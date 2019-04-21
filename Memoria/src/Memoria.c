@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 
 int main(void) {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", 1, 1);
@@ -18,6 +19,14 @@ int main(void) {
 	configuracion = get_configuracion();
 
 
+=======
+#include "API.h"
+int main(int argc, char** argv) {
+	puts("--Memoria inicializada--"); /* prints !!!Hello World!!! */
+	if (argc > 1) {
+			procesarConsulta(argc,argv);
+		}
+>>>>>>> 39bd0266c7094b9a3f1643164ad53c8668791457
 	return EXIT_SUCCESS;
 }
 
