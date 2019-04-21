@@ -10,8 +10,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+#include "API.h"
+int main(int argc, char** argv) {
+	puts("--Memoria inicializada--"); /* prints !!!Hello World!!! */
+	if (argc > 1) {
+			procesarConsulta(argc,argv);
+		}
 	return EXIT_SUCCESS;
 }
