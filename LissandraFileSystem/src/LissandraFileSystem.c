@@ -9,16 +9,23 @@
  */
 
 
-#include <LissandraFileSystem.h>
+#include "LissandraFileSystem.h"
+
+
 
 int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
-	return EXIT_SUCCESS;
+	t_configuracion_LFS* configuracion;
+	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/error.log");
+	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/info.log");
+	loggerInfo = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/info.log", "LFS Logs", 1, LOG_LEVEL_INFO);
+	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/error.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
+	log_info(loggerInfo, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
+	configuracion = cargarConfig();
 
 }
 
-int cargarConfig (){
-		t_configuracion *config = malloc(sizeof(t_configuracion));
+t_configuracion_LFS cargarConfig (){
+		t_configuracion_LFS *config = malloc(sizeof(t_configuracion_LFS));
 		t_config *fsConfig = config_create("./fsConfig.cfg");
 
 		config->PUERTO_ESCUCHA = config_get_int_value(fsConfig, "PUERTO_ESCUCHA");
@@ -29,7 +36,7 @@ int cargarConfig (){
 
 		config_destroy(fsConfig);
 
-		return 1;
+		return config;
 	}
 
 

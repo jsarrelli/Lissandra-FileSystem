@@ -27,13 +27,15 @@
 #include <commons/bitarray.h>
 #include <commons/log.h>
 
+#include "Compartidas.h"
+
 typedef struct{
 	int PUERTO_ESCUCHA;
 	char* PUNTO_MONTAJE;
 	int RETARDO;
 	int TAMANIO_VALUE;
 	int TIEMPO_DUMP;
-}t_configuracion;
+}t_configuracion_LFS;
 
 typedef struct{
 	int TAMANIO_BLOQUES;
@@ -50,8 +52,11 @@ typedef struct{
 }t_rutas;
 
 t_rutas rutas;
-t_configuracion config;
+t_configuracion_LFS config;
 t_metadata metadata;
 t_bitarray *bitmap;
+
+t_log* loggerInfo;
+t_log* loggerError;
 
 #endif /* LISSANDRAFILESYSTEM_H_ */
