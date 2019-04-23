@@ -37,3 +37,11 @@ char** get_campo_config_array(t_config* archivo_configuracion,
 
 char* get_campo_config_string(t_config* archivo_configuracion,
 		char* nombre_campo);
+
+void logErrorAndExit(char * mensaje);
+void inicializarArchivoDeLogs(char * ruta);
+int contarPunteroDePunteros(char ** puntero);
+void liberarPunteroDePunterosAChar(char** palabras);
+
+t_log* logger;
+t_log* loggerError;

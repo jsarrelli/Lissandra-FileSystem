@@ -1,13 +1,13 @@
 /*
  * ApiLFS.c
  *
- *  Created on: 22 abr. 2019
+ *  Created on: 23 abr. 2019
  *      Author: utnso
  */
 
 #include "LissandraFileSystem.h"
 
-void consolaFS(){
+/*void consolaFS(){
 	puts("Bienvenido a la consola. Ingrese un comando:");
 	while(1){
 		char *linea = readline(">");
@@ -21,8 +21,9 @@ void consolaFS(){
 		procesarInput(linea);
 		free(linea);
 	}
-}
+}*/
 
+/*
 void procesarInput(char* linea) {
 	int cantidad;
 	char **palabras = string_split(linea, " ");
@@ -52,3 +53,4 @@ void procesarInput(char* linea) {
 	free(palabras);
 
 }
+*/

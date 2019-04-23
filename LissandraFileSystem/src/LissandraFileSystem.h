@@ -13,7 +13,6 @@
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
-
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/stat.h>
@@ -21,13 +20,14 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
-
+#include <readline/readline.h>
+#include <readline/history.h>
 #include <commons/config.h>
 #include <commons/string.h>
 #include <commons/bitarray.h>
 #include <commons/log.h>
 
-#include "Compartidas.h"
+#include "Libraries.h"
 
 typedef struct{
 	int PUERTO_ESCUCHA;
@@ -52,11 +52,10 @@ typedef struct{
 }t_rutas;
 
 t_rutas rutas;
-t_configuracion_LFS config;
 t_metadata metadata;
 t_bitarray *bitmap;
 
-t_log* loggerInfo;
+t_log* logger;
 t_log* loggerError;
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

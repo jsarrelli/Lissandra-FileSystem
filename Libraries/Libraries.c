@@ -33,3 +33,32 @@ char** get_campo_config_array(t_config* archivo_configuracion, char* nombre_camp
 	}
 	return NULL;
 }
+
+void logErrorAndExit(char * mensaje){
+	log_error(loggerError,mensaje);
+	exit(-1);
+}
+
+void inicializarArchivoDeLogs(char * ruta){
+	FILE * archivo = fopen(ruta, "w");
+	fclose(archivo);
+}
+
+int contarPunteroDePunteros(char ** puntero){
+	char ** aux = puntero;
+	int contador = 0;
+	while(*aux != NULL){
+		contador++;
+		aux++;
+	}
+	return contador;
+}
+
+void liberarPunteroDePunterosAChar(char** palabras){
+	int i = 0;
+	while(palabras[i] != NULL){
+		free(palabras[i]);
+		i++;
+	}
+
+}
