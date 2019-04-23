@@ -13,31 +13,30 @@
 
 
 
-t_configuracion_LFS* cargarConfig (){
+t_configuracion_LFS* cargarConfig (char* ruta){
 	log_info(logger,"Levantando archivo de configuracion del proceso LFS \n");
 		t_configuracion_LFS* config = malloc(sizeof(t_configuracion_LFS));
-		t_config *fsConfig = config_create("./fsConfig.cfg");
+		t_config *fsConfig = config_create(ruta);
 
 		config->PUERTO_ESCUCHA = get_campo_config_int(fsConfig, "PUERTO_ESCUCHA");
 		config->PUNTO_MONTAJE = get_campo_config_string(fsConfig, "PUNTO_MONTAJE");
 		config->RETARDO = get_campo_config_int(fsConfig, "RETARDO");
 		config->TAMANIO_VALUE = get_campo_config_int(fsConfig, "TAMANIO_VALUE");
 		config->TIEMPO_DUMP = get_campo_config_int(fsConfig, "TIEMPO_DUMP");
-
+		log_info(logger,"Archivo de configuracion del proceso LFS levantado \n");
 		config_destroy(fsConfig);
-
 		return config;
 	}
 
 
-int main(int argc, char* argv[]) {
-		t_configuracion_LFS* config = cargarConfig();
-		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/error.log");
-		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/info.log");
-		logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/info.log", "LFS Logs", 1, LOG_LEVEL_INFO);
-		loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/error.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
+int main(void) {
+		t_configuracion_LFS* config;
+		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
+		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log");
+		logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);
+		loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
 		log_info(logger, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
-
+		config = cargarConfig("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
 
 		return EXIT_SUCCESS;
 }
