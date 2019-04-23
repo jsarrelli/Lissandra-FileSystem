@@ -10,7 +10,7 @@
 
 
 #include "LissandraFileSystem.h"
-
+#include "lib/funcionesLFS.h"
 
 
 t_configuracion_LFS* cargarConfig (char* ruta){
@@ -31,12 +31,16 @@ t_configuracion_LFS* cargarConfig (char* ruta){
 
 int main(void) {
 		t_configuracion_LFS* config;
+		pthread_t hiloConsolaLFS;
 		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
 		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log");
 		logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);
 		loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
 		log_info(logger, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
 		config = cargarConfig("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
+		crearHilo(&hiloConsolaLFS, (void *)consolaLFS, NULL);
+		puts("Hilo creado");
+
 
 		return EXIT_SUCCESS;
 }

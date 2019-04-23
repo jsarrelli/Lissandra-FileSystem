@@ -6,8 +6,9 @@
  */
 
 #include "LissandraFileSystem.h"
+#include "lib/funcionesLFS.h"
 
-/*void consolaFS(){
+void consolaLFS(){
 	puts("Bienvenido a la consola. Ingrese un comando:");
 	while(1){
 		char *linea = readline(">");
@@ -17,11 +18,10 @@
 			free(linea);
 			continue;
 		}
-		add_history(linea);
-		procesarInput(linea);
+		//procesarInput(linea);
 		free(linea);
 	}
-}*/
+}
 
 /*
 void procesarInput(char* linea) {

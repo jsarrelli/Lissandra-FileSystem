@@ -62,3 +62,13 @@ void liberarPunteroDePunterosAChar(char** palabras){
 	}
 
 }
+
+
+void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros){
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	if(pthread_create(nombreHilo, &attr, nombreFuncion, parametros) < 0){
+			logErrorAndExit("No se pudo crear el hilo.");
+	}
+}

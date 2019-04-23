@@ -8,25 +8,6 @@
 #ifndef LISSANDRAFILESYSTEM_H_
 #define LISSANDRAFILESYSTEM_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <pthread.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <commons/config.h>
-#include <commons/string.h>
-#include <commons/bitarray.h>
-#include <commons/log.h>
-
 #include "Libraries.h"
 
 typedef struct{

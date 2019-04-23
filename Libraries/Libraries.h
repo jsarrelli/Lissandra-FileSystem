@@ -14,9 +14,12 @@
 #include <commons/error.h>
 #include <commons/config.h>
 #include <commons/collections/list.h>
+#include <commons/bitarray.h>
 #include <commons/txt.h>
 #include <commons/log.h>
 #include <unistd.h>
+#include <readline/readline.h>
+#include <sys/time.h>
 #include <assert.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -42,6 +45,7 @@ void logErrorAndExit(char * mensaje);
 void inicializarArchivoDeLogs(char * ruta);
 int contarPunteroDePunteros(char ** puntero);
 void liberarPunteroDePunterosAChar(char** palabras);
+void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 
 t_log* logger;
 t_log* loggerError;
