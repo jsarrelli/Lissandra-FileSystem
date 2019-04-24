@@ -10,6 +10,7 @@
 
 
 
+
 //consola
 void consolaLFS(void);
 

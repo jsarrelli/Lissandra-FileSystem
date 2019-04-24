@@ -30,6 +30,7 @@
 #include <stdarg.h>
 #include <math.h>
 #include <pthread.h>
+#include <dirent.h>
 #include <signal.h>
 
 

@@ -18,25 +18,11 @@ typedef struct{
 	int TIEMPO_DUMP;
 }t_configuracion_LFS;
 
-typedef struct{
-	int TAMANIO_BLOQUES;
-	int CANTIDAD_BLOQUES;
-	char* MAGIC_NUMBER;
-}t_metadata;
 
-typedef struct{
-	char* Tablas;
-	char* Bloques;
-	char* Metadata;
-	char* Bitmap;
-
-}t_rutas;
-
-t_rutas rutas;
-t_metadata metadata;
-t_bitarray *bitmap;
 
 t_log* logger;
 t_log* loggerError;
+
+t_configuracion_LFS* cargarConfig (char* ruta);
 
 #endif /* LISSANDRAFILESYSTEM_H_ */
