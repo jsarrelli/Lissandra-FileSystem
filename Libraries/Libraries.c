@@ -72,3 +72,11 @@ void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros){
 			logErrorAndExit("No se pudo crear el hilo.");
 	}
 }
+
+int cantidadParametros(char ** palabras){
+	int i = 1;
+	while(palabras[i] != NULL){
+		i++;
+	}
+	return i-1;
+}

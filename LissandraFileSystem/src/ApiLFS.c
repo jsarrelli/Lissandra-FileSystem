@@ -23,8 +23,7 @@ void consolaLFS(){
 	}
 }
 
-/*
-void procesarInput(char* linea) {
+/*void procesarInput(char* linea) {
 	int cantidad;
 	char **palabras = string_split(linea, " ");
 	cantidad = cantidadParametros(palabras);
@@ -35,7 +34,7 @@ void procesarInput(char* linea) {
 	} else if (!strcmp(*palabras, "SELECT")) {
 		//consolaSelect(palabras,cantidad);
 	} else if (!strcmp(*palabras, "CREATE")) {
-		//consolaMove(palabras,cantidad);
+		//consolaCreate(palabras,cantidad);
 	} else if (!strcmp(*palabras, "DESCRIBE")) {
 		//consolaDescribe(palabras,cantidad);
 	} else if (!strcmp(*palabras, "DROP")) {
@@ -53,4 +52,22 @@ void procesarInput(char* linea) {
 	free(palabras);
 
 }
-*/
+
+
+void consolaCreate(char**palabras, int cantidad){
+	if(cantidad == 4){
+
+			if(existeTabla(palabras[1])){
+				puts("Ya existe una tabla con ese nombre.");
+			}
+			else{
+				puts("No existe la tabla. Se la creara");
+				crearTablaYParticiones(palabras[1], palabras[3]);
+				crearMetadataTabla(palabras[2], palabras[3], palabras[4]);
+
+			}
+	}
+	else{
+		puts("Error en la cantidad de parametros.");
+	}
+}*/

@@ -12,6 +12,14 @@
 
 
 //consola
+
+void procesarInput(char * linea);
 void consolaLFS(void);
+void consolaDrop(char** palabras, int cantidadParametros);
+void consolaInsert(char**palabras, int cantidadParametros);
+void consolaSelect(char**palabras, int cantidadParametros);
+void consolaCreate(char**palabras, int cantidadParametros);
+void consolaDescribe(char**palabras, int cantidadParametros);
+
 
 #endif /* FUNCIONESLFS_H_ */

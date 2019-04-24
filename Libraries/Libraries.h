@@ -47,6 +47,7 @@ void inicializarArchivoDeLogs(char * ruta);
 int contarPunteroDePunteros(char ** puntero);
 void liberarPunteroDePunterosAChar(char** palabras);
 void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
+int cantidadParametros(char ** palabras);
 
 t_log* logger;
 t_log* loggerError;
