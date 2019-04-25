@@ -80,3 +80,13 @@ int cantidadParametros(char ** palabras){
 	}
 	return i-1;
 }
+
+char * obtenerUltimoElementoDeUnSplit(char ** palabras){
+	char * ultimaPalabra;
+	int i = 0;
+	while(palabras[i] != NULL){
+		ultimaPalabra = palabras[i];
+		i++;
+	}
+	return strdup(ultimaPalabra);
+}

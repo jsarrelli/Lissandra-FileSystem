@@ -8,8 +8,9 @@
 #ifndef FUNCIONESLFS_H_
 #define FUNCIONESLFS_H_
 
+#include "Libraries.h"
 
-
+t_list* listaNombresTablas;
 
 //consola
 
@@ -20,6 +21,12 @@ void consolaInsert(char**palabras, int cantidadParametros);
 void consolaSelect(char**palabras, int cantidadParametros);
 void consolaCreate(char**palabras, int cantidadParametros);
 void consolaDescribe(char**palabras, int cantidadParametros);
+
+//tablas
+
+int existeTabla(char* nombreTabla);
+void crearTablaYParticiones(char* nombreTabla, int cantidadParticiones);
+char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 
 
 #endif /* FUNCIONESLFS_H_ */
