@@ -14,12 +14,20 @@
 #define PUERTO "6667"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define MAX_PACKAGE_SIZE 1024	//El servidor no admitira paquetes de mas de 1024 bytes
-#define MAXUSERNAME 30
-#define MAX_MESSAGE_SIZE 300
+#define MAXCONSULTA 6
+#define MAX_MENSAJE_SIZE 100
 int listenningSocket;
 
+typedef struct _t_Paquete {
+	char consulta[MAXCONSULTA];
+	uint32_t consulta_long;
+	char mensaje[MAX_MENSAJE_SIZE];
+	uint32_t mensaje_long;
+} t_Paquete;
 
-void configurarSocketEscucha();
+
+int configurarSocketServidor();
 void escuchar();
+int recieve_and_deserialize(t_Paquete *paquete, int socketCliente);
 
 #endif /* SERVER_H_ */

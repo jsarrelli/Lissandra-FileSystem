@@ -1,18 +1,13 @@
 /*
  ============================================================================
  Name        : Memoria.c
- Author      : 
+ Author      : Matias Erratchu y Julian Sarrelli
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
 #include "Memoria.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "Socket.h"
-
 
 int main(int argc, char** argv) {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", 1, 1);
@@ -24,8 +19,12 @@ int main(int argc, char** argv) {
 			procesarConsulta(argc,argv);
 		}
 
-	configurarSocketEscucha();
+	log_info(logger, "Configurando Listening Socket. \n");
+	if(configurarSocketServidor()){
+		escuchar();
+	}
 
+	close(listenningSocket);
 
 
 

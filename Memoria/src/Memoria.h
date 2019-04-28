@@ -2,6 +2,11 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#include "SocketServidor.h"
 
 
 typedef struct MEMORIA_configuracion{
