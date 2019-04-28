@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "Socket.h"
 
 
 int main(int argc, char** argv) {
@@ -22,6 +23,11 @@ int main(int argc, char** argv) {
 	if (argc > 1) {
 			procesarConsulta(argc,argv);
 		}
+
+	configurarSocketEscucha();
+
+
+
 
 	return EXIT_SUCCESS;
 }
