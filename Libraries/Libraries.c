@@ -72,3 +72,21 @@ void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros){
 			logErrorAndExit("No se pudo crear el hilo.");
 	}
 }
+
+int cantidadParametros(char ** palabras){
+	int i = 1;
+	while(palabras[i] != NULL){
+		i++;
+	}
+	return i-1;
+}
+
+char * obtenerUltimoElementoDeUnSplit(char ** palabras){
+	char * ultimaPalabra;
+	int i = 0;
+	while(palabras[i] != NULL){
+		ultimaPalabra = palabras[i];
+		i++;
+	}
+	return strdup(ultimaPalabra);
+}
