@@ -25,8 +25,8 @@ void consolaDescribe(char**palabras, int cantidadParametros);
 //tablas
 
 int existeTabla(char* nombreTabla);
-void crearTablaYParticiones(char* nombreTabla, int cantidadParticiones);
 char * obtenerRutaTablaSinArchivo(char * rutaTabla);
+void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 
 
 #endif /* FUNCIONESLFS_H_ */

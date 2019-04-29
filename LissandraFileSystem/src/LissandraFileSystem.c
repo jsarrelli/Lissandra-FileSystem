@@ -32,8 +32,8 @@ t_configuracion_LFS* cargarConfig (char* ruta){
 
 int main(void) {
 		t_configuracion_LFS* config;
-		pthread_t hiloConsolaLFS;
-		t_list* listaRutasTablas = list_create();
+		//pthread_t hiloConsolaLFS;
+		listaNombresTablas = list_create();
 		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
 		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log");
 		logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);
@@ -43,8 +43,8 @@ int main(void) {
 		//cargarMetadata("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
 		//leerMetadata();
 
-		crearHilo(&hiloConsolaLFS, (void *)consolaLFS, NULL);
-		puts("Hilo creado");
+		consolaLFS();
+
 
 
 		return EXIT_SUCCESS;

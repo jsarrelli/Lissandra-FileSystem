@@ -26,9 +26,9 @@ char * obtenerRutaTablaSinArchivo(char * rutaTabla){
 
 int existeTabla(char* nombreTabla){
 		int i;
-		int tamanioListaRutasTablas = list_size(listaNombresTablas);
+		int tamanioListaNombresTablas = list_size(listaNombresTablas);
 		char* elemento;
-		for (i=0; i< tamanioListaRutasTablas; i++){
+		for (i=0; i< tamanioListaNombresTablas; i++){
 		strcpy(elemento, list_get(listaNombresTablas, i));
 			if(string_equals_ignore_case(nombreTabla, elemento)){
 				return 1;
@@ -38,25 +38,28 @@ int existeTabla(char* nombreTabla){
 		return 0;
 }
 
-void crearTablaYParticiones(char* nombreTabla, int cantidadParticiones){
+void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 
-	char* rutaTabla;
-	int i = 0;
-	string_append(&rutaTabla, "/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Tablas");
+	char* rutaTabla= malloc(100);
+	strcpy(rutaTabla, "/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/src/tablas");
+	int i=0;
+	int cantPart = atoi(cantidadParticiones);
+
 	string_append(&rutaTabla,"/");
 	string_append(&rutaTabla, nombreTabla);
 	mkdir(rutaTabla,0777);
 	puts("Tabla creada");
-	FILE* archivo;
 
-
-	for (i=0; i< cantidadParticiones; i++){
+	while (i < cantPart){
 		string_append(&rutaTabla,"/");
 		string_append_with_format(&rutaTabla, "%d.bin", i);
-		archivo = fopen(rutaTabla, "w+");
-		printf("Particion %d creada", i);
+		FILE* archivo = fopen(rutaTabla, "w+");
+		printf("Particion %d creada \n", i);
 		rutaTabla = obtenerRutaTablaSinArchivo(rutaTabla);
+		i++;
 	}
+
+	free(rutaTabla);
 }
 
 
