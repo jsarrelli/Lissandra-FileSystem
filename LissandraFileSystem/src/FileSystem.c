@@ -10,6 +10,76 @@
 
 #include "FileSystem.h"
 
+void crearBloques(){
+	int i;
+	FILE *archivo;
+	for (i = 0; i < metadata.BLOCKS; ++i) {
+		char* pat = string_new();
+		string_append(&pat,rutas.Bloques);
+		string_append(&pat,string_itoa(i));
+		string_append(&pat,".bin");
+		archivo = fopen(pat,"rb");
+		if(archivo==NULL){
+			archivo = fopen(pat,"wb");
+		}
+		free(pat);
+		fclose(archivo);
+	}
+}
+
+int* buscarBloquesLibres(int cant){
+	int i;
+	int j=0;
+	int *bloques = (int*) malloc(sizeof(int) * cant);
+	for (i = 0; i < metadata.BLOCKS && j != cant; ++i) {
+		if(bitarray_test_bit(bitmap, i)==0){
+			bloques[j]=i;
+			j++;
+		}
+	}
+	return (j == cant)? bloques : NULL;
+}
+
+void liberarBloque(int index){
+	bitarray_clean_bit(bitmap, index);
+}
+
+void reservarBloque(int index){
+	bitarray_set_bit(bitmap, index);
+}
+
+void crearBitmap(){
+	int cantidad = ((metadata.BLOCKS+8-1)/8); //Redondeado para arriba
+	char * bitarray = (char*) malloc(sizeof(char)* cantidad);
+	memset(bitarray,0,cantidad);
+	bitmap = bitarray_create_with_mode(bitarray,(metadata.BLOCKS+8-1)/8, LSB_FIRST);
+}
+
+void leerBitmap(){
+	FILE *archivo = fopen(rutas.Bitmap,"rb");
+	if(archivo==NULL){
+		archivo = fopen(rutas.Bitmap, "wb");
+		crearBitmap();
+		fclose(archivo);
+	}else{
+		crearBitmap();
+		fread(bitmap->bitarray, sizeof(char), (metadata.BLOCKS+8-1)/8, archivo);
+		fclose(archivo);
+	}
+}
+
+void escribirBitmap(){
+	FILE *archivo = fopen(rutas.Bitmap,"wb");
+	fwrite(bitmap->bitarray, sizeof(char), (metadata.BLOCKS+8-1)/8, archivo);
+	fclose(archivo);
+}
+
+void destruirBitmap(t_bitarray *bitmap){
+	free(bitmap->bitarray);
+	bitarray_destroy(bitmap);
+}
+
+
 int cargarMetadata(t_configuracion_LFS* config){
 	char*path;
 	t_config* configFs = config_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
@@ -32,7 +102,7 @@ int cargarMetadata(t_configuracion_LFS* config){
 			string_append(&path,config->PUNTO_MONTAJE);
 			string_append(&path,"/Metadata/Bitmap.bin");
 			rutas.Bitmap = path;
-			FILE*arch2 = fopen(rutas.Bitmap, "w+");
+			leerBitmap();
 
 			path = string_new();
 			string_append(&path,config->PUNTO_MONTAJE);
@@ -50,6 +120,8 @@ int cargarMetadata(t_configuracion_LFS* config){
 
 		return 1;
 }
+
+
 int leerMetadata(){
 	t_config* config = config_create(rutas.Metadata);
 	if(config==NULL){
@@ -60,6 +132,7 @@ int leerMetadata(){
 	if (config_has_property(config, "BLOCKS")){
 		metadata.BLOCKS = config_get_int_value(config,"BLOCKS");
 		printf("CANTIDAD DE BLOQUES: %i\n", metadata.BLOCKS);
+		crearBloques();
 	}else{
 		printf("No se encontró el parámetro BLOCKS dentro del archivo Metadata\n");
 		return -1;

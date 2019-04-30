@@ -30,6 +30,15 @@ t_bitarray *bitmap;
 
 int cargarMetadata(t_configuracion_LFS* config);
 int leerMetadata();
+void crearBloques();
+void crearBitmap();
+void leerBitmap();
+void escribirBitmap();
+void destruirBitmap();
+int* buscarBloquesLibres(int cant);
+void reservarBloque(int index);
+void liberarBloque(int index);
+
 
 
 

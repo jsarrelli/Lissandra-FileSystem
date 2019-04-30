@@ -11,7 +11,7 @@
 
 #include "LissandraFileSystem.h"
 #include "FileSystem.h"
-#include "lib/funcionesLFS.h"
+#include "funcionesLFS.h"
 
 
 t_configuracion_LFS* cargarConfig (char* ruta){
@@ -40,10 +40,14 @@ int main(void) {
 		loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
 		log_info(logger, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
 		config = cargarConfig("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
+
 		cargarMetadata(config);
 		printf("Metadata cargada \n ");
 		leerMetadata();
 		printf("Metadata  leida \n");
+
+		leerBitmap();
+		printf("Bitmap creado\n\n");
 
 		consolaLFS();
 

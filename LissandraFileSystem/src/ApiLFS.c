@@ -6,14 +6,14 @@
  */
 
 #include "LissandraFileSystem.h"
-#include "lib/funcionesLFS.h"
+#include "funcionesLFS.h"
+#include "FileSystem.h"
 
 void consolaLFS(){
 	puts("Bienvenido a la consola. Ingrese un comando:");
 	while(1){
 		char *linea = readline(">");
-		//esto se hace por que si el tipo apreta enter
-		//rompe todo
+
 		if(!strcmp(linea, "")){
 			free(linea);
 			continue;

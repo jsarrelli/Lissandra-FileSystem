@@ -9,6 +9,7 @@
 #define FUNCIONESLFS_H_
 
 #include "Libraries.h"
+#include "FileSystem.h"
 
 t_list* listaNombresTablas;
 
