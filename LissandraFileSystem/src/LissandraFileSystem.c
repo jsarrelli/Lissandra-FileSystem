@@ -25,7 +25,7 @@ t_configuracion_LFS* cargarConfig (char* ruta){
 		config->TAMANIO_VALUE = get_campo_config_int(fsConfig, "TAMANIO_VALUE");
 		config->TIEMPO_DUMP = get_campo_config_int(fsConfig, "TIEMPO_DUMP");
 		log_info(logger,"Archivo de configuracion del proceso LFS levantado \n");
-		config_destroy(fsConfig);
+
 		return config;
 	}
 
@@ -40,8 +40,10 @@ int main(void) {
 		loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
 		log_info(logger, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
 		config = cargarConfig("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
-		//cargarMetadata("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
-		//leerMetadata();
+		cargarMetadata(config);
+		printf("Metadata cargada \n ");
+		leerMetadata();
+		printf("Metadata  leida \n");
 
 		consolaLFS();
 

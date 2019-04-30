@@ -12,6 +12,7 @@
 
 t_list* listaNombresTablas;
 
+
 //consola
 
 void procesarInput(char * linea);
@@ -27,6 +28,7 @@ void consolaDescribe(char**palabras, int cantidadParametros);
 int existeTabla(char* nombreTabla);
 char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
+void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
 
 
 #endif /* FUNCIONESLFS_H_ */

@@ -60,10 +60,10 @@ void consolaCreate(char**palabras, int cantidad){
 				puts("Ya existe una tabla con ese nombre.");
 			}
 			else{
-				puts("No existe la tabla. Se la creara");
+
 
 				crearTablaYParticiones(palabras[1], palabras[3]);
-				//crearMetadataTabla(palabras[2], palabras[3], palabras[4]);
+				crearMetadataTabla(palabras[1],palabras[2], palabras[3], palabras[4]);
 
 			}
 	}
