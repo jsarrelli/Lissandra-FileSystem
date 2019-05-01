@@ -57,6 +57,15 @@ int main(void) {
 }
 
 
+/*char* buscarPorNombreDeTabla(char * nombreTabla){
+	bool buscarPorNombreDeTablaParaLista(void* elementoDeLista){
+		char* nombreTablaActual  = (char*) elementoDeLista;
+
+		return !strcmp(nombreTabla, nombreTablaActual);
+	}
+
+	return (char*)list_find(listaNombresTablas, buscarPorNombreDeTablaParaLista);
+}*/
 
 
 

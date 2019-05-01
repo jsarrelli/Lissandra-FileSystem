@@ -30,6 +30,10 @@ int existeTabla(char* nombreTabla);
 char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
+char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
+void mostrarMetadataTabla(char* nombreTabla);
+//void mostrarMetadataTodasTablas();
+
 
 
 #endif /* FUNCIONESLFS_H_ */

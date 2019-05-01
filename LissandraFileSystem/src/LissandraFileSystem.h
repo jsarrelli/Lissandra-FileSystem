@@ -18,6 +18,12 @@ typedef struct{
 	int TIEMPO_DUMP;
 }t_configuracion_LFS;
 
+typedef struct{
+	char* CONSISTENCIA;
+	int CANT_PARTICIONES;
+	int T_COMPACTACION;
+}t_metadata_tabla;
+
 
 
 t_log* logger;

@@ -7,9 +7,11 @@
 
 #include "funcionesLFS.h"
 
+int cantTablas = 0;
+
 char * obtenerRutaTablaSinArchivo(char * rutaTabla){
 	char ** directorios;
-	char * archivo;
+	char * archivo = malloc(50);
 	int tamanioNombreArchivo;
 	int tamanioRuta;
 
@@ -25,17 +27,20 @@ char * obtenerRutaTablaSinArchivo(char * rutaTabla){
 }
 
 int existeTabla(char* nombreTabla){
-		int i;
-		int tamanioListaNombresTablas = list_size(listaNombresTablas);
-		char* elemento = malloc(10);
-		for (i=0; i< tamanioListaNombresTablas; i++){
-		strcpy(elemento, list_get(listaNombresTablas, i));
-			if(string_equals_ignore_case(nombreTabla, elemento)){
+	char* rutaTabla = malloc(100);
+	DIR* tablaActual;
+	armarRutaTabla(rutaTabla, nombreTabla);
+	tablaActual = opendir(rutaTabla);
+
+			if(tablaActual !=NULL){
+				closedir(rutaTabla);
 				return 1;
 			}
-		}
-		free(elemento);
-		return 0;
+
+
+
+	free(rutaTabla);
+	return 0;
 }
 
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
@@ -49,7 +54,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 	string_append(&rutaTabla, nombreTabla);
 	mkdir(rutaTabla,0777);
 	printf("%s creada\n", nombreTabla);
-	list_add(listaNombresTablas, nombreTabla);
+	cantTablas += 1;
 	log_info(logger, "Se creo la  %s\n", nombreTabla);
 
 	while (i < cantPart){
@@ -82,9 +87,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion){
 	char*rutaTabla=malloc(100);
-	strcpy(rutaTabla, rutas.Tablas);
-	string_append(&rutaTabla, nombreTabla);
-	string_append(&rutaTabla, "/");
+	armarRutaTabla(rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "Metadata");
 	FILE*arch = fopen(rutaTabla, "w+");
 	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones, tiempoCompactacion);
@@ -94,4 +97,47 @@ void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadPar
 
 
 }
+
+void mostrarMetadataTabla(char* nombreTabla){
+
+	char* rutaTabla=malloc(100);
+	armarRutaTabla(rutaTabla, nombreTabla);
+	string_append(&rutaTabla, "Metadata");
+	t_config* configMetadata = config_create(rutaTabla);
+	t_metadata_tabla* metadataTabla = malloc(sizeof (t_metadata_tabla));
+
+	printf("\nMetadata de %s: \n", nombreTabla);
+
+	metadataTabla->CONSISTENCIA = config_get_string_value(configMetadata, "CONSISTENCIA");
+	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
+	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
+
+	printf("CONSISTENCIA: %s\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
+	free(metadataTabla);
+	free(rutaTabla);
+	config_destroy(configMetadata);
+}
+
+char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
+
+		strcpy(rutaTabla, rutas.Tablas);
+		string_append(&rutaTabla, nombreTabla);
+		string_append(&rutaTabla, "/");
+
+		return rutaTabla;
+}
+
+/*void mostrarMetadataTodasTablas(){
+	char* nombreTabla = malloc(20);
+	int i=1;
+
+	while(i <= cantTablas){
+		string_append_with_format(&nombreTabla, "TABLA%d", i);
+		mostrarMetadataTabla(nombreTabla);
+		nombreTabla = NULL;
+		i++;
+	}
+
+	free(nombreTabla);
+}*/
 

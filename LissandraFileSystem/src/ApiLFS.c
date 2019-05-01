@@ -36,7 +36,7 @@ void procesarInput(char* linea) {
 	} else if (!strcmp(*palabras, "CREATE")) {
 		consolaCreate(palabras,cantidad);
 	} else if (!strcmp(*palabras, "DESCRIBE")) {
-		//consolaDescribe(palabras,cantidad);
+		consolaDescribe(palabras,cantidad);
 	} else if (!strcmp(*palabras, "DROP")) {
 		//consolaDrop(palabras,cantidad);
 	} else if(!strcmp(*palabras, "exit")){
@@ -66,6 +66,23 @@ void consolaCreate(char**palabras, int cantidad){
 				crearMetadataTabla(palabras[1],palabras[2], palabras[3], palabras[4]);
 
 			}
+	}
+	else{
+		puts("Error en la cantidad de parametros.");
+	}
+}
+
+void consolaDescribe(char**palabras, int cantidad){
+	if(cantidad == 1){
+
+			if(existeTabla(palabras[1])){
+				mostrarMetadataTabla(palabras[1]);
+
+			}
+
+	}else if(cantidad==0){
+		//mostrarMetadataTodasTablas();
+
 	}
 	else{
 		puts("Error en la cantidad de parametros.");
