@@ -10,7 +10,7 @@
 #include "FileSystem.h"
 
 void consolaLFS(){
-	puts("Bienvenido a la consola. Ingrese un comando:");
+	puts("Bienvenido a la consola de LFS. Ingrese un comando:");
 	while(1){
 		char *linea = readline(">");
 
@@ -38,7 +38,7 @@ void procesarInput(char* linea) {
 	} else if (!strcmp(*palabras, "DESCRIBE")) {
 		consolaDescribe(palabras,cantidad);
 	} else if (!strcmp(*palabras, "DROP")) {
-		//consolaDrop(palabras,cantidad);
+		consolaDrop(palabras,cantidad);
 	} else if(!strcmp(*palabras, "exit")){
 		printf("Finalizando consola\n");
 
@@ -82,6 +82,21 @@ void consolaDescribe(char**palabras, int cantidad){
 
 	}else if(cantidad==0){
 		//mostrarMetadataTodasTablas();
+
+	}
+	else{
+		puts("Error en la cantidad de parametros.");
+	}
+}
+
+
+void consolaDrop(char**palabras, int cantidad){
+	if(cantidad == 1){
+
+			if(existeTabla(palabras[1])){
+				removerTabla(palabras[1]);
+				puts("Tabla eliminada.");
+			}
 
 	}
 	else{

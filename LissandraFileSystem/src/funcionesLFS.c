@@ -141,3 +141,132 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 	free(nombreTabla);
 }*/
 
+
+char** buscarArchivos(char * rutaTabla){
+
+	  DIR *directorioActual;
+	  struct dirent *archivo;
+	  char ** archivos = malloc(100);
+	  char * rutaNueva;
+	  int i = 0;
+
+	  directorioActual = opendir(rutaTabla);
+
+	  if (directorioActual == NULL){
+	    puts("No se pudo abrir el directorio.");
+	    log_error(loggerError,"No se pudo abrir el directorio.");
+
+	  }else{
+	  // Leo uno por uno los archivos que estan adentro del directorio actual
+	  while ((archivo = readdir(directorioActual)) != NULL) {
+
+		  //Con readdir aparece siempre . y .. como no me interesa no lo contemplo
+		if ((strcmp(archivo->d_name, ".") != 0) && (strcmp(archivo->d_name, "..") != 0)) {
+
+			rutaNueva = string_duplicate(rutaTabla);
+			string_append(&rutaNueva,"/");
+			string_append(&rutaNueva,archivo->d_name);
+			archivos[i] = malloc(256);
+				if(esArchivo(rutaNueva)){
+					strcpy(archivos[i],rutaNueva);
+					i++;
+				}
+			free(rutaNueva);
+
+		}
+	  }
+	  closedir (directorioActual);
+	  }
+
+	  archivos[i] = NULL;
+
+	  return archivos;
+}
+
+int esArchivo (char* ruta){
+	struct stat estado;
+	int i;
+
+	stat(ruta,&estado);
+	i= S_ISREG(estado.st_mode);
+
+	return i;
+}
+
+void removerArchivosDeTabla(char * rutaTabla){
+	char ** archivos;
+	int i = 0;
+	archivos = buscarArchivos(rutaTabla);
+
+	if(archivos[i] != NULL){
+		while(archivos[i] != NULL){
+			liberarBloquesDeArchivo(archivos[i]);
+			remove(archivos[i]);
+			i++;
+
+		}
+		liberarPunteroDePunterosAChar(archivos);
+		free(archivos);
+	}else{
+		free(archivos);
+	}
+}
+
+int liberarBloquesDeArchivo(char *rutaArchivo){
+
+	t_archivo *archivo = malloc(sizeof(t_archivo));
+	int result = leerArchivoDeTabla(rutaArchivo, archivo);
+	if(result<0){
+		puts("Error al borrar el archivo");
+		return -1;
+	}
+	int i;
+	for (i = 0; i < archivo->cantBloques ; ++i) {
+		liberarBloque(strtol(archivo->BLOQUES[i],NULL,10));
+		log_info(logger, "Bloque liberado: %s\n",archivo->BLOQUES[i]);
+		printf( "Bloque liberado: %s\n",archivo->BLOQUES[i]);
+		i++;
+	}
+	escribirBitmap();
+
+	free(archivo);
+	return 1;
+}
+
+int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo){
+
+	t_config* config = config_create(rutaArchivo);
+
+
+	if(config==NULL){
+		return -1;
+		puts("El archivo no existe");
+	}
+
+	if (config_has_property(config, "TAMANIO")){
+		archivo->TAMANIO = config_get_int_value(config,"TAMANIO");
+		printf("El tamanio del archivo es %i\n", archivo->TAMANIO);
+	}else{
+		return -2; //Archivo corrupto
+	}
+	if (config_has_property(config, "BLOQUES")){
+		archivo->BLOQUES = config_get_array_value(config,"BLOQUES");
+		int cant = 0;
+		for (cant = 0 ; archivo->BLOQUES[cant] ; cant++);
+		archivo->cantBloques = cant;
+	}else{
+		return -2;
+	}
+
+
+	return 1;
+}
+
+void removerTabla(char* nombreTabla){
+	char* rutaTabla = malloc(200);
+	armarRutaTabla(rutaTabla,nombreTabla);
+	removerArchivosDeTabla(rutaTabla);
+
+	rmdir(rutaTabla);
+	free(rutaTabla);
+}

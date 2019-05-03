@@ -11,9 +11,6 @@
 #include "Libraries.h"
 #include "FileSystem.h"
 
-t_list* listaNombresTablas;
-
-
 //consola
 
 void procesarInput(char * linea);
@@ -32,8 +29,15 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
 void mostrarMetadataTabla(char* nombreTabla);
+void removerTabla(char* nombreTabla);
 //void mostrarMetadataTodasTablas();
 
+//ARCHIVOS DE TABLA
 
+char** buscarArchivos(char * rutaTabla);
+int esArchivo (char* ruta);
+void removerArchivosDeTabla(char * rutaTabla);
+int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
+int liberarBloquesDeArchivo(char *rutaArchivo);
 
 #endif /* FUNCIONESLFS_H_ */

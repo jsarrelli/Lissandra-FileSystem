@@ -33,7 +33,7 @@ t_configuracion_LFS* cargarConfig (char* ruta){
 int main(void) {
 		t_configuracion_LFS* config;
 		//pthread_t hiloConsolaLFS;
-		listaNombresTablas = list_create();
+		//listaNombresTablas = list_create();
 		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
 		inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log");
 		logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);

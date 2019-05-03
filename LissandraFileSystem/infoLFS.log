@@ -1,9 +1,20 @@
-[INFO] 13:09:24:343 LFS Logs/(13838:13838): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 18:03:06:412 LFS Logs/(7078:7078): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 13:09:24:346 LFS Logs/(13838:13838): Levantando archivo de configuracion del proceso LFS 
+[INFO] 18:03:06:420 LFS Logs/(7078:7078): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 13:09:24:352 LFS Logs/(13838:13838): Archivo de configuracion del proceso LFS levantado 
+[INFO] 18:03:06:453 LFS Logs/(7078:7078): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 13:17:10:691 LFS Logs/(13838:13838): Se creo la  TABLA2
+[INFO] 18:03:14:681 LFS Logs/(7078:7078): Se creo la  TABLA1
 
-[INFO] 13:17:10:699 LFS Logs/(13838:13838): Metadata de TABLA2 creada
+[INFO] 18:03:14:710 LFS Logs/(7078:7078): Metadata de TABLA1 creada
+[INFO] 18:03:23:96 LFS Logs/(7078:7078): Se creo la  TABLA3
+
+[INFO] 18:03:23:144 LFS Logs/(7078:7078): Metadata de TABLA3 creada
+[INFO] 18:03:32:155 LFS Logs/(7078:7078): Bloque liberado: 2
+
+[INFO] 18:03:32:189 LFS Logs/(7078:7078): Bloque liberado: 3
+
+[INFO] 18:03:32:197 LFS Logs/(7078:7078): Bloque liberado: 5
+
+[INFO] 18:03:32:210 LFS Logs/(7078:7078): Bloque liberado: 4
+

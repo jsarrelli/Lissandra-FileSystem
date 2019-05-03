@@ -24,7 +24,11 @@ typedef struct{
 	int T_COMPACTACION;
 }t_metadata_tabla;
 
-
+typedef struct{
+	int TAMANIO;
+	char **BLOQUES;
+	int cantBloques;
+}t_archivo;
 
 t_log* logger;
 t_log* loggerError;
