@@ -127,19 +127,20 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 		return rutaTabla;
 }
 
-/*void mostrarMetadataTodasTablas(){
-	char* nombreTabla = malloc(20);
+void mostrarMetadataTodasTablas(){
+	char* nombreTabla = malloc(15);
 	int i=1;
 
-	while(i <= cantTablas){
-		string_append_with_format(&nombreTabla, "TABLA%d", i);
+
+	while(i <=cantTablas){
+		sprintf(nombreTabla, "TABLA%d",i);
 		mostrarMetadataTabla(nombreTabla);
-		nombreTabla = NULL;
+
 		i++;
 	}
 
 	free(nombreTabla);
-}*/
+}
 
 
 char** buscarArchivos(char * rutaTabla){
@@ -216,8 +217,7 @@ int liberarBloquesDeArchivo(char *rutaArchivo){
 
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	int result = leerArchivoDeTabla(rutaArchivo, archivo);
-	if(result<0){
-		puts("Error al borrar el archivo");
+	if(result <0){
 		return -1;
 	}
 	int i;
@@ -245,7 +245,6 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo){
 
 	if (config_has_property(config, "TAMANIO")){
 		archivo->TAMANIO = config_get_int_value(config,"TAMANIO");
-		printf("El tamanio del archivo es %i\n", archivo->TAMANIO);
 	}else{
 		return -2; //Archivo corrupto
 	}
@@ -266,7 +265,8 @@ void removerTabla(char* nombreTabla){
 	char* rutaTabla = malloc(200);
 	armarRutaTabla(rutaTabla,nombreTabla);
 	removerArchivosDeTabla(rutaTabla);
-
 	rmdir(rutaTabla);
 	free(rutaTabla);
 }
+
+

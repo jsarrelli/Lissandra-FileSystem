@@ -11,6 +11,8 @@
 #include "Libraries.h"
 #include "FileSystem.h"
 
+//t_list* listaNombresTablas;
+
 //consola
 
 void procesarInput(char * linea);
@@ -30,7 +32,8 @@ void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadPar
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
 void mostrarMetadataTabla(char* nombreTabla);
 void removerTabla(char* nombreTabla);
-//void mostrarMetadataTodasTablas();
+void mostrarMetadataTodasTablas();
+
 
 //ARCHIVOS DE TABLA
 

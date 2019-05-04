@@ -81,7 +81,7 @@ void consolaDescribe(char**palabras, int cantidad){
 			}
 
 	}else if(cantidad==0){
-		//mostrarMetadataTodasTablas();
+		mostrarMetadataTodasTablas();
 
 	}
 	else{
