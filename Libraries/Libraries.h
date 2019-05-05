@@ -32,6 +32,12 @@
 #include <pthread.h>
 #include <signal.h>
 
+typedef struct t_registro{
+	int key;
+	char* value;
+	long timestamp;
+}t_registro;
+
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 

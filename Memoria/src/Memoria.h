@@ -23,6 +23,8 @@ typedef struct MEMORIA_configuracion{
 	int MEMORY_NUMBER;
 }MEMORIA_configuracion;
 
+
+
 MEMORIA_configuracion configuracion;
 
 MEMORIA_configuracion get_configuracion();
