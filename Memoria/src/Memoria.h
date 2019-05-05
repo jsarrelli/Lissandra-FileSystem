@@ -2,6 +2,11 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#include "SocketServidor.h"
 
 
 typedef struct MEMORIA_configuracion{
@@ -18,11 +23,14 @@ typedef struct MEMORIA_configuracion{
 	int MEMORY_NUMBER;
 }MEMORIA_configuracion;
 
+
+
 MEMORIA_configuracion configuracion;
 
 MEMORIA_configuracion get_configuracion();
 
-char* pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
+//char* pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
+char* pathMEMConfig = "configMEM.cfg";
 
 t_log* logger;
 
