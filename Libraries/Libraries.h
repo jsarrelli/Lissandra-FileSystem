@@ -1,4 +1,4 @@
-
+#ifndef LIBRARIES_H_
 #define LIBRARIES_H_
 
 #include <stdlib.h>
@@ -33,11 +33,11 @@
 #include <dirent.h>
 #include <signal.h>
 
-typedef struct t_registro{
+typedef struct {
 	int key;
 	char* value;
 	long timestamp;
-}t_registro;
+} t_registro;
 
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
@@ -57,3 +57,5 @@ int cantidadParametros(char ** palabras);
 
 t_log* logger;
 t_log* loggerError;
+
+#endif LIBRARIES_H_
