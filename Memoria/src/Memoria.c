@@ -8,6 +8,7 @@
  ============================================================================
  */
 #include "Memoria.h"
+#include "MemoriaPrincipal.h"
 
 int main(int argc, char** argv) {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", 1, 1);
@@ -20,11 +21,14 @@ int main(int argc, char** argv) {
 		}
 
 	log_info(logger, "Configurando Listening Socket. \n");
-	if(configurarSocketServidor()){
-		escuchar();
-	}
 
-	close(listenningSocket);
+	insertarSegmentoEnMemoria("TABLA1");
+
+//	if(configurarSocketServidor()){
+//		escuchar();
+//	}
+
+//	close(listenningSocket);
 
 
 

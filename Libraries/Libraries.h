@@ -40,7 +40,6 @@ typedef struct {
 
 } t_registro;
 
-int contadorConexiones = 0;
 
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
@@ -69,7 +68,8 @@ void enviar(int socket, void* cosaAEnviar, int tamanio);
 void* recibir(int socket);
 void *get_in_addr(struct sockaddr *sa);
 
-
+//TIEMPO
+double getCurrentTime();
 
 t_log* logger;
 t_log* loggerError;

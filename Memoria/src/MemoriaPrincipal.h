@@ -1,3 +1,6 @@
+#ifndef MEMORIAPRINCIPAL_H_
+#define MEMORIAPRINCIPAL_H_
+
 #include <Libraries.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
@@ -6,34 +9,48 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-int LIBRE = 1;
-int OCUPADO = 0;
-
-int tamanioMemoria=1024;
-int tamanioPagina=124;
-int cantPaginas;
 
 int valueMaximo;
 
 void* memoria;
-t_list segmentos;
-t_list estadoMemoria;
+t_list* segmentos;
+t_list* memoriaStatus;// suerte de bitmap que guarda los frames disponibles de memoria
 
 typedef struct Segmento{
 	char* nombreTabla;
 	char* nombreViejo;
-	t_list paginas;
+	t_list* paginas;
 	int nombreModificado;
 }Segmento;
 
 typedef struct Pagina{
 	int modificado;
-	t_registro *registro;
+	t_registro* registro;
 }Pagina;
-//
-//bool existePagina(Segmento segmento,int key);
-//bool existeSegmento(Segmento segmento);
-//Segmento buscarSegmento(char* nombreSegmento);
-//Pagina buscarPagina(Segmento segmento,int key);
-//Segmento insertarSegmento(char* nombreSegmento);
-//Pagina insertarPagina(int key, char* value);
+
+typedef struct EstadoMemoria{
+	int estado;
+	int fechaObtencion;
+}EstadoMemoria;
+
+bool existePaginaEnMemoria(Segmento* segmento,int key);
+bool existeSegmentoEnMemoria(char* nombreSegmento);
+
+Segmento* buscarSegmento(char* nombreSegmento);
+Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
+
+Pagina* buscarPaginaEnMemoria(Segmento* segmento,int key);
+Pagina* buscarPagina(Segmento* segmento,int key);
+
+void insertarSegmentoEnMemoria(char* nombreSegmento);
+Pagina* insertarPaginaEnMemoria(int key, char* value, char* nombreSegmento);
+
+Pagina* crearPagina(int key, char*value);
+bool memoriaLlena();
+void* darMarcoVacio();
+bool estaLibre(EstadoMemoria estado);
+bool todosModificados();
+
+void* liberarUltimoUsado();
+
+#endif /*MEMORIAPRINCIPAL_H_*/

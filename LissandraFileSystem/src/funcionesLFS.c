@@ -445,13 +445,6 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp){
 	}
 }
 
-double getCurrentTime(){
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	unsigned long long result = (((unsigned long long)tv.tv_sec)*1000 + ((unsigned long long )tv.tv_usec)/1000);
-	double res = result;
-	return res;
-}
 
 void crearArchivosTemporales(char*ruta){
 	char ** directorios;
