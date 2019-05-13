@@ -33,6 +33,7 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
 void mostrarMetadataTabla(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas();
+t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla);
 
 
 //ARCHIVOS DE TABLA

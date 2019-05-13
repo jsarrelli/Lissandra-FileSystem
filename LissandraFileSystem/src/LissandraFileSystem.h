@@ -25,11 +25,17 @@ typedef struct{
 }t_metadata_tabla;
 
 typedef struct{
+	char * tabla;
+	t_list* registros;
+}t_tabla_memtable;
+
+typedef struct{
 	int TAMANIO;
 	char **BLOQUES;
 	int cantBloques;
 }t_archivo;
 
+t_list* memtable;
 t_log* logger;
 t_log* loggerError;
 

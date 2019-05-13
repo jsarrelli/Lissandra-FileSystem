@@ -44,6 +44,13 @@ int existeTabla(char* nombreTabla){
 }
 
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
+	t_tabla_memtable* tabla= malloc(sizeof(t_tabla_memtable));
+	tabla->tabla = nombreTabla;
+	tabla->registros= list_create();
+	list_add(memtable, tabla);
+	printf("%s insertada en memtable \n", tabla->tabla);
+
+
 
 	char* rutaTabla= malloc(100);
 	strcpy(rutaTabla, rutas.Tablas);
@@ -53,9 +60,9 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 	string_append(&rutaTabla,"/");
 	string_append(&rutaTabla, nombreTabla);
 	mkdir(rutaTabla,0777);
-	printf("%s creada\n", nombreTabla);
+	printf("%s creada en LFS\n", nombreTabla);
 	cantTablas += 1;
-	log_info(logger, "Se creo la  %s\n", nombreTabla);
+	log_info(logger, "Se creo la  %s en LFS\n", nombreTabla);
 
 	while (i < cantPart){
 		string_append(&rutaTabla,"/");
@@ -83,6 +90,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 	}
 
 	free(rutaTabla);
+
 }
 
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion){
@@ -128,16 +136,19 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 }
 
 void mostrarMetadataTodasTablas(){
+
+	int tamanio = list_size(memtable);
+	int i=0;
 	char* nombreTabla = malloc(15);
-	int i=1;
 
+	t_tabla_memtable *tabla;
 
-	while(i <=cantTablas){
-		sprintf(nombreTabla, "TABLA%d",i);
-		mostrarMetadataTabla(nombreTabla);
-
-		i++;
-	}
+		while(tamanio != i){
+			 tabla = list_get(memtable, i);
+			sprintf(nombreTabla, tabla->tabla );
+			mostrarMetadataTabla(nombreTabla);
+			i++;
+		}
 
 	free(nombreTabla);
 }
@@ -262,11 +273,38 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo){
 }
 
 void removerTabla(char* nombreTabla){
+	int tamanio = list_size(memtable);
+	int i=0;
+
+	t_tabla_memtable * tabla;
+
+	while(tamanio != i){
+		tabla = list_get(memtable, i);
+		if(string_equals_ignore_case(nombreTabla, tabla->tabla)){
+			list_remove(memtable, i);
+			break;
+		}
+			i++;
+	}
+
 	char* rutaTabla = malloc(200);
 	armarRutaTabla(rutaTabla,nombreTabla);
 	removerArchivosDeTabla(rutaTabla);
 	rmdir(rutaTabla);
 	free(rutaTabla);
+}
+
+t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla){
+	int i;
+	for(i=0;i<list_size(memtable);i++){
+		t_tabla_memtable *tabla = list_get(memtable,i);
+		if(tabla->tabla==nombreTabla){
+			return tabla;
+		}
+	}
+
+	return NULL;
+	printf("La tabla no se encuentra en la memtable");
 }
 
 
