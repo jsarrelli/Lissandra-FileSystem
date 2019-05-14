@@ -102,7 +102,7 @@ void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadPar
 	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones, tiempoCompactacion);
 
 	fclose(arch);
-	log_info(logger, "Metadata de %s creada", nombreTabla);
+	log_info(logger, "Metadata de %s creada\n", nombreTabla);
 
 
 }
@@ -148,6 +148,7 @@ void mostrarMetadataTabla2(char* nombreTabla){
 	free(nombTabla);
 	liberarPunteroDePunterosAChar(palabras);
 	free(palabras);
+	free(rutaTabla);
 	config_destroy(configMetadata);
 }
 
@@ -385,17 +386,26 @@ void mostrarMetadataTodasTablas(char *ruta){
 	free(directorios);
 }
 
-void insertarKey(char* nombreTabla, uint16_t key, char* value, double timestamp){
-	t_tabla_memtable * tabla = obtenerTablaDeMemtable(nombreTabla);
-	t_registro* registro = malloc(sizeof(t_registro));
-	registro->timestamp = timestamp;
-	registro->key = key;
-	registro->value = value;
+void insertarKey(char* nombreTabla, unsigned short key, char* value, double timestamp){
+	int i;
+	for(i=0;i<list_size(memtable);i++){
+		t_tabla_memtable *tabla = list_get(memtable,i);
+		if(strcmp(tabla->tabla,nombreTabla) ==0){
+			t_registro* registro = malloc(sizeof(t_registro));
+				registro->timestamp = timestamp;
+				registro->key = key;
+				registro->value = value;
 
-	list_add(tabla->registros, registro);
-	printf("Registro %f;%d;%s insertado correctamente en memtable, %s", registro->timestamp, registro->key, registro->value, nombreTabla);
+				list_add(tabla->registros, registro);
+				printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", registro->timestamp, registro->key, registro->value, nombreTabla);
 
-	free(registro);
+				free(registro);
+				break;
+		}
+	}
+
+	obtenerRegistrosDeTabla(nombreTabla);
+
 }
 
 double getCurrentTime(){
@@ -405,3 +415,18 @@ double getCurrentTime(){
 	double res = result;
 	return res;
 }
+
+void obtenerRegistrosDeTabla(char* nombreTabla){
+	int i,j;
+	for(i=0;i<list_size(memtable);i++){
+		t_tabla_memtable *tabla = list_get(memtable,i);
+		if(strcmp(tabla->tabla,nombreTabla) ==0){
+			printf("Registros de %s\n\n", tabla->tabla);
+			for(j=0;i<list_size(tabla->registros);j++){
+				t_registro* reg = list_get(tabla->registros,j);
+				printf("%f;%u;%s", reg->timestamp, reg->key, reg->value);
+			}
+		}
+	}
+}
+

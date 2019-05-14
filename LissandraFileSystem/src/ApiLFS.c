@@ -28,7 +28,7 @@ void procesarInput(char* linea) {
 	char **palabras = string_split(linea, " ");
 	cantidad = cantidadParametros(palabras);
 	if (!strcmp(*palabras, "INSERT")) {
-		//consolaInsert(palabras, cantidad);
+		consolaInsert(palabras, cantidad);
 
 	} else if (!strcmp(*palabras, "SELECT")) {
 		//consolaSelect(palabras,cantidad);

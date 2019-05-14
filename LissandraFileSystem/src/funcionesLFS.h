@@ -32,10 +32,12 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
 void mostrarMetadataTabla(char* nombreTabla);
+void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
 t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla);
 void insertarKey(char* nombreTabla, uint16_t key, char* value, double timestamp);
+void obtenerRegistrosDeTabla(char* nombreTabla);
 
 
 //ARCHIVOS DE TABLA
