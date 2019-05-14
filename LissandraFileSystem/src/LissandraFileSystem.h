@@ -25,7 +25,7 @@ typedef struct{
 }t_metadata_tabla;
 
 typedef struct{
-	char * tabla;
+	char tabla[100];
 	t_list* registros;
 }t_tabla_memtable;
 

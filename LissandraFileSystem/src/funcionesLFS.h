@@ -12,6 +12,7 @@
 #include "FileSystem.h"
 
 //t_list* listaNombresTablas;
+double getCurrentTime();
 
 //consola
 
@@ -32,8 +33,9 @@ void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadPar
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
 void mostrarMetadataTabla(char* nombreTabla);
 void removerTabla(char* nombreTabla);
-void mostrarMetadataTodasTablas();
+void mostrarMetadataTodasTablas(char *ruta);
 t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla);
+void insertarKey(char* nombreTabla, uint16_t key, char* value, double timestamp);
 
 
 //ARCHIVOS DE TABLA

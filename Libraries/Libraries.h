@@ -34,9 +34,10 @@
 #include <signal.h>
 
 typedef struct {
-	int key;
+	double timestamp;
+	uint16_t key;
 	char* value;
-	long timestamp;
+
 } t_registro;
 
 
@@ -54,6 +55,7 @@ int contarPunteroDePunteros(char ** puntero);
 void liberarPunteroDePunterosAChar(char** palabras);
 void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 int cantidadParametros(char ** palabras);
+
 
 t_log* logger;
 t_log* loggerError;

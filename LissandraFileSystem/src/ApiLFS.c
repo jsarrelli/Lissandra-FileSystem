@@ -29,8 +29,7 @@ void procesarInput(char* linea) {
 	cantidad = cantidadParametros(palabras);
 	if (!strcmp(*palabras, "INSERT")) {
 		//consolaInsert(palabras, cantidad);
-	} else if (!strcmp(*palabras, "")) {
-		//consolaRemove(palabras,cantidad);
+
 	} else if (!strcmp(*palabras, "SELECT")) {
 		//consolaSelect(palabras,cantidad);
 	} else if (!strcmp(*palabras, "CREATE")) {
@@ -78,10 +77,12 @@ void consolaDescribe(char**palabras, int cantidad){
 			if(existeTabla(palabras[1])){
 				mostrarMetadataTabla(palabras[1]);
 
+			}else{
+				printf("La %s no existe", palabras[1]);
 			}
 
 	}else if(cantidad==0){
-		mostrarMetadataTodasTablas();
+		mostrarMetadataTodasTablas(rutas.Tablas);
 
 	}
 	else{
@@ -95,8 +96,36 @@ void consolaDrop(char**palabras, int cantidad){
 
 			if(existeTabla(palabras[1])){
 				removerTabla(palabras[1]);
-				puts("Tabla eliminada.");
+				printf("%s eliminada", palabras[1]);
 			}
+
+	}
+	else{
+		puts("Error en la cantidad de parametros.");
+	}
+}
+
+void consolaInsert(char**palabras, int cantidad){
+	if(cantidad == 4){
+
+			if(existeTabla(palabras[1])){
+				double timestamp = atof(palabras[4]);
+				insertarKey(palabras[1], palabras[2], palabras[3],timestamp);
+				log_info(logger, "Insert realizado en memtable");
+
+			} else{
+				printf("La %s no existe", palabras[1]);
+			}
+
+	}else if(cantidad==3){
+		if(existeTabla(palabras[1])){
+		double timestamp = getCurrentTime();
+		insertarKey(palabras[1], palabras[2], palabras[3], timestamp);
+		log_info(logger, "Insert realizado en memtable");
+
+		}else{
+			printf("La %s no existe", palabras[1]);
+		}
 
 	}
 	else{

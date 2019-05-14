@@ -44,12 +44,7 @@ int existeTabla(char* nombreTabla){
 }
 
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
-	t_tabla_memtable* tabla= malloc(sizeof(t_tabla_memtable));
-	tabla->tabla = nombreTabla;
-	tabla->registros= list_create();
-	list_add(memtable, tabla);
-	printf("%s insertada en memtable \n", tabla->tabla);
-
+	t_tabla_memtable* tabla;
 
 
 	char* rutaTabla= malloc(100);
@@ -89,6 +84,12 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 		j++;
 	}
 
+	tabla= malloc(sizeof(t_tabla_memtable));
+	strcpy(tabla->tabla,nombreTabla);
+	tabla->registros= list_create();
+	list_add(memtable, tabla);
+	printf("%s insertada en memtable \n", tabla->tabla);
+
 	free(rutaTabla);
 
 }
@@ -126,6 +127,30 @@ void mostrarMetadataTabla(char* nombreTabla){
 	config_destroy(configMetadata);
 }
 
+void mostrarMetadataTabla2(char* nombreTabla){
+	char*rutaTabla = malloc(100);
+	char* nombTabla=malloc(15);
+	strcpy(rutaTabla, nombreTabla);
+	string_append(&nombreTabla, "/");
+	string_append(&nombreTabla, "Metadata");
+	t_config* configMetadata = config_create(nombreTabla);
+	t_metadata_tabla* metadataTabla = malloc(sizeof (t_metadata_tabla));
+	char** palabras = string_split(rutaTabla, "/");
+	nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
+	printf("\nMetadata de %s: \n", nombTabla);
+
+	metadataTabla->CONSISTENCIA = config_get_string_value(configMetadata, "CONSISTENCIA");
+	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
+	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
+
+	printf("CONSISTENCIA: %s\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
+	free(metadataTabla);
+	free(nombTabla);
+	liberarPunteroDePunterosAChar(palabras);
+	free(palabras);
+	config_destroy(configMetadata);
+}
+
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 
 		strcpy(rutaTabla, rutas.Tablas);
@@ -133,24 +158,6 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 		string_append(&rutaTabla, "/");
 
 		return rutaTabla;
-}
-
-void mostrarMetadataTodasTablas(){
-
-	int tamanio = list_size(memtable);
-	int i=0;
-	char* nombreTabla = malloc(15);
-
-	t_tabla_memtable *tabla;
-
-		while(tamanio != i){
-			 tabla = list_get(memtable, i);
-			sprintf(nombreTabla, tabla->tabla );
-			mostrarMetadataTabla(nombreTabla);
-			i++;
-		}
-
-	free(nombreTabla);
 }
 
 
@@ -201,6 +208,17 @@ int esArchivo (char* ruta){
 
 	stat(ruta,&estado);
 	i= S_ISREG(estado.st_mode);
+
+	return i;
+}
+
+int esDirectorio(char * ruta){
+	struct stat estado;
+	int i;
+
+	stat(ruta,&estado);
+	i = S_ISDIR(estado.st_mode);
+
 
 	return i;
 }
@@ -276,13 +294,14 @@ void removerTabla(char* nombreTabla){
 	int tamanio = list_size(memtable);
 	int i=0;
 
-	t_tabla_memtable * tabla;
 
 	while(tamanio != i){
-		tabla = list_get(memtable, i);
-		if(string_equals_ignore_case(nombreTabla, tabla->tabla)){
+		t_tabla_memtable * tabla = list_get(memtable, i);
+		if(string_equals_ignore_case(tabla->tabla, nombreTabla)){
 			list_remove(memtable, i);
+			printf("%s eliminada de memtable\n", nombreTabla);
 			break;
+
 		}
 			i++;
 	}
@@ -307,4 +326,82 @@ t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla){
 	printf("La tabla no se encuentra en la memtable");
 }
 
+char** buscarDirectorios(char * ruta){
 
+	  DIR *directorioActual;
+	  struct dirent *directorio;
+	  char ** directorios = malloc(100);
+	  char * rutaNueva;
+	  int i = 0;
+
+	  directorioActual = opendir(ruta);
+
+	  if (directorioActual == NULL){
+		  puts("No pudo abrir el directorio");
+		  log_error(loggerError,"No se pudo abrir el directorio.");
+	  }
+	  else{
+		  // Leo uno por uno los directorios que estan adentro del directorio actual
+		  while ((directorio = readdir(directorioActual)) != NULL) {
+
+			  //Con readdir aparece siempre . y .. como no me interesa no lo contemplo
+			if ((strcmp(directorio->d_name, ".") != 0) && (strcmp(directorio->d_name, "..") != 0)) {
+
+
+				rutaNueva = string_duplicate(ruta);
+				string_append(&rutaNueva,directorio->d_name);
+
+				directorios[i] = malloc(256);
+				if(esDirectorio(rutaNueva)){
+					strcpy(directorios[i],rutaNueva);
+					i++;
+				}
+				free(rutaNueva);
+			}
+
+		  }
+
+
+		  closedir (directorioActual);
+	  }
+	  directorios[i] = NULL;
+	  return directorios;
+}
+
+void mostrarMetadataTodasTablas(char *ruta){
+	char ** directorios;
+	int i = 0;
+
+	directorios = buscarDirectorios(ruta);
+
+	while (directorios[i] != NULL) {
+
+		mostrarMetadataTabla2(directorios[i]);
+
+		i++;
+
+	}
+	liberarPunteroDePunterosAChar(directorios);
+	free(directorios);
+}
+
+void insertarKey(char* nombreTabla, uint16_t key, char* value, double timestamp){
+	t_tabla_memtable * tabla = obtenerTablaDeMemtable(nombreTabla);
+	t_registro* registro = malloc(sizeof(t_registro));
+	registro->timestamp = timestamp;
+	registro->key = key;
+	registro->value = value;
+
+	list_add(tabla->registros, registro);
+	printf("Registro %f;%d;%s insertado correctamente en memtable, %s", registro->timestamp, registro->key, registro->value, nombreTabla);
+
+	free(registro);
+}
+
+double getCurrentTime(){
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	unsigned long long result = (((unsigned long long)tv.tv_sec)*1000 + ((unsigned long long )tv.tv_usec)/1000);
+	double res = result;
+	return res;
+}

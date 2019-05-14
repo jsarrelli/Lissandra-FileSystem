@@ -90,3 +90,5 @@ char * obtenerUltimoElementoDeUnSplit(char ** palabras){
 	}
 	return strdup(ultimaPalabra);
 }
+
+
