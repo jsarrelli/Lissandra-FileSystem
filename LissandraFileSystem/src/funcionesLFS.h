@@ -36,7 +36,7 @@ void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
 t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla);
-void insertarKey(char* nombreTabla, uint16_t key, char* value, double timestamp);
+void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 void obtenerRegistrosDeTabla(char* nombreTabla);
 
 
@@ -47,5 +47,6 @@ int esArchivo (char* ruta);
 void removerArchivosDeTabla(char * rutaTabla);
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
 int liberarBloquesDeArchivo(char *rutaArchivo);
+char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
 
 #endif /* FUNCIONESLFS_H_ */

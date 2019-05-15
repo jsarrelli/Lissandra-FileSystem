@@ -129,7 +129,7 @@ void mostrarMetadataTabla(char* nombreTabla){
 
 void mostrarMetadataTabla2(char* nombreTabla){
 	char*rutaTabla = malloc(100);
-	char* nombTabla=malloc(15);
+	char* nombTabla=string_new();
 	strcpy(rutaTabla, nombreTabla);
 	string_append(&nombreTabla, "/");
 	string_append(&nombreTabla, "Metadata");
@@ -161,6 +161,40 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 		return rutaTabla;
 }
 
+int existeArchivo(char*nombreTabla, char * rutaArchivo){
+	int i =0;
+	char ** archivos;
+	char *archivo;
+	char * ruta = malloc(100);
+	char ** carpetas = string_split(rutaArchivo,"/");
+
+	armarRutaTabla(ruta, nombreTabla);
+	archivos = buscarArchivos(ruta);
+	archivo = obtenerUltimoElementoDeUnSplit(carpetas);
+	string_append(&ruta,archivo);
+
+	if (archivos[i] != NULL) {
+		while (archivos[i] != NULL) {
+			if (string_equals_ignore_case(archivos[i], ruta)) {
+				liberarPunteroDePunterosAChar(carpetas);
+				free(carpetas);
+				liberarPunteroDePunterosAChar(archivos);
+				free(archivos);
+				free(archivo);
+				free(ruta);
+				return 1;
+			}
+			i++;
+		}
+		liberarPunteroDePunterosAChar(archivos);
+	}
+	liberarPunteroDePunterosAChar(carpetas);
+	free(carpetas);
+	free(archivos);
+	free(archivo);
+	free(ruta);
+	return 0;
+}
 
 char** buscarArchivos(char * rutaTabla){
 
@@ -386,26 +420,43 @@ void mostrarMetadataTodasTablas(char *ruta){
 	free(directorios);
 }
 
-void insertarKey(char* nombreTabla, unsigned short key, char* value, double timestamp){
-	int i;
+void obtenerRegistrosDeTabla(char* nombreTabla){
+	int i,j=0;
 	for(i=0;i<list_size(memtable);i++){
 		t_tabla_memtable *tabla = list_get(memtable,i);
 		if(strcmp(tabla->tabla,nombreTabla) ==0){
-			t_registro* registro = malloc(sizeof(t_registro));
+			int tamanio = list_size(tabla->registros);
+			printf("Registros de %s\n\n", tabla->tabla);
+			while(tamanio != j){
+
+				t_registro* reg = list_get(tabla->registros,j);
+
+				printf("%f;%d;%s", reg->timestamp, reg->key, reg->value);
+				j++;
+			}
+		}
+	}
+}
+
+void insertarKey(char* nombreTabla, char* key, char* value, double timestamp){
+	int i;
+	int clave  = atoi(key);
+
+	for(i=0;i<list_size(memtable);i++){
+		t_tabla_memtable *tabla = list_get(memtable,i);
+		if(strcmp(tabla->tabla,nombreTabla) ==0){
+
+				t_registro* registro = malloc(sizeof(t_registro));
 				registro->timestamp = timestamp;
-				registro->key = key;
+				registro->key = clave;
 				registro->value = value;
 
 				list_add(tabla->registros, registro);
-				printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", registro->timestamp, registro->key, registro->value, nombreTabla);
+				printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n",timestamp, registro->key, registro->value, nombreTabla);
 
-				free(registro);
 				break;
 		}
 	}
-
-	obtenerRegistrosDeTabla(nombreTabla);
-
 }
 
 double getCurrentTime(){
@@ -416,17 +467,30 @@ double getCurrentTime(){
 	return res;
 }
 
-void obtenerRegistrosDeTabla(char* nombreTabla){
-	int i,j;
-	for(i=0;i<list_size(memtable);i++){
-		t_tabla_memtable *tabla = list_get(memtable,i);
-		if(strcmp(tabla->tabla,nombreTabla) ==0){
-			printf("Registros de %s\n\n", tabla->tabla);
-			for(j=0;i<list_size(tabla->registros);j++){
-				t_registro* reg = list_get(tabla->registros,j);
-				printf("%f;%u;%s", reg->timestamp, reg->key, reg->value);
-			}
-		}
+
+/*void crearArchivosTemporales(){
+	char**directorios;
+	int i =0, j=0;
+	directorios = buscarDirectorios(rutas.Tablas);
+	while (directorios [i] != NULL){
+		char*rutaArch = malloc(150);
+		char** palabras = string_split(directorios[i], "/");
+		char* nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
+
+	}*/
+
+char * obtenerNombreDeArchivoDeUnaRuta(char * ruta){
+	char * archivoConExtension;
+	char ** split = string_split(ruta, "/");
+	archivoConExtension = obtenerUltimoElementoDeUnSplit(split);
+	liberarPunteroDePunterosAChar(split);
+	free(split);
+	if(strstr(archivoConExtension, ".") != NULL){
+		return archivoConExtension;
 	}
+	return NULL;
+
 }
+
+
 

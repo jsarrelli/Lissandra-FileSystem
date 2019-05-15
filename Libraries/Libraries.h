@@ -35,7 +35,7 @@
 
 typedef struct {
 	double timestamp;
-	unsigned short key;
+	int key;
 	char* value;
 
 } t_registro;
