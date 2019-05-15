@@ -57,7 +57,8 @@ void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 int cantidadParametros(char ** palabras);
 
 
+
 t_log* logger;
 t_log* loggerError;
 
-#endif LIBRARIES_H_
+#endif /* LIBRARIES_H_*/

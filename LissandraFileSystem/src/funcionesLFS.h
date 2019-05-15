@@ -48,5 +48,8 @@ void removerArchivosDeTabla(char * rutaTabla);
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
 int liberarBloquesDeArchivo(char *rutaArchivo);
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
+void crearArchivosTemporales(char*ruta);
+void crearTemporal(char*nombreTabla);
+void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 
 #endif /* FUNCIONESLFS_H_ */

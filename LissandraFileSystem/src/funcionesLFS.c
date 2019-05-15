@@ -62,22 +62,8 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 	while (i < cantPart){
 		string_append(&rutaTabla,"/");
 		string_append_with_format(&rutaTabla, "%d.bin", i);
-		FILE* archivo = fopen(rutaTabla, "w+");
-		int *bloque = buscarBloquesLibres(1);
+		crearArchReservarBloqueYEscribirBitmap(rutaTabla);
 
-			if(bloque == NULL){
-				logErrorAndExit( "No hay bloques libres para crear el archivo");
-			}
-		reservarBloque(bloque[0]);
-
-		escribirBitmap();
-
-		fprintf(archivo, "TAMANIO=0\n");
-
-		fprintf(archivo, "BLOQUES=[%i]", bloque[0]);
-
-		fclose(archivo);
-		free(bloque);
 		printf("Particion %d creada \n", j);
 		rutaTabla = obtenerRutaTablaSinArchivo(rutaTabla);
 		i++;
@@ -467,17 +453,42 @@ double getCurrentTime(){
 	return res;
 }
 
+void crearArchivosTemporales(char*ruta){
+	char ** directorios;
+		int i = 0;
 
-/*void crearArchivosTemporales(){
-	char**directorios;
-	int i =0, j=0;
-	directorios = buscarDirectorios(rutas.Tablas);
-	while (directorios [i] != NULL){
-		char*rutaArch = malloc(150);
-		char** palabras = string_split(directorios[i], "/");
-		char* nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
+		directorios = buscarDirectorios(ruta);
 
-	}*/
+		while (directorios[i] != NULL) {
+
+			crearTemporal(directorios[i]);
+
+			i++;
+
+		}
+		liberarPunteroDePunterosAChar(directorios);
+		free(directorios);
+}
+
+void crearTemporal(char*nombreTabla){
+
+		char* nombTabla=string_new();
+		char**palabras = string_split(nombreTabla, "/");
+		nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
+
+		string_append(&nombreTabla, "/");
+		string_append_with_format(&nombreTabla, "%stmp0.tmp", nombTabla);
+
+		crearArchReservarBloqueYEscribirBitmap(nombreTabla);
+		printf("Archivo temporal creado en %s\n\n", nombTabla);
+
+		liberarPunteroDePunterosAChar(palabras);
+		free(palabras);
+		free(nombTabla);
+
+}
+
+
 
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta){
 	char * archivoConExtension;
@@ -492,5 +503,21 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta){
 
 }
 
+void crearArchReservarBloqueYEscribirBitmap(char* rutaArch){
+	FILE*archivo = fopen(rutaArch, "w");
+	int *bloque = buscarBloquesLibres(1);
 
+		if(bloque == NULL){
+			logErrorAndExit( "No hay bloques libres para crear el archivo");
+		}
 
+		reservarBloque(bloque[0]);
+		escribirBitmap();
+
+		fprintf(archivo, "TAMANIO=0\n");
+
+		fprintf(archivo, "BLOQUES=[%i]", bloque[0]);
+		fclose(archivo);
+		free(bloque);
+
+}

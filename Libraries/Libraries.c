@@ -2,6 +2,7 @@
 #include "Libraries.h"
 
 
+
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo) {
 	int valor;
 	if(config_has_property(archivo_configuracion, nombre_campo)){

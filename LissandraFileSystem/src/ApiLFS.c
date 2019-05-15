@@ -84,6 +84,7 @@ void consolaDescribe(char**palabras, int cantidad){
 	}else if(cantidad==0){
 		mostrarMetadataTodasTablas(rutas.Tablas);
 
+
 	}
 	else{
 		puts("Error en la cantidad de parametros.");
@@ -96,7 +97,7 @@ void consolaDrop(char**palabras, int cantidad){
 
 			if(existeTabla(palabras[1])){
 				removerTabla(palabras[1]);
-				printf("%s eliminada", palabras[1]);
+				printf("%s eliminada\n\n", palabras[1]);
 			}
 
 	}
