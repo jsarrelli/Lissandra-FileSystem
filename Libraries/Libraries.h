@@ -40,6 +40,8 @@ typedef struct {
 
 } t_registro;
 
+int contadorConexiones = 0;
+
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 
@@ -55,6 +57,17 @@ int contarPunteroDePunteros(char ** puntero);
 void liberarPunteroDePunterosAChar(char** palabras);
 void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 int cantidadParametros(char ** palabras);
+
+//SOCKETS
+
+int crear_socket_cliente(char * ip, char * puerto);
+int recibirConexion(int socket_servidor);
+int crear_socket_servidor(char *puerto);
+char* recibir_string(int socket_aceptado);
+void enviar_string(int socket, char* mensaje);
+void enviar(int socket, void* cosaAEnviar, int tamanio);
+void* recibir(int socket);
+void *get_in_addr(struct sockaddr *sa);
 
 
 
