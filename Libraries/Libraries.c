@@ -282,3 +282,12 @@ double getCurrentTime(){
 	double res = result;
 	return res;
 }
+
+int tamanioArchivo(FILE*archivo){
+	int tamanio;
+	fseek(archivo, 0L, SEEK_END);
+	tamanio = ftell(archivo);
+	fseek(archivo, 0L, SEEK_SET);
+
+	return tamanio;
+}
