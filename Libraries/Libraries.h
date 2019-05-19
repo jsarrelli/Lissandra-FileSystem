@@ -36,10 +36,15 @@
 typedef struct {
 	double timestamp;
 	int key;
-	char value[100];
+	char value[112];
 
 } t_registro;
 
+typedef struct{
+	char CONSISTENCIA[7];
+	int CANT_PARTICIONES;
+	int T_COMPACTACION;
+}t_metadata_tabla;
 
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);

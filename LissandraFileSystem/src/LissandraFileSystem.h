@@ -19,12 +19,6 @@ typedef struct{
 }t_configuracion_LFS;
 
 typedef struct{
-	char* CONSISTENCIA;
-	int CANT_PARTICIONES;
-	int T_COMPACTACION;
-}t_metadata_tabla;
-
-typedef struct{
 	char tabla[100];
 	t_list* registros;
 }t_tabla_memtable;
