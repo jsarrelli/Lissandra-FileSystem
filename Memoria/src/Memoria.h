@@ -23,15 +23,11 @@ typedef struct MEMORIA_configuracion{
 	int MEMORY_NUMBER;
 }MEMORIA_configuracion;
 
-
-
-MEMORIA_configuracion configuracion;
-
-MEMORIA_configuracion get_configuracion();
-
-//char* pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
-char* pathMEMConfig = "configMEM.cfg";
-
 t_log* logger;
+char* pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
+MEMORIA_configuracion* configuracion;
+
+void cargarConfiguracion();
+
 
 
