@@ -41,7 +41,7 @@ typedef struct {
 } t_registro;
 
 typedef struct{
-	char CONSISTENCIA[7];
+	char* CONSISTENCIA;
 	int CANT_PARTICIONES;
 	int T_COMPACTACION;
 }t_metadata_tabla;
