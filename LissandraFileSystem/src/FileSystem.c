@@ -154,3 +154,13 @@ int leerMetadata(){
 
 		return 1;
 }
+
+/*int crearStructRegistro(int tamanio){
+	typedef struct{
+		double timestamp;
+		int key;
+		char value[tamanio];
+	}t_registros;
+
+	return 1;
+}*/

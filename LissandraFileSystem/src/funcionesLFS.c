@@ -9,6 +9,14 @@
 
 int cantTablas = 0;
 
+double getCurrentTime(){
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	unsigned long long result = (((unsigned long long)tv.tv_sec)*1000 + ((unsigned long long )tv.tv_usec)/1000);
+	double res = result;
+	return res;
+}
+
 char * obtenerRutaTablaSinArchivo(char * rutaTabla){
 	char ** directorios;
 	char * archivo = malloc(50);
@@ -108,6 +116,8 @@ void mostrarMetadataTabla(char* nombreTabla){
 	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 
 	printf("CONSISTENCIA: %s\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
+	FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
+	fclose(archivo);
 	free(metadataTabla);
 	free(rutaTabla);
 	config_destroy(configMetadata);
@@ -435,7 +445,7 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp){
 				t_registro* registro = malloc(sizeof(t_registro));
 				registro->timestamp = timestamp;
 				registro->key = clave;
-				registro->value = value;
+				strcpy(registro->value,value);
 
 				list_add(tabla->registros, registro);
 				printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n",timestamp, registro->key, registro->value, nombreTabla);
@@ -513,4 +523,24 @@ void crearArchReservarBloqueYEscribirBitmap(char* rutaArch){
 		fclose(archivo);
 		free(bloque);
 
+}
+
+void escribirEnTxt (){
+	int i,j;
+	FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
+	t_registro* reg;
+	t_tabla_memtable* tabla;
+	//char value[500];
+	for (i=0;i<list_size(memtable); i++){
+		tabla= (t_tabla_memtable*)  list_get (memtable,i);
+
+		for (j=0;j<list_size(tabla->registros); j++){
+			reg = (t_registro*) list_get(tabla->registros, j);
+			//strcpy(value, reg->value);
+			fprintf(archivo, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
+
+		}
+	}
+	fclose(archivo);
+	//free(value);
 }

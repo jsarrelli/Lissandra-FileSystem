@@ -38,6 +38,7 @@ void destruirBitmap();
 int* buscarBloquesLibres(int cant);
 void reservarBloque(int index);
 void liberarBloque(int index);
+//int crearStructRegistro(int tamanio);
 
 
 
