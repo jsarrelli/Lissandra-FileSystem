@@ -629,5 +629,109 @@ int guardarDatosEnArchivo(char *path, int offset, int size, void* buffer)
 }
 */
 
+/*int escribirEnTmp(char* rutaTmp, char* rutaTxt, int tamanioTxt){
+	FILE*arch = fopen(rutaTmp,"w+" );
+	int i,j,k=0;
+	char** directorios = string_split(rutaTxt, "\n");
+	//int cantReg = contarPunteroDePunteros(directorios);
+	int bytesAEscribir = tamanioTxt;
+	int tamanioMaxBloque = metadata.BLOCK_SIZE;
+	t_archivo *archivo = malloc(sizeof(t_archivo));
+	int res = leerArchivoDeTabla(rutaTmp, archivo);
+	if(res<0){ return -1;}
+	int bloquesNecesarios = (tamanioTxt + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
+	int bloquesReservados = archivo->cantBloques;
+	if(bloquesNecesarios>bloquesReservados){
+			int cantBloques = bloquesNecesarios-bloquesReservados;
+			int *bloques = buscarBloquesLibres(cantBloques);
+			if(bloques==NULL){
+				puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
+				return -1;
+			}
+
+			char **arrBloques = (char**) malloc(sizeof(char*)*bloquesNecesarios);
+			for (i = 0; i < archivo->cantBloques ; ++i) {
+				arrBloques[i] = archivo->BLOQUES[i];
+			}
+
+			for (j = 0; j < cantBloques; ++j) {
+				reservarBloque(bloques[j]);
+				arrBloques[i] = string_itoa(bloques[j]);
+				i++;
+			}
+			free(archivo->BLOQUES);
+			free(bloques);
+			archivo->BLOQUES=arrBloques;
+			archivo->cantBloques = bloquesNecesarios;
+	}
+	i=0;
+
+	while(archivo->BLOQUES[i] != NULL){
+		int tamanioArchBloque =0;
+		char *rutaBloque = string_new();
+		string_append(&rutaBloque,rutas.Bloques);
+		string_append(&rutaBloque,archivo->BLOQUES[i]);
+		string_append(&rutaBloque,".bin");
+		FILE* archBloque = fopen(rutaBloque,"w+");
+		if(archBloque == NULL){
+		puts("Error al guardar datos en bloques");
+		return -1;
+		}
+		while(bytesAEscribir){
+			if(tamanioArchBloque < tamanioMaxBloque){
+					t_registro * reg = malloc(sizeof(t_registro));
+					char ** directorio = string_split(directorios[k],";");
+					reg->timestamp = atof(directorio[0]);
+					reg->key = directorio[1];
+					strcpy(reg->value, directorio[2]);
+					fprintf(archBloque, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
+					tamanioArchBloque += tamanioArchivo(archBloque);
+					bytesAEscribir-= tamanioArchivo(archBloque);
+
+					free(reg);
+					liberarPunteroDePunterosAChar(directorio);
+					free(directorio);
+					k++;
+			} else{
+				archivo->TAMANIO += tamanioArchivo(archBloque);
+				fclose(archBloque);
+				break;
+			}
+		}
+
+	i++;
+	}
+	escribirArchivo(arch, archivo);
+	liberarPunteroDePunterosAChar(directorios);
+	free(directorios);
+	free(archivo);
+
+
+	for(k=0; k < cantReg; k++){
+			t_registro * reg = malloc(sizeof(t_registro));
+			char ** directorio = string_split(directorios[k],";");
+			reg->timestamp = directorio[0];
+			strcpy(reg->value, directorio[2]);
+			list_add(listaReg, reg);
+	}
+	return 1;
+}
+
+void escribirArchivo(FILE* arch, t_archivo *archivo){
+
+
+	fprintf(arch, "TAMANIO=%i\n", archivo->TAMANIO);
+	fprintf(arch, "BLOQUES=[");
+	int i;
+	for (i = 0; i < archivo->cantBloques ; ++i) {
+		if(i!=0){
+			fprintf(arch, ",");
+		}
+		fprintf(arch, "%s", archivo->BLOQUES[i]);
+	}
+	fprintf(arch, "]");
+	fclose(arch);
+}*/
+
 
 
