@@ -475,16 +475,27 @@ void crearArchivosTemporales(char*ruta){
 
 void crearTemporal(char*nombreTabla){
 
-		char* nombTabla=string_new();
+		char* nombTabla=malloc(50);
+		char*archivoTxt= malloc(100);
 		char**palabras = string_split(nombreTabla, "/");
 		nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
 
 		string_append(&nombreTabla, "/");
+		string_append_with_format(&nombreTabla, "%sRegistros.txt", nombTabla);
+		strcpy(archivoTxt,nombreTabla);
+		FILE* archivo = fopen(archivoTxt, "w+");
+		escribirEnTxt(nombTabla, archivo);
+		int tamanioTxt = tamanioArchivo(archivo);
+		nombreTabla = obtenerRutaTablaSinArchivo(nombreTabla);
+		string_append(&nombreTabla, "/");
 		string_append_with_format(&nombreTabla, "%stmp0.tmp", nombTabla);
-
 		crearArchReservarBloqueYEscribirBitmap(nombreTabla);
+		//escribirEnTmp(nombreTabla,archivoTxt,tamanioTxt);
 		printf("Archivo temporal creado en %s\n\n", nombTabla);
 
+		fclose(archivo);
+		fclose(nombreTabla);
+		free(archivoTxt);
 		liberarPunteroDePunterosAChar(palabras);
 		free(palabras);
 		free(nombTabla);
@@ -520,27 +531,103 @@ void crearArchReservarBloqueYEscribirBitmap(char* rutaArch){
 		fprintf(archivo, "TAMANIO=0\n");
 
 		fprintf(archivo, "BLOQUES=[%i]", bloque[0]);
-		fclose(archivo);
+
 		free(bloque);
 
 }
 
-void escribirEnTxt (){
+void escribirEnTxt (char* nombreTabla, FILE* archivoTxt){
 	int i,j;
-	FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
+
 	t_registro* reg;
 	t_tabla_memtable* tabla;
-	//char value[500];
+
 	for (i=0;i<list_size(memtable); i++){
 		tabla= (t_tabla_memtable*)  list_get (memtable,i);
-
+		if(!strcmp(tabla->tabla, nombreTabla)){
 		for (j=0;j<list_size(tabla->registros); j++){
 			reg = (t_registro*) list_get(tabla->registros, j);
 			//strcpy(value, reg->value);
-			fprintf(archivo, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
+			fprintf(archivoTxt, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
 
 		}
+		}
+
+
 	}
-	fclose(archivo);
-	//free(value);
 }
+
+/*
+int guardarDatosEnArchivo(char *path, int offset, int size, void* buffer)
+{
+	char** directorios = string_split("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "\n");
+	t_archivo *archivo = newArchivo();
+	int res = leerArchivo(path, archivo);
+	if(res<0){
+		return -1;
+	}
+	//Calculo bloques necesarios y los reservo
+	int tamanio = tamanioArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt");
+	int bloquesNecesarios = (tamanio + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
+	int bloquesReservados = archivo->cantBloques;
+	if(bloquesNecesarios>bloquesReservados){
+		int cantBloques = bloquesNecesarios-bloquesReservados;
+		int *bloques = buscarBloquesLibres(cantBloques);
+		if(bloques==NULL){
+			puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
+			return -1;
+		}
+		int i;
+		char **arrBloques = (char**) malloc(sizeof(char*)*bloquesNecesarios);
+		for (i = 0; i < archivo->cantBloques ; ++i) {
+			arrBloques[i] = archivo->BLOQUES[i];
+		}
+		int j;
+		for (j = 0; j < cantBloques; ++j) {
+			reservarBloque(bloques[j]);
+			arrBloques[i] = string_itoa(bloques[j]);
+			i++;
+		}
+		free(archivo->BLOQUES);
+		free(bloques);
+		archivo->BLOQUES=arrBloques;
+		archivo->cantBloques = bloquesNecesarios;
+	}
+	//Escribir datos en bloques
+	int bloqueActual = archivo->BLOQUES[0]; //Bloque inicial
+	int offsetBloque;
+	int bytesAEscribir = tamanio;
+	while(bytesAEscribir){
+		offsetBloque = offset - bloqueActual * metadata.BLOCK_SIZE;
+		char *pat = string_new();
+		string_append(&pat,rutas.Bloques);
+		string_append(&pat,archivo->BLOQUES[bloqueActual]);
+		string_append(&pat,".bin");
+		FILE* archBloque = fopen(pat,"rb+");
+		if(archBloque == NULL){
+			puts("Error al guardar datos en bloques");
+			return -1;
+		}
+		fseek(archBloque,offsetBloque,SEEK_SET);
+		int bytesLibres = metadata.BLOCK_SIZE - offsetBloque;
+		int cant = (bytesAEscribir<=bytesLibres)? bytesAEscribir : bytesLibres;
+		fwrite(buffer+size-bytesAEscribir,1,cant,archBloque);
+		fclose(archBloque);
+		free(pat);
+		bytesAEscribir-=cant;
+		offset+=cant;
+		bloqueActual++;
+	}
+	//Escribo nuevo tamaño
+	archivo->TAMANIO = (tamanio>archivo->TAMANIO)? tamanio : archivo->TAMANIO;
+	//Escribo archivos de metadata
+	escribirArchivo(path, archivo);
+	escribirBitmap();
+	free(archivo->BLOQUES);
+	free(archivo);
+	return 1;
+}
+*/
+
+
+

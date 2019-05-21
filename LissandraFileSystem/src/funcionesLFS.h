@@ -52,6 +52,6 @@ void crearArchivosTemporales(char*ruta);
 void crearTemporal(char*nombreTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 
-void escribirEnTxt ();
+void escribirEnTxt (char* nombreTabla, FILE* archivoTxt);
 
 #endif /* FUNCIONESLFS_H_ */
