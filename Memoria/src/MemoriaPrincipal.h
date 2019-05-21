@@ -17,8 +17,8 @@ t_list* segmentos;
 t_list* memoriaStatus;// suerte de bitmap que guarda los frames disponibles de memoria
 
 typedef struct Segmento{
-	char* nombreTabla;
-	char* nombreViejo;
+	char nombreTabla[20];
+	char nombreViejo[20];
 	t_list* paginas;
 	int nombreModificado;
 }Segmento;
@@ -36,19 +36,19 @@ typedef struct EstadoMemoria{
 bool existePaginaEnMemoria(Segmento* segmento,int key);
 bool existeSegmentoEnMemoria(char* nombreSegmento);
 
-Segmento* buscarSegmento(char* nombreSegmento);
-Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
+Segmento* buscarSegmento(char nombreSegmento[20]);
+Segmento* buscarSegmentoEnMemoria(char nombreSegmento[20]);
 
 Pagina* buscarPaginaEnMemoria(Segmento* segmento,int key);
 Pagina* buscarPagina(Segmento* segmento,int key);
 
-void insertarSegmentoEnMemoria(char* nombreSegmento);
-Pagina* insertarPaginaEnMemoria(int key, char* value, char* nombreSegmento);
+void insertarSegmentoEnMemoria(char nombreSegmento[20]);
+Pagina* insertarPaginaEnMemoria(int key, char value[112], char nombreSegmento[20]);
 
-Pagina* crearPagina(int key, char*value);
+Pagina* crearPagina(int key, char value[100]);
 bool memoriaLlena();
 void* darMarcoVacio();
-bool estaLibre(EstadoMemoria estado);
+bool estaLibre(EstadoMemoria* estado);
 bool todosModificados();
 
 void* liberarUltimoUsado();

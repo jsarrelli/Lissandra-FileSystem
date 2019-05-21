@@ -1,23 +1,25 @@
 #include "MemoriaPrincipal.h"
 
-int LIBRE = 1;
-int OCUPADO = 0;
+int LIBRE = 0;
+int OCUPADO = 1;
 
-int tamanioMemoria=1024;
-int tamanioPagina=124;
+int tamanioMemoria;
+int tamanioPagina = 128;
 int cantPaginas;
 
+//inicializa el vector memoriaStatus
 void inicializarEstadoMemoria() {
 	memoriaStatus = list_create();
 	for (int i = 0; i < cantPaginas - 1; i++) {
-		EstadoMemoria* estadoMemoria=malloc(sizeof(EstadoMemoria));
+		EstadoMemoria* estadoMemoria = malloc(sizeof(EstadoMemoria));
 		estadoMemoria->estado = 0;
 		estadoMemoria->fechaObtencion = 0;
 		list_add(memoriaStatus, estadoMemoria);
 	}
 }
 
-void inicializarMemoria(int valueMaximoRecibido) {
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido) {
+	tamanioMemoria = tamanioMemoriaRecibido;
 	cantPaginas = tamanioMemoria / tamanioPagina;
 	memoria = malloc(tamanioMemoria);
 	valueMaximo = valueMaximoRecibido;
@@ -25,25 +27,23 @@ void inicializarMemoria(int valueMaximoRecibido) {
 	inicializarEstadoMemoria();
 }
 
-void insertarSegmentoEnMemoria(char* nombreSegmento) {
+void insertarSegmentoEnMemoria(char nombreSegmento[20]) {
 
 	Segmento* segmento = malloc(sizeof(Segmento));
-	strcpy(segmento->nombreTabla, nombreSegmento);
-	segmento->nombreModificado = 1;
 	segmento->paginas = list_create();
+	strcpy(segmento->nombreTabla, nombreSegmento);
+	segmento->nombreModificado = 0;
 	list_add(segmentos, segmento);
-	free(segmento);
 
 }
 
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
-Pagina* insertarPaginaEnMemoria(int key, char* value, char* nombreSegmento) {
+Pagina* insertarPaginaEnMemoria(int key, char value[112], char nombreSegmento[20]) {
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
 	Pagina* paginaNueva = NULL;
 	if (existeSegmentoEnMemoria(nombreSegmento) && !existePaginaEnMemoria(segmento, key)) {
-		t_registro registro = { .key = key, .value = value, .timestamp =
-				getCurrentTime() };
+		t_registro registro = { .key = key, .value = value, .timestamp = getCurrentTime() };
 		void* marcoVacio = NULL;
 		if (memoriaLlena()) {
 			if (!todosModificados()) {
@@ -102,7 +102,7 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	return pagina;
 }
 
-Segmento* buscarSegmentoEnMemoria(char* nombreSegmento) {
+Segmento* buscarSegmentoEnMemoria(char nombreSegmento[20]) {
 	for (int i = 0; i < list_size(segmentos); i++) {
 		Segmento* segmentoActual = (Segmento*) list_get(segmentos, i);
 		if (strcmp(segmentoActual->nombreTabla, nombreSegmento)) {
@@ -114,7 +114,7 @@ Segmento* buscarSegmentoEnMemoria(char* nombreSegmento) {
 
 //cuando busca un segmento primero buscamos en memoria y si no lo tenemos
 //lo vamos a buscar al fileSystem
-Segmento* buscarSegmento(char* nombreSegmento) {
+Segmento* buscarSegmento(char nombreSegmento[20]) {
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
 	if (segmento == NULL) {
 		//pegale al fileSystem
@@ -124,8 +124,8 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 	return segmento;
 }
 
-bool existeSegmentoEnMemoria(char* nombreSegmento) {
-	return buscarSegmento(nombreSegmento) != NULL;
+bool existeSegmentoEnMemoria(char nombreSegmento[20]) {
+	return buscarSegmentoEnMemoria(nombreSegmento) != NULL;
 }
 
 bool existePaginaEnMemoria(Segmento* segmento, int key) {
@@ -133,13 +133,11 @@ bool existePaginaEnMemoria(Segmento* segmento, int key) {
 }
 
 bool memoriaLlena() {
-	t_list *espaciosDisponibles = list_filter(memoriaStatus,
-			(void*) estaLibre);
-	return list_size(espaciosDisponibles) == 0;
+	return list_is_empty(list_filter(memoriaStatus, (void*) estaLibre));
 }
 
-bool estaLibre(EstadoMemoria estado) {
-	return estado.estado == LIBRE;
+bool estaLibre(EstadoMemoria* estado) {
+	return estado->estado == LIBRE;
 }
 
 bool todosModificados() {
