@@ -39,6 +39,8 @@ t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla);
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 void obtenerRegistrosDeTabla(char* nombreTabla);
 
+int obtenerTamanioArrayRegistros(char** registros);
+
 
 //ARCHIVOS DE TABLA
 
@@ -51,7 +53,8 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
 void crearArchivosTemporales(char*ruta);
 void crearTemporal(char*nombreTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
+void escribirArchivo(FILE* arch, t_archivo *archivo);
 
-void escribirEnTxt (char* nombreTabla, FILE* archivoTxt);
+int escribirEnTmp (char* nombreTabla,char*rutaTmp);
 
 #endif /* FUNCIONESLFS_H_ */

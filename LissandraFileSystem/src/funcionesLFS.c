@@ -116,8 +116,8 @@ void mostrarMetadataTabla(char* nombreTabla){
 	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 
 	printf("CONSISTENCIA: %s\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
-	FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
-	fclose(archivo);
+	//FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
+	//fclose(archivo);
 	free(metadataTabla);
 	free(rutaTabla);
 	config_destroy(configMetadata);
@@ -476,26 +476,28 @@ void crearArchivosTemporales(char*ruta){
 void crearTemporal(char*nombreTabla){
 
 		char* nombTabla=malloc(50);
-		char*archivoTxt= malloc(100);
+		//char*archivoTxt= malloc(100);
 		char**palabras = string_split(nombreTabla, "/");
 		nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
 
-		string_append(&nombreTabla, "/");
-		string_append_with_format(&nombreTabla, "%sRegistros.txt", nombTabla);
-		strcpy(archivoTxt,nombreTabla);
-		FILE* archivo = fopen(archivoTxt, "w+");
-		escribirEnTxt(nombTabla, archivo);
-		int tamanioTxt = tamanioArchivo(archivo);
-		nombreTabla = obtenerRutaTablaSinArchivo(nombreTabla);
+		//string_append(&nombreTabla, "/");
+		//string_append_with_format(&nombreTabla, "%sRegistros.txt", nombTabla);
+		//strcpy(archivoTxt,nombreTabla);
+		//FILE* archivo = fopen(archivoTxt, "w+");
+		//escribirEnTxt(nombTabla, archivo);
+		//int tamanioTxt = tamanioArchivo(archivo);
+		//nombreTabla = obtenerRutaTablaSinArchivo(nombreTabla);
 		string_append(&nombreTabla, "/");
 		string_append_with_format(&nombreTabla, "%stmp0.tmp", nombTabla);
 		crearArchReservarBloqueYEscribirBitmap(nombreTabla);
-		//escribirEnTmp(nombreTabla,archivoTxt,tamanioTxt);
 		printf("Archivo temporal creado en %s\n\n", nombTabla);
 
-		fclose(archivo);
-		fclose(nombreTabla);
-		free(archivoTxt);
+		escribirEnTmp(nombTabla,nombreTabla);
+
+
+		//fclose(archivo);
+
+		//free(archivoTxt);
 		liberarPunteroDePunterosAChar(palabras);
 		free(palabras);
 		free(nombTabla);
@@ -531,14 +533,16 @@ void crearArchReservarBloqueYEscribirBitmap(char* rutaArch){
 		fprintf(archivo, "TAMANIO=0\n");
 
 		fprintf(archivo, "BLOQUES=[%i]", bloque[0]);
-
+		fclose(archivo);
 		free(bloque);
 
 }
 
-void escribirEnTxt (char* nombreTabla, FILE* archivoTxt){
+/*int escribirEnTmp (char* nombreTabla,char*rutaTmp){
+	FILE*arch = fopen(rutaTmp, "r");
 	int i,j;
-
+	char** registros= malloc(500);
+	char*registro = malloc(150);
 	t_registro* reg;
 	t_tabla_memtable* tabla;
 
@@ -547,14 +551,108 @@ void escribirEnTxt (char* nombreTabla, FILE* archivoTxt){
 		if(!strcmp(tabla->tabla, nombreTabla)){
 		for (j=0;j<list_size(tabla->registros); j++){
 			reg = (t_registro*) list_get(tabla->registros, j);
-			//strcpy(value, reg->value);
-			fprintf(archivoTxt, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
+			sprintf(registro, "%f;%d;%s", reg->timestamp, reg->key, reg->value);
+			strcpy(registros[j],registro);
 
 		}
 		}
-
-
 	}
+
+	int bytesAEscribir = obtenerTamanioArrayRegistros(registros);
+	t_archivo *archivo = malloc(sizeof(t_archivo));
+	int res = leerArchivoDeTabla(rutaTmp, archivo);
+	if(res<0){ return -1;}
+	int bloquesNecesarios = (bytesAEscribir + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
+	int bloquesReservados = archivo->cantBloques;
+	if(bloquesNecesarios>bloquesReservados){
+			int cantBloques = bloquesNecesarios-bloquesReservados;
+			int *bloques = buscarBloquesLibres(cantBloques);
+			if(bloques==NULL){
+				puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
+				return -1;
+			}
+
+			char **arrBloques = (char**) malloc(sizeof(char*)*bloquesNecesarios);
+			for (i = 0; i < archivo->cantBloques ; ++i) {
+				arrBloques[i] = archivo->BLOQUES[i];
+			}
+
+			for (j = 0; j < cantBloques; ++j) {
+				reservarBloque(bloques[j]);
+				arrBloques[i] = string_itoa(bloques[j]);
+				i++;
+			}
+			free(archivo->BLOQUES);
+			free(bloques);
+			archivo->BLOQUES=arrBloques;
+			archivo->cantBloques = bloquesNecesarios;
+	}
+	i=0, j=0;
+
+		while(archivo->BLOQUES[i] != NULL){
+			int tamanioArchBloque =0;
+			char *rutaBloque = string_new();
+			string_append(&rutaBloque,rutas.Bloques);
+			string_append(&rutaBloque,archivo->BLOQUES[i]);
+			string_append(&rutaBloque,".bin");
+			FILE* archBloque = fopen(rutaBloque,"w+");
+			if(archBloque == NULL){
+			puts("Error al guardar datos en bloques");
+			return -1;
+			}
+			while(tamanioArchBloque + strlen(registros[j]) < metadata.BLOCK_SIZE){
+			fprintf(archBloque, registros[j]);
+			fprintf(archBloque, "\n");
+			tamanioArchBloque += strlen(registros[j]);
+			bytesAEscribir-= strlen(registros[j]);
+			if(bytesAEscribir==0){
+				fclose(archBloque);
+				archivo->TAMANIO+= tamanioArchBloque;
+				break;
+				break;
+			}
+			j++;
+			}
+			fclose(archBloque);
+			archivo->TAMANIO += tamanioArchBloque;
+			i++;
+		}
+
+		escribirArchivo(arch, archivo);
+		escribirBitmap();
+		free(archivo->BLOQUES);
+		free(archivo);
+		liberarPunteroDePunterosAChar(registros);
+		free(registros);
+		free(registro);
+		return 1;
+
+}*/
+
+void escribirArchivo(FILE* arch, t_archivo *archivo){
+
+
+	fprintf(arch, "TAMANIO=%i\n", archivo->TAMANIO);
+	fprintf(arch, "BLOQUES=[");
+	int i;
+	for (i = 0; i < archivo->cantBloques ; ++i) {
+		if(i!=0){
+			fprintf(arch, ",");
+		}
+		fprintf(arch, "%s", archivo->BLOQUES[i]);
+	}
+	fprintf(arch, "]");
+	fclose(arch);
+}
+
+int obtenerTamanioArrayRegistros(char** registros){
+	int tamanio=0,i=0;
+
+	while(registros[i] != NULL){
+		tamanio += (strlen(registros[i]) +1);
+		i++;
+	}
+	return tamanio;
 }
 
 /*
