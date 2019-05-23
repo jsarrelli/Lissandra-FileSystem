@@ -36,9 +36,6 @@ typedef struct EstadoFrame{
 
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido);
 
-bool existePaginaEnMemoria(Segmento* segmento,int key);
-bool existeSegmentoEnMemoria(char* nombreSegmento);
-
 Segmento* buscarSegmento(char nombreSegmento[20]);
 Segmento* buscarSegmentoEnMemoria(char nombreSegmento[20]);
 
@@ -49,17 +46,15 @@ Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* m
 Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento);
 void eliminarSegmento(char nombreTabla[20]);
 
-Pagina* crearPagina(int key, char value[100]);
 bool memoriaLlena();
 void* darMarcoVacio();
-bool estaLibre(EstadoFrame* estado);
 bool todosModificados();
 
 void* liberarUltimoUsado();
 t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
-void eliminarSegmento(char nombreSegmento[20]);
-void eliminarPaginaDeMemoria(Pagina* pagina);
+void eliminarSegmentoDeMemoria(char nombreSegmento[20]);
+void eliminarPaginaDeMemoria(Pagina* paginaAEliminar,Segmento* segmento);
 
 #endif /*MEMORIAPRINCIPAL_H_*/

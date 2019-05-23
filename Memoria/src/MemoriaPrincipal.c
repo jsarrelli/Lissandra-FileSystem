@@ -23,17 +23,8 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido) {
 	memoria = malloc(tamanioMemoria);
 	valueMaximo = valueMaximoRecibido;
 
-	segmentos = obtenerSegmentosDeFileSystem();
-	inicializarEstadoMemoria();
-}
-
-t_list* obtenerSegmentosDeFileSystem() {
-	/*uso la estrategia de fetch:eager, porque el enunciado no es claro
-	 y por lo poco que dice creo que se refiere a este
-	 y la realidad es que lo simplifica bastante*/
 	segmentos = list_create();
-	//aca pedile a kevin que nos pase las tablas que hay ahi
-	return segmentos;
+	inicializarEstadoMemoria();
 }
 
 Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* metaData) {
@@ -56,9 +47,9 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento) {
 	if (paginaNueva == NULL) {
 
 		t_registro registro;
-		registro.key=key;
-		registro.timestamp= getCurrentTime();
-		strcpy(registro.value,value);
+		registro.key = key;
+		registro.timestamp = getCurrentTime();
+		strcpy(registro.value, value);
 
 		void* marcoVacio = NULL;
 		if (memoriaLlena()) {
@@ -113,7 +104,7 @@ Pagina* buscarPaginaEnMemoria(Segmento* segmento, int keyBuscada) {
 		}
 		return false;
 	}
-	return list_find(segmento->paginas, (void*)isPaginaBuscada);
+	return list_find(segmento->paginas, (void*) isPaginaBuscada);
 }
 
 Pagina* buscarPagina(Segmento* segmento, int key) {
@@ -157,25 +148,16 @@ Segmento* buscarSegmento(char nombreSegmento[20]) {
 		//pegale al fileSystem
 		//segmento= algo que nos devuelte el fileSystem
 
-		insertarSegmentoEnMemoria(nombreSegmento, NULL);
 	}
 	return segmento;
 }
 
-bool existeSegmentoEnMemoria(char nombreSegmento[20]) {
-	return buscarSegmentoEnMemoria(nombreSegmento) != NULL;
-}
-
-bool existePaginaEnMemoria(Segmento* segmento, int key) {
-	return buscarPaginaEnMemoria(segmento, key) != NULL;
-}
-
 bool memoriaLlena() {
-	return list_is_empty(list_filter(memoriaStatus, (void*) estaLibre));
-}
+	bool estaLibre(EstadoFrame* estado) {
+		return estado->estado == LIBRE;
+	}
+	return list_any_satisfy(memoriaStatus, (void*) estaLibre);
 
-bool estaLibre(EstadoFrame* estado) {
-	return estado->estado == LIBRE;
 }
 
 bool todosModificados() {
@@ -193,35 +175,65 @@ bool todosModificados() {
 }
 
 void* liberarUltimoUsado() {
-	int indiceFrameMenosUsado = 0;
-	EstadoFrame* frameMenosUtilizado=list_get(memoriaStatus,0);
-	for (int i = 0; i < list_size(memoriaStatus); i++) {
-		EstadoFrame* estadoMemoriaActual = list_get(memoriaStatus, i);
-		if (estadoMemoriaActual->fechaObtencion <= frameMenosUtilizado->fechaObtencion) {
-			frameMenosUtilizado=estadoMemoriaActual;
-			indiceFrameMenosUsado = i;
+	EstadoFrame* frameMenosUtilizado = list_get(memoriaStatus, 0);
+	Pagina* paginaMenosUtilizada;
+	Segmento* segmentoPaginaMenosUtilizada;
+	Segmento* segmentoActual;
+
+	void LRUPagina(Pagina* pagina) {
+		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
+		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion) {
+			frameMenosUtilizado = frameDePagina;
+			segmentoPaginaMenosUtilizada = segmentoActual;
+			paginaMenosUtilizada = pagina;
 		}
 	}
-	frameMenosUtilizado->estado = 0;
-	return memoria + indiceFrameMenosUsado * sizeof(t_registro);
-}
-
-void eliminarSegmento(char nombreSegmento[20]) {
-	Segmento* segmentoAEliminar = buscarSegmentoEnMemoria(nombreSegmento);
-	if (segmentoAEliminar != NULL) {
-
-		list_iterate(segmentoAEliminar->paginas, eliminarPagina);
-		list_destroy_and_destroy_elements(segmentoAEliminar->paginas);
-		list_remove_and_destroy_element()
+	void iterarEntrePaginas(Segmento* segmento) {
+		segmentoActual = segmento;
+		list_iterate(segmento->paginas, LRUPagina);
 
 	}
 
+	list_iterate(segmentos, (void*) iterarEntrePaginas);
+
+	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
+
+	return frameMenosUtilizado;
 }
 
-void eliminarPaginaDeMemoria(Pagina* pagina) {
-	void* indiceRegistroEnMemoria = (&(pagina->registro) - &memoria) / sizeof(t_registro);
-	EstadoFrame* estadoMemoria = list_get(memoriaStatus, indiceRegistroEnMemoria);
-	estadoMemoria->estado = 0;
-	estadoMemoria->fechaObtencion = 0;
+void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
+
+	EstadoFrame* estadoFrame = getEstadoFrame(paginaAEliminar);
+	estadoFrame->estado = 0;
+
+	bool isPagina(Pagina* pagina) {
+		return pagina->registro->key == paginaAEliminar->registro->key;
+	}
+
+	void freePagina(Pagina* pagina) {
+		free(pagina);
+	}
+
+	list_remove_and_destroy_by_condition(segmento->paginas, isPagina, freePagina);
+
+}
+
+void eliminarSegmentoDeMemoria(char nombreSegmento[20]) {
+	Segmento* segmentoAEliminar = buscarSegmentoEnMemoria(nombreSegmento);
+
+	if (segmentoAEliminar != NULL) {
+		//podria usar aca un list_clean and destroy pero voy a estar cargando mas funciones parecidas
+		void eliminarPaginaSegmento(Pagina* pagina) {
+			eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
+		}
+		list_iterate(segmentoAEliminar->paginas, eliminarPaginaSegmento);
+		list_destroy(segmentoAEliminar->paginas);
+		if (segmentoAEliminar->metaData != NULL) {
+			free(segmentoAEliminar->metaData);
+		}
+		free(segmentoAEliminar);
+
+	}
+
 }
 

@@ -8,7 +8,7 @@
 #include "AdministradorDeConsultas.h"
 
 t_registro* SELECT(char nombreTabla[20], int key) {
-	Segmento* tabla = buscarSegmentoEnMemoria(nombreTabla);
+	Segmento* tabla = buscarSegmento(nombreTabla);
 	if (tabla != NULL) {
 		Pagina* pagina = buscarPagina(tabla, key);
 		if (pagina != NULL) {
@@ -19,7 +19,7 @@ t_registro* SELECT(char nombreTabla[20], int key) {
 }
 
 t_registro* INSERT(char nombreTabla[20], int key, char value[112]) {
-	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
+	Segmento *tabla = buscarSegmento(nombreTabla);
 	if(tabla==NULL){
 		tabla=insertarSegmentoEnMemoria(nombreTabla,NULL);
 	}
@@ -28,5 +28,6 @@ t_registro* INSERT(char nombreTabla[20], int key, char value[112]) {
 }
 
 void DROP(char nombreTabla[20]) {
-
+	eliminarSegmentoDeMemoria(nombreTabla);
+	//aca pegale a kevin y avisale
 }
