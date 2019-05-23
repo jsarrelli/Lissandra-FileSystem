@@ -35,9 +35,9 @@ void mostrarMetadataTabla(char* nombreTabla);
 void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
-t_tabla_memtable * obtenerTablaDeMemtable(char* nombreTabla);
+
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
-void obtenerRegistrosDeTabla(char* nombreTabla);
+char** buscarRegistrosDeTabla(char*nombreTabla);
 
 int obtenerTamanioArrayRegistros(char** registros);
 
@@ -53,7 +53,7 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
 void crearArchivosTemporales(char*ruta);
 void crearTemporal(char*nombreTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
-void escribirArchivo(FILE* arch, t_archivo *archivo);
+void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 
 int escribirEnTmp (char* nombreTabla,char*rutaTmp);
 
