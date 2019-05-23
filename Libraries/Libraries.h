@@ -2,6 +2,7 @@
 #define LIBRARIES_H_
 
 #include <stdlib.h>
+#include <malloc.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
