@@ -24,9 +24,10 @@ int main(int argc, char** argv) {
 	log_info(logger, "Configurando Listening Socket.");
 
 	inicializarMemoria(100,configuracion->TAM_MEMORIA);
-	insertarSegmentoEnMemoria("TABLA1");
-	insertarSegmentoEnMemoria("TABLA2");
-	insertarPaginaEnMemoria(3,"juli" ,"TABLA1");
+	insertarSegmentoEnMemoria("TABLA1",NULL);
+	insertarSegmentoEnMemoria("TABLA2",NULL);
+	Segmento* tabla1= buscarSegmentoEnMemoria("TABLA1");
+	insertarPaginaEnMemoria(3,"juli" ,tabla1);
 	SELECT("TABLA1",3);
 	printf("salio");
 

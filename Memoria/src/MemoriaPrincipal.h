@@ -21,6 +21,7 @@ typedef struct Segmento{
 	char nombreViejo[20];
 	t_list* paginas;
 	int nombreModificado;
+	t_metadata_tabla* metaData;
 }Segmento;
 
 typedef struct Pagina{
@@ -28,13 +29,12 @@ typedef struct Pagina{
 	t_registro* registro;
 }Pagina;
 
-typedef struct EstadoMemoria{
+typedef struct EstadoFrame{
 	int estado;
-	int fechaObtencion;
-}EstadoMemoria;
+	double fechaObtencion;
+}EstadoFrame;
 
-bool existePaginaEnMemoria(Segmento* segmento,int key);
-bool existeSegmentoEnMemoria(char* nombreSegmento);
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido);
 
 Segmento* buscarSegmento(char nombreSegmento[20]);
 Segmento* buscarSegmentoEnMemoria(char nombreSegmento[20]);
@@ -42,15 +42,19 @@ Segmento* buscarSegmentoEnMemoria(char nombreSegmento[20]);
 Pagina* buscarPaginaEnMemoria(Segmento* segmento,int key);
 Pagina* buscarPagina(Segmento* segmento,int key);
 
-void insertarSegmentoEnMemoria(char nombreSegmento[20]);
-Pagina* insertarPaginaEnMemoria(int key, char value[112], char nombreSegmento[20]);
+Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* metaData);
+Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento);
+void eliminarSegmento(char nombreTabla[20]);
 
-Pagina* crearPagina(int key, char value[100]);
 bool memoriaLlena();
 void* darMarcoVacio();
-bool estaLibre(EstadoMemoria* estado);
 bool todosModificados();
 
 void* liberarUltimoUsado();
+t_list* obtenerSegmentosDeFileSystem();
+EstadoFrame* getEstadoFrame(Pagina* pagina);
+
+void eliminarSegmentoDeMemoria(char nombreSegmento[20]);
+void eliminarPaginaDeMemoria(Pagina* paginaAEliminar,Segmento* segmento);
 
 #endif /*MEMORIAPRINCIPAL_H_*/
