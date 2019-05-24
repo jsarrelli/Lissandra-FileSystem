@@ -9,7 +9,8 @@ int cantFrames;
 //inicializa el vector memoriaStatus
 void inicializarEstadoMemoria() {
 	memoriaStatus = list_create();
-	for (int i = 0; i < cantFrames - 1; i++) {
+	int i;
+	for (i = 0; i < cantFrames - 1; i++) {
 		EstadoFrame* estadoMemoria = malloc(sizeof(EstadoFrame));
 		estadoMemoria->estado = 0;
 		estadoMemoria->fechaObtencion = 0;
@@ -86,7 +87,8 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento) {
 }
 
 void* darMarcoVacio() {
-	for (int i = 0; i < list_size(memoriaStatus); i++) {
+	int i;
+	for (i = 0; i < list_size(memoriaStatus); i++) {
 		if (((EstadoFrame*) list_get(memoriaStatus, i))->estado
 				== LIBRE) {
 			return memoria + (i * sizeof(t_registro));
@@ -161,10 +163,11 @@ bool memoriaLlena() {
 }
 
 bool todosModificados() {
-	for (int i = 0; i < list_size(segmentos); i++) {
+	int i;
+	for (i = 0; i < list_size(segmentos); i++) {
 		t_list* paginasSegmento = list_get(segmentos, i);
-
-		for (int j = 0; j < list_size(paginasSegmento); j++) {
+		int j;
+		for (j = 0; j < list_size(paginasSegmento); j++) {
 			Pagina* pagina = list_get(paginasSegmento, j);
 			if (pagina->modificado == 0) {
 				return false;
