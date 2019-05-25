@@ -1,18 +1,12 @@
-[INFO] 20:44:25:524 LFS Logs/(8658:8658): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 01:20:43:170 LFS Logs/(8252:8252): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 20:44:26:376 LFS Logs/(8658:8658): Levantando archivo de configuracion del proceso LFS 
+[INFO] 01:20:44:40 LFS Logs/(8252:8252): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 20:44:26:400 LFS Logs/(8658:8658): Archivo de configuracion del proceso LFS levantado 
+[INFO] 01:20:44:68 LFS Logs/(8252:8252): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 20:44:53:44 LFS Logs/(8658:8658): Se creo la  TABLA1 en LFS
+[INFO] 01:21:09:813 LFS Logs/(8252:8252): Se creo la  TABLA1 en LFS
 
-[INFO] 20:44:53:71 LFS Logs/(8658:8658): Metadata de TABLA1 creada
+[INFO] 01:21:09:864 LFS Logs/(8252:8252): Metadata de TABLA1 creada
 
-[INFO] 20:45:17:358 LFS Logs/(8658:8658): Se creo la  TABLA2 en LFS
-
-[INFO] 20:45:17:424 LFS Logs/(8658:8658): Metadata de TABLA2 creada
-
-[INFO] 20:45:28:668 LFS Logs/(8658:8658): Insert realizado en memtable
-[INFO] 20:45:48:183 LFS Logs/(8658:8658): Insert realizado en memtable
-[INFO] 20:46:17:488 LFS Logs/(8658:8658): Insert realizado en memtable
-[INFO] 20:46:31:491 LFS Logs/(8658:8658): Insert realizado en memtable
+[INFO] 01:21:22:919 LFS Logs/(8252:8252): Insert realizado en memtable
+[INFO] 01:21:37:999 LFS Logs/(8252:8252): Insert realizado en memtable
