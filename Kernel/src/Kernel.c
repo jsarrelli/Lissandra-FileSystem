@@ -104,11 +104,23 @@ char * getConsistencia(t_dictionary * metadataTablas,char *nombreTabla){
 
 	return consistencia;
 }
+t_criterios * inicializarCriterios(){
+	t_criterios *criterios = malloc(sizeof(t_criterios));
+	t_list *SHC = list_create();
+	t_list *EC = list_create();
+	criterios->SC = 0;
+	criterios->SHC = SHC;
+	criterios->EC = EC;
+
+	return criterios;
+}
 int main(void) {
 	t_config_kernel *config;
 	t_dictionary *metadataTablas;
 	t_dictionary *poolMemorias;
-	t_criterios *criterios;
+
+	t_criterios *criterios = inicializarCriterios();
+
 	char * consistencia;
 	int memDestino;
 	int key;
@@ -130,7 +142,7 @@ int main(void) {
 	//COMANDO ADD MEMORY [NÚMERO] TO [CRITERIO]
 		//PRIMERO VERIFICAR SI EXISTE CADA MEMORIA
 		//ADD MEMORY 1 TO SC
-		puts("asda");
+
 		criterios->SC = 1; //esto da segmentation fault
 
 		//ADD MEMORY 1 TO SHC
