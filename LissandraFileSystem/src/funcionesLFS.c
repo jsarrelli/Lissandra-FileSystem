@@ -233,6 +233,7 @@ char** buscarArchivos(char * rutaTabla){
 	  return archivos;
 }
 
+
 int esArchivo (char* ruta){
 	struct stat estado;
 	int i;
@@ -428,7 +429,7 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp){
 }
 
 
-void crearArchivosTemporales(char*ruta){
+void crearYEscribirArchivosTemporales(char*ruta){
 	char ** directorios;
 		int i = 0;
 
@@ -436,7 +437,7 @@ void crearArchivosTemporales(char*ruta){
 
 		while (directorios[i] != NULL) {
 
-			crearTemporal(directorios[i]);
+			crearYEscribirTemporal(directorios[i]);
 
 			i++;
 
@@ -445,69 +446,59 @@ void crearArchivosTemporales(char*ruta){
 		free(directorios);
 }
 
-void crearTemporal(char*nombreTabla){
+void crearYEscribirTemporal(char*rutaTabla){
 
 		char* nombTabla=malloc(50);
-		//char** registros;
-		//char*archivoTxt= malloc(100);
-		char**palabras = string_split(nombreTabla, "/");
+		char**palabras = string_split(rutaTabla, "/");
 		nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
+		char**archivos = buscarArchivos(rutaTabla);
+		int cantidad = contarPunteroDePunteros(archivos);
+		int i=0;
 
 
-	/*	char* rutaBloque = malloc(150);
-		strcpy(rutaBloque, rutas.Bloques);
-		int i=0, j=0;
-		char*registro=malloc(100);
-		string_append(&nombreTabla, "/");
-		string_append_with_format(&nombreTabla, "%sRegistros.txt", nombTabla);
-		strcpy(archivoTxt,nombreTabla);
-		FILE* archivo = fopen(archivoTxt, "w+");
-		escribirEnTxt(nombTabla, archivo);
-		int tamanioTxt = tamanioArchivo(archivo);
-		nombreTabla = obtenerRutaTablaSinArchivo(nombreTabla);*/
-		string_append(&nombreTabla, "/");
-		string_append_with_format(&nombreTabla, "%stmp0.tmp", nombTabla);
-		crearArchReservarBloqueYEscribirBitmap(nombreTabla);
-		printf("Archivo temporal creado en %s\n\n", nombTabla);
-/*		t_archivo* arch = malloc(sizeof(t_archivo));
-		int res = leerArchivoDeTabla(nombreTabla, arch);
-		string_append(&rutaBloque, arch->BLOQUES[i]);
-		string_append(&rutaBloque, ".bin");
-		FILE*archBloque = fopen(rutaBloque, "w+");
+		while(cantidad != i){
 
-		registros = buscarRegistrosDeTabla(nombTabla);
-		int bytesAEscribir = obtenerTamanioArrayRegistros(registros);
-		int tamanioArchBloque =0;
-		while(bytesAEscribir>=0){
-			while(registros[j] != NULL){
-				strcpy(registro, registros[j]);
-				char** reg = string_split(registro, ";");
-				fprintf(archBloque, "%s;%s;%s\n", reg[0], reg[1], reg[2]);
-				tamanioArchBloque += (strlen(registro)+1);
-				bytesAEscribir-= (strlen(registro) +1);
-				//fwrite(registros[j], strlen(registros[j]), 1, archBloque);
-				liberarPunteroDePunterosAChar(reg);
-				free(reg);
-				j++;
-			}
+			string_append(&rutaTabla, "/");
+			string_append_with_format(&rutaTabla, "%stmp%d.tmp", nombTabla,i);
+
+		if(existeArchivo(nombTabla,rutaTabla)){
+			rutaTabla = obtenerRutaTablaSinArchivo(rutaTabla);
+			i++;
+			break;
+		}else{
+
+			crearArchReservarBloqueYEscribirBitmap(rutaTabla);
+			printf("Archivo temporal creado en %s\n\n", nombTabla);
+			escribirEnTmp(nombTabla,rutaTabla);
+			limpiarRegistrosDeTabla(nombTabla);
 		}
-		fclose(archBloque);*/
-		printf("Vamos a escribir en el temporal");
-		escribirEnTmp(nombTabla,nombreTabla);
+		}
 
 
-		//fclose(archivo);
 
-		//free(archivoTxt);
 		liberarPunteroDePunterosAChar(palabras);
 		free(palabras);
-		//liberarPunteroDePunterosAChar(registros);
-		//free(registros);
+		liberarPunteroDePunterosAChar(archivos);
+		free(archivos);
 		free(nombTabla);
 
 }
 
+void limpiarRegistrosDeTabla(char*nombreTabla){
+	t_tabla_memtable* tabla;
+	int i;
 
+
+	for (i=0;i<list_size(memtable); i++){
+			tabla= (t_tabla_memtable*)  list_get (memtable,i);
+			if(!strcmp(tabla->tabla, nombreTabla)){
+				list_clean(tabla->registros);
+			}
+
+	}
+
+	printf("Lista de Registros de %s limpia\n", nombreTabla);
+}
 
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta){
 	char * archivoConExtension;
@@ -580,11 +571,11 @@ int obtenerTamanioArrayRegistros(char** registros){
 
 
 int escribirEnTmp (char*nombreTabla,char*rutaTmp){
-	puts("entre a escribir temporal");
 
 	int*bloques;
 	char *rutaBloque = malloc(150);
 	char **arrBloques = malloc(40);
+	//char*registro = malloc(100);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	strcpy(rutaBloque,rutas.Bloques);
 	char**registros = buscarRegistrosDeTabla(nombreTabla);
@@ -614,10 +605,13 @@ int escribirEnTmp (char*nombreTabla,char*rutaTmp){
 				i++;
 			}
 
-			archivo->BLOQUES=arrBloques;
 			archivo->cantBloques = bloquesNecesarios;
+			for(i=0;i<archivo->cantBloques;i++){
+				archivo->BLOQUES[i]=arrBloques[i];
+			}
+
 			free(bloques);
-			free(arrBloques);
+
 	}
 
 	FILE*archivoBloque;
@@ -633,10 +627,14 @@ int escribirEnTmp (char*nombreTabla,char*rutaTmp){
 			puts("Error al guardar datos en bloques");
 			return -1;
 			}
-			while(tamanioArchBloque + sizeof(registros[j]) < metadata.BLOCK_SIZE){
+
+			//int cantBytes = strlen(registros[j]) + 1;
+			while(tamanioArchBloque + (strlen(registros[j]) +1) < metadata.BLOCK_SIZE && registros[j] !=NULL){
 			char registro[strlen(registros[j]) +1];
 			strcpy(registro, registros[j]);
+			//registro = string_duplicate(registros[j]);
 			fwrite(registro,1,sizeof(registro),archivoBloque);
+			printf("Registro %s insertado en bloque de .tmp\n", registro);
 			tamanioArchBloque += (sizeof(registro));
 			bytesAEscribir-= (sizeof(registro));
 			if(bytesAEscribir==0){
@@ -645,8 +643,11 @@ int escribirEnTmp (char*nombreTabla,char*rutaTmp){
 				escribirArchivo(rutaTmp, archivo);
 				escribirBitmap();
 				free(archivo->BLOQUES);
+				free(arrBloques);
 				free(archivo);
 				free(rutaBloque);
+				puts("Se termino de escribir en el temporal\n");
+				//free(registro);
 				return 1;
 			}
 
@@ -655,6 +656,7 @@ int escribirEnTmp (char*nombreTabla,char*rutaTmp){
 			fclose(archivoBloque);
 			archivo->TAMANIO += tamanioArchBloque;
 			rutaBloque = obtenerRutaTablaSinArchivo(rutaBloque);
+			string_append(&rutaBloque, "/");
 			i++;
 		}
 

@@ -83,7 +83,7 @@ void consolaDescribe(char**palabras, int cantidad){
 
 	}else if(cantidad==0){
 		mostrarMetadataTodasTablas(rutas.Tablas);
-		crearArchivosTemporales(rutas.Tablas);
+		crearYEscribirArchivosTemporales(rutas.Tablas);
 
 
 	}

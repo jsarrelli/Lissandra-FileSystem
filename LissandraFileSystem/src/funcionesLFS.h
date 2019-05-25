@@ -38,20 +38,21 @@ void mostrarMetadataTodasTablas(char *ruta);
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 char** buscarRegistrosDeTabla(char*nombreTabla);
-
+void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioArrayRegistros(char** registros);
 
 
 //ARCHIVOS DE TABLA
 
 char** buscarArchivos(char * rutaTabla);
+char** buscarArchivosTemporales(char * rutaTabla);
 int esArchivo (char* ruta);
 void removerArchivosDeTabla(char * rutaTabla);
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
 int liberarBloquesDeArchivo(char *rutaArchivo);
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
-void crearArchivosTemporales(char*ruta);
-void crearTemporal(char*nombreTabla);
+void crearYEscribirArchivosTemporales(char*ruta);
+void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 
