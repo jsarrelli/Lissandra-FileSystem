@@ -8,34 +8,31 @@
  ============================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 
-#define VALOR_CUALQUIERA 50
+#define VALOR_CUALQUIERA 50 // Pero puede ser ilimitado
 
-#include "../Libraries/sockets.h"
+#include "../../sockets/sockets.h"
 
 /*
  * En este archivo se prueba el cliente
  */
 
 int main(void) {
-	void iterator(char* value)
-	{
-		printf("%s\n", value);
-	}
-
 	t_log *log_master = log_create("kernel.log(test)", "config", 1,
 			LOG_LEVEL_INFO);
 
 	char*ip = "127.0.0.1";
-	char*puerto = "4444";
+	int puerto = 4444;
+	struct sockaddr_in server;
+
 	// Primer paso: crear el cliente
-	int socket_cliente = iniciar_cliente(ip, puerto, log_master);
+	int socket_cliente = iniciar_cliente(&server, puerto, ip, log_master);
 
 	for (int i = 0; i < VALOR_CUALQUIERA; i++) {
 
 		enviar_por_socket(socket_cliente, log_master, PAQUETE_DEFAULT);
+		sem_post(&sem_socket);
+//		sem_post(&sem_socket);
 
 		t_list* lista;
 		int cod_op = recibir_operacion(socket_cliente);

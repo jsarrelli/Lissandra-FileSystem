@@ -8,36 +8,28 @@
  ============================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "../Libraries/sockets.h"
+#include "../../sockets/sockets.h"
 
 /*
  * Ahora creamos el servidor
  */
 
 int main(void) {
-
-	void iterator(char* value)
-	{
-		printf("%s\n", value);
-	}
-
 	t_log *log_master = log_create("kernel.log(test)", "config", 1,
-				LOG_LEVEL_INFO);
+			LOG_LEVEL_INFO);
 
 	// Paso 1: Iniciar Servidor
 
-	int socket_servidor = iniciar_servidor("127.0.0.1", "4444", log_master);
+	struct sockaddr_in server;
+
+	int socket_servidor = iniciar_servidor(4444, &server, log_master);
 
 	// Paso 2: Recibir paquete
 
-	int socket_cliente = esperando_una_conexion(socket_servidor, log_master, 1); // accept
+	int socket_cliente = aceptar_conexion(socket_servidor, log_master, 1); // accept
 
 	// Paso 3: Veo que tipo es y tomo la decision (aunque nosotros no vamos a mandar mensajes de char*, a menos que
 	//				tengamos que lidiar con una excepcion?) )
-
 
 	/*
 	 * Este switch es una idea de la API que se tiene que implementar en el tp
