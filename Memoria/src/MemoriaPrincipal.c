@@ -162,7 +162,8 @@ bool memoriaLlena() {
 
 bool todosModificados() {
 	for (int i = 0; i < list_size(segmentos); i++) {
-		t_list* paginasSegmento = list_get(segmentos, i);
+		Segmento* segmento = list_get(segmentos, i);
+		t_list* paginasSegmento= segmento->paginas;
 
 		for (int j = 0; j < list_size(paginasSegmento); j++) {
 			Pagina* pagina = list_get(paginasSegmento, j);
@@ -182,7 +183,8 @@ void* liberarUltimoUsado() {
 
 	void LRUPagina(Pagina* pagina) {
 		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
-		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion) {
+		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion &&
+				frameDePagina->estado!=1) {
 			frameMenosUtilizado = frameDePagina;
 			segmentoPaginaMenosUtilizada = segmentoActual;
 			paginaMenosUtilizada = pagina;
@@ -190,7 +192,7 @@ void* liberarUltimoUsado() {
 	}
 	void iterarEntrePaginas(Segmento* segmento) {
 		segmentoActual = segmento;
-		list_iterate(segmento->paginas, LRUPagina);
+		list_iterate(segmento->paginas, (void*)LRUPagina);
 
 	}
 
@@ -214,7 +216,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 		free(pagina);
 	}
 
-	list_remove_and_destroy_by_condition(segmento->paginas, isPagina, freePagina);
+	list_remove_and_destroy_by_condition(segmento->paginas, (void*)isPagina, (void*)freePagina);
 
 }
 
@@ -226,7 +228,7 @@ void eliminarSegmentoDeMemoria(char nombreSegmento[20]) {
 		void eliminarPaginaSegmento(Pagina* pagina) {
 			eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
 		}
-		list_iterate(segmentoAEliminar->paginas, eliminarPaginaSegmento);
+		list_iterate(segmentoAEliminar->paginas, (void*)eliminarPaginaSegmento);
 		list_destroy(segmentoAEliminar->paginas);
 		if (segmentoAEliminar->metaData != NULL) {
 			free(segmentoAEliminar->metaData);
