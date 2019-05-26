@@ -34,6 +34,15 @@ char * obtenerRutaTablaSinArchivo(char * rutaTabla){
 	return string_substring_until(rutaTabla,tamanioRuta-tamanioNombreArchivo);
 }
 
+char * obtenerExtensionDeUnArchivo(char * nombreArchivoConExtension){
+	char ** palabras = string_split(nombreArchivoConExtension, ".");
+	char * extension = strdup(palabras[1]);
+	liberarPunteroDePunterosAChar(palabras);
+	free(palabras);
+	return extension;
+
+}
+
 int existeTabla(char* nombreTabla){
 	char* rutaTabla = malloc(100);
 	DIR* tablaActual;
@@ -91,7 +100,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones){
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion){
 	char*rutaTabla=malloc(100);
 	armarRutaTabla(rutaTabla, nombreTabla);
-	string_append(&rutaTabla, "Metadata");
+	string_append(&rutaTabla, "Metadata.txt");
 	FILE*arch = fopen(rutaTabla, "w+");
 	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones, tiempoCompactacion);
 
@@ -105,7 +114,7 @@ void mostrarMetadataTabla(char* nombreTabla){
 
 	char* rutaTabla=malloc(100);
 	armarRutaTabla(rutaTabla, nombreTabla);
-	string_append(&rutaTabla, "Metadata");
+	string_append(&rutaTabla, "Metadata.txt");
 	t_config* configMetadata = config_create(rutaTabla);
 	t_metadata_tabla* metadataTabla = malloc(sizeof (t_metadata_tabla));
 
@@ -128,7 +137,7 @@ void mostrarMetadataTabla2(char* nombreTabla){
 	char* nombTabla=string_new();
 	strcpy(rutaTabla, nombreTabla);
 	string_append(&nombreTabla, "/");
-	string_append(&nombreTabla, "Metadata");
+	string_append(&nombreTabla, "Metadata.txt");
 	t_config* configMetadata = config_create(nombreTabla);
 	t_metadata_tabla* metadataTabla = malloc(sizeof (t_metadata_tabla));
 	char** palabras = string_split(rutaTabla, "/");
@@ -155,6 +164,29 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla){
 		string_append(&rutaTabla, "/");
 
 		return rutaTabla;
+}
+
+
+int contarArchivosTemporales(char ** puntero){
+	char ** aux = puntero;
+	int contador = 0;
+	char* nombreArchivoConExtension;
+	char*extension;
+	while(*aux != NULL){
+		nombreArchivoConExtension = obtenerNombreDeArchivoDeUnaRuta(*aux);
+		extension=obtenerExtensionDeUnArchivo(nombreArchivoConExtension);
+		if(!strcmp(extension, "tmp")){
+			contador++;
+			aux++;
+		}else{
+			aux++;
+		}
+	}
+
+
+	free(nombreArchivoConExtension);
+	free(extension);
+	return contador;
 }
 
 int existeArchivo(char*nombreTabla, char * rutaArchivo){
@@ -452,29 +484,15 @@ void crearYEscribirTemporal(char*rutaTabla){
 		char**palabras = string_split(rutaTabla, "/");
 		nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
 		char**archivos = buscarArchivos(rutaTabla);
-		int cantidad = contarPunteroDePunteros(archivos);
-		int i=0;
+		int cantidadTmp = contarArchivosTemporales(archivos);
 
-
-		while(cantidad != i){
 
 			string_append(&rutaTabla, "/");
-			string_append_with_format(&rutaTabla, "%stmp%d.tmp", nombTabla,i);
-
-		if(existeArchivo(nombTabla,rutaTabla)){
-			rutaTabla = obtenerRutaTablaSinArchivo(rutaTabla);
-			i++;
-			break;
-		}else{
-
+			string_append_with_format(&rutaTabla, "%stmp%d.tmp", nombTabla,cantidadTmp);
 			crearArchReservarBloqueYEscribirBitmap(rutaTabla);
 			printf("Archivo temporal creado en %s\n\n", nombTabla);
 			escribirEnTmp(nombTabla,rutaTabla);
 			limpiarRegistrosDeTabla(nombTabla);
-		}
-		}
-
-
 
 		liberarPunteroDePunterosAChar(palabras);
 		free(palabras);
@@ -512,6 +530,7 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta){
 	return NULL;
 
 }
+
 
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch){
 	FILE*archivo = fopen(rutaArch, "w");

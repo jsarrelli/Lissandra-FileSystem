@@ -56,6 +56,8 @@ int contarPunteroDePunteros(char ** puntero){
 	return contador;
 }
 
+
+
 void liberarPunteroDePunterosAChar(char** palabras){
 	int i = 0;
 	while(palabras[i] != NULL){

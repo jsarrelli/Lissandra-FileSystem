@@ -55,7 +55,7 @@ void crearYEscribirArchivosTemporales(char*ruta);
 void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
-
+int contarArchivosTemporales(char ** puntero);
 int escribirEnTmp (char*nombreTabla,char*rutaTmp);
 
 #endif /* FUNCIONESLFS_H_ */
