@@ -108,6 +108,7 @@ t_criterios * inicializarCriterios(){
 	t_criterios *criterios = malloc(sizeof(t_criterios));
 	t_list *SHC = list_create();
 	t_list *EC = list_create();
+
 	criterios->SC = 0;
 	criterios->SHC = SHC;
 	criterios->EC = EC;
@@ -159,7 +160,6 @@ int main(void) {
 		metadataTablas = describeGlobal(config->IP_MEMORIA);
 		t_metadata_tabla * metaTabla1 = dictionary_get(metadataTablas,"tabla1");
 		//puts(metaTabla1->CONSISTENCIA);
-
 
 
 	//Comando RUN <path>, por ahora simple, despues aplicar RR
