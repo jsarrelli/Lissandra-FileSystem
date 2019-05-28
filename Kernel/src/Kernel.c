@@ -10,12 +10,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "SocketCliente.h"
+
+#include "SocketClienteMemoria.h"
 
 int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
 	if(configurarSocketCliente()){
-		enviarConsulta();
+
+		INSERT(32, "juli", "tabla1");
 	}
 	close(serverSocket);
 	return EXIT_SUCCESS;

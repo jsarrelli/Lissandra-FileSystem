@@ -15,21 +15,26 @@
 #define MAXCONSULTA 6
 #define MAX_MENSAJE_SIZE 100
 
+
+enum CodigoOperacion{
+	SELECT = 1
+};
+
+
 int serverSocket;
 
-typedef struct t_Paquete {
-	char* consulta;
-	uint32_t consulta_long;
-	char* mensaje;
-	uint32_t mensaje_long;
-} t_Paquete;
+typedef struct t_Paquete_SELECT {
+	int codOp;
+	int key;
+	int sizeValue;
+	char* value;
+	int sizeNombreTabla;
+	char* nombreTabla;
+} t_Paquete_SELECT;
 
 
-char* serializarOperandos(t_Paquete*);
-void get_Username(char**);
-void fill_package(t_Paquete*, char**);
-void dispose_package(char**);
+
 int configurarSocketCliente();
-int enviarCosulta();
+void INSERT(int key, char* value, char* nombreTabla);
 
 #endif /* CLIENTE_H_ */

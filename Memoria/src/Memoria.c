@@ -8,8 +8,7 @@
  ============================================================================
  */
 #include "Memoria.h"
-#include "MemoriaPrincipal.h"
-#include "AdministradorDeConsultas.h"
+
 
 int main(int argc, char** argv) {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
@@ -28,14 +27,13 @@ int main(int argc, char** argv) {
 	insertarSegmentoEnMemoria("TABLA2",NULL);
 	Segmento* tabla1= buscarSegmentoEnMemoria("TABLA1");
 	insertarPaginaEnMemoria(3,"juli" ,tabla1);
-	SELECT("TABLA1",3);
-	printf("salio");
+	//SELECT_MEMORIA("TABLA1" , 3);
 
-//	if(configurarSocketServidor()){
-//		escuchar();
-//	}
+	if(configurarSocketServidor()){
+		escuchar();
+	}
 
-//	close(listenningSocket);
+	close(listenningSocket);
 
 
 	log_destroy(logger);

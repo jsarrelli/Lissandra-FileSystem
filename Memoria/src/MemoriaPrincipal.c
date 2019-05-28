@@ -158,7 +158,7 @@ bool memoriaLlena() {
 	bool estaLibre(EstadoFrame* estado) {
 		return estado->estado == LIBRE;
 	}
-	return list_any_satisfy(memoriaStatus, (void*) estaLibre);
+	return !list_any_satisfy(memoriaStatus, (void*) estaLibre);
 
 }
 

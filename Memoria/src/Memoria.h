@@ -1,3 +1,6 @@
+#ifndef MEMEORIA_H_
+#define MEMEORIA_H_
+
 #include <Libraries.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
@@ -6,8 +9,9 @@
 #include <stdlib.h>
 
 
-#include "SocketServidor.h"
-
+#include "SocketServidorKernel.h"
+#include "MemoriaPrincipal.h"
+#include "AdministradorDeConsultas.h"
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;
@@ -30,4 +34,4 @@ MEMORIA_configuracion* configuracion;
 void cargarConfiguracion();
 
 
-
+#endif /*MEMEORIA_H_ */

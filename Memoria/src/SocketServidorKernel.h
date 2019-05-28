@@ -28,6 +28,6 @@ typedef struct _t_Paquete {
 
 int configurarSocketServidor();
 void escuchar();
-int recieve_and_deserialize(t_Paquete *paquete, int socketCliente);
+void recibirYDeserealizarINSERT(socketCliente);
 
 #endif /* SERVER_H_ */

@@ -1,5 +1,4 @@
-#include "SocketServidor.h"
-
+#include "SocketServidorKernel.h"
 
 
 
@@ -28,54 +27,53 @@ int configurarSocketServidor(){
 		return 1;
 }
 
-void escuchar(){
+void escuchar() {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
 	printf("Escuchando...\n");
 
-	struct sockaddr_in datosConexionCliente;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+	struct sockaddr_in datosConexionCliente;// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	int socketCliente = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 	t_Paquete paquete;
 	int status = 1;
-	printf("Cliente conectado. Esperando Envío de mensajes.\n");
-	while (status!=0){
-		char cadena[6];
-		status=recv(socketCliente,cadena,6,0);
-		//status = recieve_and_deserialize(&paquete, socketCliente);	// Ver el "Deserializando estructuras dinamicas" en el comentario de la funcion.
-		//if (status) printf("%s: %s", paquete.consulta, paquete.mensaje);
-				if(status!=0)printf(cadena);
+	printf("Kernel conectado. Esperando envío de mensajes.\n");
+	while (status != 0) {
+		int codOp;
+		status = recv(socketCliente, &codOp, 4, 0);
+		if (status != 0) {
+			switch (codOp) {
+				case 1:
+					recibirYDeserealizarINSERT(socketCliente);
+					break;
+				default:
+					break;
+			}
+		}
 	}
 	printf("Cliente Desconectado.\n");
 	close(socketCliente);
 }
 
 
-int recieve_and_deserialize(t_Paquete *paquete, int socketCliente){
+void recibirYDeserealizarINSERT(int socketCliente) {
+	int key;
+	recv(socketCliente, &key, 4, 0);
 
-	int status;
-	int buffer_size;
-	char *buffer = malloc(buffer_size = sizeof(uint32_t));
+	int sizeValue;
+	recv(socketCliente, &sizeValue, 4, 0);
+	char* value=malloc(sizeValue);
+	recv(socketCliente, value, sizeValue, 0);
 
-	uint32_t consulta_long;
-	status = recv(socketCliente, buffer, sizeof(paquete->consulta_long), 0);
-	memcpy(&(consulta_long), buffer, buffer_size);
-	if (!status) return 0;
+	int sizeNombreTabla;
+	recv(socketCliente, &sizeNombreTabla, 4, 0);
+	char* nombreTabla=malloc(sizeNombreTabla);
+	recv(socketCliente, nombreTabla, sizeNombreTabla, 0);
 
-	status = recv(socketCliente, paquete->consulta, consulta_long, 0);
-	if (!status) return 0;
+	fprintf("Se recibio un INSERT %d , %s ,%s",key,value,nombreTabla);
+	INSERT_MEMORIA(nombreTabla, key, value);
 
-	uint32_t mensaje_long;
-	status = recv(socketCliente, buffer, sizeof(paquete->mensaje_long), 0);
-	memcpy(&(mensaje_long), buffer, buffer_size);
-	if (!status) return 0;
-
-	status = recv(socketCliente, paquete->mensaje, mensaje_long, 0);
-	if (!status) return 0;
-
-
-	free(buffer);
-
-	return status;
 }
+
+
 
 
