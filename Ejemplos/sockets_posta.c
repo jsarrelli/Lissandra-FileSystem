@@ -11,7 +11,7 @@
 
 #define VALOR_CUALQUIERA 50 // Pero puede ser ilimitado
 
-#include "../../sockets/sockets.h"
+#include "../Libraries/sockets.h"
 
 /*
  * En este archivo se prueba el cliente
