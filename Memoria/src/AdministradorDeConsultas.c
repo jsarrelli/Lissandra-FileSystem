@@ -7,7 +7,7 @@
 
 #include "AdministradorDeConsultas.h"
 
-t_registro* SELECT_MEMROIA(char* nombreTabla, int key) {
+t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 	Segmento* tabla = buscarSegmento(nombreTabla);
 	if (tabla != NULL) {
 		Pagina* pagina = buscarPagina(tabla, key);
@@ -27,12 +27,12 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value) {
 	return pagina->registro;
 }
 
-void DROP_MEMROIA(char* nombreTabla) {
+void DROP_MEMORIA(char* nombreTabla) {
 	eliminarSegmentoDeMemoria(nombreTabla);
 	//aca pegale a kevin y avisale
 }
 
-int CREATE_MEMROIA(char* nombreTabla, char* consitencia, int cantParticiones, int tiempoCompactacion) {
+int CREATE_MEMORIA(char* nombreTabla, char* consitencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metaData = malloc(sizeof(t_metadata_tabla));
 	strcpy(metaData->CONSISTENCIA, consitencia);
 	metaData->CANT_PARTICIONES = cantParticiones;
@@ -45,7 +45,7 @@ int CREATE_MEMROIA(char* nombreTabla, char* consitencia, int cantParticiones, in
 	return 0;
 }
 
-t_metadata_tabla* DESCRIBRE_MEMROIA(char* nombreTabla) {
+t_metadata_tabla* DESCRIBRE_MEMORIA(char* nombreTabla) {
 	return buscarSegmento(nombreTabla)->metaData;
 }
 

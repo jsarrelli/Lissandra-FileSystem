@@ -12,6 +12,7 @@
 #include "SocketServidorKernel.h"
 #include "MemoriaPrincipal.h"
 #include "AdministradorDeConsultas.h"
+#include "API.h"
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;
@@ -30,8 +31,8 @@ typedef struct MEMORIA_configuracion{
 t_log* logger;
 char* pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
 MEMORIA_configuracion* configuracion;
+pthread_t threadId;
 
 void cargarConfiguracion();
-
-
+void* leerConsola();
 #endif /*MEMEORIA_H_ */

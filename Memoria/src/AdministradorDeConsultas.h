@@ -12,9 +12,9 @@
 
 t_registro* SELECT_MEMORIA(char* nombreTabla, int key);
 t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value);
-int CREATE_MEMROIA(char* nombreTabla, char* consitencia, int cantParticiones, int tiempoCompactacion);
-void DESCRIBE_MEMROIA(char* nombreTabla);
-void DROP_MEMROIA(char* nombreTabla);
+int CREATE_MEMORIA(char* nombreTabla, char* consitencia, int cantParticiones, int tiempoCompactacion);
+void DESCRIBE_MEMORIA(char* nombreTabla);
+void DROP_MEMORIA(char* nombreTabla);
 void* JORUNAL();
 
 #endif /*ADMINISTRADORCONSULTAS_H_*/
