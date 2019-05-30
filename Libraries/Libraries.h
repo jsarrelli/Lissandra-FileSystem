@@ -11,13 +11,13 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <string.h>
-#include <commons/string.h>
-#include <commons/error.h>
-#include <commons/config.h>
-#include <commons/collections/list.h>
-#include <commons/bitarray.h>
-#include <commons/txt.h>
-#include <commons/log.h>
+#include "commons/string.h"
+#include "commons/error.h"
+#include "commons/config.h"
+#include "commons/collections/list.h"
+#include "commons/bitarray.h"
+#include "commons/txt.h"
+#include "commons/log.h"
 #include <unistd.h>
 #include <readline/readline.h>
 #include <sys/time.h>
@@ -40,6 +40,7 @@ typedef struct {
 	char value[112];
 
 } t_registro;
+
 
 typedef struct{
 	char* CONSISTENCIA;

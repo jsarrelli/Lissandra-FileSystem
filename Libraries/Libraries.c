@@ -1,5 +1,6 @@
 
 #include "Libraries.h"
+int contadorConexiones = 0;
 
 
 int contadorConexiones = 0;
