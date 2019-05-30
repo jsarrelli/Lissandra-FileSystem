@@ -8,7 +8,8 @@
 #ifndef EXEC_K_H_
 #define EXEC_K_H_
 
-#include "api_kernel.h"
+#include "API_kernel.h"
+#include "commons/collections/queue.h"
 
 typedef struct estructura_p_thread{
 	int id;

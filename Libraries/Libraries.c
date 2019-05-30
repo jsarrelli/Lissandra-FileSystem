@@ -3,7 +3,6 @@
 int contadorConexiones = 0;
 
 
-int contadorConexiones = 0;
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo) {
 	int valor;
