@@ -10,13 +10,13 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <string.h>
-#include <commons/string.h>
-#include <commons/error.h>
-#include <commons/config.h>
-#include <commons/collections/list.h>
-#include <commons/bitarray.h>
-#include <commons/txt.h>
-#include <commons/log.h>
+#include "commons/string.h"
+#include "commons/error.h"
+#include "commons/config.h"
+#include "commons/collections/list.h"
+#include "commons/bitarray.h"
+#include "commons/txt.h"
+#include "commons/log.h"
 #include <unistd.h>
 #include <readline/readline.h>
 #include <sys/time.h>
@@ -40,7 +40,6 @@ typedef struct {
 
 } t_registro;
 
-int contadorConexiones = 0;
 
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);

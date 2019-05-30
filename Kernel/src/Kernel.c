@@ -8,12 +8,9 @@
  ============================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "SocketCliente.h"
-#include "kernel.h"
+#include "Libraries.h"
 
-//#include "../LissandraFileSystem/src/FileSystem.h" //para traer el t_metadata
+#include "kernel.h"
 t_config_kernel *cargarConfig(char *ruta){
 	puts("!!!Hello World!!!");
 	log_info(logger,"Levantando archivo de configuracion del proceso Kernel \n");
@@ -79,50 +76,100 @@ t_dictionary *conocerPoolMemorias(char* IP_MEMORIA){
 		dictionary_put(diccionario,"2",memoria2);
 	return diccionario;
 }
-int obtenerMemSegunConsistencia(char *consistencia, int key, t_criterios* criterios){
+int obtenerMemSegunConsistencia(char *consistencia, int key){
 	log_info(logger, "Obteniendo memoria segun consistencia");
 
-	int memDestino = 0;
+	int memDestino = -1;
 
 	if (strcmp(consistencia, "SC") == 0){
 		memDestino = criterios->SC;
+		puts("SC");
 	}
 	else if (strcmp(consistencia, "SHC") == 0){
 		//aplico el hash, seria key mod cantMemorias
-		memDestino = key % list_size(criterios->SHC);
+		if(list_size(criterios->SHC) > 0){
+			int largo = list_size(criterios->SHC);
+			//printf("la key es %d y largo %d",key,largo);
+			memDestino = (key % largo)+1;
+		}
+		puts("SHC");
 	}else if (strcmp(consistencia, "EC") == 0){
-		memDestino = (rand() % list_size(criterios->EC)) +1;
+		puts("EC");
+		if(list_size(criterios->EC) > 0){
+			srand(time(NULL));
+			memDestino = (rand() % list_size(criterios->EC)) +1;
+		}
 
 	}
 
 	return memDestino;
 }
-char * getConsistencia(t_dictionary * metadataTablas,char *nombreTabla){
+char * getConsistencia(char *nombreTabla){
 	char *consistencia;
 	t_metadata_tabla * metaTabla = dictionary_get(metadataTablas,nombreTabla);
-	consistencia = metaTabla->CONSISTENCIA;
+	if(metaTabla != NULL){
+		consistencia = metaTabla->CONSISTENCIA;
+		return consistencia;
 
-	return consistencia;
+	}else{
+		return NULL;
+	}
 }
 t_criterios * inicializarCriterios(){
 	t_criterios *criterios = malloc(sizeof(t_criterios));
 	t_list *SHC = list_create();
 	t_list *EC = list_create();
 
-	criterios->SC = 0;
+	criterios->SC = -1;
 	criterios->SHC = SHC;
 	criterios->EC = EC;
 
 	return criterios;
 }
+int obtenerMemDestino(char *tabla, int key){
+	char * consistencia;
+	consistencia = getConsistencia(tabla);
+	if(consistencia != NULL){
+		return obtenerMemSegunConsistencia(consistencia,key);
+	}else{
+		return -1;
+	}
+}
+
+void add(int numeroMem, char *criterio){
+	int i = -1;
+	if (strcmp(criterio, "SC") == 0){
+		if(criterios->SC == -1){
+			criterios->SC = numeroMem;
+		}else{
+			printf("El criterio SC ya tiene la memoria %d asignada.",criterios->SC);
+		}
+	}
+	else if (strcmp(criterio, "SHC") == 0){
+		//t_list * SHC = criterios->SHC;
+		i = list_add(criterios->SHC,numeroMem);
+
+	}else if (strcmp(criterio, "EC") == 0){
+		i = list_add(criterios->EC,numeroMem);
+	}
+	/*
+	//mostrar los elementos
+	puts("\nMemorias en EC: ");
+	for(i=0;i<list_size(criterios->EC);i++){
+		m = list_get(criterios->EC,i);
+		printf(" , %d ,",m);
+	}
+	puts("\nMemorias en SHC: ");
+	for(i=0;i<list_size(criterios->SHC);i++){
+		m = list_get(criterios->SHC,i);
+		printf(" , %d ,",m);
+	}
+	free(i);
+	*/
+}
 int main(void) {
 	t_config_kernel *config;
-	t_dictionary *metadataTablas;
-	t_dictionary *poolMemorias;
 
-	t_criterios *criterios = inicializarCriterios();
-
-	char * consistencia;
 	int memDestino;
 	int key;
 	int i=0;
@@ -137,52 +184,38 @@ int main(void) {
 	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/erroresKernel.log", "Kernel Error Logs", 1, LOG_LEVEL_ERROR);
 
 	config = cargarConfig(rutaConfig);
-	//criterios = inicializarCriterios(criterios);
+	criterios = inicializarCriterios();
+
 	//Conocer las memorias del pool
 		poolMemorias = conocerPoolMemorias(config->IP_MEMORIA);
 	//COMANDO ADD MEMORY [NÚMERO] TO [CRITERIO]
 		//PRIMERO VERIFICAR SI EXISTE CADA MEMORIA
-		//ADD MEMORY 1 TO SC
 
-		criterios->SC = 1; //esto da segmentation fault
-
-		//ADD MEMORY 1 TO SHC
-		i = list_add(criterios->SHC,1);
-		//ADD MEMORY 1 TO EC
-		i = list_add(criterios->EC,1);
-
-		//ADD MEMORY 2 TO EC
-		i = list_add(criterios->EC,2);
-
-
-		puts("asd");
 	//cada METADATA_REFRESH hacer
 		metadataTablas = describeGlobal(config->IP_MEMORIA);
-		t_metadata_tabla * metaTabla1 = dictionary_get(metadataTablas,"tabla1");
-		//puts(metaTabla1->CONSISTENCIA);
+		//t_metadata_tabla * metaTabla1 = dictionary_get(metadataTablas,"tabla1");
 
 
 	//Comando RUN <path>, por ahora simple, despues aplicar RR
 		//Levanto LQL de <path>
 		//INSERT TABLA1 1 “Mi nombre es Lissandra”
 		//fijarme a que memoria mandarlo segun la consistencia de TABLA1
-		key=1;
-		consistencia = getConsistencia(metadataTablas,"tabla1");
-		memDestino = obtenerMemSegunConsistencia(consistencia,key,criterios);
-		printf("La consistencia es %s y memoria %d\n", consistencia, memDestino);
-
-
-		//setearCriterios(infoTablas);
-
-	//Cuando llega un request
-		//memDestino = criterios(nombreTabla);
-		//resultado = ejecutarRequest(memDestino,request);
 	/*
+		key=2;
+
+		memDestino = obtenerMemDestino("tabla1",key);
+		if(memDestino != -1){
+			printf("La memoria destino es la %d\n", memDestino);
+		}else{
+			printf("No se pudo obtener la memoria destino.");
+		}
+
+
 	if(configurarSocketCliente()){
 		enviarConsulta();
 	}
 	close(serverSocket);
 	*/
-
+	consolaKernel();
 	return EXIT_SUCCESS;
 }

@@ -28,6 +28,18 @@ typedef struct{
 	t_list *EC;
 }t_criterios;
 
+t_dictionary *metadataTablas;
+t_dictionary *poolMemorias;
+t_criterios *criterios;
+
 t_config_kernel* cargarConfig (char* ruta);
+t_dictionary *describeGlobal(char* IP_MEMORIA);
+t_dictionary *conocerPoolMemorias(char* IP_MEMORIA);
+int obtenerMemSegunConsistencia(char *consistencia, int key);
+char * getConsistencia(char *nombreTabla);
+t_criterios * inicializarCriterios();
+int obtenerMemDestino(char *tabla, int key);
+void add(int numeroMem, char *criterio);
+
 
 #endif /* KERNEL_H_ */
