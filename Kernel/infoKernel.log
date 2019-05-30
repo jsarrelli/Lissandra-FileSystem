@@ -1,9 +1,6 @@
-[INFO] 23:27:28:744 Kernel Info Logs/(13722:13722): Levantando archivo de configuracion del proceso Kernel 
+[INFO] 00:17:47:61 Kernel Info Logs/(14903:14903): Levantando archivo de configuracion del proceso Kernel 
 
-[INFO] 23:27:28:745 Kernel Info Logs/(13722:13722): Archivo de configuracion del proceso Kernel levantado 
+[INFO] 00:17:47:61 Kernel Info Logs/(14903:14903): Archivo de configuracion del proceso Kernel levantado 
 
-[INFO] 23:27:28:745 Kernel Info Logs/(13722:13722): Pidiendo pool de memorias
-[INFO] 23:27:28:745 Kernel Info Logs/(13722:13722): Pidiendo metadata global
-[INFO] 23:28:28:368 Kernel Info Logs/(13722:13722): Obteniendo memoria segun consistencia
-[INFO] 23:28:39:789 Kernel Info Logs/(13722:13722): Obteniendo memoria segun consistencia
-[INFO] 23:30:10:88 Kernel Info Logs/(13722:13722): Obteniendo memoria segun consistencia
+[INFO] 00:17:47:63 Kernel Info Logs/(14903:14903): Pidiendo pool de memorias
+[INFO] 00:17:47:63 Kernel Info Logs/(14903:14903): Pidiendo metadata global
