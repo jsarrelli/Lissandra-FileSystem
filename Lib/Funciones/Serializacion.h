@@ -19,7 +19,8 @@ typedef enum t_protocolo {
 	INSERT,
 	DELETE,
 	CREATE,
-	JOURNAL
+	JOURNAL,
+	CONEXION_INICIAL_FILESYSTEM_MEMORIA
 } t_protocolo;
 
 //////////////////////////////////////////

@@ -43,13 +43,14 @@ Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* m
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
 //el segmento tiene que existir
-Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento) {
+Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento, double timeStamp) {
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 
 		t_registro registro;
 		registro.key = key;
-		registro.timestamp = getCurrentTime();
+
+		registro.timestamp = timeStamp;
 		strcpy(registro.value, value);
 
 		void* marcoVacio = NULL;
@@ -72,16 +73,16 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento) {
 		paginaNueva->modificado = 0;
 		paginaNueva->registro = registroEnMemoria;
 
-		EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
-		estadoFrame->estado = 1;
-		estadoFrame->fechaObtencion = getCurrentTime();
-
 		list_add(segmento->paginas, paginaNueva);
 	} else {
-		paginaNueva->registro->timestamp = getCurrentTime();
+		paginaNueva->registro->timestamp = timeStamp;
 		strcpy(paginaNueva->registro->value, value);
 		paginaNueva->modificado = 1;
 	}
+
+	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
+	estadoFrame->estado = 1;
+	estadoFrame->fechaObtencion = timeStamp;
 
 	return paginaNueva;
 }
@@ -114,7 +115,7 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	if (pagina == NULL) {
 
 		t_registro* registro; //= pegale a kevin
-		insertarPaginaEnMemoria(registro->key, registro->value, segmento);
+		insertarPaginaEnMemoria(registro->key, registro->value, segmento,getCurrentTime());
 
 	}
 	return pagina;
@@ -166,7 +167,7 @@ bool todosModificados() {
 	int i;
 	for (i = 0; i < list_size(segmentos); i++) {
 		Segmento* segmento = list_get(segmentos, i);
-		t_list* paginasSegmento= segmento->paginas;
+		t_list* paginasSegmento = segmento->paginas;
 
 		for (int j = 0; j < list_size(paginasSegmento); j++) {
 			Pagina* pagina = list_get(paginasSegmento, j);
@@ -187,7 +188,7 @@ void* liberarUltimoUsado() {
 	void LRUPagina(Pagina* pagina) {
 		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
 		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion &&
-				frameDePagina->estado!=1) {
+				frameDePagina->estado != 1) {
 			frameMenosUtilizado = frameDePagina;
 			segmentoPaginaMenosUtilizada = segmentoActual;
 			paginaMenosUtilizada = pagina;
@@ -195,7 +196,7 @@ void* liberarUltimoUsado() {
 	}
 	void iterarEntrePaginas(Segmento* segmento) {
 		segmentoActual = segmento;
-		list_iterate(segmento->paginas, (void*)LRUPagina);
+		list_iterate(segmento->paginas, (void*) LRUPagina);
 
 	}
 
@@ -219,7 +220,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 		free(pagina);
 	}
 
-	list_remove_and_destroy_by_condition(segmento->paginas, (void*)isPagina, (void*)freePagina);
+	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPagina, (void*) freePagina);
 
 }
 
@@ -231,7 +232,7 @@ void eliminarSegmentoDeMemoria(char nombreSegmento[20]) {
 		void eliminarPaginaSegmento(Pagina* pagina) {
 			eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
 		}
-		list_iterate(segmentoAEliminar->paginas, (void*)eliminarPaginaSegmento);
+		list_iterate(segmentoAEliminar->paginas, (void*) eliminarPaginaSegmento);
 		list_destroy(segmentoAEliminar->paginas);
 		if (segmentoAEliminar->metaData != NULL) {
 			free(segmentoAEliminar->metaData);

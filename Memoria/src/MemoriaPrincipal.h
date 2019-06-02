@@ -43,7 +43,7 @@ Pagina* buscarPaginaEnMemoria(Segmento* segmento,int key);
 Pagina* buscarPagina(Segmento* segmento,int key);
 
 Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* metaData);
-Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento);
+Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento,double timeStamp);
 void eliminarSegmento(char nombreTabla[20]);
 
 bool memoriaLlena();

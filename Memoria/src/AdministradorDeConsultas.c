@@ -18,12 +18,12 @@ t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 	return NULL;
 }
 
-t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value) {
+t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value,double timeStamp) {
 	Segmento *tabla = buscarSegmento(nombreTabla);
 	if (tabla == NULL) {
 		tabla = insertarSegmentoEnMemoria(nombreTabla, NULL);
 	}
-	Pagina* pagina = insertarPaginaEnMemoria(key, value, tabla);
+	Pagina* pagina = insertarPaginaEnMemoria(key, value, tabla,timeStamp);
 	return pagina->registro;
 }
 
@@ -32,9 +32,9 @@ void DROP_MEMORIA(char* nombreTabla) {
 	//aca pegale a kevin y avisale
 }
 
-int CREATE_MEMORIA(char* nombreTabla, char* consitencia, int cantParticiones, int tiempoCompactacion) {
+int CREATE_MEMORIA(char* nombreTabla, char* consistencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metaData = malloc(sizeof(t_metadata_tabla));
-	strcpy(metaData->CONSISTENCIA, consitencia);
+	strcpy(metaData->CONSISTENCIA, consistencia);
 	metaData->CANT_PARTICIONES = cantParticiones;
 	metaData->T_COMPACTACION = tiempoCompactacion;
 
@@ -45,11 +45,11 @@ int CREATE_MEMORIA(char* nombreTabla, char* consitencia, int cantParticiones, in
 	return 0;
 }
 
-t_metadata_tabla* DESCRIBRE_MEMORIA(char* nombreTabla) {
+t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
 	return buscarSegmento(nombreTabla)->metaData;
 }
 
-//t_list* DESCRIBE_MEMROIA() {
-//	//t_list* metadatas= pedile a kevin que te pase todas sus tablas
-//	return NULL;
-//}
+t_list* DESCRIBE_ALL_MEMOROIA() {
+	//t_list* metadatas= pedile a kevin que te pase todas sus tablas
+	return NULL;
+}

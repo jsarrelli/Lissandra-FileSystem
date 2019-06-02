@@ -9,9 +9,12 @@
 #define LISSANDRAFILESYSTEM_H_
 
 #include "Libraries.h"
+#include "SocketServidor.h"
+#include "Funciones/Conexiones.h"
+#include "Funciones/Serializacion.h"
 
 typedef struct{
-	int PUERTO_ESCUCHA;
+	char* PUERTO_ESCUCHA;
 	char* PUNTO_MONTAJE;
 	int RETARDO;
 	int TAMANIO_VALUE;
@@ -32,7 +35,7 @@ typedef struct{
 t_list* memtable;
 t_log* logger;
 t_log* loggerError;
-
+t_configuracion_LFS* config;
 t_configuracion_LFS* cargarConfig (char* ruta);
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

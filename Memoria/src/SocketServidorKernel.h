@@ -9,7 +9,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <stdint.h>
-
+#include "AdministradorDeConsultas.h"
 
 #define PUERTO "6667"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
@@ -26,8 +26,8 @@ typedef struct _t_Paquete {
 } t_Paquete;
 
 
-int configurarSocketServidor();
+int configurarSocketServidor(char* puertoEscucha);
 void escuchar();
-void recibirYDeserealizarINSERT(socketCliente);
+void recibirYDeserealizarINSERT(int socketCliente);
 
 #endif /* SERVER_H_ */
