@@ -13,6 +13,7 @@ typedef struct{
 	int METADATA_REFRESH;
 	int SLEEP_EJECUCION;
 }t_config_kernel;
+
 /*
 typedef struct{
 	char* CONSISTENCIA;
@@ -20,10 +21,12 @@ typedef struct{
 	int T_COMPACTACION;
 }t_metadata_tabla;
 */
+
 typedef struct{
 	char* IP_MEMORIA;
 	int NUMERO_MEMORIA;
 }t_memoria;
+
 typedef struct{
 	int SC;
 	t_list *SHC;

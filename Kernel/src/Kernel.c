@@ -25,35 +25,6 @@ static const char* RUTA_CONFIG_KERNEL =
 
 
 
-
-t_config_kernel *cargarConfig(char *ruta){
-	puts("!!!Hello World!!!");
-	log_info(logger,
-			"Levantando archivo de configuracion del proceso Kernel \n");
-	t_config_kernel* config = malloc(sizeof(t_config_kernel));
-	t_config *kernelConfig = config_create(ruta);
-	if (kernelConfig == NULL) {
-		perror("Error ");
-
-		log_error(loggerError, "Problema al abrir el archivo");
-	}
-	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
-	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig,
-			"PUERTO_MEMORIA");
-	config->QUANTUM = get_campo_config_int(kernelConfig, "QUANTUM");
-	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig,
-			"MULTIPROCESAMIENTO");
-	config->METADATA_REFRESH = get_campo_config_int(kernelConfig,
-			"METADATA_REFRESH");
-	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig,
-			"SLEEP_EJECUCION");
-
-	log_info(logger,
-			"Archivo de configuracion del proceso Kernel levantado \n");
-
-	return config;
-}
-
 t_dictionary *describeGlobal(char* IP_MEMORIA){
 	log_info(logger, "Pidiendo metadata global");
 	printf("Memoria request %s",IP_MEMORIA);
@@ -159,6 +130,7 @@ int obtenerMemDestino(char *tabla, int key){
 	}
 }
 
+// Viene de ADD MEMORY 1 TO SC
 void add(int numeroMem, char *criterio){
 //	int i = -1;
 	if (strcmp(criterio, "SC") == 0) {
