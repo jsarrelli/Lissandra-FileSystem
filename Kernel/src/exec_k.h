@@ -11,7 +11,7 @@
 #include "API_kernel.h"
 #include "commons/collections/queue.h"
 
-typedef struct estructura_p_thread{
+typedef struct estructura_p_thread {
 	int id;
 	char*script;
 	pthread_t parte_thread;

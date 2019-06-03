@@ -13,8 +13,18 @@
 #include "API_kernel.h"
 #include "kernel.h"
 
-static const char* RUTA_CONFIG =
+
+// Cargo paths constantes
+
+static const char* INFO_KERNEL =
+		"/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/infoKernel.log";
+static const char* ERRORES_KERNEL =
+		"/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/erroresKernel.log";
+static const char* RUTA_CONFIG_KERNEL =
 		"/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/src/config_kernel.cfg";
+
+
+
 
 t_config_kernel *cargarConfig(char *ruta){
 	puts("!!!Hello World!!!");
@@ -37,6 +47,7 @@ t_config_kernel *cargarConfig(char *ruta){
 
 	return config;
 }
+
 t_dictionary *describeGlobal(char* IP_MEMORIA){
 	log_info(logger, "Pidiendo metadata global");
 	printf("Memoria request %s",IP_MEMORIA);
@@ -64,6 +75,7 @@ t_dictionary *describeGlobal(char* IP_MEMORIA){
 
 	return diccionario;
 }
+
 t_dictionary *conocerPoolMemorias(char* IP_MEMORIA){
 	log_info(logger, "Pidiendo pool de memorias");
 	//printf("Memoria request %s",IP_MEMORIA);
@@ -81,6 +93,7 @@ t_dictionary *conocerPoolMemorias(char* IP_MEMORIA){
 		dictionary_put(diccionario,"2",memoria2);
 	return diccionario;
 }
+
 int obtenerMemSegunConsistencia(char *consistencia, int key){
 	log_info(logger, "Obteniendo memoria segun consistencia");
 
@@ -106,9 +119,9 @@ int obtenerMemSegunConsistencia(char *consistencia, int key){
 		}
 
 	}
-
 	return memDestino;
 }
+
 char * getConsistencia(char *nombreTabla){
 	char *consistencia;
 	t_metadata_tabla * metaTabla = dictionary_get(metadataTablas,nombreTabla);
@@ -120,6 +133,7 @@ char * getConsistencia(char *nombreTabla){
 		return NULL;
 	}
 }
+
 t_criterios * inicializarCriterios(){
 	t_criterios *criterios = malloc(sizeof(t_criterios));
 	t_list *SHC = list_create();
@@ -131,6 +145,7 @@ t_criterios * inicializarCriterios(){
 
 	return criterios;
 }
+
 int obtenerMemDestino(char *tabla, int key){
 	char * consistencia;
 	consistencia = getConsistencia(tabla);
@@ -142,7 +157,7 @@ int obtenerMemDestino(char *tabla, int key){
 }
 
 void add(int numeroMem, char *criterio){
-	int i = -1;
+//	int i = -1;
 	if (strcmp(criterio, "SC") == 0){
 		if(criterios->SC == -1){
 			criterios->SC = numeroMem;
@@ -152,10 +167,12 @@ void add(int numeroMem, char *criterio){
 	}
 	else if (strcmp(criterio, "SHC") == 0){
 		//t_list * SHC = criterios->SHC;
-		i = list_add(criterios->SHC,numeroMem);
+//		i = list_add(criterios->SHC,numeroMem);
+		list_add((t_list *)criterios->SHC, (void*)numeroMem);
 
 	}else if (strcmp(criterio, "EC") == 0){
-		i = list_add(criterios->EC,numeroMem);
+//		i = list_add(criterios->EC,numeroMem);
+		list_add((t_list *)criterios->EC,(void*)numeroMem);
 	}
 	/*
 	//mostrar los elementos
@@ -172,35 +189,38 @@ void add(int numeroMem, char *criterio){
 	free(i);
 	*/
 }
+
 int main(void) {
 
+	// Mandar esto a un header -> variable global
 	t_config_kernel *config;
 
 //	char *rutaConfig = RUTA_CONFIG;
 
-	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/erroresKernel.log");
-	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/infoKernel.log");
+	inicializarArchivoDeLogs((char*)ERRORES_KERNEL);
+	inicializarArchivoDeLogs((char*)INFO_KERNEL);
 
-	logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/infoKernel.log", "Kernel Info Logs", 1, LOG_LEVEL_INFO);
-	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/erroresKernel.log", "Kernel Error Logs", 1, LOG_LEVEL_ERROR);
+	logger = log_create((char*)INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
+	loggerError = log_create((char*)ERRORES_KERNEL, "Kernel Error Logs", 1,
+			LOG_LEVEL_ERROR);
 
-	config = cargarConfig((const char*)RUTA_CONFIG);
+	config = cargarConfig((char*)RUTA_CONFIG_KERNEL);
 	criterios = inicializarCriterios();
 
 	//Conocer las memorias del pool
 		poolMemorias = conocerPoolMemorias(config->IP_MEMORIA);
 	//COMANDO ADD MEMORY [NÚMERO] TO [CRITERIO]
-		//PRIMERO VERIFICAR SI EXISTE CADA MEMORIA
+	//PRIMERO VERIFICAR SI EXISTE CADA MEMORIA
 
-	//cada METADATA_REFRESH hacer
+	//Cada METADATA_REFRESH hacer
 		metadataTablas = describeGlobal(config->IP_MEMORIA);
-		//t_metadata_tabla * metaTabla1 = dictionary_get(metadataTablas,"tabla1");
+	//t_metadata_tabla * metaTabla1 = dictionary_get(metadataTablas,"tabla1");
 
 
 	//Comando RUN <path>, por ahora simple, despues aplicar RR
 		//Levanto LQL de <path>
 		//INSERT TABLA1 1 “Mi nombre es Lissandra”
-		//fijarme a que memoria mandarlo segun la consistencia de TABLA1
+		//Fijarme a que memoria mandarlo segun la consistencia de TABLA1
 	/*
 		key=2;
 
@@ -217,6 +237,10 @@ int main(void) {
 	}
 	close(serverSocket);
 	*/
+
 	consolaKernel();
+
+	dictionary_destroy(poolMemorias);
+
 	return EXIT_SUCCESS;
 }
