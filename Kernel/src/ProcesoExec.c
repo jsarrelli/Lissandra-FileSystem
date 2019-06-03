@@ -1,12 +1,12 @@
 /*
- * exec_k.c
+ * ProcesoExec.c
  *
- *  Created on: 29 abr. 2019
+ *  Created on: 3 jun. 2019
  *      Author: utnso
  */
 
 
-#include "exec_k.h"
+#include "ProcesoExec.h"
 
 int contadorGlobal =0; // Solo se usa en funcion_thread, como ejemṕlo
 

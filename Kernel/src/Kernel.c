@@ -28,22 +28,28 @@ static const char* RUTA_CONFIG_KERNEL =
 
 t_config_kernel *cargarConfig(char *ruta){
 	puts("!!!Hello World!!!");
-	log_info(logger,"Levantando archivo de configuracion del proceso Kernel \n");
+	log_info(logger,
+			"Levantando archivo de configuracion del proceso Kernel \n");
 	t_config_kernel* config = malloc(sizeof(t_config_kernel));
 	t_config *kernelConfig = config_create(ruta);
-	if(kernelConfig == NULL){
+	if (kernelConfig == NULL) {
 		perror("Error ");
 
-		log_error(loggerError,"Problema al abrir el archivo");
+		log_error(loggerError, "Problema al abrir el archivo");
 	}
 	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
-	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig, "PUERTO_MEMORIA");
+	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig,
+			"PUERTO_MEMORIA");
 	config->QUANTUM = get_campo_config_int(kernelConfig, "QUANTUM");
-	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig, "MULTIPROCESAMIENTO");
-	config->METADATA_REFRESH = get_campo_config_int(kernelConfig, "METADATA_REFRESH");
-	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig, "SLEEP_EJECUCION");
+	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig,
+			"MULTIPROCESAMIENTO");
+	config->METADATA_REFRESH = get_campo_config_int(kernelConfig,
+			"METADATA_REFRESH");
+	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig,
+			"SLEEP_EJECUCION");
 
-	log_info(logger,"Archivo de configuracion del proceso Kernel levantado \n");
+	log_info(logger,
+			"Archivo de configuracion del proceso Kernel levantado \n");
 
 	return config;
 }
@@ -72,7 +78,6 @@ t_dictionary *describeGlobal(char* IP_MEMORIA){
 		metaTabla3->CONSISTENCIA = "EC";
 		dictionary_put(diccionario,"tabla3",metaTabla3);
 
-
 	return diccionario;
 }
 
@@ -99,23 +104,22 @@ int obtenerMemSegunConsistencia(char *consistencia, int key){
 
 	int memDestino = -1;
 
-	if (strcmp(consistencia, "SC") == 0){
+	if (strcmp(consistencia, "SC") == 0) {
 		memDestino = criterios->SC;
 		puts("SC");
-	}
-	else if (strcmp(consistencia, "SHC") == 0){
+	} else if (strcmp(consistencia, "SHC") == 0) {
 		//aplico el hash, seria key mod cantMemorias
-		if(list_size(criterios->SHC) > 0){
+		if (list_size(criterios->SHC) > 0) {
 			int largo = list_size(criterios->SHC);
 			//printf("la key es %d y largo %d",key,largo);
-			memDestino = (key % largo)+1;
+			memDestino = (key % largo) + 1;
 		}
 		puts("SHC");
-	}else if (strcmp(consistencia, "EC") == 0){
+	} else if (strcmp(consistencia, "EC") == 0) {
 		puts("EC");
-		if(list_size(criterios->EC) > 0){
+		if (list_size(criterios->EC) > 0) {
 			srand(time(NULL));
-			memDestino = (rand() % list_size(criterios->EC)) +1;
+			memDestino = (rand() % list_size(criterios->EC)) + 1;
 		}
 
 	}
@@ -124,12 +128,11 @@ int obtenerMemSegunConsistencia(char *consistencia, int key){
 
 char * getConsistencia(char *nombreTabla){
 	char *consistencia;
-	t_metadata_tabla * metaTabla = dictionary_get(metadataTablas,nombreTabla);
-	if(metaTabla != NULL){
+	t_metadata_tabla * metaTabla = dictionary_get(metadataTablas, nombreTabla);
+	if (metaTabla != NULL) {
 		consistencia = metaTabla->CONSISTENCIA;
 		return consistencia;
-
-	}else{
+	} else {
 		return NULL;
 	}
 }
@@ -149,30 +152,30 @@ t_criterios * inicializarCriterios(){
 int obtenerMemDestino(char *tabla, int key){
 	char * consistencia;
 	consistencia = getConsistencia(tabla);
-	if(consistencia != NULL){
-		return obtenerMemSegunConsistencia(consistencia,key);
-	}else{
+	if (consistencia != NULL) {
+		return obtenerMemSegunConsistencia(consistencia, key);
+	} else {
 		return -1;
 	}
 }
 
 void add(int numeroMem, char *criterio){
 //	int i = -1;
-	if (strcmp(criterio, "SC") == 0){
-		if(criterios->SC == -1){
+	if (strcmp(criterio, "SC") == 0) {
+		if (criterios->SC == -1) {
 			criterios->SC = numeroMem;
-		}else{
-			printf("El criterio SC ya tiene la memoria %d asignada.",criterios->SC);
+		} else {
+			printf("El criterio SC ya tiene la memoria %d asignada.",
+					criterios->SC);
 		}
-	}
-	else if (strcmp(criterio, "SHC") == 0){
+	} else if (strcmp(criterio, "SHC") == 0) {
 		//t_list * SHC = criterios->SHC;
 //		i = list_add(criterios->SHC,numeroMem);
-		list_add((t_list *)criterios->SHC, (void*)numeroMem);
+		list_add((t_list *) criterios->SHC, (void*) numeroMem);
 
-	}else if (strcmp(criterio, "EC") == 0){
+	} else if (strcmp(criterio, "EC") == 0) {
 //		i = list_add(criterios->EC,numeroMem);
-		list_add((t_list *)criterios->EC,(void*)numeroMem);
+		list_add((t_list *) criterios->EC, (void*) numeroMem);
 	}
 	/*
 	//mostrar los elementos
