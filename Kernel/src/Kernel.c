@@ -10,8 +10,12 @@
 
 #include "Libraries.h"
 
-
+#include "API_kernel.h"
 #include "kernel.h"
+
+static const char* RUTA_CONFIG =
+		"/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/src/config_kernel.cfg";
+
 t_config_kernel *cargarConfig(char *ruta){
 	puts("!!!Hello World!!!");
 	log_info(logger,"Levantando archivo de configuracion del proceso Kernel \n");
@@ -172,12 +176,7 @@ int main(void) {
 
 	t_config_kernel *config;
 
-	int memDestino;
-	int key;
-	int i=0;
-
-
-	char *rutaConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/src/config_kernel.cfg";
+//	char *rutaConfig = RUTA_CONFIG;
 
 	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/erroresKernel.log");
 	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/infoKernel.log");
@@ -185,7 +184,7 @@ int main(void) {
 	logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/infoKernel.log", "Kernel Info Logs", 1, LOG_LEVEL_INFO);
 	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/Kernel/erroresKernel.log", "Kernel Error Logs", 1, LOG_LEVEL_ERROR);
 
-	config = cargarConfig(rutaConfig);
+	config = cargarConfig((const char*)RUTA_CONFIG);
 	criterios = inicializarCriterios();
 
 	//Conocer las memorias del pool

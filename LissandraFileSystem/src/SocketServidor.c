@@ -10,7 +10,7 @@ void escuchar(int listenningSocket) {
 		socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if(socketMemoria!= -1){
 			procesarAccion(socketMemoria);
-			printf("Escuchando.. \n")
+			printf("Escuchando.. \n");
 		}
 		close(socketMemoria);
 	}
