@@ -10,7 +10,6 @@
 
 #include "kernel.h"
 
-
 t_config_kernel *cargarConfig(char *ruta);
 t_dictionary *describeGlobal(char* IP_MEMORIA);
 t_dictionary *conocerPoolMemorias(char* IP_MEMORIA);

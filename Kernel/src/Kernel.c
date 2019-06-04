@@ -9,6 +9,8 @@
  */
 
 #include "kernel.h"
+#include "ConfigKernel.h"
+#include "ProcesoExec.h"
 
 // Cargo paths constantes
 
@@ -21,11 +23,6 @@ static const char* RUTA_CONFIG_KERNEL =
 
 
 int main(void) {
-
-	// Mandar esto a un header -> variable global
-	t_config_kernel *config;
-
-//	char *rutaConfig = RUTA_CONFIG;
 
 	inicializarArchivoDeLogs((char*)ERRORES_KERNEL);
 	inicializarArchivoDeLogs((char*)INFO_KERNEL);
@@ -70,10 +67,12 @@ int main(void) {
 	close(serverSocket);
 	*/
 
+	deNewAReady(logger);
+
+//	printf("El multiprocesamiento extraido del archivo de configuracion es: %d\n", config->MULTIPROCESAMIENTO);
 
 
-
-//	consolaKernel();
+	consolaKernel();
 
 
 
@@ -81,7 +80,7 @@ int main(void) {
 	// Libero memoria
 
 //	dictionary_destroy(poolMemorias);
-//	dictionary_destroy(metadataTablas);
+	dictionary_destroy_and_destroy_elements(metadataTablas, (void*) free);
 //	log_destroy(logger);
 //	log_destroy(loggerError);
 	free(config);

@@ -37,7 +37,7 @@ t_config_kernel *cargarConfig(char *ruta){
 	log_info(logger,
 			"Archivo de configuracion del proceso Kernel levantado \n");
 
-//	config_destroy(kernelConfig);
+//	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 
 	return config;
 }

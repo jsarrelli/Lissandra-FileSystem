@@ -55,34 +55,34 @@ void delete_threads_in_list(t_queue* queue_hilo) {
  * Primera parte de la idea de exec
  */
 
-void from_new_to_ready(t_log *log_master) {
+void deNewAReady(t_log *log_master) {
 
-	log_info(log_master, "Inicializando valores\n");
+//	log_info(log_master, "\nInicializando valores\n");
 
 	t_p_thread* hilo = malloc(sizeof(t_p_thread));
+
 	inicializar_lista_threads(hilo, 1);
-	t_queue* queue_hilo = queue_create();
 
-	queue_push((t_queue*) queue_hilo, (t_p_thread*) hilo);
+	// Creo la cola de ready
+	t_queue* colaReady = queue_create();
 
-	/*
-	 * Desarrollo importante
-	 */
+	queue_push((t_queue*) colaReady, (t_p_thread*) hilo);
 
-	// Agregar mas elementos a la pila
-	for (int j = 0; j < CANT_ELEM_QUEUE - 1; j++) {
+	// Agregar mas elementos a la pila, pero por ahora no es necesario ya que solo usamos un solo procesador
+	cantElemColaReady = config->MULTIPROCESAMIENTO;
+	for (int j = 0; j < cantElemColaReady - 1; j++) {
 		t_p_thread* hilo = malloc(sizeof(t_p_thread));
 		inicializar_lista_threads(hilo, 1);
 
-		queue_push((t_queue*) queue_hilo, (t_p_thread*) hilo);
+		queue_push((t_queue*) colaReady, (t_p_thread*) hilo);
 	}
 
-	int size = queue_size(queue_hilo);
-	printf("EL tamaño del queue es: %d\n", size);
+	int size = queue_size(colaReady);
+	printf("\nEL tamaño de la cola de ready es: %d\n", size);
 
 	t_list* lista_threads_exec = list_create();
-	for (int i = 0; i < CANT_THREADS_EXEC; i++) {
-		t_p_thread* elem_a_agregar = queue_pop(queue_hilo);
+	for (int i = 0; i < cantElemColaReady; i++) {
+		t_p_thread* elem_a_agregar = queue_pop(colaReady);
 		pthread_create(&(elem_a_agregar->parte_thread), NULL, funcion_thread,
 				NULL);
 		pthread_join(elem_a_agregar->parte_thread, NULL);
@@ -93,9 +93,9 @@ void from_new_to_ready(t_log *log_master) {
 	 * Liberamos memoria
 	 */
 
-	delete_threads_in_list(queue_hilo);
+	delete_threads_in_list(colaReady);
 
-	queue_destroy(queue_hilo);
+	queue_destroy(colaReady);
 
 	list_destroy_and_destroy_elements(lista_threads_exec, (void*) free);
 

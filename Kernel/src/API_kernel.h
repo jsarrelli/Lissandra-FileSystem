@@ -3,6 +3,8 @@
 
 #include "kernel.h"
 
+//#include "ConfigKernel.h"
+
 // Por ahora estoy dudando de esto
 
 //// Es necesario un enum de consistencia, si ya tengo el diccionario??
@@ -34,12 +36,6 @@
 //	t_list* lista_info_tablas; // Esta cargada con info_una_tabla 's
 //}info_memorias; // Para diferenciarlos: info_una_tabla es lo que se manda del LFS e info_memorias es lo que se manda de las Memorias
 
-
-/*
- * O sea, basicamente va a haber una lista info memorias que guarde la info de las memorias
- *
- *
- */
 
 void consolaKernel();
 void procesarInput(char* linea);
