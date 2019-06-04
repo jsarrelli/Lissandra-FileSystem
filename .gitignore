@@ -48,7 +48,6 @@
 .tmp_versions/
 modules.order
 Module.symvers
-Mkfile.old
 dkms.conf
 /.metadata/
 LissandraFileSystem/FS_LISSANDRA/
@@ -66,10 +65,9 @@ LissandraFileSystem/.settings/language.settings.xml
 Libraries/.settings/language.settings.xml
 Kernel/.settings/language.settings.xml
 Libraries/.settings/language.settings.xml
-LissandraFileSystem/Debug/
-Libraries/Debug/
 
 # Eclipse
 .classpath
 .project
 *.settings/
+*.mk
