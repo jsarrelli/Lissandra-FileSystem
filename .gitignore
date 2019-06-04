@@ -68,3 +68,8 @@ Kernel/.settings/language.settings.xml
 Libraries/.settings/language.settings.xml
 LissandraFileSystem/Debug/
 Libraries/Debug/
+
+# Eclipse
+.classpath
+.project
+.settings/
