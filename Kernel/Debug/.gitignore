@@ -6,3 +6,6 @@ commons
 *.swp
 *.o
 Kernel
+Libraries
+src
+commons
