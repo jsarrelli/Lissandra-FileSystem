@@ -1,7 +1,8 @@
+# .gitignore's para los modulos del tp
+
 *language.settings.xml
 Libraries
 commons
-src
 *.mk
 *.swp
 *.o
