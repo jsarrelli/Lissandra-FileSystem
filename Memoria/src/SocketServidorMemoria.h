@@ -1,6 +1,7 @@
-#ifndef SOCKETSERVIDORFILESYSTEM_H_
-#define SOCKETSERVIDORFILESYSTEM_H
+#ifndef SERVER_H_
+#define SERVER_H_
 
+#include "AdministradorDeConsultas.h"
 #include "Libraries.h"
 #include "Funciones/Conexiones.h"
 #include "Funciones/Serializacion.h"
@@ -12,11 +13,8 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <stdint.h>
+#include "Parser.h"
 
+int socketKernel;
 
-int socketMemoria;
-
-void escuchar(int listenningSocket);
-void procesarAccion(int socketMemoria);
-
-#endif /* SOCKETSERVIDORFILESYSTEM_H_ */
+#endif /* SERVER_H_ */

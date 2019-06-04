@@ -48,11 +48,11 @@ int main() {
 
 
 
-//	log_info(logger, "Configurando Listening Socket.");
-//	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
-//	if(listenningSocket!=NULL){
-//		escuchar(listenningSocket);
-//	}
+	log_info(logger, "Configurando Listening Socket.");
+	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
+	if(listenningSocket!=NULL){
+		escuchar(listenningSocket);
+	}
 
 //	close(listenningSocket);
 	log_destroy(logger);

@@ -1,4 +1,4 @@
-#include "SocketServidor.h"
+#include "SocketServidorMemoria.h"
 
 void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
@@ -7,12 +7,12 @@ void escuchar(int listenningSocket) {
 	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
-		socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
-		if(socketMemoria!= -1){
-			procesarAccion(socketMemoria);
+		socketKernel = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
+		if(socketKernel!= -1){
+			procesarAccion(socketKernel);
 			printf("Escuchando.. \n");
 		}
-		close(socketMemoria);
+		close(socketKernel);
 	}
 
 }
@@ -24,10 +24,16 @@ void procesarAccion(int socketMemoria) {
 		if (paquete.header.quienEnvia == MEMORIA) {
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
-			int valueMaximo=100;
 			switch(paquete.header.tipoMensaje){
-			case(CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-					EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+			case(SELECT):
+					void* datos=procesarConsulta(paquete.mensaje);
+					EnviarDatosTipo(socketMemoria, MEMORIA, datos, sizeof(datos), INSERT);
+					break;
+			case(INSERT):
+					procesarConsulta(paquete.mensaje);
+					break;
+			case(DELETE):
+					procesarConsulta(paquete.mensaje);
 			}
 
 		}
@@ -42,3 +48,5 @@ void procesarAccion(int socketMemoria) {
 		free(paquete.mensaje);
 	}
 }
+
+

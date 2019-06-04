@@ -13,10 +13,10 @@
 #include "SocketServidorKernel.h"
 #include "MemoriaPrincipal.h"
 #include "AdministradorDeConsultas.h"
-#include "API.h"
 #include "SocketClienteFileSystem.h"
 #include "Funciones/Conexiones.h"
 #include "Funciones/Serializacion.h"
+#include "Parser.h"
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;
