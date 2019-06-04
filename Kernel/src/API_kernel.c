@@ -7,12 +7,13 @@
 */
 
 #include "API_kernel.h"
-#include "kernel.h"
-#include "Libraries.h"
+
+//static const int ERROR = -1;
 
 void consolaKernel(){
-	puts("Bienvenido a la consola del Kernel. Ingrese un comando:");
-	while(1){
+	int limiteIngreso = 0; // Solo para probar
+	puts("\nBienvenido a la consola del Kernel. \nIngrese un comando:");
+	while(limiteIngreso < 5){
 		char *linea = readline(">");
 
 		if(!strcmp(linea, "")){
@@ -21,6 +22,9 @@ void consolaKernel(){
 		}
 		procesarInput(linea);
 		free(linea);
+
+	limiteIngreso++;
+
 	}
 }
 
@@ -29,13 +33,15 @@ void procesarInput(char* linea) {
 	char **palabras = string_split(linea, " ");
 	cantidad = cantidadParametros(palabras);
 	if (!strcmp(*palabras, "INSERT")) {
+
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
-
 		consolaInsert(palabras, cantidad);
-	} else if (!strcmp(*palabras, "SELECT")) {
-		//	SELECT [NOMBRE_TABLA] [KEY]
 
+	} else if (!strcmp(*palabras, "SELECT")) {
+
+		//	SELECT [NOMBRE_TABLA] [KEY]
 		consolaSelect(palabras,cantidad);
+
 	} else if (!strcmp(*palabras, "CREATE")) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 
@@ -50,9 +56,10 @@ void procesarInput(char* linea) {
 
 		//consolaDrop(palabras,cantidad);
 	} else if (!strcmp(*palabras, "ADD")) {
-		//	DROP [NOMBRE_TABLA]
 
+		//	DROP [NOMBRE_TABLA]
 		consolaAdd(palabras,cantidad);
+
 	} else if(!strcmp(*palabras, "exit")){
 		printf("Finalizando consola\n");
 
@@ -67,8 +74,8 @@ void procesarInput(char* linea) {
 //	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 void consolaInsert(char**palabras, int cantidad){
 	if(cantidad == 4 || cantidad == 3){
-			int memDestino = obtenerMemDestino(palabras[1],(int)palabras[2]);
-			if(memDestino != -1){
+			int memDestino = obtenerMemDestino(palabras[1],atoi(palabras[2]));
+		if (memDestino != ERROR) {
 
 				log_info(logger, "mem destino obtenida");
 				printf("\nLa mem destino es %d \n",memDestino);
@@ -86,7 +93,7 @@ void consolaInsert(char**palabras, int cantidad){
 void consolaSelect(char**palabras, int cantidad){
 	if(cantidad == 2){
 			int memDestino = obtenerMemDestino(palabras[1],atoi(palabras[2]));
-			if(memDestino != -1){
+		if (memDestino != ERROR) {
 
 				//log_info(logger, "mem destino obtenida");
 				printf("\nLa mem destino es %d \n",memDestino);

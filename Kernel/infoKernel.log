@@ -1,6 +1,8 @@
-[INFO] 00:17:47:61 Kernel Info Logs/(14903:14903): Levantando archivo de configuracion del proceso Kernel 
+[INFO] 00:16:38:59 Kernel Info Logs/(13658:13658): Levantando archivo de configuracion del proceso Kernel 
 
-[INFO] 00:17:47:61 Kernel Info Logs/(14903:14903): Archivo de configuracion del proceso Kernel levantado 
+[INFO] 00:16:38:73 Kernel Info Logs/(13658:13658): Archivo de configuracion del proceso Kernel levantado 
 
-[INFO] 00:17:47:63 Kernel Info Logs/(14903:14903): Pidiendo pool de memorias
-[INFO] 00:17:47:63 Kernel Info Logs/(14903:14903): Pidiendo metadata global
+[INFO] 00:16:38:77 Kernel Info Logs/(13658:13658): Pidiendo pool de memorias
+[INFO] 00:16:38:78 Kernel Info Logs/(13658:13658): Pidiendo metadata global
+[INFO] 00:16:38:85 Kernel Info Logs/(13658:13658): Memoria liberada
+

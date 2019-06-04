@@ -24,4 +24,26 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Funciones</name>
+			<type>2</type>
+			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Funciones</location>
+		</link>
+		<link>
+			<name>Lib</name>
+			<type>2</type>
+			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib</location>
+		</link>
+		<link>
+			<name>Libraries</name>
+			<type>2</type>
+			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries</location>
+		</link>
+		<link>
+			<name>Libraries2</name>
+			<type>2</type>
+			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries</location>
+		</link>
+	</linkedResources>
 </projectDescription>
