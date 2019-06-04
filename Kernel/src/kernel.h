@@ -3,7 +3,8 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
-#include "Libraries.h"
+#include "Libraries.h" // Una de las librerias genericas
+#include "API_kernel.h"
 
 typedef struct{
 	char* IP_MEMORIA;
@@ -36,6 +37,8 @@ typedef struct{
 t_dictionary *metadataTablas;
 t_dictionary *poolMemorias;
 t_criterios *criterios;
+
+static const int ERROR = -1;
 
 t_config_kernel* cargarConfig (char* ruta);
 t_dictionary *describeGlobal(char* IP_MEMORIA);
