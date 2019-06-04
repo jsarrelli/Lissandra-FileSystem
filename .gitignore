@@ -65,3 +65,6 @@ Memoria/.cproject
 LissandraFileSystem/.settings/language.settings.xml
 Libraries/.settings/language.settings.xml
 Kernel/.settings/language.settings.xml
+Libraries/.settings/language.settings.xml
+LissandraFileSystem/Debug/
+Libraries/Debug/
