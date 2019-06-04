@@ -1,2 +1,8 @@
 *language.settings.xml
-/Debug/
+Libraries
+commons
+src
+*.mk
+*.swp
+*.o
+Kernel
