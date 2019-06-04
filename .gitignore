@@ -72,4 +72,4 @@ Libraries/Debug/
 # Eclipse
 .classpath
 .project
-.settings/
+*.settings/
