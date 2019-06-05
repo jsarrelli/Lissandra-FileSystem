@@ -40,11 +40,11 @@ int main() {
 	pthread_detach(threadId);
 
 	//pruebas varias
-	insertarSegmentoEnMemoria("TABLA1",NULL);
-	insertarSegmentoEnMemoria("TABLA2",NULL);
-	Segmento* tabla1= buscarSegmentoEnMemoria("TABLA1");
-	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
-	//SELECT_MEMORIA("TABLA1" , 3);
+//	insertarSegmentoEnMemoria("TABLA1",NULL);
+//	insertarSegmentoEnMemoria("TABLA2",NULL);
+//	Segmento* tabla1= buscarSegmentoEnMemoria("TABLA1");
+//	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
+//	//SELECT_MEMORIA("TABLA1" , 3);
 
 
 

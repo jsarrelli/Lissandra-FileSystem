@@ -38,7 +38,7 @@ void* procesarSELECT(char* argumentos) {
 }
 
 void* procesarINSERT(char* consulta) {
-	char** valores = string_split(consulta, "'");
+	char** valores = string_split(consulta, "'"); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	int key = atoi(valoresAux[1]);
@@ -51,7 +51,7 @@ void* procesarINSERT(char* consulta) {
 	}
 
 	INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
-	printf("Se ha insertado el siguiente registro: %d %s en la tabla %s", key, value, nombreTabla);
+	printf("Se ha insertado el siguiente registro: %d %s en la tabla %s \n", key, value, nombreTabla);
 	return NULL;
 }
 

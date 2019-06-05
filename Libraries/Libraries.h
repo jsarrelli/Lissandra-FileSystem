@@ -1,5 +1,5 @@
-#ifndef LIBRARIES_H_
-#define LIBRARIES_H_
+#ifndef LIBRARIES2_H_
+#define LIBRARIES2_H_
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -39,7 +39,7 @@ typedef struct {
 	int key;
 	char value[112];
 
-} t_registro;
+} __attribute__((packed)) t_registro;
 
 
 typedef struct{
@@ -64,7 +64,7 @@ void liberarPunteroDePunterosAChar(char** palabras);
 void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 int cantidadParametros(char ** palabras);
 int tamanioArchivo(FILE*archivo);
-
+double getCurrentTime();
 //SOCKETS
 
 int crear_socket_cliente(char * ip, char * puerto);
@@ -76,10 +76,8 @@ void enviar(int socket, void* cosaAEnviar, int tamanio);
 void* recibir(int socket);
 void *get_in_addr(struct sockaddr *sa);
 
-//TIEMPO
-double getCurrentTime();
 
 t_log* logger;
 t_log* loggerError;
 
-#endif /* LIBRARIES_H_*/
+#endif /* LIBRARIES2_H_*/

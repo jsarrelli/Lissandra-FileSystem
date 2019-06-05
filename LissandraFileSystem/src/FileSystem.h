@@ -9,6 +9,7 @@
 #define FILESYSTEM_H_
 
 #include "LissandraFileSystem.h"
+#include <Libraries.h>
 
 typedef struct{
 	int BLOCK_SIZE;

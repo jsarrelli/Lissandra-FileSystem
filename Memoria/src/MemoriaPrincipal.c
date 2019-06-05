@@ -26,12 +26,14 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido) {
 
 	segmentos = list_create();
 	inicializarEstadoMemoria();
+	logger=log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 }
 
-Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* metaData) {
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData) {
 
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
+	segmento->nombreTabla=malloc(strlen(nombreSegmento));
 	strcpy(segmento->nombreTabla, nombreSegmento);
 	segmento->nombreModificado = 0;
 	segmento->metaData = metaData;
@@ -55,6 +57,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento, do
 
 		void* marcoVacio = NULL;
 		if (memoriaLlena()) {
+			log_info(logger, "Memoria llena");
 			if (!todosModificados()) {
 				marcoVacio = (void*) liberarUltimoUsado();
 			} else {
@@ -75,6 +78,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento, do
 
 		list_add(segmento->paginas, paginaNueva);
 	} else {
+		log_info(logger, "Esta key ya se encuentra en el sistema, se actualizara");
 		paginaNueva->registro->timestamp = timeStamp;
 		strcpy(paginaNueva->registro->value, value);
 		paginaNueva->modificado = 1;
@@ -121,10 +125,10 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	return pagina;
 }
 
-Segmento* buscarSegmentoEnMemoria(char nombreSegmentoBuscado[20]) {
+Segmento* buscarSegmentoEnMemoria(char* nombreSegmentoBuscado) {
 
-	bool isSegmentoBuscado(char nombreSegmento[20]) {
-		if (strcmp(nombreSegmento, nombreSegmentoBuscado) == 0) {
+	bool isSegmentoBuscado(Segmento* segmentoActual) {
+		if (strcmp(segmentoActual->nombreTabla, nombreSegmentoBuscado) == 0) {
 			return true;
 		}
 		return false;
@@ -137,7 +141,8 @@ Segmento* buscarSegmentoEnMemoria(char nombreSegmentoBuscado[20]) {
 //te devuelve el estadoFrame de determinada pagina
 //DUDOSISIMA
 EstadoFrame* getEstadoFrame(Pagina* pagina) {
-	int indiceFrame = ((int) (memoria - (void*) pagina->registro)) / sizeof(t_registro);
+	int calculo= (void*)pagina->registro-memoria;
+	int indiceFrame =calculo / sizeof(t_registro);
 	return list_get(memoriaStatus, (int) indiceFrame);
 }
 
@@ -145,7 +150,7 @@ EstadoFrame* getEstadoFrame(Pagina* pagina) {
  lo vamos a buscar al fileSystem
  y si el fileSystem no lo tiene, lo creamos
  */
-Segmento* buscarSegmento(char nombreSegmento[20]) {
+Segmento* buscarSegmento(char* nombreSegmento) {
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
 	if (segmento == NULL) {
 		//pegale al fileSystem
@@ -180,6 +185,7 @@ bool todosModificados() {
 }
 
 void* liberarUltimoUsado() {
+	log_info(logger, "Aplicando algortimo LRU");
 	EstadoFrame* frameMenosUtilizado = list_get(memoriaStatus, 0);
 	Pagina* paginaMenosUtilizada;
 	Segmento* segmentoPaginaMenosUtilizada;
@@ -201,7 +207,7 @@ void* liberarUltimoUsado() {
 	}
 
 	list_iterate(segmentos, (void*) iterarEntrePaginas);
-
+	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",paginaMenosUtilizada->registro->key,paginaMenosUtilizada->registro->timestamp);
 	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
 	return frameMenosUtilizado;
@@ -224,7 +230,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 }
 
-void eliminarSegmentoDeMemoria(char nombreSegmento[20]) {
+void eliminarSegmentoDeMemoria(char* nombreSegmento) {
 	Segmento* segmentoAEliminar = buscarSegmentoEnMemoria(nombreSegmento);
 
 	if (segmentoAEliminar != NULL) {

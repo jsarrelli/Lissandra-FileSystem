@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "AdministradorDeConsultas.h"
-
+#include "Libraries.h"
 
 void* procesarConsulta(char* consulta);
 void* procesarINSERT(char* consulta);

@@ -8,11 +8,10 @@
 #ifndef FUNCIONESLFS_H_
 #define FUNCIONESLFS_H_
 
-#include "Libraries.h"
+#include <Libraries.h>
 #include "FileSystem.h"
 
 //t_list* listaNombresTablas;
-double getCurrentTime();
 
 //consola
 

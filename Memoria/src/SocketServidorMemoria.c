@@ -24,7 +24,6 @@ void procesarAccion(int socketMemoria) {
 		if (paquete.header.quienEnvia == MEMORIA) {
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
-			void* datos;
 			switch(paquete.header.tipoMensaje){
 			case(SELECT):
 					datos=procesarConsulta(paquete.mensaje);
@@ -35,6 +34,9 @@ void procesarAccion(int socketMemoria) {
 					break;
 			case(DELETE):
 					procesarConsulta(paquete.mensaje);
+					break;
+
+
 			}
 
 		}

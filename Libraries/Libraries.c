@@ -277,14 +277,6 @@ void *get_in_addr(struct sockaddr *sa) {
 	return &(((struct sockaddr_in6*) sa)->sin6_addr);
 }
 
-double getCurrentTime(){
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	unsigned long long result = (((unsigned long long)tv.tv_sec)*1000 + ((unsigned long long )tv.tv_usec)/1000);
-	double res = result;
-	return res;
-}
-
 int tamanioArchivo(FILE*archivo){
 	int tamanio;
 	fseek(archivo, 0L, SEEK_END);
@@ -293,3 +285,12 @@ int tamanioArchivo(FILE*archivo){
 
 	return tamanio;
 }
+
+double getCurrentTime(){
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	unsigned long long result = (((unsigned long long)tv.tv_sec)*1000 + ((unsigned long long )tv.tv_usec)/1000);
+	double res = result;
+	return res;
+}
+

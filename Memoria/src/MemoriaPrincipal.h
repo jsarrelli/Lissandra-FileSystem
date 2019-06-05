@@ -11,14 +11,14 @@
 
 
 int valueMaximo;
-
+t_log* logger;
 void* memoria;
 t_list* segmentos;
 t_list* memoriaStatus;// suerte de bitmap que guarda los frames disponibles de memoria
 
 typedef struct Segmento{
-	char nombreTabla[20];
-	char nombreViejo[20];
+	char* nombreTabla;
+	char* nombreViejo;
 	t_list* paginas;
 	int nombreModificado;
 	t_metadata_tabla* metaData;
@@ -36,15 +36,15 @@ typedef struct EstadoFrame{
 
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido);
 
-Segmento* buscarSegmento(char nombreSegmento[20]);
-Segmento* buscarSegmentoEnMemoria(char nombreSegmento[20]);
+Segmento* buscarSegmento(char* nombreSegmento);
+Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
 
 Pagina* buscarPaginaEnMemoria(Segmento* segmento,int key);
 Pagina* buscarPagina(Segmento* segmento,int key);
 
-Segmento* insertarSegmentoEnMemoria(char nombreSegmento[20], t_metadata_tabla* metaData);
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData);
 Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento,double timeStamp);
-void eliminarSegmento(char nombreTabla[20]);
+void eliminarSegmento(char* nombreSegmento);
 
 bool memoriaLlena();
 void* darMarcoVacio();
@@ -54,7 +54,7 @@ void* liberarUltimoUsado();
 t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
-void eliminarSegmentoDeMemoria(char nombreSegmento[20]);
+void eliminarSegmentoDeMemoria(char* nombreSegmento);
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar,Segmento* segmento);
 
 #endif /*MEMORIAPRINCIPAL_H_*/
