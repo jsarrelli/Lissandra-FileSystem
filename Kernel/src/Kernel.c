@@ -9,8 +9,6 @@
  */
 
 #include "kernel.h"
-#include "ConfigKernel.h"
-#include "ProcesoExec.h"
 
 // Cargo paths constantes
 

@@ -8,7 +8,7 @@
 #ifndef PROCESOEXEC_H_
 #define PROCESOEXEC_H_
 
-#include "API_kernel.h"
+#include "kernel.h"
 #include "commons/collections/queue.h"
 
 

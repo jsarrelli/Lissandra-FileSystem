@@ -5,6 +5,7 @@
 
 #include "Libraries.h" // Una de las librerias genericas
 #include "API_kernel.h"
+#include "ProcesoExec.h"
 
 typedef struct{
 	char* IP_MEMORIA;
