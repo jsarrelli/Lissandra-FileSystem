@@ -69,4 +69,5 @@ Libraries/.settings/language.settings.xml
 # Eclipse
 .classpath
 .project
+.cproject
 *.settings/
