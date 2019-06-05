@@ -67,7 +67,7 @@ Kernel/.settings/language.settings.xml
 Libraries/.settings/language.settings.xml
 
 # Eclipse
-.classpath
-.project
-.cproject
+*.classpath
+*.project
+*.cproject
 *.settings/
