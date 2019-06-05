@@ -71,3 +71,5 @@ Libraries/.settings/language.settings.xml
 *.project
 *.cproject
 *.settings/
+*valgrind*
+LissandraFileSystem/Debug/LissandraFileSystem
