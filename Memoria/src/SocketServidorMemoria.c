@@ -1,6 +1,6 @@
 #include "SocketServidorMemoria.h"
 
-void escuchar(int listenningSocket) {
+void escuchar(int listenningSocket,int socketFileSystem) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
 	printf("Escuchando...\n");
 
@@ -9,7 +9,7 @@ void escuchar(int listenningSocket) {
 	while (true) {
 		socketKernel = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if(socketKernel!= -1){
-			procesarAccion(socketKernel);
+			procesarAccion(socketKernel,socketFileSystem);
 			printf("Escuchando.. \n");
 		}
 		close(socketKernel);
@@ -17,17 +17,17 @@ void escuchar(int listenningSocket) {
 
 }
 
-void procesarAccion(int socketMemoria) {
+void procesarAccion(int socketKernel,int socketFileSystem) {
 	Paquete paquete;
 	void* datos;
-	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
-		if (paquete.header.quienEnvia == MEMORIA) {
+	if (RecibirPaqueteServidor(socketKernel, FILESYSTEM, &paquete) > 0) {
+		if (paquete.header.quienEnvia == KERNEL) {
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
 			switch(paquete.header.tipoMensaje){
 			case(SELECT):
 					datos=procesarConsulta(paquete.mensaje);
-					EnviarDatosTipo(socketMemoria, MEMORIA, datos, sizeof(datos), INSERT);
+					EnviarDatosTipo(socketFileSystem, MEMORIA, datos, sizeof(datos), INSERT);
 					break;
 			case(INSERT):
 					procesarConsulta(paquete.mensaje);

@@ -17,6 +17,6 @@
 
 int socketKernel;
 
-void procesarAccion(int socketMemoria);
-void escuchar(int listenningSocket);
+void procesarAccion(int socketMemoria,int socketFileSystem);
+void escuchar(int listenningSocket,int socketFileSystem);
 #endif /* SERVER_H_ */

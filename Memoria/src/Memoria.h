@@ -10,7 +10,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#include "SocketServidorKernel.h"
 #include "MemoriaPrincipal.h"
 #include "AdministradorDeConsultas.h"
 #include "SocketClienteFileSystem.h"
