@@ -8,7 +8,7 @@
 #ifndef PROCESOEXEC_H_
 #define PROCESOEXEC_H_
 
-#include "kernel.h"
+#include "Kernel.h"
 #include "commons/collections/queue.h"
 
 

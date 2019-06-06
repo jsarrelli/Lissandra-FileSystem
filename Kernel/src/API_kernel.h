@@ -1,7 +1,7 @@
 #ifndef API_KERNEL_H_
 #define API_KERNEL_H_
 
-#include "kernel.h"
+#include "Kernel.h"
 
 //#include "ConfigKernel.h"
 

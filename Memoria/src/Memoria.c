@@ -9,7 +9,7 @@
  */
 #include "Memoria.h"
 
-void HandshakeInicial()
+int HandshakeInicial()
 {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	log_info(logger, "Memoria conectada a File System");
@@ -19,10 +19,11 @@ void HandshakeInicial()
 	while (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
 		datos = malloc(paquete.header.tamanioMensaje);
 		datos = paquete.mensaje;
-		memcpy(&valueMaximoPaginas,datos,sizeof(int));
+		memcpy(&valueMaximoPaginas, datos, sizeof(int));
 	}
 
-	log_info(logger, "Handshake inicial realizado. Value Maximo: %d",valueMaximoPaginas);
+	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
+	return socketFileSystem;
 }
 
 int main() {
@@ -31,12 +32,11 @@ int main() {
 	cargarConfiguracion();
 
 	int valueMaximoPagina;
-	HandshakeInicial(&valueMaximoPagina);
-	inicializarMemoria(valueMaximoPagina,configuracion->TAM_MEMORIA);
+	int socketFileSystem = HandshakeInicial(&valueMaximoPagina);
+	inicializarMemoria(valueMaximoPagina, configuracion->TAM_MEMORIA);
 	log_info(logger, "--Memoria inicializada--");
 
-
-	pthread_create(&threadId, NULL, leerConsola(), NULL);
+	pthread_create(&threadId, NULL, leerConsola, NULL);
 	pthread_detach(threadId);
 
 	//pruebas varias
@@ -46,18 +46,17 @@ int main() {
 //	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
 //	//SELECT_MEMORIA("TABLA1" , 3);
 
-
-
 	log_info(logger, "Configurando Listening Socket.");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
-	if(listenningSocket!=NULL){
-		escuchar(listenningSocket);
+	if (listenningSocket != NULL) {
+		escuchar(listenningSocket, socketFileSystem);
 	}
 
 //	close(listenningSocket);
 	log_destroy(logger);
 	free(configuracion);
 	config_destroy(archivo_configuracion);
+
 	return EXIT_SUCCESS;
 }
 
@@ -67,11 +66,11 @@ void* leerConsola()
 	while (1) {
 
 		puts("Ingrese comandos a ejecutar. Escriba 'salir' para finalizar");
-		consulta=readline(">");
-		if(consulta){
+		consulta = readline(">");
+		if (consulta) {
 			add_history(consulta);
 		}
-		if(consulta==NULL){
+		if (consulta == NULL) {
 			return NULL;
 		}
 		procesarConsulta(consulta);
@@ -82,9 +81,9 @@ void* leerConsola()
 }
 
 void cargarConfiguracion() {
-	log_info(logger,"Levantando archivo de configuracion del proceso MEMORIA");
-	configuracion=(MEMORIA_configuracion*)malloc(sizeof(MEMORIA_configuracion));
-	if(configuracion==NULL){
+	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
+	configuracion = (MEMORIA_configuracion*) malloc(sizeof(MEMORIA_configuracion));
+	if (configuracion == NULL) {
 		exit(0);
 	}
 	archivo_configuracion = config_create(pathMEMConfig);

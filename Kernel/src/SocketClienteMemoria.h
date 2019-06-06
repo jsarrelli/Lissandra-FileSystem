@@ -15,10 +15,8 @@
 #define MAXCONSULTA 6
 #define MAX_MENSAJE_SIZE 100
 
-
-enum CodigoOperacion{
-	SELECT = 1
-};
+#include "Funciones/Conexiones.h"
+#include "Funciones/Serializacion.h"
 
 
 int serverSocket;
@@ -31,10 +29,5 @@ typedef struct t_Paquete_SELECT {
 	int sizeNombreTabla;
 	char* nombreTabla;
 } t_Paquete_SELECT;
-
-
-
-int configurarSocketCliente();
-void INSERT(int key, char* value, char* nombreTabla);
 
 #endif /* CLIENTE_H_ */

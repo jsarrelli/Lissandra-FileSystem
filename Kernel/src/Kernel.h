@@ -7,15 +7,9 @@
 #include "API_kernel.h"
 #include "ProcesoExec.h"
 
-typedef struct{
-	char* IP_MEMORIA;
-	int PUERTO_MEMORIA;
-	int QUANTUM;
-	int MULTIPROCESAMIENTO;
-	int METADATA_REFRESH;
-	int SLEEP_EJECUCION;
-}t_config_kernel;
-
+#include "ProcesoExec.h"
+#include "Funciones/Conexiones.h"
+#include "Funciones/Serializacion.h"
 /*
 typedef struct{
 	char* CONSISTENCIA;
@@ -29,11 +23,23 @@ typedef struct{
 	int NUMERO_MEMORIA;
 }t_memoria;
 
+typedef struct {
+	char* IP_MEMORIA;
+	int PUERTO_MEMORIA;
+	int QUANTUM;
+	int MULTIPROCESAMIENTO;
+	int METADATA_REFRESH;
+	int SLEEP_EJECUCION;
+} t_config_kernel;
+
 typedef struct{
 	int SC;
 	t_list *SHC;
 	t_list *EC;
 }t_criterios;
+
+
+
 
 t_dictionary *metadataTablas;
 t_dictionary *poolMemorias;

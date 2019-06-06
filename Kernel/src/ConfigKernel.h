@@ -7,8 +7,7 @@
 
 #ifndef CONFIGKERNEL_H_
 #define CONFIGKERNEL_H_
-
-#include "kernel.h"
+#include "Kernel.h"
 
 t_config_kernel *cargarConfig(char *ruta);
 t_dictionary *describeGlobal(char* IP_MEMORIA);
