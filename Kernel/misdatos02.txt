@@ -1,0 +1,9 @@
+Nueva prueba de fgets (03) 
+Veamos si lee los siguientes datos 
+SELECT TABLA1 3 
+CREATE TABLA1 SC 4 60000 
+DESCRIBE 
+DESCRIBE TABLA1 
+JOURNAL 
+METRICS 
+ADD MEMORY 3 TO SC 

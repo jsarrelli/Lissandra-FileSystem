@@ -7,7 +7,6 @@
 #include "API_kernel.h"
 #include "ProcesoExec.h"
 
-#include "ProcesoExec.h"
 #include "Funciones/Conexiones.h"
 #include "Funciones/Serializacion.h"
 /*
@@ -37,8 +36,6 @@ typedef struct{
 	t_list *SHC;
 	t_list *EC;
 }t_criterios;
-
-
 
 
 t_dictionary *metadataTablas;

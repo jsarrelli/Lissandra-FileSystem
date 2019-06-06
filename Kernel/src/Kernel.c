@@ -55,12 +55,15 @@ int main(void) {
 	 printf("No se pudo obtener la memoria destino.");
 	 }
 	 */
-	log_info(logger, "Conectandose a memoria..");
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
-	log_info(logger, "Memoria conectada");
 
-	char* consulta ="INSERT TABLA1 3 'CASA'";
-	EnviarDatosTipo(socketMemoria, KERNEL, consulta, strlen(consulta),INSERT);
+	// Empezar a conectarse con memoria
+
+//	log_info(logger, "Conectandose a memoria..");
+//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+//	log_info(logger, "Memoria conectada");
+//
+//	char* consulta ="INSERT TABLA1 3 'CASA'";
+//	EnviarDatosTipo(socketMemoria, KERNEL, consulta, strlen(consulta),INSERT);
 
 
 	deNewAReady(logger);
