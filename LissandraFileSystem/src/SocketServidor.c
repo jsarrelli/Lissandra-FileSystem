@@ -8,8 +8,10 @@ void escuchar(int listenningSocket) {
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
 		socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
-		if(socketMemoria!= -1){
-			procesarAccion(socketMemoria);
+		if (socketMemoria != -1) {
+			pthread_t threadId;
+			pthread_create(&threadId, NULL, procesarAccion, (void*) socketMemoria);
+			pthread_detach(threadId);
 			printf("Escuchando.. \n");
 		}
 		close(socketMemoria);
@@ -24,21 +26,32 @@ void procesarAccion(int socketMemoria) {
 		if (paquete.header.quienEnvia == MEMORIA) {
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
-			int valueMaximo=100;
-			switch(paquete.header.tipoMensaje){
-			case(CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-					EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+			int valueMaximo = 100;
+			switch ((int)paquete.header.tipoMensaje) {
+			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
+				EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+				break;
+			case (SELECT):
+				//
+				break;
+			case (INSERT):
+				//
+				break;
+			case (DROP):
+				//
+				break;
+			case (DESCRIBE):
+				//
+				break;
 			}
 
-		}
-		else{
+		} else {
 			log_info(logger, "No es ningun proceso de Memoria");
 		}
 
-
 	}
 
-	if(paquete.mensaje!=NULL){
+	if (paquete.mensaje != NULL) {
 		free(paquete.mensaje);
 	}
 }
