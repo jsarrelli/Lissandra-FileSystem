@@ -186,3 +186,71 @@ void add(int numeroMem, char *criterio){
 	free(i);
 	*/
 }
+
+void escriboComandosHardcodeados(FILE* fichero, char* path) {
+	//ESCRITURA
+	fichero = fopen(path, "wt");
+	fprintf(fichero, "%s %c", "Nueva prueba de fgets (03)", '\n');
+	fprintf(fichero, "%s %c", "Veamos si lee los siguientes datos", '\n');
+	fprintf(fichero, "%s %c", "SELECT TABLA1 3", '\n');
+	fprintf(fichero, "%s %c", "CREATE TABLA1 SC 4 60000", '\n');
+	fprintf(fichero, "%s %c", "DESCRIBE", '\n');
+	fprintf(fichero, "%s %c", "DESCRIBE TABLA1", '\n');
+	fprintf(fichero, "%s %c", "JOURNAL", '\n');
+	fprintf(fichero, "%s %c", "METRICS", '\n');
+	fprintf(fichero, "%s %c", "ADD MEMORY 3 TO SC", '\n');
+	fclose(fichero);
+}
+
+int contarLineasArchivo(FILE* fichero, char* path) {
+	fichero = fopen(path, "rt");
+
+	if(fichero==NULL)
+		return 0;
+	int caracter, num_lineas = 0;
+	while ((caracter = fgetc(fichero)) != EOF)
+		if (caracter == '\n')
+			num_lineas++;
+	fclose(fichero);
+	return num_lineas;
+}
+
+void comandoRun(char*path){
+	info.script = NULL;
+//	char**info.script = NULL;
+	FILE* fd = NULL;
+//	escriboComandosHardcodeados(fd, path2);
+	int num_lineas = contarLineasArchivo(fd, path);
+
+	// Inicializar puntero
+	info.script = (char**) malloc(num_lineas * sizeof(char*));
+
+	if(num_lineas==0)
+		printf("El path no es correcto o el archivo esta vacio\n");
+	else{
+		fd = fopen(path, "rt");
+			for (int i = 0; i < num_lineas; i++) {
+
+				// Inicializo punteros del puntero matriz
+				char ejemplo[200];
+				fgets(ejemplo, sizeof(ejemplo), fd);
+				int tam = strlen(ejemplo) + 1;
+				info.script[i] = (char*) malloc(tam);
+				strcpy(info.script[i], ejemplo);
+
+				printf("El valor es: %s", ejemplo);
+		//		list_add(listaInfoProcesos, info);
+			}
+			fclose(fd);
+
+			// Libero memoria, por ahora no la libero a proposito porque necesito la info
+
+		//	for (int i = 0; i < num_lineas; i++) {
+		//		free(info.script[i]);
+		//	}
+		//	free(info.script);
+		//	info.script=NULL;
+
+	}
+}
+
