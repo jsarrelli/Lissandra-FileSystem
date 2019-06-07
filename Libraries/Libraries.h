@@ -43,7 +43,8 @@ typedef struct {
 
 typedef enum t_consistencia{
 	EVENTUAL = 1,
-	STRONG
+	STRONG,
+	STRONG_HASH
 }t_consistencia;
 
 typedef struct{
@@ -69,6 +70,7 @@ void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 int cantidadParametros(char ** palabras);
 int tamanioArchivo(FILE*archivo);
 double getCurrentTime();
+t_consistencia getConsistencia(char* consistenciaChar);
 //SOCKETS
 
 int crear_socket_cliente(char * ip, char * puerto);

@@ -294,3 +294,16 @@ double getCurrentTime(){
 	return res;
 }
 
+t_consistencia getConsistencia(char* consistenciaChar) {
+	t_consistencia consistencia;
+	if (strcmp(consistenciaChar, "SC")) {
+		consistencia = STRONG;
+	} else if (strcmp(consistenciaChar, "SHC")) {
+		consistencia = STRONG_HASH;
+	} else {
+		consistencia = EVENTUAL;
+	}
+
+	return consistencia;
+}
+
