@@ -7,7 +7,6 @@
 #include "API_kernel.h"
 #include "ProcesoExec.h"
 
-#include "ProcesoExec.h"
 #include "Funciones/Conexiones.h"
 #include "Funciones/Serializacion.h"
 /*
@@ -38,14 +37,19 @@ typedef struct{
 	t_list *EC;
 }t_criterios;
 
+typedef struct{
+	char**script;
+}infoProceso;
 
-
+infoProceso info;
 
 t_dictionary *metadataTablas;
 t_dictionary *poolMemorias;
 t_criterios *criterios;
 
 t_config_kernel *config;
+
+t_list* listaInfoProcesos;
 
 static const int ERROR = -1;
 

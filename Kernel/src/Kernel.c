@@ -24,6 +24,8 @@ int main(void) {
 	inicializarArchivoDeLogs((char*) ERRORES_KERNEL);
 	inicializarArchivoDeLogs((char*) INFO_KERNEL);
 
+	listaInfoProcesos = list_create();
+
 	logger = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
 	loggerError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1,
 			LOG_LEVEL_ERROR);
@@ -55,12 +57,15 @@ int main(void) {
 	 printf("No se pudo obtener la memoria destino.");
 	 }
 	 */
-	log_info(logger, "Conectandose a memoria..");
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
-	log_info(logger, "Memoria conectada");
 
-	char* consulta ="INSERT TABLA1 3 'CASA'";
-	EnviarDatosTipo(socketMemoria, KERNEL, consulta, strlen(consulta),INSERT);
+	// Empezar a conectarse con memoria
+
+//	log_info(logger, "Conectandose a memoria..");
+//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+//	log_info(logger, "Memoria conectada");
+//
+//	char* consulta ="INSERT TABLA1 3 'CASA'";
+//	EnviarDatosTipo(socketMemoria, KERNEL, consulta, strlen(consulta),INSERT);
 
 
 	deNewAReady(logger);
@@ -69,6 +74,8 @@ int main(void) {
 
 	consolaKernel();
 
+//	printf("%s", info.script[0]);
+
 	// Libero memoria
 
 //	dictionary_destroy(poolMemorias);
@@ -76,6 +83,7 @@ int main(void) {
 //	log_destroy(logger);
 //	log_destroy(loggerError);
 	free(config);
+	list_destroy(listaInfoProcesos);
 
 	return EXIT_SUCCESS;
 }

@@ -17,5 +17,6 @@ char * getConsistencia(char *nombreTabla);
 t_criterios * inicializarCriterios();
 int obtenerMemDestino(char *tabla, int key);
 void add(int numeroMem, char *criterio);
+void comandoRun(char*path);
 
 #endif /* CONFIGKERNEL_H_ */

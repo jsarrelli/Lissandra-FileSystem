@@ -10,3 +10,4 @@ void* procesarSELECT(char* consulta);
 void* procesarCREATE(char* consulta);
 void* procesarDROP(char* consulta);
 void* procesarDESCRIBE(char* consulta);
+t_registro procesarRegistro(char* datos);

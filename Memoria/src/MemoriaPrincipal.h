@@ -7,43 +7,47 @@
 #include <commons/string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
-
+#include "Parser.h"
+#include "Funciones/Serializacion.h"
+#include "Funciones/Conexiones.h"
 
 int valueMaximo;
 t_log* logger;
 void* memoria;
 t_list* segmentos;
-t_list* memoriaStatus;// suerte de bitmap que guarda los frames disponibles de memoria
+t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
+int socketFileSystem;
 
-typedef struct Segmento{
+typedef struct Segmento {
 	char* nombreTabla;
 	char* nombreViejo;
 	t_list* paginas;
 	int nombreModificado;
 	t_metadata_tabla* metaData;
-}Segmento;
+} Segmento;
 
-typedef struct Pagina{
+typedef struct Pagina {
 	int modificado;
 	t_registro* registro;
-}Pagina;
+} Pagina;
 
-typedef struct EstadoFrame{
+typedef struct EstadoFrame {
 	int estado;
 	double fechaObtencion;
-}EstadoFrame;
+} EstadoFrame;
 
-void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido);
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystem);
 
 Segmento* buscarSegmento(char* nombreSegmento);
 Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
 
-Pagina* buscarPaginaEnMemoria(Segmento* segmento,int key);
-Pagina* buscarPagina(Segmento* segmento,int key);
+Pagina* buscarPaginaEnMemoria(Segmento* segmento, int key);
+Pagina* buscarPagina(Segmento* segmento, int key);
 
 Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData);
-Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento,double timeStamp);
+Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento);
 void eliminarSegmento(char* nombreSegmento);
 
 bool memoriaLlena();
@@ -55,6 +59,6 @@ t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
 void eliminarSegmentoDeMemoria(char* nombreSegmento);
-void eliminarPaginaDeMemoria(Pagina* paginaAEliminar,Segmento* segmento);
+void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
 
 #endif /*MEMORIAPRINCIPAL_H_*/

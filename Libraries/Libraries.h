@@ -35,15 +35,19 @@
 #include <signal.h>
 
 typedef struct {
-	double timestamp;
 	int key;
 	char value[112];
+	double timestamp;
 
 } __attribute__((packed)) t_registro;
 
+typedef enum t_consistencia{
+	EVENTUAL = 1,
+	STRONG
+}t_consistencia;
 
 typedef struct{
-	char* CONSISTENCIA;
+	t_consistencia CONSISTENCIA;
 	int CANT_PARTICIONES;
 	int T_COMPACTACION;
 }t_metadata_tabla;

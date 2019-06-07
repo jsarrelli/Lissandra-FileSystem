@@ -58,10 +58,15 @@ void* procesarINSERT(char* consulta) {
 void* procesarCREATE(char* consulta) {
 	char** valores = string_split(consulta, " ");
 	char* nombreTabla = valores[0];
-	char* consistencia = valores[1];
+	char* consistenciaChar = valores[1];
 	int cantParticiones = atoi(valores[2]);
 	int tiempoCompactacion = atoi(valores[3]);
-
+	t_consistencia consistencia;
+	if(strcmp(consistenciaChar,"EV")==0){
+		consistencia=EVENTUAL;
+	}else{
+		consistencia=STRONG;
+	}
 	CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 	printf("Se ha creado la tabla %s", nombreTabla);
 	return NULL;
@@ -93,4 +98,20 @@ void* procesarDESCRIBE(char* nombreTabla) {
 	return NULL;//por ahora
 
 }
+
+t_registro procesarRegistro(char* cadenaRecibida){
+	char** datos=string_split(cadenaRecibida, " ");
+	int key=atoi(datos[0]);
+	char* valueRecibido=datos[1];
+	double timeStamp = atof(datos[2]);
+
+	t_registro registro;
+	registro.key=key;
+	strcpy(registro.value,valueRecibido);
+	registro.timestamp=timeStamp;
+	return registro;
+
+}
+
+
 
