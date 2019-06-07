@@ -9,22 +9,7 @@
  */
 #include "Memoria.h"
 
-int HandshakeInicial()
-{
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	log_info(logger, "Memoria conectada a File System");
-	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
-	Paquete paquete;
-	void* datos;
-	while (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
-		datos = malloc(paquete.header.tamanioMensaje);
-		datos = paquete.mensaje;
-		memcpy(&valueMaximoPaginas, datos, sizeof(int));
-	}
 
-	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
-	return socketFileSystem;
-}
 
 int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
@@ -33,7 +18,7 @@ int main() {
 
 	int valueMaximoPagina;
 	int socketFileSystem = HandshakeInicial(&valueMaximoPagina);
-	inicializarMemoria(valueMaximoPagina, configuracion->TAM_MEMORIA);
+	inicializarMemoria(valueMaximoPagina, configuracion->TAM_MEMORIA,socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
 	pthread_create(&threadId, NULL, leerConsola, NULL);
@@ -52,7 +37,7 @@ int main() {
 		escuchar(listenningSocket, socketFileSystem);
 	}
 
-//	close(listenningSocket);
+	close(listenningSocket);
 	log_destroy(logger);
 	free(configuracion);
 	config_destroy(archivo_configuracion);
@@ -78,6 +63,23 @@ void* leerConsola()
 	}
 	log_info(logger, "Fin de leectura por consola");
 	return NULL;
+}
+
+int HandshakeInicial()
+{
+	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	log_info(logger, "Memoria conectada a File System");
+	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+	Paquete paquete;
+	void* datos;
+	while (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
+		datos = malloc(paquete.header.tamanioMensaje);
+		datos = paquete.mensaje;
+		memcpy(&valueMaximoPaginas, datos, sizeof(int));
+	}
+
+	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
+	return socketFileSystem;
 }
 
 void cargarConfiguracion() {

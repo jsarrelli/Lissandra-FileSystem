@@ -8,6 +8,7 @@
 #include "AdministradorDeConsultas.h"
 
 t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
+	//si aca el segmento no existe en ningun lado, lo tengo que crear?
 	Segmento* tabla = buscarSegmento(nombreTabla);
 	if (tabla != NULL) {
 		Pagina* pagina = buscarPagina(tabla, key);
@@ -23,7 +24,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value,double timeSt
 	if (tabla == NULL) {
 		tabla = insertarSegmentoEnMemoria(nombreTabla, NULL);
 	}
-	Pagina* pagina = insertarPaginaEnMemoria(key, value, tabla,timeStamp);
+	Pagina* pagina = insertarPaginaEnMemoria(key, value,timeStamp,tabla);
 	return pagina->registro;
 }
 
@@ -32,9 +33,9 @@ void DROP_MEMORIA(char* nombreTabla) {
 	//aca pegale a kevin y avisale
 }
 
-int CREATE_MEMORIA(char* nombreTabla, char* consistencia, int cantParticiones, int tiempoCompactacion) {
+int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metaData = malloc(sizeof(t_metadata_tabla));
-	strcpy(metaData->CONSISTENCIA, consistencia);
+	metaData->CONSISTENCIA=consistencia;
 	metaData->CANT_PARTICIONES = cantParticiones;
 	metaData->T_COMPACTACION = tiempoCompactacion;
 

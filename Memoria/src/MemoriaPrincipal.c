@@ -18,22 +18,23 @@ void inicializarEstadoMemoria() {
 	}
 }
 
-void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido) {
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
 	tamanioMemoria = tamanioMemoriaRecibido;
 	cantFrames = tamanioMemoria / sizeof(t_registro);
 	memoria = malloc(tamanioMemoria);
 	valueMaximo = valueMaximoRecibido;
+	socketFileSystem = socketFileSystemRecibido;
 
 	segmentos = list_create();
 	inicializarEstadoMemoria();
-	logger=log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
+	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 }
 
 Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData) {
 
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
-	segmento->nombreTabla=malloc(strlen(nombreSegmento));
+	segmento->nombreTabla = malloc(strlen(nombreSegmento));
 	strcpy(segmento->nombreTabla, nombreSegmento);
 	segmento->nombreModificado = 0;
 	segmento->metaData = metaData;
@@ -45,7 +46,7 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
 //el segmento tiene que existir
-Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento, double timeStamp) {
+Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento) {
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 
@@ -86,7 +87,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], Segmento* segmento, do
 
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
 	estadoFrame->estado = 1;
-	estadoFrame->fechaObtencion = timeStamp;
+	estadoFrame->fechaObtencion = getCurrentTime();
 
 	return paginaNueva;
 }
@@ -118,8 +119,24 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
-		t_registro* registro; //= pegale a kevin
-		insertarPaginaEnMemoria(registro->key, registro->value, segmento,getCurrentTime());
+		//queria INSERT TABLA KEY, le sumo dos por los espacios
+		char* consulta = malloc(strlen(strlen("INSERT") + segmento->nombreTabla) + 4 + 2);
+		sprintf(consulta, "INSERT &s &d", segmento->nombreTabla, key);
+
+		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
+		free(consulta);
+
+		Paquete paquete;
+		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+
+		if (paquete.header.tipoMensaje == NOTFOUND) {
+			return NULL;
+		}
+		void* datos = malloc(paquete.header.tamanioMensaje);
+		datos = paquete.mensaje;
+
+		t_registro registro = procesarRegistro(datos);
+		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
 
 	}
 	return pagina;
@@ -139,10 +156,10 @@ Segmento* buscarSegmentoEnMemoria(char* nombreSegmentoBuscado) {
 }
 
 //te devuelve el estadoFrame de determinada pagina
-//DUDOSISIMA
+//HERMOSA
 EstadoFrame* getEstadoFrame(Pagina* pagina) {
-	int calculo= (void*)pagina->registro-memoria;
-	int indiceFrame =calculo / sizeof(t_registro);
+	int calculo = (void*) pagina->registro - memoria;
+	int indiceFrame = calculo / sizeof(t_registro);
 	return list_get(memoriaStatus, (int) indiceFrame);
 }
 
@@ -152,9 +169,35 @@ EstadoFrame* getEstadoFrame(Pagina* pagina) {
  */
 Segmento* buscarSegmento(char* nombreSegmento) {
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
+
 	if (segmento == NULL) {
-		//pegale al fileSystem
-		//segmento= algo que nos devuelte el fileSystem
+
+		EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento), SELECT_TABLE);
+		Paquete paquete;
+		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+
+		if (paquete.header.tipoMensaje == NOTFOUND) {
+			return NULL;
+		}
+		//esto deberia sacarlo en una funcion, pero es muy compeljo y no justifica
+		void*cadenaRecibida = malloc(paquete.header.tamanioMensaje);
+		char** datos = string_split(cadenaRecibida, " ");
+		char* nombreSegmento = datos[0];
+		char* consistenciaChar = datos[1];
+		int cantParticiones = atoi(datos[2]);
+		int tiempoCompactacion = atoi(datos[3]);
+
+		t_consistencia consistencia;
+		if (strcmp(consistenciaChar, "EC") == 0) {
+			consistencia = EVENTUAL;
+		}
+		t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
+		metadata->CONSISTENCIA = consistencia;
+		metadata->CANT_PARTICIONES = cantParticiones;
+		metadata->T_COMPACTACION = tiempoCompactacion;
+
+		segmento = insertarSegmentoEnMemoria(nombreSegmento, metadata);
+		list_add(segmentos, segmento);
 
 	}
 	return segmento;
@@ -207,7 +250,8 @@ void* liberarUltimoUsado() {
 	}
 
 	list_iterate(segmentos, (void*) iterarEntrePaginas);
-	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",paginaMenosUtilizada->registro->key,paginaMenosUtilizada->registro->timestamp);
+	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
+			paginaMenosUtilizada->registro->key, paginaMenosUtilizada->registro->timestamp);
 	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
 	return frameMenosUtilizado;

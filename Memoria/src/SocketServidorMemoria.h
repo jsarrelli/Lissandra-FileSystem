@@ -14,9 +14,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include "Parser.h"
-
-int socketKernel;
-
-void procesarAccion(int socketMemoria,int socketFileSystem);
+int socketFileSystem;
+void procesarAccion(int socketMemoria);
 void escuchar(int listenningSocket,int socketFileSystem);
 #endif /* SERVER_H_ */
