@@ -33,12 +33,13 @@ all: Memoria
 
 dependents:
 	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) all
+	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug && $(MAKE) all
 
 # Tool invocations
-Memoria: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so
+Memoria: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "Memoria" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug" -o "Memoria" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -49,5 +50,6 @@ clean:
 
 .PHONY: all clean dependents
 /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so:
+/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so:
 
 -include ../makefile.targets
