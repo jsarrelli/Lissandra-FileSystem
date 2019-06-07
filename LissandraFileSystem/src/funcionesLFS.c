@@ -112,12 +112,11 @@ void mostrarMetadataTabla(char* nombreTabla){
 	t_metadata_tabla* metadataTabla = malloc(sizeof (t_metadata_tabla));
 
 	printf("\nMetadata de %s: \n", nombreTabla);
-
-	metadataTabla->CONSISTENCIA = config_get_string_value(configMetadata, "CONSISTENCIA");
+	metadataTabla->CONSISTENCIA = getConsistencia(config_get_string_value(configMetadata, "CONSISTENCIA"));
 	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
 	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 
-	printf("CONSISTENCIA: %s\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
+	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
 	//FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
 	//fclose(archivo);
 	free(metadataTabla);
@@ -137,11 +136,11 @@ void mostrarMetadataTabla2(char* nombreTabla){
 	nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
 	printf("\nMetadata de %s: \n", nombTabla);
 
-	metadataTabla->CONSISTENCIA = config_get_string_value(configMetadata, "CONSISTENCIA");
+	metadataTabla->CONSISTENCIA = getConsistencia(config_get_string_value(configMetadata, "CONSISTENCIA"));
 	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
 	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 
-	printf("CONSISTENCIA: %s\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
+	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
 	free(metadataTabla);
 	free(nombTabla);
 	liberarPunteroDePunterosAChar(palabras);
