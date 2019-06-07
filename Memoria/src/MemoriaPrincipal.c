@@ -42,14 +42,12 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
-//el segmento tiene que existir
 Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento) {
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
-
+		log_info(logger, "Insertando registro en memoria");
 		t_registro registro;
 		registro.key = key;
-
 		registro.timestamp = timeStamp;
 		strcpy(registro.value, value);
 
@@ -59,7 +57,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 			if (!todosModificados()) {
 				marcoVacio = (void*) liberarUltimoUsado();
 			} else {
-				//journal
+				journalMemoria();
 			}
 		}
 
@@ -91,7 +89,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 
 void* darMarcoVacio() {
 	int i;
-	//pasar esto a funcion mas linda
+	//no hay algun list_find_first?
 	for (i = 0; i < list_size(memoriaStatus); i++) {
 		if (((EstadoFrame*) list_get(memoriaStatus, i))->estado
 				== LIBRE) {
@@ -136,6 +134,9 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 		t_registro registro = procesarRegistro(datos);
 		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
 
+	}else{
+		EstadoFrame* estadoFrame=getEstadoFrame(pagina);
+		estadoFrame->fechaObtencion=getCurrentTime();
 	}
 	return pagina;
 }
@@ -181,14 +182,10 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 		void*cadenaRecibida = malloc(paquete.header.tamanioMensaje);
 		char** datos = string_split(cadenaRecibida, " ");
 		char* nombreSegmento = datos[0];
-		char* consistenciaChar = datos[1];
+		t_consistencia consistencia=getConsistenciaByChar(datos[1]);
 		int cantParticiones = atoi(datos[2]);
 		int tiempoCompactacion = atoi(datos[3]);
 
-		t_consistencia consistencia;
-		if (strcmp(consistenciaChar, "EC") == 0) {
-			consistencia = EVENTUAL;
-		}
 		t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
 		metadata->CONSISTENCIA = consistencia;
 		metadata->CANT_PARTICIONES = cantParticiones;
@@ -210,20 +207,8 @@ bool memoriaLlena() {
 }
 
 bool todosModificados() {
-	//pasar esto a funcion linda
-	int i;
-	for (i = 0; i < list_size(segmentos); i++) {
-		Segmento* segmento = list_get(segmentos, i);
-		t_list* paginasSegmento = segmento->paginas;
-
-		for (int j = 0; j < list_size(paginasSegmento); j++) {
-			Pagina* pagina = list_get(paginasSegmento, j);
-			if (pagina->modificado == NO_MODIFICADO) {
-				return false;
-			}
-		}
-	}
-	return true;
+	t_list* paginasModificadas= obtenerPaginasModificadas();
+	return list_size(paginasModificadas)==list_size(memoriaStatus);
 }
 
 void* liberarUltimoUsado() {
@@ -313,6 +298,7 @@ void enviarRegistro(Pagina* pagina) {
 
 void journalMemoria() {
 	//algun semaforo
+	log_info(logger, "Realizando Journal");
 	t_list* paginasModificadas = obtenerPaginasModificadas();
 
 	list_iterate(paginasModificadas, (void*) enviarRegistro);

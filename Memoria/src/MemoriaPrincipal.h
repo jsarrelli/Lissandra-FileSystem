@@ -71,6 +71,7 @@ EstadoFrame* getEstadoFrame(Pagina* pagina);
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar);
 void eliminarSegmentoFileSystem(char* nombreTabla);
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
+void journalMemoria();
 
 t_list* obtenerPaginasModificadas();
 #endif /*MEMORIAPRINCIPAL_H_*/

@@ -31,7 +31,7 @@ int main() {
 //	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
 //	//SELECT_MEMORIA("TABLA1" , 3);
 
-	log_info(logger, "Configurando Listening Socket.");
+	log_info(logger, "Configurando Listening Socket...");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != -1) {
 		escuchar(listenningSocket, socketFileSystem);
@@ -50,7 +50,7 @@ void* leerConsola()
 	char * consulta;
 	while (1) {
 
-		puts("Ingrese comandos a ejecutar. Escriba 'salir' para finalizar");
+		puts("Ingrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
 		if (consulta) {
 			add_history(consulta);

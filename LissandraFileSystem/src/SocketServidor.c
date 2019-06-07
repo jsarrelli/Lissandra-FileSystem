@@ -37,12 +37,12 @@ void procesarAccion(int socketMemoria) {
 			case (INSERT):
 				//
 				break;
-			case (DROP):
+			//case (DROP):
 				//
-				break;
-			case (DESCRIBE):
+				//break;
+			//case (DESCRIBE):
 				//
-				break;
+				//break;
 			}
 
 		} else {
