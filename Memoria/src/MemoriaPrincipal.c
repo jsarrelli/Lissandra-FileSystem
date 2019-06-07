@@ -1,8 +1,5 @@
 #include "MemoriaPrincipal.h"
 
-int LIBRE = 0;
-int OCUPADO = 1;
-
 int tamanioMemoria;
 int cantFrames;
 
@@ -12,7 +9,7 @@ void inicializarEstadoMemoria() {
 	int i;
 	for (i = 0; i < cantFrames - 1; i++) {
 		EstadoFrame* estadoMemoria = malloc(sizeof(EstadoFrame));
-		estadoMemoria->estado = 0;
+		estadoMemoria->estado = LIBRE;
 		estadoMemoria->fechaObtencion = 0;
 		list_add(memoriaStatus, estadoMemoria);
 	}
@@ -74,7 +71,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 				sizeof(t_registro));
 
 		paginaNueva = malloc(sizeof(Pagina));
-		paginaNueva->modificado = 0;
+		paginaNueva->modificado = MODIFICADO;
 		paginaNueva->registro = registroEnMemoria;
 
 		list_add(segmento->paginas, paginaNueva);
@@ -82,11 +79,11 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 		log_info(logger, "Esta key ya se encuentra en el sistema, se actualizara");
 		paginaNueva->registro->timestamp = timeStamp;
 		strcpy(paginaNueva->registro->value, value);
-		paginaNueva->modificado = 1;
+		paginaNueva->modificado = MODIFICADO;
 	}
 
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
-	estadoFrame->estado = 1;
+	estadoFrame->estado = OCUPADO;
 	estadoFrame->fechaObtencion = getCurrentTime();
 
 	return paginaNueva;
@@ -94,6 +91,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 
 void* darMarcoVacio() {
 	int i;
+	//pasar esto a funcion mas linda
 	for (i = 0; i < list_size(memoriaStatus); i++) {
 		if (((EstadoFrame*) list_get(memoriaStatus, i))->estado
 				== LIBRE) {
@@ -119,9 +117,9 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
-		//queria INSERT TABLA KEY, le sumo dos por los espacios
-		char* consulta = malloc(strlen(strlen("INSERT") + segmento->nombreTabla) + 4 + 2);
-		sprintf(consulta, "INSERT &s &d", segmento->nombreTabla, key);
+		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
+		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
+		sprintf(consulta, "SELECT &s &d", segmento->nombreTabla, key);
 
 		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
 		free(consulta);
@@ -165,7 +163,7 @@ EstadoFrame* getEstadoFrame(Pagina* pagina) {
 
 /*cuando busca un segmento primero buscamos en memoria y si no lo tenemos
  lo vamos a buscar al fileSystem
- y si el fileSystem no lo tiene, lo creamos
+ y si el fileSystem no lo tiene, lo creamos (no la crea aca)
  */
 Segmento* buscarSegmento(char* nombreSegmento) {
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
@@ -212,6 +210,7 @@ bool memoriaLlena() {
 }
 
 bool todosModificados() {
+	//pasar esto a funcion linda
 	int i;
 	for (i = 0; i < list_size(segmentos); i++) {
 		Segmento* segmento = list_get(segmentos, i);
@@ -219,7 +218,7 @@ bool todosModificados() {
 
 		for (int j = 0; j < list_size(paginasSegmento); j++) {
 			Pagina* pagina = list_get(paginasSegmento, j);
-			if (pagina->modificado == 0) {
+			if (pagina->modificado == NO_MODIFICADO) {
 				return false;
 			}
 		}
@@ -237,7 +236,7 @@ void* liberarUltimoUsado() {
 	void LRUPagina(Pagina* pagina) {
 		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
 		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion &&
-				frameDePagina->estado != 1) {
+				frameDePagina->estado == LIBRE) {
 			frameMenosUtilizado = frameDePagina;
 			segmentoPaginaMenosUtilizada = segmentoActual;
 			paginaMenosUtilizada = pagina;
@@ -260,7 +259,7 @@ void* liberarUltimoUsado() {
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaAEliminar);
-	estadoFrame->estado = 0;
+	estadoFrame->estado = LIBRE;
 
 	bool isPagina(Pagina* pagina) {
 		return pagina->registro->key == paginaAEliminar->registro->key;
@@ -274,10 +273,8 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 }
 
-void eliminarSegmentoDeMemoria(char* nombreSegmento) {
-	Segmento* segmentoAEliminar = buscarSegmentoEnMemoria(nombreSegmento);
+void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
-	if (segmentoAEliminar != NULL) {
 		//podria usar aca un list_clean and destroy pero voy a estar cargando mas funciones parecidas
 		void eliminarPaginaSegmento(Pagina* pagina) {
 			eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
@@ -289,7 +286,44 @@ void eliminarSegmentoDeMemoria(char* nombreSegmento) {
 		}
 		free(segmentoAEliminar);
 
-	}
 
+
+}
+t_list* obtenerPaginasModificadas() {
+	t_list* paginasModificadas = list_create();
+	bool isModificada(Pagina* pagina) {
+		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
+		return estadoFrame->estado == (int) MODIFICADO;
+	}
+	void buscarPaginasModificadas(Segmento* segmento) {
+		t_list* paginasModificadasSegmento = list_filter(segmento->paginas, (void*) isModificada);
+		list_add_all(paginasModificadas, paginasModificadasSegmento);
+
+	}
+	list_iterate(segmentos, (void*) buscarPaginasModificadas);
+	return paginasModificadas;
+}
+
+void enviarRegistro(Pagina* pagina) {
+	t_registro* registro = pagina->registro;
+	char* consulta = malloc(strlen("INSERT") + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 3);//mas 3 espacios
+	sprintf(consulta, "INSERT &d &s %f", registro->key, registro->value, registro->timestamp);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
+}
+
+void journalMemoria() {
+	//algun semaforo
+	t_list* paginasModificadas = obtenerPaginasModificadas();
+
+	list_iterate(paginasModificadas, (void*) enviarRegistro);
+
+	list_iterate(segmentos,(void*) eliminarSegmentoDeMemoria);
+
+}
+
+void eliminarSegmentoFileSystem(char* nombreSegmento){
+	char* consulta=malloc(strlen("DROP")+strlen(nombreSegmento)+1);// +1 por el espacio
+	sprintf(consulta,"DROP %s",nombreSegmento);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), DROP);
 }
 

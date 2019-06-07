@@ -16,5 +16,5 @@
 #include "Parser.h"
 int socketFileSystem;
 void procesarAccion(int socketMemoria);
-void escuchar(int listenningSocket,int socketFileSystem);
+void escuchar(int listenningSocket, int socketFileSystemRecibido);
 #endif /* SERVER_H_ */

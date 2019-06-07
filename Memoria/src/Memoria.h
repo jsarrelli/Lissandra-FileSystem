@@ -15,7 +15,6 @@
 #include "Funciones/Conexiones.h"
 #include "Funciones/Serializacion.h"
 #include "Parser.h"
-#include "SocketClienteMemoria.h"
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;

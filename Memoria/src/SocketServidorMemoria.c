@@ -28,7 +28,7 @@ void procesarAccion(int socketKernel) {
 		if (paquete.header.quienEnvia == KERNEL) {
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
-			switch (paquete.header.tipoMensaje) {
+			switch ((int)paquete.header.tipoMensaje) {
 			case (SELECT):
 				datos = procesarConsulta(paquete.mensaje);
 				EnviarDatosTipo(socketFileSystem, MEMORIA, datos, sizeof(datos), INSERT);

@@ -29,7 +29,12 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value,double timeSt
 }
 
 void DROP_MEMORIA(char* nombreTabla) {
-	eliminarSegmentoDeMemoria(nombreTabla);
+	Segmento* segmento= buscarSegmento(nombreTabla);
+	if(segmento!=NULL){
+		eliminarSegmentoDeMemoria(segmento);
+	}
+	eliminarSegmentoFileSystem(nombreTabla);
+
 	//aca pegale a kevin y avisale
 }
 

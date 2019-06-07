@@ -82,7 +82,7 @@ void* procesarDROP(char* nombreTabla) {
 void* procesarDESCRIBE(char* nombreTabla) {
 
 	void mostrarMetadata(t_metadata_tabla* metadata) {
-		printf("Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d", metadata->CONSISTENCIA,
+		printf("Consistencia: %d / cantParticiones: %d / tiempoCompactacion: %d", metadata->CONSISTENCIA,
 				metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
 	}
 

@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 
 int ConectarAServidor(int puerto, char* ip);
+int configurarSocketServidor(char* puertoEscucha);
 
 
 #endif /* CONEXIONES_H_ */

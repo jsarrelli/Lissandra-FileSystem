@@ -28,13 +28,24 @@ typedef struct Segmento {
 	t_metadata_tabla* metaData;
 } Segmento;
 
+typedef enum{
+	NO_MODIFICADO = 0,
+	MODIFICADO = 1
+}t_modificado;
+
 typedef struct Pagina {
-	int modificado;
+	t_modificado modificado;
 	t_registro* registro;
 } Pagina;
 
+typedef enum {
+	LIBRE = 0,
+	OCUPADO
+} t_estado;
+
+
 typedef struct EstadoFrame {
-	int estado;
+	t_estado estado;
 	double fechaObtencion;
 } EstadoFrame;
 
@@ -48,7 +59,6 @@ Pagina* buscarPagina(Segmento* segmento, int key);
 
 Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData);
 Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento);
-void eliminarSegmento(char* nombreSegmento);
 
 bool memoriaLlena();
 void* darMarcoVacio();
@@ -58,7 +68,9 @@ void* liberarUltimoUsado();
 t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
-void eliminarSegmentoDeMemoria(char* nombreSegmento);
+void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar);
+void eliminarSegmentoFileSystem(char* nombreTabla);
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
 
+t_list* obtenerPaginasModificadas();
 #endif /*MEMORIAPRINCIPAL_H_*/

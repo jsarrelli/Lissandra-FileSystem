@@ -33,7 +33,7 @@ int main() {
 
 	log_info(logger, "Configurando Listening Socket.");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
-	if (listenningSocket != NULL) {
+	if (listenningSocket != -1) {
 		escuchar(listenningSocket, socketFileSystem);
 	}
 
