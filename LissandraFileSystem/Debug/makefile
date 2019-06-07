@@ -9,12 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include src/subdir.mk
--include Libraries2/commons/collections/subdir.mk
--include Libraries2/commons/subdir.mk
--include Libraries2/Debug/commons/collections/subdir.mk
--include Libraries2/Debug/commons/subdir.mk
--include Libraries2/Debug/subdir.mk
--include Libraries2/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -32,14 +26,14 @@ endif
 all: LissandraFileSystem
 
 dependents:
-	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) all
 	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug && $(MAKE) all
+	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) all
 
 # Tool invocations
-LissandraFileSystem: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so
+LissandraFileSystem: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug" -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Funciones -o "LissandraFileSystem" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug" -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug" -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Funciones -o "LissandraFileSystem" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -49,7 +43,7 @@ clean:
 	-@echo ' '
 
 .PHONY: all clean dependents
-/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so:
 /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so:
+/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so:
 
 -include ../makefile.targets

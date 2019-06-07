@@ -53,19 +53,19 @@ t_dictionary *describeGlobal(char* IP_MEMORIA){
 		t_metadata_tabla * metaTabla1 = malloc(sizeof(t_metadata_tabla));
 		metaTabla1->CANT_PARTICIONES = 5;
 		metaTabla1->T_COMPACTACION = 5000;
-		metaTabla1->CONSISTENCIA = "SC";
+		metaTabla1->CONSISTENCIA = STRONG;
 		dictionary_put(diccionario,"tabla1",metaTabla1);
 	//tabla2
 		t_metadata_tabla * metaTabla2 = malloc(sizeof(t_metadata_tabla));
 		metaTabla2->CANT_PARTICIONES = 10;
 		metaTabla2->T_COMPACTACION = 4000;
-		metaTabla2->CONSISTENCIA = "SHC";
+		metaTabla2->CONSISTENCIA = STRONG_HASH;
 		dictionary_put(diccionario,"tabla2",metaTabla2);
 	//tabla3
 		t_metadata_tabla * metaTabla3 = malloc(sizeof(t_metadata_tabla));
 		metaTabla3->CANT_PARTICIONES = 40;
 		metaTabla3->T_COMPACTACION = 3000;
-		metaTabla3->CONSISTENCIA = "EC";
+		metaTabla3->CONSISTENCIA =EVENTUAL;
 		dictionary_put(diccionario,"tabla3",metaTabla3);
 
 	return diccionario;
@@ -92,15 +92,15 @@ t_dictionary *conocerPoolMemorias(char* IP_MEMORIA){
 	return diccionario;
 }
 
-int obtenerMemSegunConsistencia(char *consistencia, int key){
+int obtenerMemSegunConsistencia(t_consistencia consistencia, int key){
 	log_info(logger, "Obteniendo memoria segun consistencia");
 
 	int memDestino = ERROR;
 
-	if (strcmp(consistencia, "SC") == 0) {
+	if (consistencia==STRONG) {
 		memDestino = criterios->SC;
 		puts("SC");
-	} else if (strcmp(consistencia, "SHC") == 0) {
+	} else if (consistencia==STRONG_HASH) {
 		//aplico el hash, seria key mod cantMemorias
 		if (list_size(criterios->SHC) > 0) {
 			int largo = list_size(criterios->SHC);
@@ -108,7 +108,7 @@ int obtenerMemSegunConsistencia(char *consistencia, int key){
 			memDestino = (key % largo) + 1;
 		}
 		puts("SHC");
-	} else if (strcmp(consistencia, "EC") == 0) {
+	} else if (consistencia==EVENTUAL) {
 		puts("EC");
 		if (list_size(criterios->EC) > 0) {
 			srand(time(NULL));
@@ -119,14 +119,14 @@ int obtenerMemSegunConsistencia(char *consistencia, int key){
 	return memDestino;
 }
 
-char * getConsistencia(char *nombreTabla){
-	char *consistencia;
+t_consistencia getConsistencia(char *nombreTabla){
+	t_consistencia consistencia;
 	t_metadata_tabla * metaTabla = dictionary_get(metadataTablas, nombreTabla);
 	if (metaTabla != NULL) {
 		consistencia = metaTabla->CONSISTENCIA;
 		return consistencia;
 	} else {
-		return NULL;
+		return 0;
 	}
 }
 
@@ -143,7 +143,7 @@ t_criterios * inicializarCriterios(){
 }
 
 int obtenerMemDestino(char *tabla, int key){
-	char * consistencia;
+	t_consistencia consistencia;
 	consistencia = getConsistencia(tabla);
 	if (consistencia != NULL) {
 		return obtenerMemSegunConsistencia(consistencia, key);

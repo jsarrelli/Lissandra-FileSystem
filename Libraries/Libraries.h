@@ -70,7 +70,7 @@ void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros);
 int cantidadParametros(char ** palabras);
 int tamanioArchivo(FILE*archivo);
 double getCurrentTime();
-t_consistencia getConsistencia(char* consistenciaChar);
+t_consistencia getConsistenciaByChar(char* consistenciaChar);
 //SOCKETS
 
 int crear_socket_cliente(char * ip, char * puerto);

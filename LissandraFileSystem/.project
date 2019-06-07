@@ -3,8 +3,8 @@
 	<name>LissandraFileSystem</name>
 	<comment></comment>
 	<projects>
-		<project>Libraries</project>
 		<project>Lib</project>
+		<project>Libraries</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -38,11 +38,6 @@
 		</link>
 		<link>
 			<name>Libraries</name>
-			<type>2</type>
-			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries</location>
-		</link>
-		<link>
-			<name>Libraries2</name>
 			<type>2</type>
 			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries</location>
 		</link>

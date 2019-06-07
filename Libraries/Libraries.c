@@ -294,7 +294,7 @@ double getCurrentTime(){
 	return res;
 }
 
-t_consistencia getConsistencia(char* consistenciaChar) {
+t_consistencia getConsistenciaByChar(char* consistenciaChar) {
 	t_consistencia consistencia;
 	if (strcmp(consistenciaChar, "SC")) {
 		consistencia = STRONG;

@@ -112,7 +112,7 @@ void mostrarMetadataTabla(char* nombreTabla){
 	t_metadata_tabla* metadataTabla = malloc(sizeof (t_metadata_tabla));
 
 	printf("\nMetadata de %s: \n", nombreTabla);
-	metadataTabla->CONSISTENCIA = getConsistencia(config_get_string_value(configMetadata, "CONSISTENCIA"));
+	metadataTabla->CONSISTENCIA = getConsistenciaByChar(config_get_string_value(configMetadata, "CONSISTENCIA"));
 	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
 	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 
@@ -136,7 +136,7 @@ void mostrarMetadataTabla2(char* nombreTabla){
 	nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
 	printf("\nMetadata de %s: \n", nombTabla);
 
-	metadataTabla->CONSISTENCIA = getConsistencia(config_get_string_value(configMetadata, "CONSISTENCIA"));
+	metadataTabla->CONSISTENCIA = getConsistenciaByChar(config_get_string_value(configMetadata, "CONSISTENCIA"));
 	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
 	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 
