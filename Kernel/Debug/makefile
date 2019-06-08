@@ -32,7 +32,7 @@ dependents:
 Kernel: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug -o "Kernel" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug" -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug -o "Kernel" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

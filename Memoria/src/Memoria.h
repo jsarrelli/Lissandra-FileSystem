@@ -15,6 +15,7 @@
 #include "Sockets/Conexiones.h"
 #include "Sockets/Serializacion.h"
 #include "Parser.h"
+#include "SocketServidorMemoria.h"
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;
@@ -39,4 +40,5 @@ int valueMaximoPaginas;
 
 void cargarConfiguracion();
 void* leerConsola();
+int HandshakeInicial();
 #endif /*MEMEORIA_H_ */

@@ -16,8 +16,9 @@ void inicializarEstadoMemoria() {
 }
 
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
+	tamanioRegistro= sizeof(int)+sizeof(double)+valueMaximoRecibido;
 	tamanioMemoria = tamanioMemoriaRecibido;
-	cantFrames = tamanioMemoria / sizeof(t_registro);
+	cantFrames = tamanioMemoria / tamanioRegistro;
 	memoria = malloc(tamanioMemoria);
 	valueMaximo = valueMaximoRecibido;
 	socketFileSystem = socketFileSystemRecibido;
@@ -66,7 +67,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 		}
 
 		t_registro* registroEnMemoria = memcpy(marcoVacio, &registro,
-				sizeof(t_registro));
+				tamanioRegistro);
 
 		paginaNueva = malloc(sizeof(Pagina));
 		paginaNueva->modificado = MODIFICADO;
@@ -93,7 +94,7 @@ void* darMarcoVacio() {
 	for (i = 0; i < list_size(memoriaStatus); i++) {
 		if (((EstadoFrame*) list_get(memoriaStatus, i))->estado
 				== LIBRE) {
-			return memoria + (i * sizeof(t_registro));
+			return memoria + (i * tamanioRegistro);
 		}
 	}
 	return NULL;
@@ -117,7 +118,7 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 
 		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
 		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
-		sprintf(consulta, "SELECT &s &d", segmento->nombreTabla, key);
+		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
 
 		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
 		free(consulta);
@@ -292,7 +293,7 @@ t_list* obtenerPaginasModificadas() {
 void enviarRegistro(Pagina* pagina) {
 	t_registro* registro = pagina->registro;
 	char* consulta = malloc(strlen("INSERT") + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 3);//mas 3 espacios
-	sprintf(consulta, "INSERT &d &s %f", registro->key, registro->value, registro->timestamp);
+	sprintf(consulta, "INSERT %d %s %f", registro->key, registro->value, registro->timestamp);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
 }
 

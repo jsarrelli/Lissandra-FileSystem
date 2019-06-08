@@ -15,10 +15,8 @@ int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 	log_info(logger, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
-
-	int valueMaximoPagina;
-	int socketFileSystem = HandshakeInicial(&valueMaximoPagina);
-	inicializarMemoria(valueMaximoPagina, configuracion->TAM_MEMORIA,socketFileSystem);
+	int socketFileSystem = HandshakeInicial();
+	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
 	pthread_create(&threadId, NULL, leerConsola, NULL);

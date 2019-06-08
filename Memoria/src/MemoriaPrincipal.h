@@ -19,6 +19,7 @@ void* memoria;
 t_list* segmentos;
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
 int socketFileSystem;
+int tamanioRegistro;
 
 typedef struct Segmento {
 	char* nombreTabla;
