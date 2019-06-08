@@ -79,7 +79,7 @@ t_dictionary *conocerPoolMemorias(char* IP_MEMORIA){
 	//hardcodeo datos
 
 	//mem1
-		t_memoria * memoria1 = malloc(sizeof(t_memoria));
+		t_memoria* memoria1 = malloc(sizeof(t_memoria));
 		memoria1->IP_MEMORIA = "192.168.1.2";
 		memoria1->NUMERO_MEMORIA = 1;
 		dictionary_put(diccionario,"1",memoria1);

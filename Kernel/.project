@@ -3,8 +3,8 @@
 	<name>Kernel</name>
 	<comment></comment>
 	<projects>
-		<project>Libraries</project>
 		<project>Lib</project>
+		<project>Libraries</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -25,11 +25,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Libraries</name>
-			<type>2</type>
-			<location>/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries</location>
-		</link>
-	</linkedResources>
 </projectDescription>

@@ -13,11 +13,5 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Libraries/Debug \
-Libraries/Debug/commons \
-Libraries/Debug/commons/collections \
-Libraries \
-Libraries/commons \
-Libraries/commons/collections \
 src \
 

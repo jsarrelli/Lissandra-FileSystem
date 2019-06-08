@@ -2,20 +2,16 @@
 
 #ifndef KERNEL_H_
 #define KERNEL_H_
-
 #include "Libraries.h" // Una de las librerias genericas
-#include "API_kernel.h"
-#include "ProcesoExec.h"
+#include <commons/log.h>
+#include <commons/collections/dictionary.h>
+#include <commons/config.h>
 
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
-/*
 typedef struct{
-	char* CONSISTENCIA;
-	int CANT_PARTICIONES;
-	int T_COMPACTACION;
-}t_metadata_tabla;
-*/
+	int SC;
+	t_list *SHC;
+	t_list *EC;
+}t_criterios;
 
 typedef struct{
 	char* IP_MEMORIA;
@@ -32,14 +28,25 @@ typedef struct {
 } t_config_kernel;
 
 typedef struct{
-	int SC;
-	t_list *SHC;
-	t_list *EC;
-}t_criterios;
-
-typedef struct{
 	char**script;
 }infoProceso;
+
+#include "API_kernel.h"
+#include "ProcesoExec.h"
+
+#include "Funciones/Conexiones.h"
+#include "Funciones/Serializacion.h"
+/*
+typedef struct{
+	char* CONSISTENCIA;
+	int CANT_PARTICIONES;
+	int T_COMPACTACION;
+}t_metadata_tabla;
+*/
+
+
+
+
 
 infoProceso info;
 
