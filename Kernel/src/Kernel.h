@@ -34,8 +34,8 @@ typedef struct{
 #include "API_kernel.h"
 #include "ProcesoExec.h"
 
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
+#include <Sockets/Serializacion.h>
+#include <Sockets/Conexiones.h>
 /*
 typedef struct{
 	char* CONSISTENCIA;

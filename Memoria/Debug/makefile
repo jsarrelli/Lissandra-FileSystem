@@ -9,12 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include src/subdir.mk
--include Libraries/commons/collections/subdir.mk
--include Libraries/commons/subdir.mk
--include Libraries/Debug/commons/collections/subdir.mk
--include Libraries/Debug/commons/subdir.mk
--include Libraries/Debug/subdir.mk
--include Libraries/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -33,13 +27,12 @@ all: Memoria
 
 dependents:
 	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) all
-	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug && $(MAKE) all
 
 # Tool invocations
-Memoria: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so /home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so
+Memoria: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug" -o "Memoria" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug -o "Memoria" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -50,6 +43,5 @@ clean:
 
 .PHONY: all clean dependents
 /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so:
-/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Debug/libLib.so:
 
 -include ../makefile.targets

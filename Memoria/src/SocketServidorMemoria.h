@@ -2,9 +2,9 @@
 #define SERVER_H_
 
 #include "AdministradorDeConsultas.h"
-#include "Libraries.h"
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
+#include <Libraries.h>
+#include <Sockets/Conexiones.h>
+#include <Sockets/Serializacion.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

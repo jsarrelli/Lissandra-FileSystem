@@ -12,7 +12,7 @@ void escuchar(int listenningSocket, int socketFileSystemRecibido) {
 				&datosConexionClienteSize);
 		if (socketKernel != -1) {
 			pthread_t threadId;
-			pthread_create(&threadId, NULL, procesarAccion, (void*) socketKernel);
+			pthread_create(&threadId, NULL, (void*)procesarAccion, (void*) socketKernel);
 			pthread_detach(threadId);
 			printf("Escuchando.. \n");
 		}

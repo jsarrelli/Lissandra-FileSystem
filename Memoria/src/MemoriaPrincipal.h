@@ -10,8 +10,8 @@
 #include <string.h>
 #include <sys/time.h>
 #include "Parser.h"
-#include "Funciones/Serializacion.h"
-#include "Funciones/Conexiones.h"
+#include "Sockets/Conexiones.h"
+#include "Sockets/Serializacion.h"
 
 int valueMaximo;
 t_log* logger;

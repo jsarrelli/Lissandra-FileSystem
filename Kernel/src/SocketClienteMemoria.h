@@ -15,8 +15,8 @@
 #define MAXCONSULTA 6
 #define MAX_MENSAJE_SIZE 100
 
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
+#include <Sockets/Serializacion.h>
+#include <Sockets/Conexiones.h>
 
 
 int serverSocket;

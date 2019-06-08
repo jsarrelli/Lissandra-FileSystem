@@ -10,8 +10,9 @@
 
 #include <Libraries.h>
 #include "SocketServidor.h"
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
+#include <Sockets/Serializacion.h>
+#include <Sockets/Conexiones.h>
+#include <commons/config.h>
 
 typedef struct{
 	char* PUERTO_ESCUCHA;

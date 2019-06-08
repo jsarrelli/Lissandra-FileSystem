@@ -1,4 +1,4 @@
-#include "Serializacion.h"
+#include "../Sockets/Serializacion.h"
 
 bool EnviarPaquete(int socketCliente, Paquete* paquete) {
 	int cantAEnviar = sizeof(Header) + paquete->header.tamanioMensaje;

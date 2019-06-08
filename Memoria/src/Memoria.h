@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-
+#include <commons/config.h>
 #include "MemoriaPrincipal.h"
 #include "AdministradorDeConsultas.h"
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
+#include "Sockets/Conexiones.h"
+#include "Sockets/Serializacion.h"
 #include "Parser.h"
 
 typedef struct MEMORIA_configuracion{

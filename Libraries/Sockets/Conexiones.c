@@ -1,4 +1,4 @@
-#include "Conexiones.h"
+#include "../Sockets/Conexiones.h"
 
 int ConectarAServidor(int puerto, char* ip) {
 	int socketFD = socket(AF_INET, SOCK_STREAM, 0);

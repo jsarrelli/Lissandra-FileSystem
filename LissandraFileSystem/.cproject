@@ -38,14 +38,12 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1328445811" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
 								<option id="gnu.c.link.option.paths.1864148828" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Libraries/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lib/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="/home/utnso/tp-2019-1c-Los-Sisoperadores/Lib/Funciones"/>
+									<listOptionValue builtIn="false" value="/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug"/>
 								</option>
 								<option id="gnu.c.link.option.libs.801621903" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Libraries"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Lib"/>
+									<listOptionValue builtIn="false" value="Libraries"/>
 									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="commons"/>
 									<listOptionValue builtIn="false" value="readline"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1747259137" superClass="cdt.managedbuild.tool.gnu.c.linker.input">

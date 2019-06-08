@@ -2,8 +2,8 @@
 #define SOCKETSERVIDORFILESYSTEM_H
 
 #include "Libraries.h"
-#include "Funciones/Conexiones.h"
-#include "Funciones/Serializacion.h"
+#include <Sockets/Conexiones.h>
+#include <Sockets/Serializacion.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
