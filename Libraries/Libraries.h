@@ -13,7 +13,7 @@
 #include <string.h>
 #include "commons/string.h"
 #include "commons/error.h"
-#include "commons/config.h"
+#include <commons/config.h>
 #include "commons/collections/list.h"
 #include "commons/bitarray.h"
 #include "commons/txt.h"
@@ -36,32 +36,26 @@
 
 typedef struct {
 	int key;
-	char value[112];
+	char* value;
 	double timestamp;
 
-} __attribute__((packed)) t_registro;
+}__attribute__((packed)) t_registro;
 
-typedef enum t_consistencia{
+typedef enum t_consistencia {
 	EVENTUAL = 1,
 	STRONG,
 	STRONG_HASH
-}t_consistencia;
+} t_consistencia;
 
-typedef struct{
+typedef struct {
 	t_consistencia CONSISTENCIA;
 	int CANT_PARTICIONES;
 	int T_COMPACTACION;
-}t_metadata_tabla;
-
+} t_metadata_tabla;
 
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
-
-char** get_campo_config_array(t_config* archivo_configuracion,
-		char* nombre_campo);
-
-char* get_campo_config_string(t_config* archivo_configuracion,
-		char* nombre_campo);
-
+char** get_campo_config_array(t_config* archivo_configuracion, char* nombre_campo);
+char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
 void logErrorAndExit(char * mensaje);
 void inicializarArchivoDeLogs(char * ruta);
 int contarPunteroDePunteros(char ** puntero);
@@ -81,7 +75,6 @@ void enviar_string(int socket, char* mensaje);
 void enviar(int socket, void* cosaAEnviar, int tamanio);
 void* recibir(int socket);
 void *get_in_addr(struct sockaddr *sa);
-
 
 t_log* logger;
 t_log* loggerError;
