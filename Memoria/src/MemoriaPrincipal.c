@@ -16,7 +16,7 @@ void inicializarEstadoMemoria() {
 }
 
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
-	tamanioRegistro= sizeof(int)+sizeof(double)+valueMaximoRecibido;
+	tamanioRegistro = sizeof(int) + sizeof(double) + valueMaximoRecibido;
 	tamanioMemoria = tamanioMemoriaRecibido;
 	cantFrames = tamanioMemoria / tamanioRegistro;
 	memoria = malloc(tamanioMemoria);
@@ -135,9 +135,9 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 		t_registro registro = procesarRegistro(datos);
 		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
 
-	}else{
-		EstadoFrame* estadoFrame=getEstadoFrame(pagina);
-		estadoFrame->fechaObtencion=getCurrentTime();
+	} else {
+		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
+		estadoFrame->fechaObtencion = getCurrentTime();
 	}
 	return pagina;
 }
@@ -172,7 +172,7 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 
 	if (segmento == NULL) {
 
-		EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento), SELECT_TABLE);
+		EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento), DESCRIBE);
 		Paquete paquete;
 		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
@@ -183,7 +183,7 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 		void*cadenaRecibida = malloc(paquete.header.tamanioMensaje);
 		char** datos = string_split(cadenaRecibida, " ");
 		char* nombreSegmento = datos[0];
-		t_consistencia consistencia=getConsistenciaByChar(datos[1]);
+		t_consistencia consistencia = getConsistenciaByChar(datos[1]);
 		int cantParticiones = atoi(datos[2]);
 		int tiempoCompactacion = atoi(datos[3]);
 
@@ -208,8 +208,8 @@ bool memoriaLlena() {
 }
 
 bool todosModificados() {
-	t_list* paginasModificadas= obtenerPaginasModificadas();
-	return list_size(paginasModificadas)==list_size(memoriaStatus);
+	t_list* paginasModificadas = obtenerPaginasModificadas();
+	return list_size(paginasModificadas) == list_size(memoriaStatus);
 }
 
 void* liberarUltimoUsado() {
@@ -261,18 +261,16 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
-		//podria usar aca un list_clean and destroy pero voy a estar cargando mas funciones parecidas
-		void eliminarPaginaSegmento(Pagina* pagina) {
-			eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
-		}
-		list_iterate(segmentoAEliminar->paginas, (void*) eliminarPaginaSegmento);
-		list_destroy(segmentoAEliminar->paginas);
-		if (segmentoAEliminar->metaData != NULL) {
-			free(segmentoAEliminar->metaData);
-		}
-		free(segmentoAEliminar);
-
-
+	//podria usar aca un list_clean and destroy pero voy a estar cargando mas funciones parecidas
+	void eliminarPaginaSegmento(Pagina* pagina) {
+		eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
+	}
+	list_iterate(segmentoAEliminar->paginas, (void*) eliminarPaginaSegmento);
+	list_destroy(segmentoAEliminar->paginas);
+	if (segmentoAEliminar->metaData != NULL) {
+		free(segmentoAEliminar->metaData);
+	}
+	free(segmentoAEliminar);
 
 }
 t_list* obtenerPaginasModificadas() {
@@ -292,7 +290,8 @@ t_list* obtenerPaginasModificadas() {
 
 void enviarRegistro(Pagina* pagina) {
 	t_registro* registro = pagina->registro;
-	char* consulta = malloc(strlen("INSERT") + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 3);//mas 3 espacios
+	char* consulta = malloc(
+			strlen("INSERT") + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 3); //mas 3 espacios
 	sprintf(consulta, "INSERT %d %s %f", registro->key, registro->value, registro->timestamp);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
 }
@@ -304,13 +303,13 @@ void journalMemoria() {
 
 	list_iterate(paginasModificadas, (void*) enviarRegistro);
 
-	list_iterate(segmentos,(void*) eliminarSegmentoDeMemoria);
+	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
 
 }
 
-void eliminarSegmentoFileSystem(char* nombreSegmento){
-	char* consulta=malloc(strlen("DROP")+strlen(nombreSegmento)+1);// +1 por el espacio
-	sprintf(consulta,"DROP %s",nombreSegmento);
+void eliminarSegmentoFileSystem(char* nombreSegmento) {
+	char* consulta = malloc(strlen("DROP") + strlen(nombreSegmento) + 1); // +1 por el espacio
+	sprintf(consulta, "DROP %s", nombreSegmento);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), DROP);
 }
 

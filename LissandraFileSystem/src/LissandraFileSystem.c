@@ -35,7 +35,7 @@ void iniciarSocketServidor(t_configuracion_LFS* config) {
 
 int main(void) {
 	t_configuracion_LFS* config;
-	//pthread_t hiloConsolaLFS;
+	pthread_t hiloConsolaLFS;
 	//listaNombresTablas = list_create();
 	memtable = list_create();
 	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
@@ -44,8 +44,7 @@ int main(void) {
 	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1, LOG_LEVEL_ERROR);
 	log_info(logger, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
 	config = cargarConfig("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
-	//OJO lo que estas haciendo aca con la variable config
-	iniciarSocketServidor(config);
+
 	//crearStructRegistro(config->TAMANIO_VALUE);
 	cargarMetadata(config);
 	printf("Metadata cargada \n ");
@@ -55,10 +54,11 @@ int main(void) {
 	leerBitmap();
 	printf("Bitmap creado\n\n");
 
+	pthread_create(&hiloConsolaLFS, NULL, (void*) consolaLFS, NULL);
+	pthread_detach(hiloConsolaLFS);
 
-
-	//consolaLFS();
-
+	iniciarSocketServidor(config);
+	free(config);
 	return EXIT_SUCCESS;
 }
 

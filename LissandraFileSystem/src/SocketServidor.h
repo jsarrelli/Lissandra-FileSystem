@@ -18,5 +18,5 @@ int socketMemoria;
 
 void escuchar(int listenningSocket);
 void procesarAccion(int socketMemoria);
-
+void procesarDescribe(char* consulta);
 #endif /* SOCKETSERVIDORFILESYSTEM_H_ */

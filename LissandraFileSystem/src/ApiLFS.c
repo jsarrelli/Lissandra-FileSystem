@@ -9,12 +9,13 @@
 #include "funcionesLFS.h"
 #include "FileSystem.h"
 
-void consolaLFS(){
-	puts("Bienvenido a la consola de LFS. Ingrese un comando:");
-	while(1){
+void consolaLFS() {
+	puts("Bienvenido a la consola de LFS");
+	while (1) {
+		puts("Ingrese un comando:");
 		char *linea = readline(">");
 
-		if(!strcmp(linea, "")){
+		if (!strcmp(linea, "")) {
 			free(linea);
 			continue;
 		}
@@ -33,15 +34,13 @@ void procesarInput(char* linea) {
 	} else if (!strcmp(*palabras, "SELECT")) {
 		//consolaSelect(palabras,cantidad);
 	} else if (!strcmp(*palabras, "CREATE")) {
-		consolaCreate(palabras,cantidad);
+		consolaCreate(palabras, cantidad);
 	} else if (!strcmp(*palabras, "DESCRIBE")) {
-		consolaDescribe(palabras,cantidad);
+		consolaDescribe(palabras, cantidad);
 	} else if (!strcmp(*palabras, "DROP")) {
-		consolaDrop(palabras,cantidad);
-	} else if(!strcmp(*palabras, "exit")){
+		consolaDrop(palabras, cantidad);
+	} else if (!strcmp(*palabras, "exit")) {
 		printf("Finalizando consola\n");
-
-
 
 	} else {
 		puts("El comando no existe.");
@@ -51,86 +50,79 @@ void procesarInput(char* linea) {
 
 }
 
+void consolaCreate(char**palabras, int cantidad) {
+	if (cantidad == 4) {
 
-void consolaCreate(char**palabras, int cantidad){
-	if(cantidad == 4){
+		if (existeTabla(palabras[1])) {
+			puts("Ya existe una tabla con ese nombre.");
+		} else {
 
-			if(existeTabla(palabras[1])){
-				puts("Ya existe una tabla con ese nombre.");
-			}
-			else{
+			crearTablaYParticiones(palabras[1], palabras[3]);
+			crearMetadataTabla(palabras[1], palabras[2], palabras[3], palabras[4]);
 
-
-				crearTablaYParticiones(palabras[1], palabras[3]);
-				crearMetadataTabla(palabras[1],palabras[2], palabras[3], palabras[4]);
-
-			}
-	}
-	else{
+		}
+	} else {
 		puts("Error en la cantidad de parametros.");
 	}
 }
 
-void consolaDescribe(char**palabras, int cantidad){
-	if(cantidad == 1){
+void consolaDescribe(char**palabras, int cantidad) {
+	if (cantidad == 1) {
 
-			if(existeTabla(palabras[1])){
-				mostrarMetadataTabla(palabras[1]);
+		if (existeTabla(palabras[1])) {
+			mostrarMetadataTabla(palabras[1]);
 
-			}else{
-				printf("La %s no existe", palabras[1]);
-			}
+		} else {
+			printf("La %s no existe", palabras[1]);
 
-	}else if(cantidad==0){
+		}
+
+	} else if (cantidad == 0) {
 		mostrarMetadataTodasTablas(rutas.Tablas);
 		crearYEscribirArchivosTemporales(rutas.Tablas);
 
-
+	} else {
+		puts("Error en la cantidad de parametros.");
 	}
-	else{
+
+}
+
+void consolaDrop(char**palabras, int cantidad) {
+	if (cantidad == 1) {
+
+		if (existeTabla(palabras[1])) {
+			removerTabla(palabras[1]);
+			printf("%s eliminada\n\n", palabras[1]);
+		}
+
+	} else {
 		puts("Error en la cantidad de parametros.");
 	}
 }
 
+void consolaInsert(char**palabras, int cantidad) {
+	if (cantidad == 4) {
 
-void consolaDrop(char**palabras, int cantidad){
-	if(cantidad == 1){
+		if (existeTabla(palabras[1])) {
+			double timestamp = atof(palabras[4]);
+			insertarKey(palabras[1], palabras[2], palabras[3], timestamp);
+			log_info(logger, "Insert realizado en memtable");
 
-			if(existeTabla(palabras[1])){
-				removerTabla(palabras[1]);
-				printf("%s eliminada\n\n", palabras[1]);
-			}
-
-	}
-	else{
-		puts("Error en la cantidad de parametros.");
-	}
-}
-
-void consolaInsert(char**palabras, int cantidad){
-	if(cantidad == 4){
-
-			if(existeTabla(palabras[1])){
-				double timestamp = atof(palabras[4]);
-				insertarKey(palabras[1], palabras[2], palabras[3],timestamp);
-				log_info(logger, "Insert realizado en memtable");
-
-			} else{
-				printf("La %s no existe", palabras[1]);
-			}
-
-	}else if(cantidad==3){
-		if(existeTabla(palabras[1])){
-		double timestamp = getCurrentTime();
-		insertarKey(palabras[1], palabras[2], palabras[3], timestamp);
-		log_info(logger, "Insert realizado en memtable");
-
-		}else{
+		} else {
 			printf("La %s no existe", palabras[1]);
 		}
 
-	}
-	else{
+	} else if (cantidad == 3) {
+		if (existeTabla(palabras[1])) {
+			double timestamp = getCurrentTime();
+			insertarKey(palabras[1], palabras[2], palabras[3], timestamp);
+			log_info(logger, "Insert realizado en memtable");
+
+		} else {
+			printf("La %s no existe", palabras[1]);
+		}
+
+	} else {
 		puts("Error en la cantidad de parametros.");
 	}
 }
