@@ -74,7 +74,7 @@ int main(void) {
 
 	consolaKernel(socketMemoria);
 
-//	printf("%s", info.script[0]);
+	printf("%d", info.num_requests);
 
 	// Libero memoria
 

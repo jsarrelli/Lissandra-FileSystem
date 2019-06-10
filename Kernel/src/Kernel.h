@@ -29,6 +29,7 @@ typedef struct {
 
 typedef struct{
 	char**script;
+	int num_requests;
 }infoProceso;
 
 #include "API_kernel.h"

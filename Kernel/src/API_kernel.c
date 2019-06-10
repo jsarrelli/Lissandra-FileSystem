@@ -29,9 +29,10 @@
 //}
 
 void consolaKernel(int socketMemoriaRecibido) {
-socketMemoria=socketMemoriaRecibido;
+	socketMemoria = socketMemoriaRecibido;
 	char * consulta;
-	while (1) {
+//	while (1) {
+	for(int i=0; i<5;i++){
 
 		puts("\nBienvenido a la consola del Kernel. \nIngrese un comando:");
 		consulta = readline(">");
@@ -42,6 +43,7 @@ socketMemoria=socketMemoriaRecibido;
 			return;
 		}
 		procesarInput(consulta);
+		free(consulta);
 
 	}
 
@@ -115,6 +117,8 @@ void procesarInput(char* linea) {
 	else {
 		puts("Comando no encontrado");
 	}
+
+//	free(comandos);
 	return;
 }
 

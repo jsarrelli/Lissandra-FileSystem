@@ -9,7 +9,7 @@
 #define PROCESOEXEC_H_
 
 #include "Kernel.h"
-#include "commons/collections/queue.h"
+#include <commons/collections/queue.h>
 
 
 #define CANT_ELEM_QUEUE 7 // Constante de ejemplo, recordar que tiene que ser una cola infinita
