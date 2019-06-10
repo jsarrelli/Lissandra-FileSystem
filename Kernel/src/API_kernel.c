@@ -110,7 +110,7 @@ void procesarInput(char* linea) {
 	} else if (strcmp(operacion, "ADD") == 0) {
 		return consolaAdd(linea);
 	}else if (strcmp(operacion, "RUN") == 0) {
-		return consolaAdd(linea);
+		return consolaRun(argumentos);
 	}
 	else {
 		puts("Comando no encontrado");
@@ -172,8 +172,7 @@ void consolaAdd(char* consulta) {
 }
 
 void consolaRun(char* consulta){
-	char** valores= string_n_split(consulta, 2, " ");
-	comandoRun(valores[1]);
+	comandoRun(consulta);
 }
 /*
 
