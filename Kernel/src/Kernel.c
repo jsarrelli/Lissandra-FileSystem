@@ -21,6 +21,9 @@ static const char* RUTA_CONFIG_KERNEL =
 
 int main(void) {
 
+	t_queue* colaReady = queue_create();
+	t_list* lista_threads_exec = list_create();
+
 	inicializarArchivoDeLogs((char*) ERRORES_KERNEL);
 	inicializarArchivoDeLogs((char*) INFO_KERNEL);
 
@@ -68,7 +71,7 @@ int main(void) {
 //	EnviarDatosTipo(socketMemoria, KERNEL, consulta, strlen(consulta),INSERT);
 
 
-	deNewAReady(logger);
+	deNewAReady(logger, colaReady, lista_threads_exec);
 
 //	printf("El multiprocesamiento extraido del archivo de configuracion es: %d\n", config->MULTIPROCESAMIENTO);
 
