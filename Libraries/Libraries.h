@@ -65,6 +65,7 @@ int cantidadParametros(char ** palabras);
 int tamanioArchivo(FILE*archivo);
 double getCurrentTime();
 t_consistencia getConsistenciaByChar(char* consistenciaChar);
+char* getConsistenciaCharByEnum(t_consistencia consistencia);
 //SOCKETS
 
 int crear_socket_cliente(char * ip, char * puerto);

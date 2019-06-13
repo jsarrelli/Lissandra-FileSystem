@@ -34,7 +34,6 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 	segmento->paginas = list_create();
 	segmento->nombreTabla = malloc(strlen(nombreSegmento));
 	strcpy(segmento->nombreTabla, nombreSegmento);
-	segmento->nombreModificado = 0;
 	segmento->metaData = metaData;
 	list_add(segmentos, segmento);
 	return segmento;
@@ -172,32 +171,18 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 
 	if (segmento == NULL) {
 
-		EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento), DESCRIBE);
-		Paquete paquete;
-		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
-
-		if (paquete.header.tipoMensaje == NOTFOUND) {
-			return NULL;
+		Segmento* segmentoAux = buscarSegmentoEnFileSystem(nombreSegmento);
+		if (segmentoAux != NULL) {
+			segmento = insertarSegmentoEnMemoria(segmentoAux->nombreTabla, segmentoAux->metaData);
+			list_add(segmentos, segmento);
+			freeSegmento(segmentoAux);
 		}
-		//esto deberia sacarlo en una funcion, pero es muy compeljo y no justifica
-		void*cadenaRecibida = malloc(paquete.header.tamanioMensaje);
-		char** datos = string_split(cadenaRecibida, " ");
-		char* nombreSegmento = datos[0];
-		t_consistencia consistencia = getConsistenciaByChar(datos[1]);
-		int cantParticiones = atoi(datos[2]);
-		int tiempoCompactacion = atoi(datos[3]);
-
-		t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
-		metadata->CONSISTENCIA = consistencia;
-		metadata->CANT_PARTICIONES = cantParticiones;
-		metadata->T_COMPACTACION = tiempoCompactacion;
-
-		segmento = insertarSegmentoEnMemoria(nombreSegmento, metadata);
-		list_add(segmentos, segmento);
 
 	}
 	return segmento;
 }
+
+
 
 bool memoriaLlena() {
 	bool estaLibre(EstadoFrame* estado) {
@@ -259,6 +244,18 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 }
 
+void freeSegmento(Segmento* segmentoAEliminar)
+{
+	if(segmentoAEliminar->paginas!=NULL){
+		list_destroy(segmentoAEliminar->paginas);
+	}
+
+	if (segmentoAEliminar->metaData != NULL) {
+		free(segmentoAEliminar->metaData);
+	}
+	free(segmentoAEliminar);
+}
+
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
 	//podria usar aca un list_clean and destroy pero voy a estar cargando mas funciones parecidas
@@ -266,12 +263,7 @@ void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 		eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
 	}
 	list_iterate(segmentoAEliminar->paginas, (void*) eliminarPaginaSegmento);
-	list_destroy(segmentoAEliminar->paginas);
-	if (segmentoAEliminar->metaData != NULL) {
-		free(segmentoAEliminar->metaData);
-	}
-	free(segmentoAEliminar);
-
+	freeSegmento(segmentoAEliminar);
 }
 t_list* obtenerPaginasModificadas() {
 	t_list* paginasModificadas = list_create();

@@ -23,9 +23,7 @@ int tamanioRegistro;
 
 typedef struct Segmento {
 	char* nombreTabla;
-	char* nombreViejo;
 	t_list* paginas;
-	int nombreModificado;
 	t_metadata_tabla* metaData;
 } Segmento;
 
@@ -75,4 +73,6 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
 void journalMemoria();
 
 t_list* obtenerPaginasModificadas();
+
+
 #endif /*MEMORIAPRINCIPAL_H_*/

@@ -20,7 +20,7 @@ t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 }
 
 t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value,double timeStamp) {
-	Segmento *tabla = buscarSegmento(nombreTabla);
+	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
 	if (tabla == NULL) {
 		tabla = insertarSegmentoEnMemoria(nombreTabla, NULL);
 	}
@@ -35,7 +35,6 @@ void DROP_MEMORIA(char* nombreTabla) {
 	}
 	eliminarSegmentoFileSystem(nombreTabla);
 
-	//aca pegale a kevin y avisale
 }
 
 int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
@@ -43,7 +42,12 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	metaData->CONSISTENCIA=consistencia;
 	metaData->CANT_PARTICIONES = cantParticiones;
 	metaData->T_COMPACTACION = tiempoCompactacion;
-
+	char* consulta=malloc(strlen("CREATE")+strlen(nombreTabla)+2+sizeof(int)+sizeof(int)+4);//hay 4 espacios
+	sprintf(consulta,"CREATE %s %s %d %d",nombreTabla,getConsistenciaCharByEnum(consistencia),cantParticiones,tiempoCompactacion);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), CREATE);
+	free(consulta);
+	Paquete paquete;
+	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 	if (buscarSegmento(nombreTabla) != NULL) {
 		return 1; //es un error, la tabla ya existe
 	}
