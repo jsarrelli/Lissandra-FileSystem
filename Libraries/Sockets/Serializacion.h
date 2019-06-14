@@ -23,7 +23,9 @@ typedef enum t_protocolo {
 	JOURNAL,
 	NOTFOUND,
 	SELECT_TABLE,
-	CONEXION_INICIAL_FILESYSTEM_MEMORIA
+	CONEXION_INICIAL_FILESYSTEM_MEMORIA,
+	SUCCESS,
+	ERROR
 } t_protocolo;
 
 //////////////////////////////////////////

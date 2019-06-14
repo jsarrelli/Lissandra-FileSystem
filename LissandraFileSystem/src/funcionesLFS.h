@@ -9,19 +9,9 @@
 #define FUNCIONESLFS_H_
 
 #include <Libraries.h>
-#include "FileSystem.h"
-
+#include "LissandraFileSystem.h"
 //t_list* listaNombresTablas;
 
-//consola
-
-void procesarInput(char * linea);
-void consolaLFS(void);
-void consolaDrop(char** palabras, int cantidadParametros);
-void consolaInsert(char**palabras, int cantidadParametros);
-void consolaSelect(char**palabras, int cantidadParametros);
-void consolaCreate(char**palabras, int cantidadParametros);
-void consolaDescribe(char**palabras, int cantidad);
 
 //tablas
 
@@ -30,7 +20,7 @@ char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
-t_metadata_tabla mostrarMetadataTabla(char* nombreTabla);
+void mostrarMetadataTabla(t_metadata_tabla metadataTabla,char* nombreTabla);
 void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
@@ -40,6 +30,8 @@ char** buscarRegistrosDeTabla(char*nombreTabla);
 void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioArrayRegistros(char** registros);
 
+t_metadata_tabla obtenerMetadata(char* nombreTabla);
+void mostrarMetadataTodasTablas(char *ruta);
 
 //ARCHIVOS DE TABLA
 

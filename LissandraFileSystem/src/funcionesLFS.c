@@ -95,26 +95,22 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 
 }
 
-t_metadata_tabla mostrarMetadataTabla(char* nombreTabla) {
-
+t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 	char* rutaTabla = malloc(100);
 	armarRutaTabla(rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	t_config* configMetadata = config_create(rutaTabla);
 	t_metadata_tabla metadataTabla;
-
-	printf("\nMetadata de %s: \n", nombreTabla);
 	metadataTabla.CONSISTENCIA = getConsistenciaByChar(config_get_string_value(configMetadata, "CONSISTENCIA"));
 	metadataTabla.CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
 	metadataTabla.T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
-
-	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
-	//FILE* archivo = fopen ("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "w+");
-	//fclose(archivo);
-
 	free(rutaTabla);
-	config_destroy(configMetadata);
 	return metadataTabla;
+}
+
+void mostrarMetadataTabla(t_metadata_tabla metadataTabla,char* nombreTabla) {
+	printf("\nMetadata de %s: \n", nombreTabla);
+	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 }
 
 void mostrarMetadataTabla2(char* nombreTabla) {

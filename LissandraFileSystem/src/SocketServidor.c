@@ -40,6 +40,10 @@ void procesarAccion(int socketMemoria) {
 			case (DROP):
 				procesarInput(paquete.mensaje);
 				break;
+
+			case (CREATE):
+							procesarInput(paquete.mensaje);
+							break;
 			case (DESCRIBE):
 					//
 				break;

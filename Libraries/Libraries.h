@@ -1,5 +1,5 @@
-#ifndef LIBRARIES2_H_
-#define LIBRARIES2_H_
+#ifndef LIBRARIES_H_
+#define LIBRARIES_H_
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -80,4 +80,4 @@ void *get_in_addr(struct sockaddr *sa);
 t_log* logger;
 t_log* loggerError;
 
-#endif /* LIBRARIES2_H_*/
+#endif /* LIBRARIES_H_*/
