@@ -7,10 +7,17 @@
 
 #include "KernelHeader.h"
 
-void destruirElementosMain(t_list* lista, t_queue* cola, t_log* logger){
+void destruirElementosMain(t_list* lista, t_queue* cola){
 	list_destroy_and_destroy_elements(lista, (void*) free);
 	queue_destroy_and_destroy_elements(cola, (void*) free);
-	log_destroy(logger);
+//	log_destroy(logger);
+}
+
+void destruirLogStruct(logStruct* log_master){
+	log_destroy(log_master->logInfo);
+	log_destroy(log_master->logError);
+	log_destroy(log_master->logTrace);
+	free(log_master);
 }
 
 bool instruccionSeaSalir(char* operacion){
@@ -27,9 +34,14 @@ procExec* newProceso(){
 	return proceso;
 }
 
-void destruirProcesoExec(procExec* proceso){
+void destruirProceso(procExec* proceso){
 	list_destroy_and_destroy_elements(proceso->script, (void*) free);
+	free(proceso);
 }
+
+//void destruirProcesoExec(procExec* proceso){
+//	list_destroy_and_destroy_elements(proceso->script, (void*) free);
+//}
 
 void deNewAReady(procExec* proceso){
 	queue_push(colaReady, proceso);
@@ -44,7 +56,7 @@ int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo) {
 	int valor;
 	if (config_has_property(archivo_configuracion, nombre_campo)) {
 		valor = config_get_int_value(archivo_configuracion, nombre_campo);
-		printf("El %s es: %i\n", nombre_campo, valor);
+		log_info(log_master->logInfo, "El %s es: %i", nombre_campo, valor);
 		return valor;
 	}
 	return (int)NULL;
@@ -54,7 +66,7 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 	char* valor;
 	if (config_has_property(archivo_configuracion, nombre_campo)) {
 		valor = config_get_string_value(archivo_configuracion, nombre_campo);
-		printf("El %s es: %s\n", nombre_campo, valor);
+		log_info(log_master->logInfo, "El %s es: %s", nombre_campo, valor);
 		return valor;
 	}
 	return NULL;
@@ -63,8 +75,8 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 t_config_kernel *cargarConfig(char *ruta){
 //	puts("!!!Hello World!!!");
 
-	log_info(logger,
-			"Levantando archivo de configuracion del proceso Kernel \n");
+	log_info(log_master->logInfo,
+			"Levantando archivo de configuracion del proceso Kernel ");
 
 	t_config_kernel* config = malloc(sizeof(t_config_kernel));
 	t_config *kernelConfig = config_create(ruta);
@@ -72,7 +84,7 @@ t_config_kernel *cargarConfig(char *ruta){
 	if (kernelConfig == NULL) {
 		perror("Error ");
 
-		log_error(loggerError, "Problema al abrir el archivo");
+		log_error(log_master->logError, "Problema al abrir el archivo");
 	}
 
 	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
@@ -86,8 +98,8 @@ t_config_kernel *cargarConfig(char *ruta){
 	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig,
 			"SLEEP_EJECUCION");
 
-	log_info(logger,
-			"Archivo de configuracion del proceso Kernel levantado \n");
+	log_info(log_master->logInfo,
+			"Archivo de configuracion del proceso Kernel levantado ");
 
 	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 
@@ -103,56 +115,57 @@ int cantidadParametros(char ** palabras) {
 }
 
 void procesarInput(char* linea) {
-//	int cantidad;
-	char **palabras = string_split(linea, " ");
-//	cantidad = cantidadParametros(palabras);
-//	if (!strcmp(*palabras, "INSERT")) {
-//
-//		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
-//		consolaInsert(palabras, cantidad);
-//
-//	} else
-//	if (!strcmp(*palabras, "SELECT")) {
-//
-//		//	SELECT [NOMBRE_TABLA] [KEY]
-//		consolaSelect(palabras, cantidad);
-//
-//	} else
-//	if (!strcmp(*palabras, "CREATE")) {
-//		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
-//
-//		//consolaCreate(palabras,cantidad);
-//	} else
-//	if (!strcmp(*palabras, "DESCRIBE")) {
-//		// DESCRIBE [NOMBRE_TABLA]
-//		// DESCRIBE
-//
-//		//consolaDescribe(palabras,cantidad);
-//	} else
-//	if (!strcmp(*palabras, "DROP")) {
-//		//	DROP [NOMBRE_TABLA]
-//
-//		//consolaDrop(palabras,cantidad);
-//	} else
-	if (!strcmp(*palabras, "ADD")) {
-
+	char** comandos = string_n_split(linea, 2, " ");
+	char* operacion = comandos[0];
+	char* argumentos = comandos[1];
+//	char **palabras = string_split(linea, " ");
+//	int cantidad = cantidadParametros(comandos);
+	if (strcmp(operacion, "INSERT")==0) {
+		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
+		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
+		consolaInsert(argumentos);
+	} else if (strcmp(operacion, "SELECT")==0) {
+		//	SELECT [NOMBRE_TABLA] [KEY]
+		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
+		consolaSelect(argumentos);
+	} else if (strcmp(operacion, "CREATE")==0) {
+		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
+		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
+		consolaCreate(argumentos);
+		//consolaCreate(palabras,cantidad);
+	} else if (strcmp(operacion, "DESCRIBE")==0) {
+		// DESCRIBE [NOMBRE_TABLA]
+		// DESCRIBE
+		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
+		consolaDescribe(argumentos);
+		//consolaDescribe(palabras,cantidad);
+	} else if (strcmp(operacion, "DROP")==0) {
+		//	DROP [NOMBRE_TABLA]
+		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
+		consolaDrop(argumentos);
+		//consolaDrop(palabras,cantidad);
+	} else if (strcmp(operacion, "ADD")==0) {
 		//	ADD MEMORY [id] TO [consistencia]
-		printf("Se ha escrito el comando ADD\n");
-		consolaAdd(linea);
-
+		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
+		procesarAdd(argumentos);
 	}
-	else
-		printf("El comando no es el correcto. Por favor intente nuevamente\n");
 //	else
-//		if (!strcmp(*palabras, "exit")) {
-//		printf("Finalizando consola\n");
-//
-//	} else {
-//		puts("El comando no existe.");
+//		printf("El comando no es el correcto. Por favor intente nuevamente");
+	else if (strcmp(operacion, "SALIR")==0) {
+		log_trace(log_master->logTrace, "Finalizando consola");
+	} else {
+		log_trace(log_master->logTrace, "El comando no es el correcto. Por favor intente nuevamente");
+	}
+
+//	for(int i=0;i< cantidad;i++){
+//		free()
 //	}
+	free(argumentos);
+	free(operacion);
+	free(comandos);
+
 //	liberarPunteroDePunterosAChar(palabras);
 //	free(palabras);
-//
 }
 
 consistencia procesarConsistencia(char* palabra){
@@ -165,36 +178,75 @@ consistencia procesarConsistencia(char* palabra){
 	return ERROR_CONSISTENCIA;
 }
 
-bool condicionAdd(int id, infoMemoria* memoria){
-	return id == memoria->id;
-}
-
 void comandoAdd(int id, consistencia cons){
+	bool condicionAdd(int id, infoMemoria* memoria){
+			return id == memoria->id;
+	}
 	bool _esCondicionAdd(void* memoria){
 		return condicionAdd(id , memoria);
-	}
-	bool condicionAdd(int id, infoMemoria* memoria){
-		return id == memoria->id;
 	}
 	infoMemoria* memoriaEncontrada = malloc(sizeof(metadataTablas));
 	if((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd))!=NULL){
 		memoriaEncontrada->ccia = cons;
-		printf("Se ha asignado la consistencia a la memoria correctamente\n");
-		printf(
-				"La consistencia de esta memoria es: %d y el id de esta memoria es %d\n",
+		log_info(log_master->logInfo, "Se ha asignado la consistencia a la memoria correctamente");
+		log_trace(log_master->logTrace,
+				"La consistencia de esta memoria es: %d y el id de esta memoria es %d",
 				memoriaEncontrada->ccia, memoriaEncontrada->id);
 	}
 	else
-		printf("Problemas con el comando ADD");
+		log_error(log_master->logError, "Problemas con el comando ADD");
 }
 
-void consolaAdd(char*request){
-	char** valores = string_split(request, " ");
+void procesarAdd(char*argumento){
+	char** valores = string_split(argumento, " ");
 //	add(atoi(valores[1]), valores[3]);
-	consistencia cons = procesarConsistencia(valores[4]);
+	consistencia cons = procesarConsistencia(valores[3]);
 
-	int id = atoi(valores[2]);
+	int id = atoi(valores[1]);
 	comandoAdd(id, cons);
+}
+
+void consolaInsert(char*argumentos){
+	char** valores = string_split(argumentos, "\""); //34 son las " en ASCII
+	char** valoresAux = string_split(valores[0], " ");
+	char* nombreTabla = valoresAux[0];
+	char* key = valoresAux[1];
+	char* value = valores[1];
+	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key, value);
+}
+
+void consolaSelect(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	int key = atoi(valores[1]);
+
+	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
+}
+
+void consolaCreate(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	char* consistenciaChar = valores[1];
+	int cantParticiones = atoi(valores[2]);
+	int tiempoCompactacion = atoi(valores[3]);
+
+//	consistencia cons = procesarConsistencia(consistenciaChar);
+	log_trace(log_master->logTrace,
+			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d",
+			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
+}
+
+void consolaDescribe(char*nombreTabla){
+	if (nombreTabla==NULL){
+		log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
+	}
+	else{
+		log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
+	}
+}
+
+void consolaDrop(char*nombreTabla){
+	log_trace(log_master->logTrace, "Se desea elminar la tabla %s", nombreTabla);
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
@@ -205,14 +257,17 @@ void* funcionThread(void* args){
 	sem_wait(&ejecutarHilos);
 
 	sem_wait(&mutex_colaReady);
-	procExec* proceso = newProceso();
+//	procExec* proceso = newProceso();
+	procExec* proceso=NULL;
 	proceso = queue_pop(colaReady);
 	sem_post(&mutex_colaReady);
 
 	int tam_script = list_size(proceso->script);
 	for(int i=0; i< tam_script;i++){
 		procesarInput(list_get(proceso->script, i));
+		destruirProceso(proceso);
 	}
+	// Creo que aca se liberan los recursos del proceso
 	return NULL;
 }
 
@@ -226,6 +281,7 @@ void agregarHiloAListaHilosEInicializo(t_list* hilos){
 	void _agregarHilo(pthread_t*hilo){
 		pthread_create(&*hilo, NULL, (void*)funcionThread, NULL);
 		pthread_detach(*hilo);
+//		pthread_join(*hilo, NULL);
 		list_add(listaHilos, hilo);
 	}
 
@@ -278,3 +334,11 @@ void hardcodearListaMetadataTabla(){
 	list_add(listaMetadataTabla, metadata3);
 }
 
+void inicializarLogStruct(){
+	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
+			LOG_LEVEL_INFO);
+	log_master->logError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1,
+			LOG_LEVEL_ERROR);
+	log_master->logTrace = log_create((char*) TRACE_KERNEL, "Kernel Trace Logs", 1,
+			LOG_LEVEL_TRACE);
+}

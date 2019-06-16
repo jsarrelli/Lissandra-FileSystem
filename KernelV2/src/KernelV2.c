@@ -10,20 +10,38 @@
 
 #include "KernelHeader.h"
 
-static const char* INFO_KERNEL =
-		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log";
-static const char* ERRORES_KERNEL =
-		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log";
-static const char* RUTA_CONFIG_KERNEL =
-		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg";
+/*
+ * Estado del Kernel:
+ *
+ * Actualmente, el Kernel funciona con codigo hardcodeado ya que todavia no usa las funciones sockets
+ *
+ * A pesar de eso, se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
+ *
+ * Se puede asignar un criterio a una memoria (comando ADD)
+ *
+ * Se pueden loggear los errores correctamente y administrativamente (Muy importante!!)
+ *
+ * TODO:
+ * 		- Manejo de errores
+ * 		- Resto de las funciones (con codigo harcodeado) + pequeñas modificaciones del comando RUN (Brian)
+ * 		- Unir los modulos con las funciones sockets
+ * 		- Round Robin
+ *
+ * 		Y lo mas dificil: el multiprocesamiento
+ *
+ * 	Aclaracion:
+ * 		Muchas de las decisiones fueron hechas para ver los puntos que faltan
+ *
+ *
+ * 	Pero lo mas importante es que ahora tenemos una muy buena base para avanzar!!!
+ */
 
 int main(void) {
-	logger = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
-	loggerError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1,
-				LOG_LEVEL_ERROR);
-	log_info(logger, "Hola!!!");
-	sem_init(&ejecutarHilos, 0, 0);
-	sem_init(&mutex_colaReady, 0, 1); // Recordar cambiar el 0 a 1
+	log_master = malloc(sizeof(logStruct));
+	inicializarLogStruct();
+//	log_info(log_master->logInfo, "Hola!!!");
+	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
+	sem_init(&mutex_colaReady, 0, 1);
 	char*operacion;
 
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
@@ -37,12 +55,11 @@ int main(void) {
 	listaHilos = list_create();
 	listaMemorias = list_create();
 	hardcodearInfoMemorias();
-	printf("El id de la primera memoria es: %d\n", ((infoMemoria*)list_get(listaMemorias, 1))->id);
+	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n", ((infoMemoria*)list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
 	hardcodearListaMetadataTabla();
 	quantum = config->QUANTUM;
-//	pthread_t* hilos = malloc(sizeof(pthread_t)* config->MULTIPROCESAMIENTO);
-	agregarHiloAListaHilosEInicializo(listaHilos);
+//	agregarHiloAListaHilosEInicializo(listaHilos);
 
 
 	operacion = readline(">");
@@ -55,14 +72,10 @@ int main(void) {
 //		deReadyAExec();
 
 		// Por ahora lo hago con un solo proceso y lo hago manual
-//		list_get(listaHilos, 0);
 		ejecutarProcesos();
-		funcionThread((int*)2);
+		funcionThread((int*)2); // El 2 es un ejemplo porque no me importa lo que reciba pero si que reciba algo
 
 
-//		if(queue_size(colaReady) >=3){
-//			// execute();
-//		}
 
 
 
@@ -71,12 +84,13 @@ int main(void) {
 
 
 //		free(operacion);
-		destruirProcesoExec(proceso);
+//		destruirProcesoExec(proceso);
 		operacion = readline(">");
 	}
-	free(operacion);
+//	free(operacion);
 //	free(hilos);
-	destruirElementosMain(listaHilos, colaReady, logger);
+	destruirElementosMain(listaHilos, colaReady);
+	destruirLogStruct(log_master);
 //	config_destroy(config);
 	return EXIT_SUCCESS;
 }

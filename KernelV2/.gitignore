@@ -1,2 +1,4 @@
-#/Debug/
 /Debug/
+erroresKernel.log
+infoKernel.log
+tracesKernel.log
