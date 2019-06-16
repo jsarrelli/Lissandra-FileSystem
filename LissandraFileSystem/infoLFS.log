@@ -1,6 +1,14 @@
-[INFO] 21:09:49:74 LFS Logs/(16910:16910): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 23:26:16:764 LFS Logs/(23774:23774): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 21:09:49:74 LFS Logs/(16910:16910): Levantando archivo de configuracion del proceso LFS 
+[INFO] 23:26:16:767 LFS Logs/(23774:23774): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 21:09:49:74 LFS Logs/(16910:16910): Archivo de configuracion del proceso LFS levantado 
+[INFO] 23:26:16:772 LFS Logs/(23774:23774): Archivo de configuracion del proceso LFS levantado 
+
+[INFO] 23:59:20:959 LFS Logs/(23774:25665): Se creo la  TABLA4 en LFS
+
+[INFO] 23:59:20:962 LFS Logs/(23774:25665): Metadata de TABLA4 creada
+
+[INFO] 00:05:46:206 LFS Logs/(23774:25884): Se creo la  TABLA6 en LFS
+
+[INFO] 00:05:46:208 LFS Logs/(23774:25884): Metadata de TABLA6 creada
 

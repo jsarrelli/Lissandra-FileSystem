@@ -7,27 +7,31 @@ Segmento* buscarSegmentoEnFileSystem(char* nombreSegmento) {
 	Paquete paquete;
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
-	if (paquete.header.tipoMensaje == NOTFOUND) {
+	if (atoi(paquete.mensaje)==1) {
 		return NULL;
+		//la tabla no existe
 	}
 
-	void*cadenaRecibida = malloc(paquete.header.tamanioMensaje);
-	char** datos = string_split(cadenaRecibida, " ");
-	char* nombreSegmentoRecibido = datos[0];
-	t_consistencia consistencia = getConsistenciaByChar(datos[1]);
-	int cantParticiones = atoi(datos[2]);
-	int tiempoCompactacion = atoi(datos[3]);
 
+
+	char** datos = string_split(paquete.mensaje, " ");
+	t_consistencia consistencia = getConsistenciaByChar(datos[0]);
+	int cantParticiones = atoi(datos[1]);
+	int tiempoCompactacion = atoi(datos[2]);
+
+	//creo la metadata
 	t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
 	metadata->CONSISTENCIA = consistencia;
 	metadata->CANT_PARTICIONES = cantParticiones;
 	metadata->T_COMPACTACION = tiempoCompactacion;
 
+	//creo el segmento y le cargo la metadata
 	Segmento* segmentoRecibido = malloc(sizeof(Segmento));
-	segmentoRecibido->nombreTabla = malloc(strlen(nombreSegmentoRecibido));
-	strcpy(segmentoRecibido->nombreTabla, nombreSegmentoRecibido);
+	segmentoRecibido->nombreTabla = malloc(strlen(nombreSegmento));
+	strcpy(segmentoRecibido->nombreTabla, nombreSegmento);
 	segmentoRecibido->metaData = metadata;
 
+	free(paquete.mensaje);
 	return segmentoRecibido;
 }
 

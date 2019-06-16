@@ -48,7 +48,7 @@ void* leerConsola()
 	char * consulta;
 	while (1) {
 
-		puts("Ingrese comandos a ejecutar. Para salir presione enter");
+		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
 		if (consulta) {
 			add_history(consulta);

@@ -34,7 +34,12 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 	segmento->paginas = list_create();
 	segmento->nombreTabla = malloc(strlen(nombreSegmento));
 	strcpy(segmento->nombreTabla, nombreSegmento);
-	segmento->metaData = metaData;
+	segmento->metaData=malloc(sizeof(t_metadata_tabla));
+	memcpy(segmento->metaData,metaData,sizeof(t_metadata_tabla));
+	if(metaData!=NULL){
+		free(metaData);
+	}
+
 	list_add(segmentos, segmento);
 	return segmento;
 
@@ -252,7 +257,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 void freeSegmento(Segmento* segmentoAEliminar)
 {
-	if (segmentoAEliminar->paginas != NULL) {
+	if (list_size(segmentoAEliminar->paginas)>0) {
 		list_destroy(segmentoAEliminar->paginas);
 	}
 

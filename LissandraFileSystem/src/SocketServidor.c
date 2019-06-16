@@ -1,5 +1,13 @@
 #include "SocketServidor.h"
 
+#include <commons/log.h>
+#include <commons/string.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include <stdbool.h>
+
+#include "AdministradorConsultasLFS.h"
+
 void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
 	printf("\nEscuchando...\n");
@@ -7,7 +15,7 @@ void escuchar(int listenningSocket) {
 	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
-		socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
+		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			pthread_t threadId;
 			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
@@ -17,6 +25,8 @@ void escuchar(int listenningSocket) {
 
 	}
 }
+
+
 
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
@@ -28,23 +38,23 @@ void procesarAccion(int socketMemoria) {
 			int valueMaximo = 100;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-				EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+				configuracionNuevaMemoria(socketMemoria, valueMaximo);
 				break;
 			case (SELECT):
 				//
 				break;
 			case (INSERT):
-				procesarINSERT(paquete.mensaje);
+				procesarINSERT(paquete.mensaje, socketMemoria);
 				break;
 			case (DROP):
-				procesarInput(paquete.mensaje);
+				procesarDROP(paquete.mensaje, socketMemoria);
 				break;
 
 			case (CREATE):
-				procesarCREATE(paquete.mensaje);
+				procesarCREATE(paquete.mensaje, socketMemoria);
 				break;
 			case (DESCRIBE):
-				//
+				procesarDESCRIBE(paquete.mensaje, socketMemoria);
 				break;
 			}
 
@@ -60,7 +70,13 @@ void procesarAccion(int socketMemoria) {
 
 }
 
-void procesarINSERT(char* request) {
+void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
+	printf("Nueva memoria conectada. Socket N:%d",socketMemoria);
+	EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+
+}
+
+void procesarINSERT(char* request,int socketMemoria) {
 	char** valores = string_split(request, "'"); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
@@ -72,15 +88,14 @@ void procesarINSERT(char* request) {
 	} else {
 		timeStamp = atof(valores[2]);
 	}
-	char* success = malloc(1);
 
 	int resultado = funcionINSERT(timeStamp, nombreTabla, key, value);
 
-	enviarSuccess(resultado, INSERT);
+	enviarSuccess(resultado, INSERT, socketMemoria);
 
 }
 
-void procesarCREATE(char* request) {
+void procesarCREATE(char* request, int socketMemoria) {
 	char** valores = string_split(request, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];
@@ -88,22 +103,35 @@ void procesarCREATE(char* request) {
 	char* tiempoCompactacion = valores[3];
 
 	int resultado = funcionCREATE(nombreTabla, cantParticiones, consistenciaChar, tiempoCompactacion);
-	enviarSuccess(resultado, CREATE);
+	enviarSuccess(resultado, CREATE, socketMemoria);
 }
 
-void procesarDROP(char* nombreTabla) {
+void procesarDROP(char* nombreTabla, int socketMemoria) {
 	int resultado = funcionDROP(nombreTabla);
-	enviarSuccess(resultado, DROP);
+	enviarSuccess(resultado, DROP, socketMemoria);
 }
 
-void enviarSuccess(int resultado, t_protocolo protocolo) {
+void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
+
+	if (existeTabla(nombreTabla)) {
+		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
+		char respuesta[100];
+		sprintf(respuesta, "%s %d %d", getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta), DESCRIBE);
+		return;
+	}
+	enviarSuccess(1, DESCRIBE,socketMemoria);
+}
+
+void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {
 	char* success = malloc(1);
 	if (resultado == 0) {
-		strcpy(success, "0");
+		strcpy(success, "0"); //OK
 	} else {
-		strcpy(success, "1");
+		strcpy(success, "1"); //error
 	}
 
 	EnviarDatosTipo(socketMemoria, FILESYSTEM, success, 1, protocolo);
 	free(success);
 }
+

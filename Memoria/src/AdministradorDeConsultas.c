@@ -54,6 +54,7 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	if(succes==0){
 		insertarSegmentoEnMemoria(nombreTabla, metaData);
 		printf("Se ha creado la tabla %s", nombreTabla);
+
 		return 0;
 	}
 	printf("Hubo un error al crear la tabla %s, la tabla ya existe", nombreTabla);
@@ -62,7 +63,12 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 }
 
 t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
-	return buscarSegmento(nombreTabla)->metaData;
+	Segmento* segmento= buscarSegmento(nombreTabla);
+	if(segmento==NULL){
+		return NULL;
+	}else{
+		return segmento->metaData;
+	}
 }
 
 t_list* DESCRIBE_ALL_MEMOROIA() {
