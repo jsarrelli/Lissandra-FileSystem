@@ -46,21 +46,19 @@ t_metadata_tabla* newMetadata(t_consistencia consistencia, int cantParticiones, 
 	return metaData;
 }
 
+
 //crea una tabla en memoria y le avisa al fileSystem
 int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metaData = newMetadata(consistencia, cantParticiones, tiempoCompactacion);
-	char* consulta = malloc(strlen("CREATE") + strlen(nombreTabla) + 2 + sizeof(int) + sizeof(int) + 4); //hay 4 espacios
-	sprintf(consulta, "CREATE %s %s %d %d", nombreTabla, getConsistenciaCharByEnum(consistencia), cantParticiones,
-			tiempoCompactacion);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), CREATE);
-	free(consulta);
-	Paquete paquete;
-	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
-	if (paquete.header.tipoMensaje==ERROR) {
-		return 1; //es un error, la tabla ya existe
+	int succes = enviarCreateAFileSystem(metaData, nombreTabla);
+	if(succes==0){
+		insertarSegmentoEnMemoria(nombreTabla, metaData);
+		printf("Se ha creado la tabla %s", nombreTabla);
+		return 0;
 	}
-	insertarSegmentoEnMemoria(nombreTabla, metaData);
-	return 0;
+	printf("Hubo un error al crear la tabla %s, la tabla ya existe", nombreTabla);
+
+	return 1;
 }
 
 t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {

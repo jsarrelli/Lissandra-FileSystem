@@ -81,6 +81,7 @@ int HandshakeInicial()
 }
 
 void cargarConfiguracion() {
+	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
 	configuracion = (MEMORIA_configuracion*) malloc(sizeof(MEMORIA_configuracion));
 	if (configuracion == NULL) {

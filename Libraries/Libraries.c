@@ -308,5 +308,15 @@ char* getConsistenciaCharByEnum(t_consistencia consistencia) {
 		return "EC";
 	}
 	return NULL;
+
 }
 
+void list_iterate2(t_list* self, void (*closure)(void*,void*), void* segundoParametro) {
+	t_link_element *element = self->head;
+	t_link_element *aux = NULL;
+	while (element != NULL) {
+		aux = element->next;
+		closure(element->data, segundoParametro);
+		element = aux;
+	}
+}

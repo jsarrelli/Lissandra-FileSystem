@@ -12,6 +12,10 @@
 #include "Parser.h"
 #include "Sockets/Conexiones.h"
 #include "Sockets/Serializacion.h"
+#include "SocketClienteMemoria.h"
+#include "EstructurasMemoria.h"
+
+
 
 int valueMaximo;
 t_log* logger;
@@ -20,33 +24,6 @@ t_list* segmentos;
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
 int socketFileSystem;
 int tamanioRegistro;
-
-typedef struct Segmento {
-	char* nombreTabla;
-	t_list* paginas;
-	t_metadata_tabla* metaData;
-} Segmento;
-
-typedef enum{
-	NO_MODIFICADO = 0,
-	MODIFICADO = 1
-}t_modificado;
-
-typedef struct Pagina {
-	t_modificado modificado;
-	t_registro* registro;
-} Pagina;
-
-typedef enum {
-	LIBRE = 0,
-	OCUPADO
-} t_estado;
-
-
-typedef struct EstadoFrame {
-	t_estado estado;
-	double fechaObtencion;
-} EstadoFrame;
 
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystem);
 
@@ -68,11 +45,11 @@ t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar);
-void eliminarSegmentoFileSystem(char* nombreTabla);
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
 void journalMemoria();
 
-t_list* obtenerPaginasModificadas();
+void freeSegmento(Segmento* segmentoAEliminar);
 
+bool isModificada(Pagina* pagina);
 
 #endif /*MEMORIAPRINCIPAL_H_*/

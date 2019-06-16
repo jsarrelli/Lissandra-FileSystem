@@ -1,7 +1,6 @@
-[INFO] 21:41:24:924 LFS Logs/(16539:16539): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 21:09:49:74 LFS Logs/(16910:16910): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 21:41:24:924 LFS Logs/(16539:16539): Levantando archivo de configuracion del proceso LFS 
+[INFO] 21:09:49:74 LFS Logs/(16910:16910): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 21:41:24:924 LFS Logs/(16539:16539): Archivo de configuracion del proceso LFS levantado 
+[INFO] 21:09:49:74 LFS Logs/(16910:16910): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 21:42:31:871 LFS Logs/(16539:16547): Insert realizado en memtable

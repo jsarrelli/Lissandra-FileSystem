@@ -1,5 +1,5 @@
 #ifndef EstructurasFileSystem_H_
-#define EstructurasFileSyste_H_
+#define EstructurasFileSystem_H_
 
 
 typedef struct{

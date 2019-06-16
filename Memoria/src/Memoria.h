@@ -1,5 +1,5 @@
-#ifndef MEMEORIA_H_
-#define MEMEORIA_H_
+#ifndef MEMORIA_H_
+#define MEMORIA_H_
 
 #include <Libraries.h>
 #include <commons/log.h>
@@ -32,7 +32,7 @@ typedef struct MEMORIA_configuracion{
 }MEMORIA_configuracion;
 
 t_log* logger;
-char* pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
+char* pathMEMConfig;
 MEMORIA_configuracion* configuracion;
 pthread_t threadId;
 t_config*  archivo_configuracion;
@@ -41,4 +41,4 @@ int valueMaximoPaginas;
 void cargarConfiguracion();
 void* leerConsola();
 int HandshakeInicial();
-#endif /*MEMEORIA_H_ */
+#endif /*MEMORIA_H_ */

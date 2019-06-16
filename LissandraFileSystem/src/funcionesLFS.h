@@ -10,6 +10,7 @@
 
 #include <Libraries.h>
 #include "LissandraFileSystem.h"
+#include "EstructurasFileSystem.h"
 //t_list* listaNombresTablas;
 
 

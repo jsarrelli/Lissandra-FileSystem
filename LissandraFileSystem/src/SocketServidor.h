@@ -12,6 +12,8 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <stdint.h>
+#include "funcionesLFS.h"
+#include "EstructurasFileSystem.h"
 
 
 int socketMemoria;
@@ -19,4 +21,7 @@ int socketMemoria;
 void escuchar(int listenningSocket);
 void procesarAccion(int socketMemoria);
 void procesarDescribe(char* consulta);
+void procesarINSERT(char* request);
+void procesarCREATE(char* request);
+void enviarSuccess(int resultado, t_protocolo protocolo);
 #endif /* SOCKETSERVIDORFILESYSTEM_H_ */

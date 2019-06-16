@@ -68,7 +68,7 @@ void* procesarCREATE(char* consulta) {
 		consistencia=STRONG;
 	}
 	CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
-	printf("Se ha creado la tabla %s", nombreTabla);
+
 	return NULL;
 
 }

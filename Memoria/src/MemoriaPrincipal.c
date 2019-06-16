@@ -182,8 +182,6 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 	return segmento;
 }
 
-
-
 bool memoriaLlena() {
 	bool estaLibre(EstadoFrame* estado) {
 		return estado->estado == LIBRE;
@@ -193,8 +191,16 @@ bool memoriaLlena() {
 }
 
 bool todosModificados() {
-	t_list* paginasModificadas = obtenerPaginasModificadas();
-	return list_size(paginasModificadas) == list_size(memoriaStatus);
+	bool todosModificados = true;
+
+	void tienePaginasModificadas(Segmento* segmento) {
+		todosModificados = list_all_satisfy(segmento->paginas, (void*) isModificada);
+		if (todosModificados == false) {
+			return;
+		}
+	}
+	list_iterate(segmentos, (void*) tienePaginasModificadas);
+	return todosModificados;
 }
 
 void* liberarUltimoUsado() {
@@ -246,7 +252,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 
 void freeSegmento(Segmento* segmentoAEliminar)
 {
-	if(segmentoAEliminar->paginas!=NULL){
+	if (segmentoAEliminar->paginas != NULL) {
 		list_destroy(segmentoAEliminar->paginas);
 	}
 
@@ -265,43 +271,35 @@ void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 	list_iterate(segmentoAEliminar->paginas, (void*) eliminarPaginaSegmento);
 	freeSegmento(segmentoAEliminar);
 }
-t_list* obtenerPaginasModificadas() {
-	t_list* paginasModificadas = list_create();
-	bool isModificada(Pagina* pagina) {
-		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
-		return estadoFrame->estado == (int) MODIFICADO;
-	}
-	void buscarPaginasModificadas(Segmento* segmento) {
-		t_list* paginasModificadasSegmento = list_filter(segmento->paginas, (void*) isModificada);
-		list_add_all(paginasModificadas, paginasModificadasSegmento);
 
-	}
-	list_iterate(segmentos, (void*) buscarPaginasModificadas);
-	return paginasModificadas;
+bool isModificada(Pagina* pagina) {
+	EstadoFrame* estadoFrame = getEstadoFrame(pagina);
+	return estadoFrame->estado == (int) MODIFICADO;
 }
 
-void enviarRegistro(Pagina* pagina) {
-	t_registro* registro = pagina->registro;
-	char* consulta = malloc(
-			strlen("INSERT") + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 3); //mas 3 espacios
-	sprintf(consulta, "INSERT %d %s %f", registro->key, registro->value, registro->timestamp);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
+t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
+
+	t_list* paginasModificadas = list_filter(segmento->paginas, (void*) isModificada);
+	return paginasModificadas;
 }
 
 void journalMemoria() {
 	//algun semaforo
 	log_info(logger, "Realizando Journal");
-	t_list* paginasModificadas = obtenerPaginasModificadas();
 
-	list_iterate(paginasModificadas, (void*) enviarRegistro);
+	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
+		if (isModificada(pagina)) {
+			enviarRegistroAFileSystem(pagina, segmento->nombreTabla);
+		}
+	}
+
+	void journalPaginasModificadasBySegmento(Segmento* segmento) {
+		list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
+	}
+
+	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
 	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
 
-}
-
-void eliminarSegmentoFileSystem(char* nombreSegmento) {
-	char* consulta = malloc(strlen("DROP") + strlen(nombreSegmento) + 1); // +1 por el espacio
-	sprintf(consulta, "DROP %s", nombreSegmento);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), DROP);
 }
 
