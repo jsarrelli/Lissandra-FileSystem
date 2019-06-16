@@ -61,12 +61,7 @@ void* procesarCREATE(char* consulta) {
 	char* consistenciaChar = valores[1];
 	int cantParticiones = atoi(valores[2]);
 	int tiempoCompactacion = atoi(valores[3]);
-	t_consistencia consistencia;
-	if(strcmp(consistenciaChar,"EV")==0){
-		consistencia=EVENTUAL;
-	}else{
-		consistencia=STRONG;
-	}
+	t_consistencia consistencia = getConsistenciaByChar(consistenciaChar);
 	CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 
 	return NULL;
