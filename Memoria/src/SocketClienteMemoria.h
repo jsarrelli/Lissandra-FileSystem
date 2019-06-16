@@ -18,4 +18,5 @@ Segmento* buscarSegmentoEnFileSystem(char* nombreSegmento);
 void enviarRegistroAFileSystem(Pagina* pagina,char* nombreSegmento);
 void eliminarSegmentoFileSystem(char* nombreSegmento);
 int enviarCreateAFileSystem(t_metadata_tabla* metadata,char* nombreTabla);
+t_list* describeAllFileSystem();
 #endif /*SOCKETCLIENTEMEMORIA_H_*/

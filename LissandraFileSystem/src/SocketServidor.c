@@ -10,7 +10,6 @@
 
 void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
-	printf("\nEscuchando...\n");
 
 	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
@@ -18,15 +17,14 @@ void escuchar(int listenningSocket) {
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			pthread_t threadId;
+			printf("Escuchando.. \n");
 			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
 			pthread_detach(threadId);
-			printf("Escuchando.. \n");
+
 		}
 
 	}
 }
-
-
 
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
@@ -56,6 +54,9 @@ void procesarAccion(int socketMemoria) {
 			case (DESCRIBE):
 				procesarDESCRIBE(paquete.mensaje, socketMemoria);
 				break;
+			case DESCRIBE_ALL:
+				procesarDESCRIBE_ALL(socketMemoria);
+				break;
 			}
 
 		} else {
@@ -71,12 +72,12 @@ void procesarAccion(int socketMemoria) {
 }
 
 void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
-	printf("Nueva memoria conectada. Socket N:%d",socketMemoria);
+	printf("Nueva memoria conectada. Socket N:%d", socketMemoria);
 	EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 
 }
 
-void procesarINSERT(char* request,int socketMemoria) {
+void procesarINSERT(char* request, int socketMemoria) {
 	char** valores = string_split(request, "'"); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
@@ -111,16 +112,39 @@ void procesarDROP(char* nombreTabla, int socketMemoria) {
 	enviarSuccess(resultado, DROP, socketMemoria);
 }
 
+//esta funcion podria ser mucho mas linda, pero el obtenerNombreTablas no me sale
+void procesarDESCRIBE_ALL(int socketMemoria) {
+
+	t_list* listaDirectorios = list_create();
+	buscarDirectorios(rutas.Tablas, listaDirectorios);
+
+	char* obtenerNombreTablaByRuta(char* rutaTabla) {
+		char** directorios = string_split(rutaTabla, "/");
+		return (char*) obtenerUltimoElementoDeUnSplit(directorios);
+	}
+
+	void describeDirectorio(char* directorio) {
+		char* nombreTabla = obtenerNombreTablaByRuta(directorio);
+		procesarDESCRIBE(nombreTabla, socketMemoria);
+	}
+
+	list_iterate(listaDirectorios, (void*) describeDirectorio);
+	enviarSuccess(0, DESCRIBE_ALL, socketMemoria);
+	list_destroy(listaDirectorios);
+
+}
+
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
-		sprintf(respuesta, "%s %d %d", getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
+		sprintf(respuesta, "%s %s %d %d",nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta), DESCRIBE);
 		return;
 	}
-	enviarSuccess(1, DESCRIBE,socketMemoria);
+	enviarSuccess(1, DESCRIBE, socketMemoria);
+
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {

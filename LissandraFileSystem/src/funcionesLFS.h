@@ -51,4 +51,6 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 int contarArchivosTemporales(char ** puntero);
 int escribirEnTmp (char*nombreTabla,char*rutaTmp);
 
+char* obtenerNombreTablaByRuta(char* rutaTabla);
+
 #endif /* FUNCIONESLFS_H_ */

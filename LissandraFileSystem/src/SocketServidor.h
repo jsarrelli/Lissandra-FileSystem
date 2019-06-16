@@ -4,6 +4,7 @@
 #include "Libraries.h"
 #include <Sockets/Conexiones.h>
 #include <Sockets/Serializacion.h>
+#include <commons/collections/list.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,4 +25,5 @@ void procesarCREATE(char* request,int socketMemoria);
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria);
 void procesarDROP(char* nombreTabla, int socketMemoria);
 void enviarSuccess(int resultado, t_protocolo protocolo,int socketMemoria);
+void procesarDESCRIBE_ALL(int socketMemoria);
 #endif /* SOCKETSERVIDORFILESYSTEM_H_ */

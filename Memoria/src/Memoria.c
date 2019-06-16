@@ -30,11 +30,11 @@ int main() {
 //	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
 //	//SELECT_MEMORIA("TABLA1" , 3);
 
-	pthread_create(&intTemporalJournal, NULL, procesoTemporalJournal, NULL);
-	pthread_detach(intTemporalJournal);
-
-	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
-	pthread_detach(intTemporalGossiping);
+//	pthread_create(&intTemporalJournal, NULL, procesoTemporalJournal, NULL);
+//	pthread_detach(intTemporalJournal);
+//
+//	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
+//	pthread_detach(intTemporalGossiping);
 
 	log_info(logger, "Configurando Listening Socket...");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
