@@ -15,7 +15,8 @@ void inicializarEstadoMemoria() {
 	}
 }
 
-void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido,
+		int socketFileSystemRecibido) {
 	tamanioRegistro = sizeof(int) + sizeof(double) + valueMaximoRecibido;
 	tamanioMemoria = tamanioMemoriaRecibido;
 	cantFrames = tamanioMemoria / tamanioRegistro;
@@ -28,15 +29,16 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 }
 
-Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData) {
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento,
+		t_metadata_tabla* metaData) {
 
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
 	segmento->nombreTabla = malloc(strlen(nombreSegmento));
 	strcpy(segmento->nombreTabla, nombreSegmento);
-	segmento->metaData=malloc(sizeof(t_metadata_tabla));
-	memcpy(segmento->metaData,metaData,sizeof(t_metadata_tabla));
-	if(metaData!=NULL){
+	segmento->metaData = malloc(sizeof(t_metadata_tabla));
+	memcpy(segmento->metaData, metaData, sizeof(t_metadata_tabla));
+	if (metaData != NULL) {
 		free(metaData);
 	}
 
@@ -47,7 +49,8 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
-Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento) {
+Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp,
+		Segmento* segmento) {
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 		log_info(logger, "Insertando registro en memoria");
@@ -79,7 +82,8 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segm
 
 		list_add(segmento->paginas, paginaNueva);
 	} else {
-		log_info(logger, "Esta key ya se encuentra en el sistema, se actualizara");
+		log_info(logger,
+				"Esta key ya se encuentra en el sistema, se actualizara");
 		paginaNueva->registro->timestamp = timeStamp;
 		strcpy(paginaNueva->registro->value, value);
 		paginaNueva->modificado = MODIFICADO;
@@ -96,8 +100,7 @@ void* darMarcoVacio() {
 	int i;
 	//no hay algun list_find_first?
 	for (i = 0; i < list_size(memoriaStatus); i++) {
-		if (((EstadoFrame*) list_get(memoriaStatus, i))->estado
-				== LIBRE) {
+		if (((EstadoFrame*) list_get(memoriaStatus, i))->estado == LIBRE) {
 			return memoria + (i * tamanioRegistro);
 		}
 	}
@@ -121,10 +124,12 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	if (pagina == NULL) {
 
 		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
-		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
+		char* consulta = malloc(
+				strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
 		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
 
-		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
+		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta),
+				SELECT);
 		free(consulta);
 
 		Paquete paquete;
@@ -137,7 +142,8 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 		datos = paquete.mensaje;
 
 		t_registro registro = procesarRegistro(datos);
-		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
+		insertarPaginaEnMemoria(registro.key, registro.value,
+				registro.timestamp, segmento);
 
 	} else {
 		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
@@ -178,7 +184,8 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 
 		Segmento* segmentoAux = buscarSegmentoEnFileSystem(nombreSegmento);
 		if (segmentoAux != NULL) {
-			segmento = insertarSegmentoEnMemoria(segmentoAux->nombreTabla, segmentoAux->metaData);
+			segmento = insertarSegmentoEnMemoria(segmentoAux->nombreTabla,
+					segmentoAux->metaData);
 			list_add(segmentos, segmento);
 			freeSegmento(segmentoAux);
 		}
@@ -199,7 +206,8 @@ bool todosModificados() {
 	bool todosModificados = true;
 
 	void tienePaginasModificadas(Segmento* segmento) {
-		todosModificados = list_all_satisfy(segmento->paginas, (void*) isModificada);
+		todosModificados = list_all_satisfy(segmento->paginas,
+				(void*) isModificada);
 		if (todosModificados == false) {
 			return;
 		}
@@ -217,8 +225,8 @@ void* liberarUltimoUsado() {
 
 	void LRUPagina(Pagina* pagina) {
 		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
-		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion &&
-				frameDePagina->estado == LIBRE) {
+		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion
+				&& frameDePagina->estado == LIBRE) {
 			frameMenosUtilizado = frameDePagina;
 			segmentoPaginaMenosUtilizada = segmentoActual;
 			paginaMenosUtilizada = pagina;
@@ -231,8 +239,10 @@ void* liberarUltimoUsado() {
 	}
 
 	list_iterate(segmentos, (void*) iterarEntrePaginas);
-	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
-			paginaMenosUtilizada->registro->key, paginaMenosUtilizada->registro->timestamp);
+	log_info(logger,
+			"Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
+			paginaMenosUtilizada->registro->key,
+			paginaMenosUtilizada->registro->timestamp);
 	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
 	return frameMenosUtilizado;
@@ -251,13 +261,13 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 		free(pagina);
 	}
 
-	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPagina, (void*) freePagina);
+	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPagina,
+			(void*) freePagina);
 
 }
 
-void freeSegmento(Segmento* segmentoAEliminar)
-{
-	if (list_size(segmentoAEliminar->paginas)>0) {
+void freeSegmento(Segmento* segmentoAEliminar) {
+	if (list_size(segmentoAEliminar->paginas) > 0) {
 		list_destroy(segmentoAEliminar->paginas);
 	}
 
@@ -284,7 +294,8 @@ bool isModificada(Pagina* pagina) {
 
 t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 
-	t_list* paginasModificadas = list_filter(segmento->paginas, (void*) isModificada);
+	t_list* paginasModificadas = list_filter(segmento->paginas,
+			(void*) isModificada);
 	return paginasModificadas;
 }
 
@@ -299,12 +310,25 @@ void journalMemoria() {
 	}
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
-		list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
+		if (existeSegmentoFS(segmento)) {
+			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada,
+					segmento);
+		}
+
 	}
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
 	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
 
+}
+
+bool existeSegmentoFS(Segmento* segmento) {
+	if (segmento->metaData != NULL) {
+		return true;
+	} else if (buscarSegmentoEnFileSystem(segmento->nombreTabla) != NULL) {
+		return true;
+	}
+	return false;
 }
 
