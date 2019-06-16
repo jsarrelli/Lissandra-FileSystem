@@ -15,8 +15,7 @@ void inicializarEstadoMemoria() {
 	}
 }
 
-void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido,
-		int socketFileSystemRecibido) {
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
 	tamanioRegistro = sizeof(int) + sizeof(double) + valueMaximoRecibido;
 	tamanioMemoria = tamanioMemoriaRecibido;
 	cantFrames = tamanioMemoria / tamanioRegistro;
@@ -29,8 +28,7 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido,
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 }
 
-Segmento* insertarSegmentoEnMemoria(char* nombreSegmento,
-		t_metadata_tabla* metaData) {
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData) {
 
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
@@ -49,8 +47,7 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento,
 
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
-Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp,
-		Segmento* segmento) {
+Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento) {
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 		log_info(logger, "Insertando registro en memoria");
@@ -73,8 +70,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp,
 			marcoVacio = darMarcoVacio();
 		}
 
-		t_registro* registroEnMemoria = memcpy(marcoVacio, &registro,
-				tamanioRegistro);
+		t_registro* registroEnMemoria = memcpy(marcoVacio, &registro, tamanioRegistro);
 
 		paginaNueva = malloc(sizeof(Pagina));
 		paginaNueva->modificado = MODIFICADO;
@@ -82,8 +78,7 @@ Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp,
 
 		list_add(segmento->paginas, paginaNueva);
 	} else {
-		log_info(logger,
-				"Esta key ya se encuentra en el sistema, se actualizara");
+		log_info(logger, "Esta key ya se encuentra en el sistema, se actualizara");
 		paginaNueva->registro->timestamp = timeStamp;
 		strcpy(paginaNueva->registro->value, value);
 		paginaNueva->modificado = MODIFICADO;
@@ -124,12 +119,10 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	if (pagina == NULL) {
 
 		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
-		char* consulta = malloc(
-				strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
+		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
 		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
 
-		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta),
-				SELECT);
+		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
 		free(consulta);
 
 		Paquete paquete;
@@ -142,8 +135,7 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 		datos = paquete.mensaje;
 
 		t_registro registro = procesarRegistro(datos);
-		insertarPaginaEnMemoria(registro.key, registro.value,
-				registro.timestamp, segmento);
+		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
 
 	} else {
 		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
@@ -184,8 +176,7 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 
 		Segmento* segmentoAux = buscarSegmentoEnFileSystem(nombreSegmento);
 		if (segmentoAux != NULL) {
-			segmento = insertarSegmentoEnMemoria(segmentoAux->nombreTabla,
-					segmentoAux->metaData);
+			segmento = insertarSegmentoEnMemoria(segmentoAux->nombreTabla, segmentoAux->metaData);
 			list_add(segmentos, segmento);
 			freeSegmento(segmentoAux);
 		}
@@ -206,8 +197,7 @@ bool todosModificados() {
 	bool todosModificados = true;
 
 	void tienePaginasModificadas(Segmento* segmento) {
-		todosModificados = list_all_satisfy(segmento->paginas,
-				(void*) isModificada);
+		todosModificados = list_all_satisfy(segmento->paginas, (void*) isModificada);
 		if (todosModificados == false) {
 			return;
 		}
@@ -225,8 +215,7 @@ void* liberarUltimoUsado() {
 
 	void LRUPagina(Pagina* pagina) {
 		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
-		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion
-				&& frameDePagina->estado == LIBRE) {
+		if (frameDePagina->fechaObtencion < frameMenosUtilizado->fechaObtencion && frameDePagina->estado == LIBRE) {
 			frameMenosUtilizado = frameDePagina;
 			segmentoPaginaMenosUtilizada = segmentoActual;
 			paginaMenosUtilizada = pagina;
@@ -239,9 +228,7 @@ void* liberarUltimoUsado() {
 	}
 
 	list_iterate(segmentos, (void*) iterarEntrePaginas);
-	log_info(logger,
-			"Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
-			paginaMenosUtilizada->registro->key,
+	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida", paginaMenosUtilizada->registro->key,
 			paginaMenosUtilizada->registro->timestamp);
 	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
@@ -261,8 +248,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 		free(pagina);
 	}
 
-	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPagina,
-			(void*) freePagina);
+	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPagina, (void*) freePagina);
 
 }
 
@@ -294,8 +280,7 @@ bool isModificada(Pagina* pagina) {
 
 t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 
-	t_list* paginasModificadas = list_filter(segmento->paginas,
-			(void*) isModificada);
+	t_list* paginasModificadas = list_filter(segmento->paginas, (void*) isModificada);
 	return paginasModificadas;
 }
 
@@ -311,8 +296,9 @@ void journalMemoria() {
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
 		if (existeSegmentoFS(segmento)) {
-			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada,
-					segmento);
+			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
+		} else {
+			log_info (logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
 		}
 
 	}

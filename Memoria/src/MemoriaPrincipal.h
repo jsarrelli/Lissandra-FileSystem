@@ -51,5 +51,6 @@ void journalMemoria();
 void freeSegmento(Segmento* segmentoAEliminar);
 
 bool isModificada(Pagina* pagina);
+bool existeSegmentoFS (Segmento* segmento);
 
 #endif /*MEMORIAPRINCIPAL_H_*/
