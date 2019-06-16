@@ -108,34 +108,14 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 	return metadataTabla;
 }
 
-void mostrarMetadataTabla(t_metadata_tabla metadataTabla,char* nombreTabla) {
+void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
 	printf("\nMetadata de %s: \n", nombreTabla);
 	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 }
 
-void mostrarMetadataTabla2(char* nombreTabla) {
-	char*rutaTabla = malloc(100);
-	char* nombTabla = string_new();
-	strcpy(rutaTabla, nombreTabla);
-	string_append(&nombreTabla, "/");
-	string_append(&nombreTabla, "Metadata.txt");
-	t_config* configMetadata = config_create(nombreTabla);
-	t_metadata_tabla* metadataTabla = malloc(sizeof(t_metadata_tabla));
-	char** palabras = string_split(rutaTabla, "/");
-	nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
-	printf("\nMetadata de %s: \n", nombTabla);
+//devuelve una lista con todos los nombres de las tablas del sistema
+void obtenerNombreTablas(t_list* tablas) {
 
-	metadataTabla->CONSISTENCIA = getConsistenciaByChar(config_get_string_value(configMetadata, "CONSISTENCIA"));
-	metadataTabla->CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
-	metadataTabla->T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
-
-	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla->CONSISTENCIA, metadataTabla->CANT_PARTICIONES, metadataTabla->T_COMPACTACION);
-	free(metadataTabla);
-	free(nombTabla);
-	liberarPunteroDePunterosAChar(palabras);
-	free(palabras);
-	free(rutaTabla);
-	config_destroy(configMetadata);
 }
 
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla) {
@@ -177,7 +157,7 @@ int existeArchivo(char*nombreTabla, char * rutaArchivo) {
 
 	armarRutaTabla(ruta, nombreTabla);
 	archivos = buscarArchivos(ruta);
-	archivo = obtenerUltimoElementoDeUnSplit(carpetas);
+	archivo = (char*) obtenerUltimoElementoDeUnSplit(carpetas);
 	string_append(&ruta, archivo);
 
 	if (archivos[i] != NULL) {
@@ -352,14 +332,12 @@ void removerTabla(char* nombreTabla) {
 	free(rutaTabla);
 }
 
-char** buscarDirectorios(char * ruta) {
+void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 
 	DIR *directorioActual;
 	struct dirent *directorio;
-	char ** directorios = malloc(100);
+	//aca estamos limitando los
 	char * rutaNueva;
-	int i = 0;
-
 	directorioActual = opendir(ruta);
 
 	if (directorioActual == NULL) {
@@ -375,10 +353,11 @@ char** buscarDirectorios(char * ruta) {
 				rutaNueva = string_duplicate(ruta);
 				string_append(&rutaNueva, directorio->d_name);
 
-				directorios[i] = malloc(256);
 				if (esDirectorio(rutaNueva)) {
-					strcpy(directorios[i], rutaNueva);
-					i++;
+					//strcpy(directorios[i], rutaNueva);
+					char* direccion = malloc(strlen(rutaNueva));
+					strcpy(direccion, rutaNueva);
+					list_add(listaDirectorios, direccion);
 				}
 				free(rutaNueva);
 			}
@@ -387,25 +366,26 @@ char** buscarDirectorios(char * ruta) {
 
 		closedir(directorioActual);
 	}
-	directorios[i] = NULL;
-	return directorios;
 }
 
 void mostrarMetadataTodasTablas(char *ruta) {
-	char ** directorios;
-	int i = 0;
 
-	directorios = buscarDirectorios(ruta);
+	t_list* listaDirectorios = list_create();
+	buscarDirectorios(ruta, listaDirectorios);
 
-	while (directorios[i] != NULL) {
-
-		mostrarMetadataTabla2(directorios[i]);
-
-		i++;
-
+	char* obtenerNombreTablaByRuta(char* rutaTabla) {
+		char** directorios = string_split(rutaTabla, "/");
+		return (char*) obtenerUltimoElementoDeUnSplit(directorios);
 	}
-	liberarPunteroDePunterosAChar(directorios);
-	free(directorios);
+
+	void describeDirectorio(char* directorio) {
+		char* nombreTabla = obtenerNombreTablaByRuta(directorio);
+		funcionDESCRIBE(nombreTabla);
+	}
+
+	list_iterate(listaDirectorios, (void*) describeDirectorio);
+	list_destroy(listaDirectorios);
+
 }
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
@@ -430,27 +410,19 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 }
 
 void crearYEscribirArchivosTemporales(char*ruta) {
-	char ** directorios;
-	int i = 0;
 
-	directorios = buscarDirectorios(ruta);
+	t_list* listaDirectorios = list_create();
+	buscarDirectorios(ruta, listaDirectorios);
 
-	while (directorios[i] != NULL) {
-
-		crearYEscribirTemporal(directorios[i]);
-
-		i++;
-
-	}
-	liberarPunteroDePunterosAChar(directorios);
-	free(directorios);
+	list_iterate(listaDirectorios, (void*) crearYEscribirTemporal);
+	list_destroy(listaDirectorios);
 }
 
 void crearYEscribirTemporal(char*rutaTabla) {
 
 	char* nombTabla = malloc(50);
 	char**palabras = string_split(rutaTabla, "/");
-	nombTabla = obtenerUltimoElementoDeUnSplit(palabras);
+	nombTabla = (char*) obtenerUltimoElementoDeUnSplit(palabras);
 	char**archivos = buscarArchivos(rutaTabla);
 	int cantidadTmp = contarArchivosTemporales(archivos);
 
@@ -487,7 +459,7 @@ void limpiarRegistrosDeTabla(char*nombreTabla) {
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
 	char * archivoConExtension;
 	char ** split = string_split(ruta, "/");
-	archivoConExtension = obtenerUltimoElementoDeUnSplit(split);
+	archivoConExtension = (char*) obtenerUltimoElementoDeUnSplit(split);
 	liberarPunteroDePunterosAChar(split);
 	free(split);
 	if (strstr(archivoConExtension, ".") != NULL) {

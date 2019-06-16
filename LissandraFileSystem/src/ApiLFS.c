@@ -57,7 +57,7 @@ void consolaCreate(char*argumentos) {
 
 void consolaDescribe(char* nombreTabla) {
 
-	if (strcmp(nombreTabla, "")!=0&&existeTabla(nombreTabla)) {
+	if (nombreTabla!=NULL&&existeTabla(nombreTabla)) {
 		funcionDESCRIBE(nombreTabla);
 	} else
 		funcionDESCRIBE_ALL();

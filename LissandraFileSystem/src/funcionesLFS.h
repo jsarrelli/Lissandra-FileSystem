@@ -27,7 +27,8 @@ void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
-char** buscarRegistrosDeTabla(char*nombreTabla);
+//char** buscarRegistrosDeTabla(char*nombreTabla);
+void buscarDirectorios(char * ruta, t_list* listaDirectorios);
 void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioArrayRegistros(char** registros);
 

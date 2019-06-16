@@ -77,6 +77,7 @@ void enviar(int socket, void* cosaAEnviar, int tamanio);
 void* recibir(int socket);
 void *get_in_addr(struct sockaddr *sa);
 void list_iterate2(t_list* self, void (*closure)(void*,void*), void* segundoParametro);
+char * obtenerUltimoElementoDeUnSplit(char ** palabras);
 
 t_log* logger;
 t_log* loggerError;
