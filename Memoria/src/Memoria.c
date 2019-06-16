@@ -22,6 +22,7 @@ int main() {
 	pthread_create(&threadId, NULL, leerConsola, NULL);
 	pthread_detach(threadId);
 
+
 	//pruebas varias
 //	insertarSegmentoEnMemoria("TABLA1",NULL);
 //	insertarSegmentoEnMemoria("TABLA2",NULL);
@@ -29,11 +30,18 @@ int main() {
 //	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
 //	//SELECT_MEMORIA("TABLA1" , 3);
 
+	pthread_create(&intTemporalJournal, NULL, procesoTemporalJournal, NULL);
+	pthread_detach(intTemporalJournal);
+
+	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
+	pthread_detach(intTemporalGossiping);
+
 	log_info(logger, "Configurando Listening Socket...");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != -1) {
 		escuchar(listenningSocket, socketFileSystem);
 	}
+
 
 	close(listenningSocket);
 	log_destroy(logger);
@@ -100,6 +108,21 @@ void cargarConfiguracion() {
 	configuracion->TIEMPO_GOSSIPING = get_campo_config_int(archivo_configuracion, "TIEMPO_GOSSIPING");
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
 	log_info(logger, "Archivo de configuracion levantado");
+
+}
+
+void procesoTemporalJournal(){
+	while(1){
+		usleep(configuracion->TIEMPO_JOURNAL);
+		journalMemoria();
+	}
+}
+
+void procesoTemporalGossiping(){
+	while(1){
+		usleep(configuracion->TIEMPO_GOSSIPING);
+		//falta funcion gossiping
+	}
 
 }
 
