@@ -180,7 +180,7 @@ consistencia procesarConsistencia(char* palabra){
 
 void comandoAdd(int id, consistencia cons){
 	bool condicionAdd(int id, infoMemoria* memoria){
-			return id == memoria->id;
+		return id == memoria->id;
 	}
 	bool _esCondicionAdd(void* memoria){
 		return condicionAdd(id , memoria);
@@ -243,6 +243,7 @@ void consolaDescribe(char*nombreTabla){
 	else{
 		log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
 	}
+	comandoDescribe(nombreTabla);
 }
 
 void consolaDrop(char*nombreTabla){
@@ -349,4 +350,85 @@ void inicializarLogStruct(){
 			LOG_LEVEL_ERROR);
 	log_master->logTrace = log_create((char*) TRACE_KERNEL, "Kernel Trace Logs", 1,
 			LOG_LEVEL_TRACE);
+}
+
+infoMemoria* obtenerMemoriaAlAzar(){
+	int numeroAleatorio = rand() % list_size(listaMemorias);
+	return list_get(listaMemorias, numeroAleatorio);
+}
+
+void comandoDescribe(char*nombreTabla){
+	infoMemoria* memoriaAlAzar = NULL;
+
+	memoriaAlAzar = obtenerMemoriaAlAzar();
+	log_trace(log_master->logTrace, "El id de la memoria obtenida es: %d", memoriaAlAzar->id);
+
+	// Aca va la funcion enviar de las sockets
+}
+
+infoMemoria* obtenerMemoria(char* nombreTabla, int key){
+	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
+
+	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
+}
+
+consistencia obtenerConsistenciaDe(char* nombreTabla){
+	bool _condicion(metadataTablas* metadata, char*nombreTabla){
+		return strcmp(nombreTabla, metadata->nombreTabla)==0;
+	}
+	bool condicionObtenerConsistencia(void* metadata){
+		return _condicion(metadata, nombreTabla);
+	}
+	metadataTablas* metadata = NULL;
+	metadata = list_find((t_list*)listaMetadataTabla,condicionObtenerConsistencia);
+	return metadata->consistencia;
+}
+
+infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key){
+	t_list* memoriasEncontradas=NULL;
+	infoMemoria* memoriaPosta=NULL;
+
+
+	bool _condicion(infoMemoria*memoria, consistencia cons){
+		return cons == memoria->ccia;
+	}
+	bool condicionParaEncontrarMemorias(void* memoria){
+		return _condicion(memoria, consistenciaDeTabla);
+	}
+	memoriasEncontradas = list_filter(listaMemorias, condicionParaEncontrarMemorias);
+
+
+
+	switch(consistenciaDeTabla){
+		case SC:
+			memoriaPosta = list_get(memoriasEncontradas, 0);
+			break;
+		case SHC:
+			memoriaPosta = resolverUsandoFuncionHash(memoriasEncontradas, key);
+			break;
+		case EC:
+			memoriaPosta = resolverAlAzar(memoriasEncontradas);
+			break;
+		default:
+			log_error(log_master->logError, "Error: en obtenerMemoriaSegunConsistencia");
+	}
+
+	return memoriaPosta;
+
+}
+
+infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key){
+	int posicionMemoria = funcionHash(memoriasEncontradas, key);
+	return list_get(memoriasEncontradas, posicionMemoria);
+}
+
+int funcionHash(t_list* memoriasEncontradas, int key){
+	int size = list_size(memoriasEncontradas);
+	return key % size;
+}
+
+infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
+	int randomNumber = rand() % list_size(memoriasEncontradas);
+
+	return list_get(memoriasEncontradas, randomNumber);
 }

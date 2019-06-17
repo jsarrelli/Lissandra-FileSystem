@@ -84,6 +84,19 @@ sem_t mutex_colaReady;
 logStruct* log_master;
 
 
+// Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
+int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
+char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
+int cantidadParametros(char ** palabras);
+t_config_kernel *cargarConfig(char *ruta);
+infoMemoria* obtenerMemoriaAlAzar();
+
+
+void hardcodearInfoMemorias();
+void hardcodearListaMetadataTabla();
+//void procesarInput(char* linea);
+
+
 // Funciones importantes
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
@@ -94,6 +107,7 @@ void destruirProceso(procExec* proceso);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
 void comandoAdd(int id, consistencia cons);
+void comandoDescribe(char*nombreTabla);
 void procesarAdd(char*argumento);
 void consolaInsert(char*request);
 void consolaSelect(char*argumentos);
@@ -105,17 +119,12 @@ void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);
 void ejecutarProcesos();
 void inicializarLogStruct();
-
-
-// Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
-int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
-char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
-int cantidadParametros(char ** palabras);
-t_config_kernel *cargarConfig(char *ruta);
-
-void hardcodearInfoMemorias();
-void hardcodearListaMetadataTabla();
-//void procesarInput(char* linea);
+int funcionHash(t_list* memoriasEncontradas, int key);
+infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key);
+infoMemoria* resolverAlAzar(t_list* memoriasEncontradas);
+infoMemoria* obtenerMemoria(char* nombreTabla, int key);
+consistencia obtenerConsistenciaDe(char* nombreTabla);
+infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key);
 
 
 #endif /* KERNELHEADER_H_ */
