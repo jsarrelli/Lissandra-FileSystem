@@ -115,16 +115,23 @@ void procesarInput(char* linea) {
 		consolaInsert(argumentos);
 	} else if (strcmp(operacion, "SELECT")==0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
-//		consolaSelect(palabras, cantidad);
+		printf("Se ha escrito el comando SELECT\n");
+		consolaSelect(argumentos);
 	} else if (strcmp(operacion, "CREATE")==0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
+		printf("Se ha escrito el comando CREATE\n");
+		consolaCreate(argumentos);
 		//consolaCreate(palabras,cantidad);
 	} else if (strcmp(operacion, "DESCRIBE")==0) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
+		printf("Se ha escrito el comando DESCRIBE\n");
+		consolaDescribe(argumentos);
 		//consolaDescribe(palabras,cantidad);
 	} else if (strcmp(operacion, "DROP")==0) {
 		//	DROP [NOMBRE_TABLA]
+		printf("Se ha escrito el comando DROP\n");
+		consolaDrop(argumentos);
 		//consolaDrop(palabras,cantidad);
 	} else if (strcmp(operacion, "ADD")==0) {
 		//	ADD MEMORY [id] TO [consistencia]
@@ -187,6 +194,40 @@ void consolaInsert(char*argumentos){
 	char* key = valoresAux[1];
 	char* value = valores[1];
 	printf("El nombre de la tabla es: %s, su key es %s, y su value es: %s\n", nombreTabla, key, value);
+}
+
+void consolaSelect(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	int key = atoi(valores[1]);
+
+	printf("El nombre de la tabla es: %s, y la key es: %d\n", nombreTabla, key);
+}
+
+void consolaCreate(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	char* consistenciaChar = valores[1];
+	int cantParticiones = atoi(valores[2]);
+	int tiempoCompactacion = atoi(valores[3]);
+
+//	consistencia cons = procesarConsistencia(consistenciaChar);
+	printf(
+			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d\n",
+			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
+}
+
+void consolaDescribe(char*nombreTabla){
+	if (nombreTabla==NULL){
+		printf("Se pide la metadata de todos las tablas\n");
+	}
+	else{
+		printf("Se pide la metadata de %s\n", nombreTabla);
+	}
+}
+
+void consolaDrop(char*nombreTabla){
+	printf("Se desea elminar la tabla %s\n", nombreTabla);
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
