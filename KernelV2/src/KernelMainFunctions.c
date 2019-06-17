@@ -262,11 +262,19 @@ void* funcionThread(void* args){
 	proceso = queue_pop(colaReady);
 	sem_post(&mutex_colaReady);
 
-	int tam_script = list_size(proceso->script);
-	for(int i=0; i< tam_script;i++){
-		procesarInput(list_get(proceso->script, i));
-		destruirProceso(proceso);
+//	int tam_script = list_size(proceso->script);
+//	for(int i=0; i< tam_script;i++){
+//		procesarInput(list_get(proceso->script, i));
+//		destruirProceso(proceso);
+//	}
+
+	void _correrProceso(char*request){
+		procesarInput(request);
 	}
+
+	list_iterate(proceso->script, (void*) _correrProceso);
+	destruirProceso(proceso);
+
 	// Creo que aca se liberan los recursos del proceso
 	return NULL;
 }
