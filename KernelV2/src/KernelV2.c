@@ -11,11 +11,11 @@
 #include "KernelHeader.h"
 
 static const char* INFO_KERNEL =
-		"/home/utnso/Escritorio/pruebas/UTN/Sistemas Operativos/tp_operativos_kernel/infoKernel.log";
+		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log";
 static const char* ERRORES_KERNEL =
-		"/home/utnso/Escritorio/pruebas/UTN/Sistemas Operativos/tp_operativos_kernel/erroresKernel.log";
+		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log";
 static const char* RUTA_CONFIG_KERNEL =
-		"/home/utnso/Escritorio/pruebas/UTN/Sistemas Operativos/tp_operativos_kernel/configKernel.cfg";
+		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg";
 
 int main(void) {
 	logger = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
