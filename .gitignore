@@ -69,6 +69,7 @@ Libraries/.settings/language.settings.xml
 # Kernel2
 KernelV2/infoKernel.log
 KernelV2/erroresKernel.log
+KernelV2/tracesKernel.log
 
 # Eclipse
 *.classpath
