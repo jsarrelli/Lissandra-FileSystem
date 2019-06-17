@@ -73,3 +73,6 @@ Libraries/.settings/language.settings.xml
 *.settings/
 *valgrind*
 LissandraFileSystem/Debug/LissandraFileSystem
+
+# Excepciones
+!KernelV2/Debug
