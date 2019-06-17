@@ -61,12 +61,14 @@ typedef struct {
 typedef struct{
 	t_log* logInfo;
 	t_log* logError;
+	t_log* logTrace;
 }logStruct;
 
 
 // Variables globales
 #define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
 #define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
+#define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
 #define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
 
 t_queue* colaReady;

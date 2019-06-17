@@ -16,6 +16,7 @@ void destruirElementosMain(t_list* lista, t_queue* cola){
 void destruirLogStruct(logStruct* log_master){
 	log_destroy(log_master->logInfo);
 	log_destroy(log_master->logError);
+	log_destroy(log_master->logTrace);
 	free(log_master);
 }
 
@@ -55,7 +56,7 @@ int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo) {
 	int valor;
 	if (config_has_property(archivo_configuracion, nombre_campo)) {
 		valor = config_get_int_value(archivo_configuracion, nombre_campo);
-		printf("El %s es: %i\n", nombre_campo, valor);
+		log_info(log_master->logInfo, "El %s es: %i", nombre_campo, valor);
 		return valor;
 	}
 	return (int)NULL;
@@ -65,7 +66,7 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 	char* valor;
 	if (config_has_property(archivo_configuracion, nombre_campo)) {
 		valor = config_get_string_value(archivo_configuracion, nombre_campo);
-		printf("El %s es: %s\n", nombre_campo, valor);
+		log_info(log_master->logInfo, "El %s es: %s", nombre_campo, valor);
 		return valor;
 	}
 	return NULL;
@@ -75,7 +76,7 @@ t_config_kernel *cargarConfig(char *ruta){
 //	puts("!!!Hello World!!!");
 
 	log_info(log_master->logInfo,
-			"Levantando archivo de configuracion del proceso Kernel \n");
+			"Levantando archivo de configuracion del proceso Kernel ");
 
 	t_config_kernel* config = malloc(sizeof(t_config_kernel));
 	t_config *kernelConfig = config_create(ruta);
@@ -98,7 +99,7 @@ t_config_kernel *cargarConfig(char *ruta){
 			"SLEEP_EJECUCION");
 
 	log_info(log_master->logInfo,
-			"Archivo de configuracion del proceso Kernel levantado \n");
+			"Archivo de configuracion del proceso Kernel levantado ");
 
 	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 
@@ -121,39 +122,39 @@ void procesarInput(char* linea) {
 //	int cantidad = cantidadParametros(comandos);
 	if (strcmp(operacion, "INSERT")==0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
-		printf("Se ha escrito el comando INSERT\n");
+		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
 		consolaInsert(argumentos);
 	} else if (strcmp(operacion, "SELECT")==0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
-		printf("Se ha escrito el comando SELECT\n");
+		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
 		consolaSelect(argumentos);
 	} else if (strcmp(operacion, "CREATE")==0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
-		printf("Se ha escrito el comando CREATE\n");
+		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
 		consolaCreate(argumentos);
 		//consolaCreate(palabras,cantidad);
 	} else if (strcmp(operacion, "DESCRIBE")==0) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
-		printf("Se ha escrito el comando DESCRIBE\n");
+		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
 		consolaDescribe(argumentos);
 		//consolaDescribe(palabras,cantidad);
 	} else if (strcmp(operacion, "DROP")==0) {
 		//	DROP [NOMBRE_TABLA]
-		printf("Se ha escrito el comando DROP\n");
+		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
 		consolaDrop(argumentos);
 		//consolaDrop(palabras,cantidad);
 	} else if (strcmp(operacion, "ADD")==0) {
 		//	ADD MEMORY [id] TO [consistencia]
-		printf("Se ha escrito el comando ADD\n");
+		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
 		procesarAdd(argumentos);
 	}
 //	else
-//		printf("El comando no es el correcto. Por favor intente nuevamente\n");
+//		printf("El comando no es el correcto. Por favor intente nuevamente");
 	else if (strcmp(operacion, "SALIR")==0) {
-		printf("Finalizando consola\n");
+		log_trace(log_master->logTrace, "Finalizando consola");
 	} else {
-		printf("El comando no es el correcto. Por favor intente nuevamente\n");
+		log_trace(log_master->logTrace, "El comando no es el correcto. Por favor intente nuevamente");
 	}
 
 //	for(int i=0;i< cantidad;i++){
@@ -187,13 +188,13 @@ void comandoAdd(int id, consistencia cons){
 	infoMemoria* memoriaEncontrada = malloc(sizeof(metadataTablas));
 	if((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd))!=NULL){
 		memoriaEncontrada->ccia = cons;
-		printf("Se ha asignado la consistencia a la memoria correctamente\n");
-		printf(
-				"La consistencia de esta memoria es: %d y el id de esta memoria es %d\n",
+		log_info(log_master->logInfo, "Se ha asignado la consistencia a la memoria correctamente");
+		log_trace(log_master->logTrace,
+				"La consistencia de esta memoria es: %d y el id de esta memoria es %d",
 				memoriaEncontrada->ccia, memoriaEncontrada->id);
 	}
 	else
-		printf("Problemas con el comando ADD\n");
+		log_error(log_master->logError, "Problemas con el comando ADD");
 }
 
 void procesarAdd(char*argumento){
@@ -211,7 +212,7 @@ void consolaInsert(char*argumentos){
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
 	char* value = valores[1];
-	printf("El nombre de la tabla es: %s, su key es %s, y su value es: %s\n", nombreTabla, key, value);
+	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key, value);
 }
 
 void consolaSelect(char*argumentos){
@@ -219,7 +220,7 @@ void consolaSelect(char*argumentos){
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
-	printf("El nombre de la tabla es: %s, y la key es: %d\n", nombreTabla, key);
+	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
 }
 
 void consolaCreate(char*argumentos){
@@ -230,22 +231,22 @@ void consolaCreate(char*argumentos){
 	int tiempoCompactacion = atoi(valores[3]);
 
 //	consistencia cons = procesarConsistencia(consistenciaChar);
-	printf(
-			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d\n",
+	log_trace(log_master->logTrace,
+			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d",
 			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
 }
 
 void consolaDescribe(char*nombreTabla){
 	if (nombreTabla==NULL){
-		printf("Se pide la metadata de todos las tablas\n");
+		log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
 	}
 	else{
-		printf("Se pide la metadata de %s\n", nombreTabla);
+		log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
 	}
 }
 
 void consolaDrop(char*nombreTabla){
-	printf("Se desea elminar la tabla %s\n", nombreTabla);
+	log_trace(log_master->logTrace, "Se desea elminar la tabla %s", nombreTabla);
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
@@ -338,4 +339,6 @@ void inicializarLogStruct(){
 			LOG_LEVEL_INFO);
 	log_master->logError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1,
 			LOG_LEVEL_ERROR);
+	log_master->logTrace = log_create((char*) TRACE_KERNEL, "Kernel Trace Logs", 1,
+			LOG_LEVEL_TRACE);
 }
