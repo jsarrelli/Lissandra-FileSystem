@@ -10,20 +10,12 @@
 
 #include "KernelHeader.h"
 
-static const char* INFO_KERNEL =
-		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log";
-static const char* ERRORES_KERNEL =
-		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log";
-static const char* RUTA_CONFIG_KERNEL =
-		"/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg";
-
 int main(void) {
-	logger = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
-	loggerError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1,
-				LOG_LEVEL_ERROR);
-	log_info(logger, "Hola!!!");
-	sem_init(&ejecutarHilos, 0, 0);
-	sem_init(&mutex_colaReady, 0, 1); // Recordar cambiar el 0 a 1
+	log_master = malloc(sizeof(logStruct));
+	inicializarLogStruct();
+	log_info(log_master->logInfo, "Hola!!!");
+	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
+	sem_init(&mutex_colaReady, 0, 1);
 	char*operacion;
 
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
@@ -41,7 +33,7 @@ int main(void) {
 	listaMetadataTabla = list_create();
 	hardcodearListaMetadataTabla();
 	quantum = config->QUANTUM;
-	agregarHiloAListaHilosEInicializo(listaHilos);
+//	agregarHiloAListaHilosEInicializo(listaHilos);
 
 
 	operacion = readline(">");
@@ -66,12 +58,13 @@ int main(void) {
 
 
 //		free(operacion);
-		destruirProcesoExec(proceso);
+//		destruirProcesoExec(proceso);
 		operacion = readline(">");
 	}
-	free(operacion);
+//	free(operacion);
 //	free(hilos);
-	destruirElementosMain(listaHilos, colaReady, logger);
+	destruirElementosMain(listaHilos, colaReady);
+	destruirLogStruct(log_master);
 //	config_destroy(config);
 	return EXIT_SUCCESS;
 }

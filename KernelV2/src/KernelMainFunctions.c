@@ -7,10 +7,16 @@
 
 #include "KernelHeader.h"
 
-void destruirElementosMain(t_list* lista, t_queue* cola, t_log* logger){
+void destruirElementosMain(t_list* lista, t_queue* cola){
 	list_destroy_and_destroy_elements(lista, (void*) free);
 	queue_destroy_and_destroy_elements(cola, (void*) free);
-	log_destroy(logger);
+//	log_destroy(logger);
+}
+
+void destruirLogStruct(logStruct* log_master){
+	log_destroy(log_master->logInfo);
+	log_destroy(log_master->logError);
+	free(log_master);
 }
 
 bool instruccionSeaSalir(char* operacion){
@@ -27,9 +33,14 @@ procExec* newProceso(){
 	return proceso;
 }
 
-void destruirProcesoExec(procExec* proceso){
+void destruirProceso(procExec* proceso){
 	list_destroy_and_destroy_elements(proceso->script, (void*) free);
+	free(proceso);
 }
+
+//void destruirProcesoExec(procExec* proceso){
+//	list_destroy_and_destroy_elements(proceso->script, (void*) free);
+//}
 
 void deNewAReady(procExec* proceso){
 	queue_push(colaReady, proceso);
@@ -63,7 +74,7 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 t_config_kernel *cargarConfig(char *ruta){
 //	puts("!!!Hello World!!!");
 
-	log_info(logger,
+	log_info(log_master->logInfo,
 			"Levantando archivo de configuracion del proceso Kernel \n");
 
 	t_config_kernel* config = malloc(sizeof(t_config_kernel));
@@ -72,7 +83,7 @@ t_config_kernel *cargarConfig(char *ruta){
 	if (kernelConfig == NULL) {
 		perror("Error ");
 
-		log_error(loggerError, "Problema al abrir el archivo");
+		log_error(log_master->logError, "Problema al abrir el archivo");
 	}
 
 	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
@@ -86,7 +97,7 @@ t_config_kernel *cargarConfig(char *ruta){
 	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig,
 			"SLEEP_EJECUCION");
 
-	log_info(logger,
+	log_info(log_master->logInfo,
 			"Archivo de configuracion del proceso Kernel levantado \n");
 
 	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
@@ -103,12 +114,11 @@ int cantidadParametros(char ** palabras) {
 }
 
 void procesarInput(char* linea) {
-//	int cantidad;
 	char** comandos = string_n_split(linea, 2, " ");
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
 //	char **palabras = string_split(linea, " ");
-//	cantidad = cantidadParametros(palabras);
+//	int cantidad = cantidadParametros(comandos);
 	if (strcmp(operacion, "INSERT")==0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 		printf("Se ha escrito el comando INSERT\n");
@@ -145,6 +155,14 @@ void procesarInput(char* linea) {
 	} else {
 		printf("El comando no es el correcto. Por favor intente nuevamente\n");
 	}
+
+//	for(int i=0;i< cantidad;i++){
+//		free()
+//	}
+	free(argumentos);
+	free(operacion);
+	free(comandos);
+
 //	liberarPunteroDePunterosAChar(palabras);
 //	free(palabras);
 }
@@ -238,14 +256,17 @@ void* funcionThread(void* args){
 	sem_wait(&ejecutarHilos);
 
 	sem_wait(&mutex_colaReady);
-	procExec* proceso = newProceso();
+//	procExec* proceso = newProceso();
+	procExec* proceso=NULL;
 	proceso = queue_pop(colaReady);
 	sem_post(&mutex_colaReady);
 
 	int tam_script = list_size(proceso->script);
 	for(int i=0; i< tam_script;i++){
 		procesarInput(list_get(proceso->script, i));
+		destruirProceso(proceso);
 	}
+	// Creo que aca se liberan los recursos del proceso
 	return NULL;
 }
 
@@ -259,6 +280,7 @@ void agregarHiloAListaHilosEInicializo(t_list* hilos){
 	void _agregarHilo(pthread_t*hilo){
 		pthread_create(&*hilo, NULL, (void*)funcionThread, NULL);
 		pthread_detach(*hilo);
+//		pthread_join(*hilo, NULL);
 		list_add(listaHilos, hilo);
 	}
 
@@ -311,3 +333,9 @@ void hardcodearListaMetadataTabla(){
 	list_add(listaMetadataTabla, metadata3);
 }
 
+void inicializarLogStruct(){
+	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
+			LOG_LEVEL_INFO);
+	log_master->logError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1,
+			LOG_LEVEL_ERROR);
+}

@@ -58,26 +58,37 @@ typedef struct {
 	int SLEEP_EJECUCION;
 } t_config_kernel;
 
+typedef struct{
+	t_log* logInfo;
+	t_log* logError;
+}logStruct;
 
 
 // Variables globales
+#define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
+#define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
+#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
+
 t_queue* colaReady;
 t_list* listaHilos;
 t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
-t_log* logger;
-t_log* loggerError;
+//t_log* logger;
+//t_log* loggerError;
 int quantum;
 sem_t ejecutarHilos;
 sem_t mutex_colaReady;
+logStruct* log_master;
 
 
 // Funciones importantes
-void destruirElementosMain(t_list* lista, t_queue* cola, t_log* logger);
+void destruirElementosMain(t_list* lista, t_queue* cola);
+void destruirLogStruct(logStruct* log_master);
 bool instruccionSeaSalir(char* operacion);
 procExec* newProceso();
-void destruirProcesoExec(procExec* proceso);
+void destruirProceso(procExec* proceso);
+//void destruirProcesoExec(procExec* proceso);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
 void comandoAdd(int id, consistencia cons);
@@ -91,6 +102,7 @@ void agregarRequestAlProceso(procExec* proceso, char* operacion);
 void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);
 void ejecutarProcesos();
+void inicializarLogStruct();
 
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
