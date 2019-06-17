@@ -41,7 +41,6 @@ int main(void) {
 	listaMetadataTabla = list_create();
 	hardcodearListaMetadataTabla();
 	quantum = config->QUANTUM;
-//	pthread_t* hilos = malloc(sizeof(pthread_t)* config->MULTIPROCESAMIENTO);
 	agregarHiloAListaHilosEInicializo(listaHilos);
 
 
@@ -55,14 +54,10 @@ int main(void) {
 //		deReadyAExec();
 
 		// Por ahora lo hago con un solo proceso y lo hago manual
-//		list_get(listaHilos, 0);
 		ejecutarProcesos();
-		funcionThread((int*)2);
+		funcionThread((int*)2); // El 2 es un ejemplo porque no me importa lo que reciba pero si que reciba algo
 
 
-//		if(queue_size(colaReady) >=3){
-//			// execute();
-//		}
 
 
 

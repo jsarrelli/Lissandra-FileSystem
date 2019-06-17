@@ -104,55 +104,42 @@ int cantidadParametros(char ** palabras) {
 
 void procesarInput(char* linea) {
 //	int cantidad;
-	char **palabras = string_split(linea, " ");
+	char** comandos = string_n_split(linea, 2, " ");
+	char* operacion = comandos[0];
+	char* argumentos = comandos[1];
+//	char **palabras = string_split(linea, " ");
 //	cantidad = cantidadParametros(palabras);
-//	if (!strcmp(*palabras, "INSERT")) {
-//
-//		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
-//		consolaInsert(palabras, cantidad);
-//
-//	} else
-//	if (!strcmp(*palabras, "SELECT")) {
-//
-//		//	SELECT [NOMBRE_TABLA] [KEY]
+	if (strcmp(operacion, "INSERT")==0) {
+		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
+		printf("Se ha escrito el comando INSERT\n");
+		consolaInsert(argumentos);
+	} else if (strcmp(operacion, "SELECT")==0) {
+		//	SELECT [NOMBRE_TABLA] [KEY]
 //		consolaSelect(palabras, cantidad);
-//
-//	} else
-//	if (!strcmp(*palabras, "CREATE")) {
-//		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
-//
-//		//consolaCreate(palabras,cantidad);
-//	} else
-//	if (!strcmp(*palabras, "DESCRIBE")) {
-//		// DESCRIBE [NOMBRE_TABLA]
-//		// DESCRIBE
-//
-//		//consolaDescribe(palabras,cantidad);
-//	} else
-//	if (!strcmp(*palabras, "DROP")) {
-//		//	DROP [NOMBRE_TABLA]
-//
-//		//consolaDrop(palabras,cantidad);
-//	} else
-	if (!strcmp(*palabras, "ADD")) {
-
+	} else if (strcmp(operacion, "CREATE")==0) {
+		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
+		//consolaCreate(palabras,cantidad);
+	} else if (strcmp(operacion, "DESCRIBE")==0) {
+		// DESCRIBE [NOMBRE_TABLA]
+		// DESCRIBE
+		//consolaDescribe(palabras,cantidad);
+	} else if (strcmp(operacion, "DROP")==0) {
+		//	DROP [NOMBRE_TABLA]
+		//consolaDrop(palabras,cantidad);
+	} else if (strcmp(operacion, "ADD")==0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		printf("Se ha escrito el comando ADD\n");
-		consolaAdd(linea);
-
+		procesarAdd(argumentos);
 	}
-	else
-		printf("El comando no es el correcto. Por favor intente nuevamente\n");
 //	else
-//		if (!strcmp(*palabras, "exit")) {
-//		printf("Finalizando consola\n");
-//
-//	} else {
-//		puts("El comando no existe.");
-//	}
+//		printf("El comando no es el correcto. Por favor intente nuevamente\n");
+	else if (strcmp(operacion, "SALIR")==0) {
+		printf("Finalizando consola\n");
+	} else {
+		printf("El comando no es el correcto. Por favor intente nuevamente\n");
+	}
 //	liberarPunteroDePunterosAChar(palabras);
 //	free(palabras);
-//
 }
 
 consistencia procesarConsistencia(char* palabra){
@@ -165,16 +152,12 @@ consistencia procesarConsistencia(char* palabra){
 	return ERROR_CONSISTENCIA;
 }
 
-bool condicionAdd(int id, infoMemoria* memoria){
-	return id == memoria->id;
-}
-
 void comandoAdd(int id, consistencia cons){
+	bool condicionAdd(int id, infoMemoria* memoria){
+			return id == memoria->id;
+	}
 	bool _esCondicionAdd(void* memoria){
 		return condicionAdd(id , memoria);
-	}
-	bool condicionAdd(int id, infoMemoria* memoria){
-		return id == memoria->id;
 	}
 	infoMemoria* memoriaEncontrada = malloc(sizeof(metadataTablas));
 	if((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd))!=NULL){
@@ -185,16 +168,25 @@ void comandoAdd(int id, consistencia cons){
 				memoriaEncontrada->ccia, memoriaEncontrada->id);
 	}
 	else
-		printf("Problemas con el comando ADD");
+		printf("Problemas con el comando ADD\n");
 }
 
-void consolaAdd(char*request){
-	char** valores = string_split(request, " ");
+void procesarAdd(char*argumento){
+	char** valores = string_split(argumento, " ");
 //	add(atoi(valores[1]), valores[3]);
-	consistencia cons = procesarConsistencia(valores[4]);
+	consistencia cons = procesarConsistencia(valores[3]);
 
-	int id = atoi(valores[2]);
+	int id = atoi(valores[1]);
 	comandoAdd(id, cons);
+}
+
+void consolaInsert(char*argumentos){
+	char** valores = string_split(argumentos, "\""); //34 son las " en ASCII
+	char** valoresAux = string_split(valores[0], " ");
+	char* nombreTabla = valoresAux[0];
+	char* key = valoresAux[1];
+	char* value = valores[1];
+	printf("El nombre de la tabla es: %s, su key es %s, y su value es: %s\n", nombreTabla, key, value);
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){

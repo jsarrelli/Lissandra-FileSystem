@@ -80,13 +80,13 @@ procExec* newProceso();
 void destruirProcesoExec(procExec* proceso);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
-void consolaAdd(char*request);
+void comandoAdd(int id, consistencia cons);
+void procesarAdd(char*argumento);
+void consolaInsert(char*request);
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
 void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);
 void ejecutarProcesos();
-void hardcodearInfoMemorias();
-void hardcodearListaMetadataTabla();
 
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
@@ -94,6 +94,9 @@ int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
 int cantidadParametros(char ** palabras);
 t_config_kernel *cargarConfig(char *ruta);
+
+void hardcodearInfoMemorias();
+void hardcodearListaMetadataTabla();
 //void procesarInput(char* linea);
 
 
