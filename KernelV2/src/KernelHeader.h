@@ -40,8 +40,8 @@ typedef enum{
 typedef struct{
 	int id;
 	char*ip;
-	consistencia ccia;
-//	bool criterios[3];
+//	consistencia ccia;
+	bool criterios[4];
 }infoMemoria;
 
 typedef struct{
@@ -80,6 +80,7 @@ t_config_kernel *config;
 //t_log* logger;
 //t_log* loggerError;
 int quantum;
+int cantRequestsEjecutadas;
 sem_t ejecutarHilos;
 sem_t mutex_colaReady;
 logStruct* log_master;
@@ -102,13 +103,18 @@ void hardcodearListaMetadataTabla();
 
 // Funciones importantes
 void destruirElementosMain(t_list* lista, t_queue* cola);
+bool verificarCriterio(bool* criterio, consistencia ccia);
+void imprimirCriterio(bool* criterio);
 void destruirLogStruct(logStruct* log_master);
 bool instruccionSeaSalir(char* operacion);
 procExec* newProceso();
+infoMemoria* newInfoMemoria();
 void destruirProceso(procExec* proceso);
 //void destruirProcesoExec(procExec* proceso);
+consistencia mejorCriterioMemoria(bool* criterios);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
+void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 void comandoAdd(int id, consistencia cons);
 void comandoDescribe(char*nombreTabla);
 void procesarAdd(char*argumento);
@@ -128,6 +134,7 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas);
 infoMemoria* obtenerMemoria(char* nombreTabla, int key);
 consistencia obtenerConsistenciaDe(char* nombreTabla);
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key);
+void destruirListaMemorias();
 
 
 #endif /* KERNELHEADER_H_ */

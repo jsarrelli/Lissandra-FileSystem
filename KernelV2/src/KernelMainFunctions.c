@@ -177,21 +177,26 @@ consistencia procesarConsistencia(char* palabra){
 }
 
 void comandoAdd(int id, consistencia cons){
-	bool condicionAdd(int id, infoMemoria* memoria){
+	bool condicionAdd(int id, infoMemoria* memoria) {
 		return id == memoria->id;
 	}
-	bool _esCondicionAdd(void* memoria){
-		return condicionAdd(id , memoria);
+	bool _esCondicionAdd(void* memoria) {
+		return condicionAdd(id, memoria);
 	}
-	infoMemoria* memoriaEncontrada = malloc(sizeof(metadataTablas));
-	if((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd))!=NULL){
-		memoriaEncontrada->ccia = cons;
-		log_info(log_master->logInfo, "Se ha asignado la consistencia a la memoria correctamente");
-		log_trace(log_master->logTrace,
-				"La consistencia de esta memoria es: %d y el id de esta memoria es %d",
-				memoriaEncontrada->ccia, memoriaEncontrada->id);
-	}
-	else
+
+
+	infoMemoria* memoriaEncontrada = NULL;
+	if ((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd)) != NULL) {
+		asignarCriterioMemoria(memoriaEncontrada, cons);
+
+		if (!(memoriaEncontrada->criterios)[3])
+			log_trace(log_master->logTrace,
+					"Se ha asignado el criterio a la memoria correctammente");
+
+		imprimirCriterio(memoriaEncontrada->criterios);
+		log_trace(log_master->logTrace, "El id de esta memoria es: %d",
+				memoriaEncontrada->id);
+	} else
 		log_error(log_master->logError, "Problemas con el comando ADD");
 }
 
@@ -202,6 +207,12 @@ void procesarAdd(char*argumento){
 
 	int id = atoi(valores[1]);
 	comandoAdd(id, cons);
+
+	free(valores[0]);
+	free(valores[1]);
+	free(valores[2]);
+	free(valores[3]);
+	free(valores);
 }
 
 void consolaInsert(char*argumentos){
@@ -231,9 +242,13 @@ void consolaSelect(char*argumentos){
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
 	log_trace(log_master->logTrace, "Los datos obtenidos son:");
-	log_trace(log_master->logTrace, "Criterio de la memoria: %d", memoriaAEnviar->ccia);
+//	log_trace(log_master->logTrace, "Criterio de la memoria: %d", mejorCriterioMemoria(memoriaAEnviar->criterios));
+	imprimirCriterio(memoriaAEnviar->criterios);
 	log_trace(log_master->logTrace, "Id de la memoria: %d", memoriaAEnviar->id);
 
+	free(valores[1]);
+	free(nombreTabla);
+	free(valores);
 }
 
 void consolaCreate(char*argumentos){
@@ -289,7 +304,7 @@ void* funcionThread(void* args){
 
 	void _correrProceso(char*request){
 		procesarInput(request);
-		quantum++;
+		cantRequestsEjecutadas++;
 	}
 
 	list_iterate(proceso->script, (void*) _correrProceso);
@@ -322,48 +337,67 @@ void ejecutarProcesos(){
 
 void hardcodearInfoMemorias(){
 //	listaMemorias
-	int idMemoria=1;
-	infoMemoria* memoria1= malloc(sizeof(infoMemoria));
-//	memoria1->ccia = SC;
-	memoria1->id=idMemoria;
+//	infoMemoria* memoria1= malloc(sizeof(infoMemoria));
+////	memoria1->ccia = SC;
+//	memoria1->id=idMemoria;
+//	list_add(listaMemorias, memoria1);
+//	idMemoria++;
+
+	infoMemoria* memoria1 = newInfoMemoria();
 	list_add(listaMemorias, memoria1);
-	idMemoria++;
 
-	infoMemoria* memoria2 = malloc(sizeof(infoMemoria));
-//	memoria2->ccia = SHC;
-	memoria2->id = idMemoria;
+	infoMemoria* memoria2 = newInfoMemoria();
 	list_add(listaMemorias, memoria2);
-	idMemoria++;
 
-	infoMemoria* memoria3 = malloc(sizeof(infoMemoria));
-//	memoria3->ccia = EC;
-	memoria3->id = idMemoria;
+	infoMemoria* memoria3 = newInfoMemoria();
 	list_add(listaMemorias, memoria3);
-	idMemoria++;
 
-	infoMemoria* memoria4 = malloc(sizeof(infoMemoria));
-	//	memoria3->ccia = EC;
-	memoria4->id = idMemoria;
+	infoMemoria* memoria4 = newInfoMemoria();
 	list_add(listaMemorias, memoria4);
-	idMemoria++;
 
-	infoMemoria* memoria5 = malloc(sizeof(infoMemoria));
-	//	memoria3->ccia = EC;
-	memoria5->id = idMemoria;
+	infoMemoria* memoria5 = newInfoMemoria();
 	list_add(listaMemorias, memoria5);
-	idMemoria++;
 
-	infoMemoria* memoria6 = malloc(sizeof(infoMemoria));
-	//	memoria3->ccia = EC;
-	memoria6->id = idMemoria;
+	infoMemoria* memoria6 = newInfoMemoria();
 	list_add(listaMemorias, memoria6);
-	idMemoria++;
 
-	infoMemoria* memoria7 = malloc(sizeof(infoMemoria));
-	//	memoria3->ccia = EC;
-	memoria7->id = idMemoria;
+	infoMemoria* memoria7 = newInfoMemoria();
 	list_add(listaMemorias, memoria7);
-	idMemoria++;
+//	infoMemoria* memoria2 = malloc(sizeof(infoMemoria));
+////	memoria2->ccia = SHC;
+//	memoria2->id = idMemoria;
+//	list_add(listaMemorias, memoria2);
+//	idMemoria++;
+//
+//	infoMemoria* memoria3 = malloc(sizeof(infoMemoria));
+////	memoria3->ccia = EC;
+//	memoria3->id = idMemoria;
+//	list_add(listaMemorias, memoria3);
+//	idMemoria++;
+//
+//	infoMemoria* memoria4 = malloc(sizeof(infoMemoria));
+//	//	memoria3->ccia = EC;
+//	memoria4->id = idMemoria;
+//	list_add(listaMemorias, memoria4);
+//	idMemoria++;
+//
+//	infoMemoria* memoria5 = malloc(sizeof(infoMemoria));
+//	//	memoria3->ccia = EC;
+//	memoria5->id = idMemoria;
+//	list_add(listaMemorias, memoria5);
+//	idMemoria++;
+//
+//	infoMemoria* memoria6 = malloc(sizeof(infoMemoria));
+//	//	memoria3->ccia = EC;
+//	memoria6->id = idMemoria;
+//	list_add(listaMemorias, memoria6);
+//	idMemoria++;
+//
+//	infoMemoria* memoria7 = malloc(sizeof(infoMemoria));
+//	//	memoria3->ccia = EC;
+//	memoria7->id = idMemoria;
+//	list_add(listaMemorias, memoria7);
+//	idMemoria++;
 
 }
 
@@ -435,7 +469,8 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, i
 
 
 	bool _condicion(infoMemoria*memoria, consistencia cons){
-		return cons == memoria->ccia;
+//		return cons == mejorCriterioMemoria(memoria->criterios);
+		return verificarCriterio(memoria->criterios, cons);
 	}
 	bool condicionParaEncontrarMemorias(void* memoria){
 		return _condicion(memoria, consistenciaDeTabla);
@@ -458,6 +493,9 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, i
 			log_error(log_master->logError, "Error: en obtenerMemoriaSegunConsistencia");
 	}
 
+//	list_destroy_and_destroy_elements(memoriasEncontradas, (void*) free);
+//	memoriasEncontradas = NULL;
+	list_destroy(memoriasEncontradas);
 	return memoriaPosta;
 
 }
@@ -479,27 +517,74 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
 	return list_get(memoriasEncontradas, randomNumber);
 }
 
-//infoMemoria* newInfoMemoria(){
-//	infoMemoria* memoria = malloc(sizeof(infoMemoria));
-//	memoria->id = idMemoria;
-//	idMemoria++;
-//	for(int i=0; i < 3; i++){
-//
-//	}
-//}
-
-consistencia mejorCriterioMemoria(bool* criterios){
-	if(criterios[0])
-		return SC;
-	else if(criterios[1])
-		return SHC;
-	else if(criterios[2])
-		return EC;
-
-	return ERROR_CONSISTENCIA;
+infoMemoria* newInfoMemoria(){
+	infoMemoria* memoria = malloc(sizeof(infoMemoria));
+	memoria->id = idMemoria;
+	idMemoria++;
+	for(int i=0; i < 4; i++){
+		(memoria->criterios)[i] = false;
+	}
+	memoria->ip = NULL;
+	return memoria;
 }
 
-//void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons){
-//	if(!haySC && cons == SC)
+//consistencia mejorCriterioMemoria(bool* criterios){
+//	if(criterios[0])
+//		return SC;
+//	else if(criterios[1])
+//		return SHC;
+//	else if(criterios[2])
+//		return EC;
 //
+//	return ERROR_CONSISTENCIA;
 //}
+
+bool verificarCriterio(bool* criterio, consistencia ccia){
+	switch(ccia){
+		case SC:
+			return criterio[0];
+			break;
+		case SHC:
+			return criterio[1];
+			break;
+		case EC:
+			return criterio[2];
+		case ERROR_CONSISTENCIA:
+			return criterio[3];
+	}
+	return false;
+}
+
+void imprimirCriterio(bool* criterio){
+		if (criterio[0]) {
+			log_trace(log_master->logTrace, "Esta memoria tiene criterio SC");
+		}
+		if (criterio[1]) {
+			log_trace(log_master->logTrace, "Esta memoria tiene criterio SHC");
+		}
+		if (criterio[2]) {
+			log_trace(log_master->logTrace, "Esta memoria tiene criterio EC");
+		}
+		if(criterio[3]){
+			log_error(log_master->logError,
+				"Error al asignar criterio a esta memoria. Por favor, intente nuevamente");
+			criterio[3] = false;
+		}
+}
+
+void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons){
+	if(!haySC && cons == SC){
+		(memoria->criterios)[0] = true;
+		haySC=true;
+	}
+	else if (cons == SHC)
+		(memoria->criterios)[1] = true;
+	else if (cons == EC)
+		(memoria->criterios)[2] = true;
+	else if((haySC && cons == SC) || cons == ERROR_CONSISTENCIA)
+		(memoria->criterios)[3] = true;
+}
+
+void destruirListaMemorias(){
+	list_destroy_and_destroy_elements(listaMemorias, (void*) free);
+}

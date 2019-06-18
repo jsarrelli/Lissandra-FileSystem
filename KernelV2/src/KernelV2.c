@@ -42,8 +42,9 @@ int main(void) {
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReady, 0, 1);
 	char*operacion;
-	quantum=0;
+	cantRequestsEjecutadas =0;
 	haySC = false;
+	idMemoria=1;
 
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
 
@@ -88,9 +89,12 @@ int main(void) {
 //		destruirProcesoExec(proceso);
 		operacion = readline(">");
 	}
-//	free(operacion);
+	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
+	free(operacion);
 //	free(hilos);
 	destruirElementosMain(listaHilos, colaReady);
+	destruirListaMemorias();
+	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
 //	config_destroy(config);
 	return EXIT_SUCCESS;
