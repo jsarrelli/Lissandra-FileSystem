@@ -113,11 +113,6 @@ void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
 	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 }
 
-//devuelve una lista con todos los nombres de las tablas del sistema
-void obtenerNombreTablas(t_list* tablas) {
-
-}
-
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla) {
 
 	strcpy(rutaTabla, rutas.Tablas);
@@ -368,6 +363,11 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 	}
 }
 
+char* obtenerNombreTablaByRuta(char* rutaTabla) {
+	char** directorios = string_split(rutaTabla, "/");
+	return (char*) obtenerUltimoElementoDeUnSplit(directorios);
+}
+
 void mostrarMetadataTodasTablas(char *ruta) {
 
 	t_list* listaDirectorios = list_create();
@@ -387,6 +387,7 @@ void mostrarMetadataTodasTablas(char *ruta) {
 	list_destroy(listaDirectorios);
 
 }
+
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 	int i;

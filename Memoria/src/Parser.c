@@ -76,19 +76,22 @@ void* procesarDROP(char* nombreTabla) {
 
 void* procesarDESCRIBE(char* nombreTabla) {
 
-	void mostrarMetadata(t_metadata_tabla* metadata) {
-		printf("Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d", getConsistenciaCharByEnum(metadata->CONSISTENCIA),
+	void mostrarMetadata(Segmento* segmento) {
+		t_metadata_tabla* metadata = segmento->metaData;
+		printf("Segmento: %s \n", segmento->nombreTabla);
+		printf("Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d \n", getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 				metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
 	}
-	t_metadata_tabla* metadata;
 
-	if (strcmp(nombreTabla, "")==0) {
-		t_list* tablas = DESCRIBE_ALL_MEMOROIA();
+
+	if (nombreTabla==NULL) {
+		t_list* tablas = DESCRIBE_ALL_MEMORIA();
 		list_iterate(tablas, (void*) mostrarMetadata);
+
 	} else {
-		metadata = DESCRIBE_MEMORIA(nombreTabla);
-		if(metadata!=NULL){
-			mostrarMetadata(metadata);
+		Segmento* segmento = DESCRIBE_MEMORIA(nombreTabla);
+		if(segmento!=NULL){
+			mostrarMetadata(segmento);
 		}else{
 			printf("La tabla: %s no se encuentra en sistema" ,nombreTabla);
 		}
@@ -96,7 +99,7 @@ void* procesarDESCRIBE(char* nombreTabla) {
 
 	}
 
-	return metadata;
+	return NULL;
 
 }
 

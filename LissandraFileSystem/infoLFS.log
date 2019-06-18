@@ -1,6 +1,14 @@
+
+[INFO] 09:01:39:223 LFS Logs/(14342:14342): Inicializando proceso LISSANDRA FILE SYSTEM. 
+
+[INFO] 09:01:39:226 LFS Logs/(14342:14342): Levantando archivo de configuracion del proceso LFS 
+
+[INFO] 09:01:39:226 LFS Logs/(14342:14342): Archivo de configuracion del proceso LFS levantado 
+
 [INFO] 13:50:25:280 LFS Logs/(27216:27216): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
 [INFO] 13:50:25:280 LFS Logs/(27216:27216): Levantando archivo de configuracion del proceso LFS 
 
 [INFO] 13:50:25:281 LFS Logs/(27216:27216): Archivo de configuracion del proceso LFS levantado 
+
 

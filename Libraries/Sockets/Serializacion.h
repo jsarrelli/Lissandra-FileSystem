@@ -19,6 +19,7 @@ typedef enum t_protocolo {
 	INSERT,
 	CREATE,
 	DESCRIBE,
+	DESCRIBE_ALL,
 	DROP,
 	JOURNAL,
 	NOTFOUND,

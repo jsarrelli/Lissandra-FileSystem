@@ -27,7 +27,7 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
-	crearYEscribirArchivosTemporales(rutas.Tablas);
+	//crearYEscribirArchivosTemporales(rutas.Tablas);
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {

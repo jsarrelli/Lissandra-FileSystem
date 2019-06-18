@@ -46,12 +46,11 @@ t_metadata_tabla* newMetadata(t_consistencia consistencia, int cantParticiones, 
 	return metaData;
 }
 
-
 //crea una tabla en memoria y le avisa al fileSystem
 int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metaData = newMetadata(consistencia, cantParticiones, tiempoCompactacion);
 	int succes = enviarCreateAFileSystem(metaData, nombreTabla);
-	if(succes==0){
+	if (succes == 0) {
 		insertarSegmentoEnMemoria(nombreTabla, metaData);
 		printf("Se ha creado la tabla %s", nombreTabla);
 
@@ -62,16 +61,16 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	return 1;
 }
 
-t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
-	Segmento* segmento= buscarSegmento(nombreTabla);
-	if(segmento==NULL){
+Segmento* DESCRIBE_MEMORIA(char* nombreTabla) {
+	Segmento* segmento = buscarSegmento(nombreTabla);
+	if (segmento == NULL) {
 		return NULL;
-	}else{
-		return segmento->metaData;
+	} else {
+		return segmento;
 	}
 }
 
-t_list* DESCRIBE_ALL_MEMOROIA() {
-	//t_list* metadatas= pedile a kevin que te pase todas sus tablas
-	return NULL;
+t_list* DESCRIBE_ALL_MEMORIA() {
+	return describeAllFileSystem();
+
 }
