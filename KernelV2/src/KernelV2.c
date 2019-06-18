@@ -23,11 +23,10 @@
  *
  * TODO:
  * 		- Manejo de errores
- * 		- Resto de las funciones (con codigo harcodeado) + pequeñas modificaciones del comando RUN (Brian)
+ * 		- Resto de las funciones (con codigo harcodeado) + pequeñas modificaciones del comando RUN
  * 		- Unir los modulos con las funciones sockets
  * 		- Round Robin
- *
- * 		Y lo mas dificil: el multiprocesamiento
+ *		- Multiprocesamiento (Brian)
  *
  * 	Aclaracion:
  * 		Muchas de las decisiones fueron hechas para ver los puntos que faltan
@@ -44,6 +43,7 @@ int main(void) {
 	sem_init(&mutex_colaReady, 0, 1);
 	char*operacion;
 	quantum=0;
+	haySC = false;
 
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
 

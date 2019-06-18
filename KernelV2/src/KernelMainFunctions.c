@@ -228,6 +228,12 @@ void consolaSelect(char*argumentos){
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 		// es un value
 
+	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+
+	log_trace(log_master->logTrace, "Los datos obtenidos son:");
+	log_trace(log_master->logTrace, "Criterio de la memoria: %d", memoriaAEnviar->ccia);
+	log_trace(log_master->logTrace, "Id de la memoria: %d", memoriaAEnviar->id);
+
 }
 
 void consolaCreate(char*argumentos){
@@ -316,48 +322,48 @@ void ejecutarProcesos(){
 
 void hardcodearInfoMemorias(){
 //	listaMemorias
-	int id=0;
+	int idMemoria=1;
 	infoMemoria* memoria1= malloc(sizeof(infoMemoria));
 //	memoria1->ccia = SC;
-	memoria1->id=id;
+	memoria1->id=idMemoria;
 	list_add(listaMemorias, memoria1);
-	id++;
+	idMemoria++;
 
 	infoMemoria* memoria2 = malloc(sizeof(infoMemoria));
 //	memoria2->ccia = SHC;
-	memoria2->id = id;
+	memoria2->id = idMemoria;
 	list_add(listaMemorias, memoria2);
-	id++;
+	idMemoria++;
 
 	infoMemoria* memoria3 = malloc(sizeof(infoMemoria));
 //	memoria3->ccia = EC;
-	memoria3->id = id;
+	memoria3->id = idMemoria;
 	list_add(listaMemorias, memoria3);
-	id++;
+	idMemoria++;
 
 	infoMemoria* memoria4 = malloc(sizeof(infoMemoria));
 	//	memoria3->ccia = EC;
-	memoria4->id = id;
+	memoria4->id = idMemoria;
 	list_add(listaMemorias, memoria4);
-	id++;
+	idMemoria++;
 
 	infoMemoria* memoria5 = malloc(sizeof(infoMemoria));
 	//	memoria3->ccia = EC;
-	memoria5->id = id;
+	memoria5->id = idMemoria;
 	list_add(listaMemorias, memoria5);
-	id++;
+	idMemoria++;
 
 	infoMemoria* memoria6 = malloc(sizeof(infoMemoria));
 	//	memoria3->ccia = EC;
-	memoria6->id = id;
+	memoria6->id = idMemoria;
 	list_add(listaMemorias, memoria6);
-	id++;
+	idMemoria++;
 
 	infoMemoria* memoria7 = malloc(sizeof(infoMemoria));
 	//	memoria3->ccia = EC;
-	memoria7->id = id;
+	memoria7->id = idMemoria;
 	list_add(listaMemorias, memoria7);
-	id++;
+	idMemoria++;
 
 }
 
@@ -472,3 +478,28 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
 
 	return list_get(memoriasEncontradas, randomNumber);
 }
+
+//infoMemoria* newInfoMemoria(){
+//	infoMemoria* memoria = malloc(sizeof(infoMemoria));
+//	memoria->id = idMemoria;
+//	idMemoria++;
+//	for(int i=0; i < 3; i++){
+//
+//	}
+//}
+
+consistencia mejorCriterioMemoria(bool* criterios){
+	if(criterios[0])
+		return SC;
+	else if(criterios[1])
+		return SHC;
+	else if(criterios[2])
+		return EC;
+
+	return ERROR_CONSISTENCIA;
+}
+
+//void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons){
+//	if(!haySC && cons == SC)
+//
+//}

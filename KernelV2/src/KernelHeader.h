@@ -41,6 +41,7 @@ typedef struct{
 	int id;
 	char*ip;
 	consistencia ccia;
+//	bool criterios[3];
 }infoMemoria;
 
 typedef struct{
@@ -82,6 +83,8 @@ int quantum;
 sem_t ejecutarHilos;
 sem_t mutex_colaReady;
 logStruct* log_master;
+int idMemoria;
+bool haySC;
 
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
