@@ -43,6 +43,7 @@ int main(void) {
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReady, 0, 1);
 	char*operacion;
+	quantum=0;
 
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
 

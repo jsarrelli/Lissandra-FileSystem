@@ -120,41 +120,39 @@ void procesarInput(char* linea) {
 	char* argumentos = comandos[1];
 //	char **palabras = string_split(linea, " ");
 //	int cantidad = cantidadParametros(comandos);
-	if (strcmp(operacion, "INSERT")==0) {
+	if (strcmp(operacion, "INSERT") == 0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
 		consolaInsert(argumentos);
-	} else if (strcmp(operacion, "SELECT")==0) {
+	} else if (strcmp(operacion, "SELECT") == 0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
 		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
 		consolaSelect(argumentos);
-	} else if (strcmp(operacion, "CREATE")==0) {
+	} else if (strcmp(operacion, "CREATE") == 0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
 		consolaCreate(argumentos);
 		//consolaCreate(palabras,cantidad);
-	} else if (strcmp(operacion, "DESCRIBE")==0) {
+	} else if (strcmp(operacion, "DESCRIBE") == 0) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
 		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
 		consolaDescribe(argumentos);
 		//consolaDescribe(palabras,cantidad);
-	} else if (strcmp(operacion, "DROP")==0) {
+	} else if (strcmp(operacion, "DROP") == 0) {
 		//	DROP [NOMBRE_TABLA]
 		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
 		consolaDrop(argumentos);
 		//consolaDrop(palabras,cantidad);
-	} else if (strcmp(operacion, "ADD")==0) {
+	} else if (strcmp(operacion, "ADD") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
 		procesarAdd(argumentos);
-	}
-//	else
-//		printf("El comando no es el correcto. Por favor intente nuevamente");
-	else if (strcmp(operacion, "SALIR")==0) {
+	} else if (strcmp(operacion, "SALIR") == 0) {
 		log_trace(log_master->logTrace, "Finalizando consola");
 	} else {
-		log_trace(log_master->logTrace, "El comando no es el correcto. Por favor intente nuevamente");
+		log_trace(log_master->logTrace,
+				"El comando no es el correcto. Por favor intente nuevamente");
 	}
 
 //	for(int i=0;i< cantidad;i++){
@@ -213,6 +211,11 @@ void consolaInsert(char*argumentos){
 	char* key = valoresAux[1];
 	char* value = valores[1];
 	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key, value);
+
+//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+
+	// Primero hay que obtener una memoria que cumpla con el criterio de la tabla.
+		// Ahora, se usa las funciones sockets para enviar el mensaje a Memoria y luego a LFS; y listo (no requiere mensaje de retorno)
 }
 
 void consolaSelect(char*argumentos){
@@ -221,6 +224,10 @@ void consolaSelect(char*argumentos){
 	int key = atoi(valores[1]);
 
 	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
+
+	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
+		// es un value
+
 }
 
 void consolaCreate(char*argumentos){
@@ -234,6 +241,9 @@ void consolaCreate(char*argumentos){
 	log_trace(log_master->logTrace,
 			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d",
 			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
+
+	// En el caso del CREATE, como el de muchas otras funciones, se le manda la info a una memoria al azar y no recibe respuesta
+
 }
 
 void consolaDescribe(char*nombreTabla){
@@ -243,6 +253,8 @@ void consolaDescribe(char*nombreTabla){
 	else{
 		log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
 	}
+
+	// El DESCRIBE es igual que el CREATE y que el DROP
 	comandoDescribe(nombreTabla);
 }
 
@@ -271,6 +283,7 @@ void* funcionThread(void* args){
 
 	void _correrProceso(char*request){
 		procesarInput(request);
+		quantum++;
 	}
 
 	list_iterate(proceso->script, (void*) _correrProceso);
@@ -321,6 +334,31 @@ void hardcodearInfoMemorias(){
 	memoria3->id = id;
 	list_add(listaMemorias, memoria3);
 	id++;
+
+	infoMemoria* memoria4 = malloc(sizeof(infoMemoria));
+	//	memoria3->ccia = EC;
+	memoria4->id = id;
+	list_add(listaMemorias, memoria4);
+	id++;
+
+	infoMemoria* memoria5 = malloc(sizeof(infoMemoria));
+	//	memoria3->ccia = EC;
+	memoria5->id = id;
+	list_add(listaMemorias, memoria5);
+	id++;
+
+	infoMemoria* memoria6 = malloc(sizeof(infoMemoria));
+	//	memoria3->ccia = EC;
+	memoria6->id = id;
+	list_add(listaMemorias, memoria6);
+	id++;
+
+	infoMemoria* memoria7 = malloc(sizeof(infoMemoria));
+	//	memoria3->ccia = EC;
+	memoria7->id = id;
+	list_add(listaMemorias, memoria7);
+	id++;
+
 }
 
 void hardcodearListaMetadataTabla(){
@@ -331,15 +369,15 @@ void hardcodearListaMetadataTabla(){
 	list_add(listaMetadataTabla, metadata1);
 
 	metadataTablas* metadata2 = malloc(sizeof(metadataTablas));
-	metadata2->consistencia = SC;
-	metadata2->nParticiones = 2;
-	metadata2->nombreTabla = "TABLA1";
+	metadata2->consistencia = SHC;
+	metadata2->nParticiones = 3;
+	metadata2->nombreTabla = "TABLA2";
 	list_add(listaMetadataTabla, metadata2);
 
 	metadataTablas* metadata3 = malloc(sizeof(metadataTablas));
-	metadata3->consistencia = SC;
-	metadata3->nParticiones = 2;
-	metadata3->nombreTabla = "TABLA1";
+	metadata3->consistencia = EC;
+	metadata3->nParticiones = 4;
+	metadata3->nombreTabla = "TABLA3";
 	list_add(listaMetadataTabla, metadata3);
 }
 
@@ -353,6 +391,7 @@ void inicializarLogStruct(){
 }
 
 infoMemoria* obtenerMemoriaAlAzar(){
+	srand(time(NULL));
 	int numeroAleatorio = rand() % list_size(listaMemorias);
 	return list_get(listaMemorias, numeroAleatorio);
 }
@@ -428,6 +467,7 @@ int funcionHash(t_list* memoriasEncontradas, int key){
 }
 
 infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
+	srand(time(NULL));
 	int randomNumber = rand() % list_size(memoriasEncontradas);
 
 	return list_get(memoriasEncontradas, randomNumber);
