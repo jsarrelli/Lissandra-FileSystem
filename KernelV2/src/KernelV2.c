@@ -10,6 +10,28 @@
 
 #include "KernelHeader.h"
 
+void iniciarVariablesKernel() {
+	log_master = malloc(sizeof(logStruct));
+	inicializarLogStruct();
+	//	log_info(log_master->logInfo, "Hola!!!");
+	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
+	sem_init(&mutex_colaReady, 0, 1);
+	cantRequestsEjecutadas = 0;
+	haySC = false;
+	idMemoria = 1;
+	srand(time(NULL));
+	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
+	colaReady = queue_create();
+	listaHilos = list_create();
+	listaMemorias = list_create();
+	hardcodearInfoMemorias();
+	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
+			((infoMemoria*) list_get(listaMemorias, 1))->id);
+	listaMetadataTabla = list_create();
+	hardcodearListaMetadataTabla();
+	quantum = config->QUANTUM;
+}
+
 /*
  * Estado del Kernel:
  *
@@ -23,7 +45,7 @@
  *
  * TODO:
  * 		- Manejo de errores
- * 		- Resto de las funciones (con codigo harcodeado) + pequeñas modificaciones del comando RUN
+ * 		- Resto de las funciones (con codigo harcodeado) -> HECHO + pequeñas modificaciones del comando RUN
  * 		- Unir los modulos con las funciones sockets
  * 		- Round Robin
  *		- Multiprocesamiento (Brian)
@@ -36,33 +58,9 @@
  */
 
 int main(void) {
-	log_master = malloc(sizeof(logStruct));
-	inicializarLogStruct();
-//	log_info(log_master->logInfo, "Hola!!!");
-	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
-	sem_init(&mutex_colaReady, 0, 1);
+	iniciarVariablesKernel();
 	char*operacion;
-	cantRequestsEjecutadas =0;
-	haySC = false;
-	idMemoria=1;
-
-	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
-
-
-
-
-
-
-	colaReady = queue_create();
-	listaHilos = list_create();
-	listaMemorias = list_create();
-	hardcodearInfoMemorias();
-	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n", ((infoMemoria*)list_get(listaMemorias, 1))->id);
-	listaMetadataTabla = list_create();
-	hardcodearListaMetadataTabla();
-	quantum = config->QUANTUM;
 //	agregarHiloAListaHilosEInicializo(listaHilos);
-
 
 	operacion = readline(">");
 	while(!instruccionSeaSalir(operacion)){

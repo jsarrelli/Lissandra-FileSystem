@@ -216,17 +216,47 @@ void procesarAdd(char*argumento){
 }
 
 void consolaInsert(char*argumentos){
-	char** valores = string_split(argumentos, "\""); //34 son las " en ASCII
+	//	INSERT
+			//[NOMBRE_TABLA] [KEY] “[VALUE]”
+	char** valores = string_split(argumentos, "\"");
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
 	char* value = valores[1];
 	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key, value);
 
+
+	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla);
+
+	printf("Aca se tienen que poner las sockets\n");
+
 //	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
-	// Primero hay que obtener una memoria que cumpla con el criterio de la tabla.
+	// Primero hay que obtener una memoria que cumpla con el criterio de la tabla (hecho)
 		// Ahora, se usa las funciones sockets para enviar el mensaje a Memoria y luego a LFS; y listo (no requiere mensaje de retorno)
+
+	free(valoresAux[1]);
+	free(valoresAux[0]);
+	free(valoresAux);
+	free(valores[1]);
+	free(valores[0]);
+	free(valores);
+}
+
+void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
+	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
+	// es un value
+	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+
+	if(memoriaAEnviar!=NULL){
+		log_trace(log_master->logTrace, "Los datos obtenidos son:");
+		//	log_trace(log_master->logTrace, "Criterio de la memoria: %d", mejorCriterioMemoria(memoriaAEnviar->criterios));
+		imprimirCriterio(memoriaAEnviar->criterios);
+		log_trace(log_master->logTrace, "Id de la memoria: %d",
+				memoriaAEnviar->id);
+	}
+	else
+		log_error(log_master->logError, "Error: no existe memoria con ese criterio");
 }
 
 void consolaSelect(char*argumentos){
@@ -239,12 +269,9 @@ void consolaSelect(char*argumentos){
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 		// es un value
 
-	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+	obtenerMemoriaSegunTablaYKey(key, nombreTabla);
 
-	log_trace(log_master->logTrace, "Los datos obtenidos son:");
-//	log_trace(log_master->logTrace, "Criterio de la memoria: %d", mejorCriterioMemoria(memoriaAEnviar->criterios));
-	imprimirCriterio(memoriaAEnviar->criterios);
-	log_trace(log_master->logTrace, "Id de la memoria: %d", memoriaAEnviar->id);
+	printf("Aca se tienen que poner las sockets\n");
 
 	free(valores[1]);
 	free(nombreTabla);
@@ -265,6 +292,17 @@ void consolaCreate(char*argumentos){
 
 	// En el caso del CREATE, como el de muchas otras funciones, se le manda la info a una memoria al azar y no recibe respuesta
 
+//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
+	obtenerMemoriaAlAzarParaFunciones();
+
+	printf("Aca se tienen que poner las sockets\n");
+
+	free(valores[3]);
+	free(valores[2]);
+	free(valores[1]);
+	free(valores[0]);
+	free(valores);
+
 }
 
 void consolaDescribe(char*nombreTabla){
@@ -276,11 +314,18 @@ void consolaDescribe(char*nombreTabla){
 	}
 
 	// El DESCRIBE es igual que el CREATE y que el DROP
-	comandoDescribe(nombreTabla);
+//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
+	obtenerMemoriaAlAzarParaFunciones();
+	printf("Aca se tienen que poner las sockets\n");
 }
 
 void consolaDrop(char*nombreTabla){
 	log_trace(log_master->logTrace, "Se desea elminar la tabla %s", nombreTabla);
+
+//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
+	obtenerMemoriaAlAzarParaFunciones();
+
+	printf("Aca se tienen que poner las sockets\n");
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
@@ -431,17 +476,18 @@ void inicializarLogStruct(){
 }
 
 infoMemoria* obtenerMemoriaAlAzar(){
-	srand(time(NULL));
+//	srand(time(NULL));
 	int numeroAleatorio = rand() % list_size(listaMemorias);
 	return list_get(listaMemorias, numeroAleatorio);
 }
 
-void comandoDescribe(char*nombreTabla){
+infoMemoria* obtenerMemoriaAlAzarParaFunciones(){
 	infoMemoria* memoriaAlAzar = NULL;
 
 	memoriaAlAzar = obtenerMemoriaAlAzar();
 	log_trace(log_master->logTrace, "El id de la memoria obtenida es: %d", memoriaAlAzar->id);
 
+	return memoriaAlAzar;
 	// Aca va la funcion enviar de las sockets
 }
 
@@ -511,7 +557,7 @@ int funcionHash(t_list* memoriasEncontradas, int key){
 }
 
 infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
-	srand(time(NULL));
+//	srand(time(NULL));
 	int randomNumber = rand() % list_size(memoriasEncontradas);
 
 	return list_get(memoriasEncontradas, randomNumber);

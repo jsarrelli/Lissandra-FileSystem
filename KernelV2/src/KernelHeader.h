@@ -102,6 +102,7 @@ void hardcodearListaMetadataTabla();
 
 
 // Funciones importantes
+void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 bool verificarCriterio(bool* criterio, consistencia ccia);
 void imprimirCriterio(bool* criterio);
@@ -116,7 +117,7 @@ void deNewAReady(procExec* proceso);
 void deReadyAExec();
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 void comandoAdd(int id, consistencia cons);
-void comandoDescribe(char*nombreTabla);
+infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void procesarAdd(char*argumento);
 void consolaInsert(char*request);
 void consolaSelect(char*argumentos);
