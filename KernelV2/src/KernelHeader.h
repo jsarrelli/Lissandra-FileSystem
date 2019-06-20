@@ -22,6 +22,7 @@
 #include <commons/collections/queue.h>
 #include <commons/config.h>
 
+
 // Estructuras de datos
 
 typedef struct{
@@ -96,34 +97,22 @@ t_config_kernel *cargarConfig(char *ruta);
 infoMemoria* obtenerMemoriaAlAzar();
 
 
-void hardcodearInfoMemorias();
-void hardcodearListaMetadataTabla();
-//void procesarInput(char* linea);
+//void hardcodearListaMetadataTabla(); // Listo
 
 
 // Funciones importantes
 void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
-bool verificarCriterio(bool* criterio, consistencia ccia);
-void imprimirCriterio(bool* criterio);
 void destruirLogStruct(logStruct* log_master);
-bool instruccionSeaSalir(char* operacion);
 procExec* newProceso();
 infoMemoria* newInfoMemoria();
 void destruirProceso(procExec* proceso);
 //void destruirProcesoExec(procExec* proceso);
-consistencia mejorCriterioMemoria(bool* criterios);
+//consistencia mejorCriterioMemoria(bool* criterios);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
-void comandoAdd(int id, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
-void procesarAdd(char*argumento);
-void consolaInsert(char*request);
-void consolaSelect(char*argumentos);
-void consolaCreate(char*argumentos);
-void consolaDescribe(char*nombreTabla);
-void consolaDrop(char*nombreTabla);
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
 void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);

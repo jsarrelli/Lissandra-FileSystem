@@ -8,7 +8,7 @@
  ============================================================================
  */
 
-#include "KernelHeader.h"
+#include "Kernel.h"
 
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));

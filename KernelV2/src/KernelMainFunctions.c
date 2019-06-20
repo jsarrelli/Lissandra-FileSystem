@@ -5,7 +5,8 @@
  *      Author: utnso
  */
 
-#include "KernelHeader.h"
+#include "Kernel.h"
+#include "APIKernel.h"
 
 void destruirElementosMain(t_list* lista, t_queue* cola){
 	list_destroy_and_destroy_elements(lista, (void*) free);
@@ -18,12 +19,6 @@ void destruirLogStruct(logStruct* log_master){
 	log_destroy(log_master->logError);
 	log_destroy(log_master->logTrace);
 	free(log_master);
-}
-
-bool instruccionSeaSalir(char* operacion){
-	if(strcmp(operacion, "SALIR")==0)
-		return true;
-	return false;
 }
 
 procExec* newProceso(){
@@ -114,134 +109,6 @@ int cantidadParametros(char ** palabras) {
 	return i - 1;
 }
 
-void procesarInput(char* linea) {
-	char** comandos = string_n_split(linea, 2, " ");
-	char* operacion = comandos[0];
-	char* argumentos = comandos[1];
-//	char **palabras = string_split(linea, " ");
-//	int cantidad = cantidadParametros(comandos);
-	if (strcmp(operacion, "INSERT") == 0) {
-		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
-		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
-		consolaInsert(argumentos);
-	} else if (strcmp(operacion, "SELECT") == 0) {
-		//	SELECT [NOMBRE_TABLA] [KEY]
-		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
-		consolaSelect(argumentos);
-	} else if (strcmp(operacion, "CREATE") == 0) {
-		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
-		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
-		consolaCreate(argumentos);
-		//consolaCreate(palabras,cantidad);
-	} else if (strcmp(operacion, "DESCRIBE") == 0) {
-		// DESCRIBE [NOMBRE_TABLA]
-		// DESCRIBE
-		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
-		consolaDescribe(argumentos);
-		//consolaDescribe(palabras,cantidad);
-	} else if (strcmp(operacion, "DROP") == 0) {
-		//	DROP [NOMBRE_TABLA]
-		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
-		consolaDrop(argumentos);
-		//consolaDrop(palabras,cantidad);
-	} else if (strcmp(operacion, "ADD") == 0) {
-		//	ADD MEMORY [id] TO [consistencia]
-		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
-		procesarAdd(argumentos);
-	} else if (strcmp(operacion, "SALIR") == 0) {
-		log_trace(log_master->logTrace, "Finalizando consola");
-	} else {
-		log_trace(log_master->logTrace,
-				"El comando no es el correcto. Por favor intente nuevamente");
-	}
-
-//	for(int i=0;i< cantidad;i++){
-//		free()
-//	}
-	free(argumentos);
-	free(operacion);
-	free(comandos);
-
-//	liberarPunteroDePunterosAChar(palabras);
-//	free(palabras);
-}
-
-consistencia procesarConsistencia(char* palabra){
-	if(strcmp(palabra, "SC")==0)
-		return SC;
-	else if(strcmp(palabra, "SHC")==0)
-		return SHC;
-	else if(strcmp(palabra, "EC")==0)
-		return EC;
-	return ERROR_CONSISTENCIA;
-}
-
-void comandoAdd(int id, consistencia cons){
-	bool condicionAdd(int id, infoMemoria* memoria) {
-		return id == memoria->id;
-	}
-	bool _esCondicionAdd(void* memoria) {
-		return condicionAdd(id, memoria);
-	}
-
-
-	infoMemoria* memoriaEncontrada = NULL;
-	if ((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd)) != NULL) {
-		asignarCriterioMemoria(memoriaEncontrada, cons);
-
-		if (!(memoriaEncontrada->criterios)[3])
-			log_trace(log_master->logTrace,
-					"Se ha asignado el criterio a la memoria correctammente");
-
-		imprimirCriterio(memoriaEncontrada->criterios);
-		log_trace(log_master->logTrace, "El id de esta memoria es: %d",
-				memoriaEncontrada->id);
-	} else
-		log_error(log_master->logError, "Problemas con el comando ADD");
-}
-
-void procesarAdd(char*argumento){
-	char** valores = string_split(argumento, " ");
-//	add(atoi(valores[1]), valores[3]);
-	consistencia cons = procesarConsistencia(valores[3]);
-
-	int id = atoi(valores[1]);
-	comandoAdd(id, cons);
-
-	free(valores[0]);
-	free(valores[1]);
-	free(valores[2]);
-	free(valores[3]);
-	free(valores);
-}
-
-void consolaInsert(char*argumentos){
-	//	INSERT
-			//[NOMBRE_TABLA] [KEY] “[VALUE]”
-	char** valores = string_split(argumentos, "\"");
-	char** valoresAux = string_split(valores[0], " ");
-	char* nombreTabla = valoresAux[0];
-	char* key = valoresAux[1];
-	char* value = valores[1];
-	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key, value);
-
-
-	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla);
-
-	printf("Aca se tienen que poner las sockets\n");
-
-//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
-
-	// Primero hay que obtener una memoria que cumpla con el criterio de la tabla (hecho)
-		// Ahora, se usa las funciones sockets para enviar el mensaje a Memoria y luego a LFS; y listo (no requiere mensaje de retorno)
-
-	free(valoresAux[1]);
-	free(valoresAux[0]);
-	free(valoresAux);
-	free(valores[1]);
-	free(valores[0]);
-	free(valores);
-}
 
 void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
@@ -259,78 +126,15 @@ void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 		log_error(log_master->logError, "Error: no existe memoria con ese criterio");
 }
 
-void consolaSelect(char*argumentos){
-	char** valores = string_split(argumentos, " ");
-	char* nombreTabla = valores[0];
-	int key = atoi(valores[1]);
 
-	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
 
-	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
-		// es un value
 
-	obtenerMemoriaSegunTablaYKey(key, nombreTabla);
 
-	printf("Aca se tienen que poner las sockets\n");
-
-	free(valores[1]);
-	free(nombreTabla);
-	free(valores);
-}
-
-void consolaCreate(char*argumentos){
-	char** valores = string_split(argumentos, " ");
-	char* nombreTabla = valores[0];
-	char* consistenciaChar = valores[1];
-	int cantParticiones = atoi(valores[2]);
-	int tiempoCompactacion = atoi(valores[3]);
-
-//	consistencia cons = procesarConsistencia(consistenciaChar);
-	log_trace(log_master->logTrace,
-			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d",
-			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
-
-	// En el caso del CREATE, como el de muchas otras funciones, se le manda la info a una memoria al azar y no recibe respuesta
-
-//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
-	obtenerMemoriaAlAzarParaFunciones();
-
-	printf("Aca se tienen que poner las sockets\n");
-
-	free(valores[3]);
-	free(valores[2]);
-	free(valores[1]);
-	free(valores[0]);
-	free(valores);
-
-}
-
-void consolaDescribe(char*nombreTabla){
-	if (nombreTabla==NULL){
-		log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
-	}
-	else{
-		log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
-	}
-
-	// El DESCRIBE es igual que el CREATE y que el DROP
-//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
-	obtenerMemoriaAlAzarParaFunciones();
-	printf("Aca se tienen que poner las sockets\n");
-}
-
-void consolaDrop(char*nombreTabla){
-	log_trace(log_master->logTrace, "Se desea elminar la tabla %s", nombreTabla);
-
-//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
-	obtenerMemoriaAlAzarParaFunciones();
-
-	printf("Aca se tienen que poner las sockets\n");
-}
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
 	list_add(proceso->script, operacion);
 }
+
 
 void* funcionThread(void* args){
 	sem_wait(&ejecutarHilos);
@@ -359,6 +163,7 @@ void* funcionThread(void* args){
 	return NULL;
 }
 
+
 void agregarHiloAListaHilosEInicializo(t_list* hilos){
 //	for(int i=0; i < cantProcesos;i++){
 //		pthread_create(&(hilos[i]), NULL, funcionThread, NULL);
@@ -376,95 +181,13 @@ void agregarHiloAListaHilosEInicializo(t_list* hilos){
 	list_iterate(hilos, (void*)_agregarHilo);
 }
 
+
 void ejecutarProcesos(){
 	sem_post(&ejecutarHilos);
 }
 
-void hardcodearInfoMemorias(){
-//	listaMemorias
-//	infoMemoria* memoria1= malloc(sizeof(infoMemoria));
-////	memoria1->ccia = SC;
-//	memoria1->id=idMemoria;
-//	list_add(listaMemorias, memoria1);
-//	idMemoria++;
 
-	infoMemoria* memoria1 = newInfoMemoria();
-	list_add(listaMemorias, memoria1);
 
-	infoMemoria* memoria2 = newInfoMemoria();
-	list_add(listaMemorias, memoria2);
-
-	infoMemoria* memoria3 = newInfoMemoria();
-	list_add(listaMemorias, memoria3);
-
-	infoMemoria* memoria4 = newInfoMemoria();
-	list_add(listaMemorias, memoria4);
-
-	infoMemoria* memoria5 = newInfoMemoria();
-	list_add(listaMemorias, memoria5);
-
-	infoMemoria* memoria6 = newInfoMemoria();
-	list_add(listaMemorias, memoria6);
-
-	infoMemoria* memoria7 = newInfoMemoria();
-	list_add(listaMemorias, memoria7);
-//	infoMemoria* memoria2 = malloc(sizeof(infoMemoria));
-////	memoria2->ccia = SHC;
-//	memoria2->id = idMemoria;
-//	list_add(listaMemorias, memoria2);
-//	idMemoria++;
-//
-//	infoMemoria* memoria3 = malloc(sizeof(infoMemoria));
-////	memoria3->ccia = EC;
-//	memoria3->id = idMemoria;
-//	list_add(listaMemorias, memoria3);
-//	idMemoria++;
-//
-//	infoMemoria* memoria4 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria4->id = idMemoria;
-//	list_add(listaMemorias, memoria4);
-//	idMemoria++;
-//
-//	infoMemoria* memoria5 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria5->id = idMemoria;
-//	list_add(listaMemorias, memoria5);
-//	idMemoria++;
-//
-//	infoMemoria* memoria6 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria6->id = idMemoria;
-//	list_add(listaMemorias, memoria6);
-//	idMemoria++;
-//
-//	infoMemoria* memoria7 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria7->id = idMemoria;
-//	list_add(listaMemorias, memoria7);
-//	idMemoria++;
-
-}
-
-void hardcodearListaMetadataTabla(){
-	metadataTablas* metadata1 = malloc(sizeof(metadataTablas));
-	metadata1->consistencia = SC;
-	metadata1->nParticiones = 2;
-	metadata1->nombreTabla = "TABLA1";
-	list_add(listaMetadataTabla, metadata1);
-
-	metadataTablas* metadata2 = malloc(sizeof(metadataTablas));
-	metadata2->consistencia = SHC;
-	metadata2->nParticiones = 3;
-	metadata2->nombreTabla = "TABLA2";
-	list_add(listaMetadataTabla, metadata2);
-
-	metadataTablas* metadata3 = malloc(sizeof(metadataTablas));
-	metadata3->consistencia = EC;
-	metadata3->nParticiones = 4;
-	metadata3->nombreTabla = "TABLA3";
-	list_add(listaMetadataTabla, metadata3);
-}
 
 void inicializarLogStruct(){
 	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
@@ -475,11 +198,13 @@ void inicializarLogStruct(){
 			LOG_LEVEL_TRACE);
 }
 
+
 infoMemoria* obtenerMemoriaAlAzar(){
 //	srand(time(NULL));
 	int numeroAleatorio = rand() % list_size(listaMemorias);
 	return list_get(listaMemorias, numeroAleatorio);
 }
+
 
 infoMemoria* obtenerMemoriaAlAzarParaFunciones(){
 	infoMemoria* memoriaAlAzar = NULL;
@@ -491,11 +216,13 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones(){
 	// Aca va la funcion enviar de las sockets
 }
 
+
 infoMemoria* obtenerMemoria(char* nombreTabla, int key){
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
 }
+
 
 consistencia obtenerConsistenciaDe(char* nombreTabla){
 	bool _condicion(metadataTablas* metadata, char*nombreTabla){
@@ -508,6 +235,7 @@ consistencia obtenerConsistenciaDe(char* nombreTabla){
 	metadata = list_find((t_list*)listaMetadataTabla,condicionObtenerConsistencia);
 	return metadata->consistencia;
 }
+
 
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key){
 	t_list* memoriasEncontradas=NULL;
@@ -546,15 +274,18 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, i
 
 }
 
+
 infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key){
 	int posicionMemoria = funcionHash(memoriasEncontradas, key);
 	return list_get(memoriasEncontradas, posicionMemoria);
 }
 
+
 int funcionHash(t_list* memoriasEncontradas, int key){
 	int size = list_size(memoriasEncontradas);
 	return key % size;
 }
+
 
 infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
 //	srand(time(NULL));
@@ -562,6 +293,7 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
 
 	return list_get(memoriasEncontradas, randomNumber);
 }
+
 
 infoMemoria* newInfoMemoria(){
 	infoMemoria* memoria = malloc(sizeof(infoMemoria));
@@ -574,6 +306,7 @@ infoMemoria* newInfoMemoria(){
 	return memoria;
 }
 
+
 //consistencia mejorCriterioMemoria(bool* criterios){
 //	if(criterios[0])
 //		return SC;
@@ -585,38 +318,7 @@ infoMemoria* newInfoMemoria(){
 //	return ERROR_CONSISTENCIA;
 //}
 
-bool verificarCriterio(bool* criterio, consistencia ccia){
-	switch(ccia){
-		case SC:
-			return criterio[0];
-			break;
-		case SHC:
-			return criterio[1];
-			break;
-		case EC:
-			return criterio[2];
-		case ERROR_CONSISTENCIA:
-			return criterio[3];
-	}
-	return false;
-}
 
-void imprimirCriterio(bool* criterio){
-		if (criterio[0]) {
-			log_trace(log_master->logTrace, "Esta memoria tiene criterio SC");
-		}
-		if (criterio[1]) {
-			log_trace(log_master->logTrace, "Esta memoria tiene criterio SHC");
-		}
-		if (criterio[2]) {
-			log_trace(log_master->logTrace, "Esta memoria tiene criterio EC");
-		}
-		if(criterio[3]){
-			log_error(log_master->logError,
-				"Error al asignar criterio a esta memoria. Por favor, intente nuevamente");
-			criterio[3] = false;
-		}
-}
 
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons){
 	if(!haySC && cons == SC){

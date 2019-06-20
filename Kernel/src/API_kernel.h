@@ -41,7 +41,7 @@ void consolaKernel(int socketMemoriaRecibido);
 void procesarInput(char* linea);
 void consolaInsert(char*consulta);
 void consolaSelect(char* consulta);
-void procesarAdd(char*consulta);
+void consolaAdd(char*consulta);
 void consolaRun(char* consulta);
 
 #endif /* API_KERNEL_H_ */
