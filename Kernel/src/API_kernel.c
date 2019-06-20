@@ -110,7 +110,7 @@ void procesarInput(char* linea) {
 	} else if (strcmp(operacion, "JOURNAL") == 0) {
 		//journalMemoria();
 	} else if (strcmp(operacion, "ADD") == 0) {
-		return procesarAdd(linea);
+		return consolaAdd(linea);
 	}else if (strcmp(operacion, "RUN") == 0) {
 		return consolaRun(argumentos);
 	}
@@ -170,7 +170,7 @@ void consolaSelect(char* consulta) {
 
 }
 //ADD MEMORY 1 TO SC
-void procesarAdd(char* consulta) {
+void consolaAdd(char* consulta) {
 	char** valores = string_split(consulta, " ");
 	add(atoi(valores[1]), valores[3]);
 }
