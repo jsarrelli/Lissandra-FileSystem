@@ -65,15 +65,14 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla)
 	free(consulta);
 
 	Paquete paquete;
-	int succes = 1;
+	int succes = 0;
 	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-		succes = atoi(paquete.mensaje);
+		succes=atoi(paquete.mensaje);
+
+
 	}
 
-	if (succes == 1) {
-		return 1; //es un error, la tabla ya existe
-	}
-	return 0;
+	return succes;
 }
 
 t_list* describeAllFileSystem() {

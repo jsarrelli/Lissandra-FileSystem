@@ -20,12 +20,17 @@ t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 }
 
 t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeStamp) {
+	validarValueMaximo(value);
 	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
 	if (tabla == NULL) {
 		tabla = insertarSegmentoEnMemoria(nombreTabla, NULL);
 	}
-	Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla);
-	return pagina->registro;
+
+	if (validarValueMaximo(value)) {
+		Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla);
+		return pagina->registro;
+	}
+	return NULL;
 }
 
 void DROP_MEMORIA(char* nombreTabla) {

@@ -11,6 +11,8 @@
 
 
 
+
+
 int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 	log_info(logger, "--Inicializando proceso MEMORIA--");

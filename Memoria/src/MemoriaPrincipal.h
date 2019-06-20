@@ -20,7 +20,7 @@
 int valueMaximo;
 t_log* logger;
 void* memoria;
-t_list* segmentos;
+
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
 int socketFileSystem;
 int tamanioRegistro;
@@ -34,7 +34,7 @@ Pagina* buscarPaginaEnMemoria(Segmento* segmento, int key);
 Pagina* buscarPagina(Segmento* segmento, int key);
 
 Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData);
-Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento);
+Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento);
 
 bool memoriaLlena();
 void* darMarcoVacio();
@@ -52,5 +52,6 @@ void freeSegmento(Segmento* segmentoAEliminar);
 
 bool isModificada(Pagina* pagina);
 bool existeSegmentoFS (Segmento* segmento);
+bool validarValueMaximo(char* value);
 
 #endif /*MEMORIAPRINCIPAL_H_*/

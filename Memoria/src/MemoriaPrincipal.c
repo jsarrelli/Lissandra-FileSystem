@@ -2,12 +2,13 @@
 
 int tamanioMemoria;
 int cantFrames;
+t_list* segmentos;
 
 //inicializa el vector memoriaStatus
 void inicializarEstadoMemoria() {
 	memoriaStatus = list_create();
 	int i;
-	for (i = 0; i < cantFrames - 1; i++) {
+	for (i = 0; i < cantFrames ; i++) {
 		EstadoFrame* estadoMemoria = malloc(sizeof(EstadoFrame));
 		estadoMemoria->estado = LIBRE;
 		estadoMemoria->fechaObtencion = 0;
@@ -18,7 +19,8 @@ void inicializarEstadoMemoria() {
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
 	tamanioRegistro = sizeof(int) + sizeof(double) + valueMaximoRecibido;
 	tamanioMemoria = tamanioMemoriaRecibido;
-	cantFrames = tamanioMemoria / tamanioRegistro;
+	//cantFrames = tamanioMemoria / tamanioRegistro;
+	cantFrames = 3;
 	memoria = malloc(tamanioMemoria);
 	valueMaximo = valueMaximoRecibido;
 	socketFileSystem = socketFileSystemRecibido;
@@ -32,11 +34,12 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
-	segmento->nombreTabla = malloc(strlen(nombreSegmento));
+	segmento->nombreTabla = malloc(strlen(nombreSegmento) + 1);
 	strcpy(segmento->nombreTabla, nombreSegmento);
 	segmento->metaData = malloc(sizeof(t_metadata_tabla));
-	memcpy(segmento->metaData, metaData, sizeof(t_metadata_tabla));
+
 	if (metaData != NULL) {
+		memcpy(segmento->metaData, metaData, sizeof(t_metadata_tabla));
 		free(metaData);
 	}
 
@@ -45,15 +48,26 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* meta
 
 }
 
+bool validarValueMaximo(char* value)
+{
+	if (strlen(value) > valueMaximo) {
+		log_info(logger, "No se puede insertar el registro ya que el value excede el tamanio maximo");
+		return false;
+	}
+	return true;
+}
+
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
-Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento) {
+Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento) {
+
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 		log_info(logger, "Insertando registro en memoria");
 		t_registro registro;
 		registro.key = key;
 		registro.timestamp = timeStamp;
+		registro.value = malloc(valueMaximo);
 		strcpy(registro.value, value);
 
 		void* marcoVacio = NULL;
@@ -118,24 +132,24 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
-		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
-		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
-		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
-
-		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
-		free(consulta);
-
-		Paquete paquete;
-		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
-
-		if (paquete.header.tipoMensaje == NOTFOUND) {
-			return NULL;
-		}
-		void* datos = malloc(paquete.header.tamanioMensaje);
-		datos = paquete.mensaje;
-
-		t_registro registro = procesarRegistro(datos);
-		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
+//		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
+//		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
+//		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
+//
+//		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
+//		free(consulta);
+//
+//		Paquete paquete;
+//		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+//
+//		if (paquete.header.tipoMensaje == NOTFOUND) {
+//			return NULL;
+//		}
+//		void* datos = malloc(paquete.header.tamanioMensaje);
+//		datos = paquete.mensaje;
+//
+//		t_registro registro = procesarRegistro(datos);
+//		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
 
 	} else {
 		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
@@ -153,7 +167,7 @@ Segmento* buscarSegmentoEnMemoria(char* nombreSegmentoBuscado) {
 		return false;
 	}
 
-	return list_find(segmentos, (void*) isSegmentoBuscado);
+	return (Segmento*) list_find(segmentos, (void*) isSegmentoBuscado);
 
 }
 
@@ -161,7 +175,7 @@ Segmento* buscarSegmentoEnMemoria(char* nombreSegmentoBuscado) {
 //HERMOSA
 EstadoFrame* getEstadoFrame(Pagina* pagina) {
 	int calculo = (void*) pagina->registro - memoria;
-	int indiceFrame = calculo / sizeof(t_registro);
+	int indiceFrame = calculo / tamanioRegistro;
 	return list_get(memoriaStatus, (int) indiceFrame);
 }
 
@@ -228,7 +242,8 @@ void* liberarUltimoUsado() {
 	}
 
 	list_iterate(segmentos, (void*) iterarEntrePaginas);
-	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida", paginaMenosUtilizada->registro->key,
+	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
+			paginaMenosUtilizada->registro->key,
 			paginaMenosUtilizada->registro->timestamp);
 	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
@@ -298,7 +313,8 @@ void journalMemoria() {
 		if (existeSegmentoFS(segmento)) {
 			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
 		} else {
-			log_info (logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
+			log_info(logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia",
+					segmento->nombreTabla);
 		}
 
 	}
