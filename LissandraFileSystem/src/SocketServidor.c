@@ -28,9 +28,10 @@ void escuchar(int listenningSocket) {
 
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
-	void* datos;
+
 	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
 		if (paquete.header.quienEnvia == MEMORIA) {
+			void* datos;
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
 			int valueMaximo = 100;
@@ -148,14 +149,9 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {
-	char* success = malloc(1);
-	if (resultado == 0) {
-		strcpy(success, "0"); //OK
-	} else {
-		strcpy(success, "1"); //error
-	}
 
-	EnviarDatosTipo(socketMemoria, FILESYSTEM, success, 1, protocolo);
-	free(success);
+	char success [2];
+	sprintf(success,"%d",resultado);
+	EnviarDatosTipo(socketMemoria, FILESYSTEM, success, 2, protocolo);
 }
 
