@@ -287,9 +287,9 @@ double getCurrentTime() {
 
 t_consistencia getConsistenciaByChar(char* consistenciaChar) {
 	t_consistencia consistencia;
-	if (strcmp(consistenciaChar, "SC")) {
+	if (strcmp(consistenciaChar, "SC")==0) {
 		consistencia = STRONG;
-	} else if (strcmp(consistenciaChar, "SHC")) {
+	} else if (strcmp(consistenciaChar, "SHC")==0) {
 		consistencia = STRONG_HASH;
 	} else {
 		consistencia = EVENTUAL;
