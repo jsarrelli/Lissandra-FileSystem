@@ -130,7 +130,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 	}
 
 	list_iterate(listaDirectorios, (void*) describeDirectorio);
-	enviarSuccess(0, DESCRIBE_ALL, socketMemoria);
+	EnviarDatosTipo(socketMemoria, FILESYSTEM, "fin", 4, DESCRIBE_ALL);
 	list_destroy(listaDirectorios);
 
 }
@@ -141,7 +141,7 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
 		sprintf(respuesta, "%s %s %d %d",nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
-		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta), DESCRIBE);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta)+1, DESCRIBE);
 		return;
 	}
 	enviarSuccess(1, DESCRIBE, socketMemoria);

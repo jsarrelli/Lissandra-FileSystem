@@ -33,7 +33,7 @@ Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
 Pagina* buscarPaginaEnMemoria(Segmento* segmento, int key);
 Pagina* buscarPagina(Segmento* segmento, int key);
 
-Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData);
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento);
 Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento);
 
 bool memoriaLlena();
@@ -51,7 +51,9 @@ void journalMemoria();
 void freeSegmento(Segmento* segmentoAEliminar);
 
 bool isModificada(Pagina* pagina);
-bool existeSegmentoFS (Segmento* segmento);
+bool existeSegmentoFS(Segmento* segmento);
 bool validarValueMaximo(char* value);
+
+Segmento* newSegmento(char* nombreSegmento);
 
 #endif /*MEMORIAPRINCIPAL_H_*/

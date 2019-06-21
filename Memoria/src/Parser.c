@@ -4,7 +4,7 @@ void* procesarConsulta(char* consulta) {
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
 
-	if (strcmp(operacion, "SELECT") == 0) {
+	if (strcmp(operacion, "SELECT/0") == 0) {
 		return procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
 		 return procesarINSERT(argumentos);
@@ -19,6 +19,7 @@ void* procesarConsulta(char* consulta) {
 	} else {
 		puts("Comando no encontrado");
 	}
+	free(comandos);
 	return NULL;
 }
 
@@ -76,22 +77,33 @@ void* procesarDROP(char* nombreTabla) {
 
 void* procesarDESCRIBE(char* nombreTabla) {
 
-	void mostrarMetadata(Segmento* segmento) {
-		t_metadata_tabla* metadata = segmento->metaData;
-		printf("Segmento: %s \n", segmento->nombreTabla);
+	void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata) {
+		printf("Segmento: %s \n", nombreSegmento);
 		printf("Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d \n", getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 				metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
 	}
 
+	void mostrarMetadataSerializada(char* tablaSerializada) {
+		char* tablaSerializadaAux= malloc(strlen(tablaSerializada+1));
+		strcpy(tablaSerializadaAux,tablaSerializada);
+		char** valores= string_split(tablaSerializada, " ");
+
+			printf("Segmento: %s \n", valores[0]);
+			printf("Consistencia: %s / cantParticiones: %s / tiempoCompactacion: %s \n", valores[1],
+					valores[2], valores[3]);
+			free(valores);
+		}
+
 
 	if (nombreTabla==NULL) {
 		t_list* tablas = DESCRIBE_ALL_MEMORIA();
-		list_iterate(tablas, (void*) mostrarMetadata);
+		list_iterate(tablas, (void*) mostrarMetadataSerializada);
+
 
 	} else {
-		Segmento* segmento = DESCRIBE_MEMORIA(nombreTabla);
-		if(segmento!=NULL){
-			mostrarMetadata(segmento);
+		t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
+		if(metaData!=NULL){
+			mostrarMetadata(nombreTabla,metaData);
 		}else{
 			printf("La tabla: %s no se encuentra en sistema" ,nombreTabla);
 		}

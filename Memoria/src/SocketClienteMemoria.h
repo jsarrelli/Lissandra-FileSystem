@@ -14,7 +14,7 @@
 #include <Sockets/Conexiones.h>
 #include "Memoria.h"
 
-Segmento* buscarSegmentoEnFileSystem(char* nombreSegmento);
+t_metadata_tabla* describeSegmento(char* nombreSegmento);
 void enviarRegistroAFileSystem(Pagina* pagina,char* nombreSegmento);
 void eliminarSegmentoFileSystem(char* nombreSegmento);
 int enviarCreateAFileSystem(t_metadata_tabla* metadata,char* nombreTabla);

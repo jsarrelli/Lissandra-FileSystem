@@ -4,7 +4,6 @@
 typedef struct Segmento {
 	char* nombreTabla;
 	t_list* paginas;
-	t_metadata_tabla* metaData;
 } Segmento;
 
 typedef enum{

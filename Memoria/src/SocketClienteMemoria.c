@@ -1,9 +1,11 @@
 #include "SocketClienteMemoria.h"
 
-Segmento* deserealizarTabla(Paquete* paquete)
+t_metadata_tabla* deserealizarTabla(Paquete* paquete)
 {
-	char** datos = string_split(paquete->mensaje, " ");
-	char* nombreTabla = datos[0];
+	char* mensaje= malloc(paquete->header.tamanioMensaje+1);
+	mensaje=strcpy(mensaje,(char*)paquete->mensaje);
+	char** datos = string_split(mensaje, " ");
+
 	t_consistencia consistencia = getConsistenciaByChar(datos[1]);
 	int cantParticiones = atoi(datos[2]);
 	int tiempoCompactacion = atoi(datos[3]);
@@ -12,19 +14,16 @@ Segmento* deserealizarTabla(Paquete* paquete)
 	metadata->CONSISTENCIA = consistencia;
 	metadata->CANT_PARTICIONES = cantParticiones;
 	metadata->T_COMPACTACION = tiempoCompactacion;
-	//creo el segmento y le cargo la metadata
-	Segmento* segmentoRecibido = malloc(sizeof(Segmento));
-	segmentoRecibido->nombreTabla = malloc(strlen(nombreTabla));
-	strcpy(segmentoRecibido->nombreTabla, nombreTabla);
-	segmentoRecibido->metaData = metadata;
 
-	return segmentoRecibido;
+
+	free(datos);
+	return metadata;
 }
 
-Segmento* buscarSegmentoEnFileSystem(char* nombreSegmento) {
+t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 
-	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento), DESCRIBE);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento)+1, DESCRIBE);
 	Paquete paquete;
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
@@ -32,17 +31,17 @@ Segmento* buscarSegmentoEnFileSystem(char* nombreSegmento) {
 		return NULL;
 		//la tabla no existe
 	}
-	Segmento* segmentoRecibido = deserealizarTabla(&paquete);
+	t_metadata_tabla* metaDataRecibida = deserealizarTabla(&paquete);
 	free(paquete.mensaje);
 
-	return segmentoRecibido;
+	return metaDataRecibida;
 }
 
 void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	t_registro* registro = pagina->registro;
 	char* consulta = malloc(
-			strlen(nombreSegmento) + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 3); //mas 3 espacios
+			strlen(nombreSegmento) + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 4); //mas 3 espacios y el caracter de fin de cadena
 	sprintf(consulta, "%s %d %s %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
 }
@@ -83,11 +82,13 @@ t_list* describeAllFileSystem() {
 	Paquete paquete;
 
 	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-		if(strcmp(paquete.mensaje,"0")==0){
+		if(strcmp(paquete.mensaje,"fin")==0){
 			break;
 		}
-		Segmento* segmentoRecibido = deserealizarTabla(&paquete);
-		list_add(segmentosRecibidos, segmentoRecibido);
+
+		char* tablaSerializada = malloc(paquete.header.tamanioMensaje);
+		strcpy(tablaSerializada,paquete.mensaje);
+		list_add(segmentosRecibidos,tablaSerializada);
 		free(paquete.mensaje);
 	}
 

@@ -23,7 +23,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 	validarValueMaximo(value);
 	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
 	if (tabla == NULL) {
-		tabla = insertarSegmentoEnMemoria(nombreTabla, NULL);
+		tabla = insertarSegmentoEnMemoria(nombreTabla);
 	}
 
 	if (validarValueMaximo(value)) {
@@ -56,7 +56,7 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	t_metadata_tabla* metaData = newMetadata(consistencia, cantParticiones, tiempoCompactacion);
 	int succes = enviarCreateAFileSystem(metaData, nombreTabla);
 	if (succes == 0) {
-		insertarSegmentoEnMemoria(nombreTabla, metaData);
+		insertarSegmentoEnMemoria(nombreTabla);
 		printf("Se ha creado la tabla %s", nombreTabla);
 
 		return 0;
@@ -66,12 +66,12 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	return 1;
 }
 
-Segmento* DESCRIBE_MEMORIA(char* nombreTabla) {
-	Segmento* segmento = buscarSegmento(nombreTabla);
-	if (segmento == NULL) {
+t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
+	t_metadata_tabla* metadata = describeSegmento(nombreTabla);
+	if (metadata == NULL) {
 		return NULL;
 	} else {
-		return segmento;
+		return metadata;
 	}
 }
 

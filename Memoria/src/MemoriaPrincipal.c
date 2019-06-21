@@ -30,19 +30,18 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 }
 
-Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData) {
-
+Segmento* newSegmento(char* nombreSegmento)
+{
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
 	segmento->nombreTabla = malloc(strlen(nombreSegmento) + 1);
 	strcpy(segmento->nombreTabla, nombreSegmento);
-	segmento->metaData = malloc(sizeof(t_metadata_tabla));
+	return segmento;
+}
 
-	if (metaData != NULL) {
-		memcpy(segmento->metaData, metaData, sizeof(t_metadata_tabla));
-		free(metaData);
-	}
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento) {
 
+	Segmento* segmento = newSegmento(nombreSegmento);
 	list_add(segmentos, segmento);
 	return segmento;
 
@@ -188,11 +187,11 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 
 	if (segmento == NULL) {
 
-		Segmento* segmentoAux = buscarSegmentoEnFileSystem(nombreSegmento);
-		if (segmentoAux != NULL) {
-			segmento = insertarSegmentoEnMemoria(segmentoAux->nombreTabla, segmentoAux->metaData);
+		t_metadata_tabla* metaData = describeSegmento(nombreSegmento);
+		if (metaData != NULL) {
+			segmento = insertarSegmentoEnMemoria(nombreSegmento);
 			list_add(segmentos, segmento);
-			freeSegmento(segmentoAux);
+			free(metaData);
 		}
 
 	}
@@ -268,13 +267,9 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
 }
 
 void freeSegmento(Segmento* segmentoAEliminar) {
-	if (list_size(segmentoAEliminar->paginas) > 0) {
-		list_destroy(segmentoAEliminar->paginas);
-	}
 
-	if (segmentoAEliminar->metaData != NULL) {
-		free(segmentoAEliminar->metaData);
-	}
+	//te borra la lista de paginas pero previamente tiene que estar vacia, creo..
+	list_destroy(segmentoAEliminar->paginas);
 	free(segmentoAEliminar);
 }
 
@@ -326,9 +321,7 @@ void journalMemoria() {
 }
 
 bool existeSegmentoFS(Segmento* segmento) {
-	if (segmento->metaData != NULL) {
-		return true;
-	} else if (buscarSegmentoEnFileSystem(segmento->nombreTabla) != NULL) {
+	if(describeSegmento(segmento->nombreTabla) != NULL) {
 		return true;
 	}
 	return false;

@@ -1,10 +1,6 @@
-[INFO] 16:23:55:707 LFS Logs/(16637:16637): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 23:59:55:804 LFS Logs/(4653:4653): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 16:23:55:707 LFS Logs/(16637:16637): Levantando archivo de configuracion del proceso LFS 
+[INFO] 23:59:55:804 LFS Logs/(4653:4653): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 16:23:55:708 LFS Logs/(16637:16637): Archivo de configuracion del proceso LFS levantado 
-
-[INFO] 16:24:21:437 LFS Logs/(16637:16719): Se creo la  SAD3 en LFS
-
-[INFO] 16:24:21:514 LFS Logs/(16637:16719): Metadata de SAD3 creada
+[INFO] 23:59:55:805 LFS Logs/(4653:4653): Archivo de configuracion del proceso LFS levantado 
 
