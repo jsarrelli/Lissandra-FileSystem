@@ -79,7 +79,7 @@ void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 }
 
 void procesarINSERT(char* request, int socketMemoria) {
-	char** valores = string_split(request, "'"); //34 son las " en ASCII
+	char** valores = string_split(request, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];

@@ -39,7 +39,7 @@ void* procesarSELECT(char* argumentos) {
 }
 
 void* procesarINSERT(char* consulta) {
-	char** valores = string_split(consulta, "'"); //34 son las " en ASCII
+	char** valores = string_split(consulta, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	int key = atoi(valoresAux[1]);
