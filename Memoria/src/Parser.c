@@ -84,7 +84,7 @@ void* procesarDESCRIBE(char* nombreTabla) {
 	}
 
 	void mostrarMetadataSerializada(char* tablaSerializada) {
-		char* tablaSerializadaAux= malloc(strlen(tablaSerializada+1));
+		char* tablaSerializadaAux= malloc(strlen(tablaSerializada)+1);
 		strcpy(tablaSerializadaAux,tablaSerializada);
 		char** valores= string_split(tablaSerializada, " ");
 
