@@ -305,7 +305,7 @@ void journalMemoria() {
 	}
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
-		if (existeSegmentoFS(segmento)) {
+		if (existeSegmentoFS(segmento->nombreTabla)) {
 			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
 		} else {
 			log_info(logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia",
@@ -320,8 +320,8 @@ void journalMemoria() {
 
 }
 
-bool existeSegmentoFS(Segmento* segmento) {
-	if(describeSegmento(segmento->nombreTabla) != NULL) {
+bool existeSegmentoFS(char* nombreSegmento) {
+	if(describeSegmento(nombreSegmento) != NULL) {
 		return true;
 	}
 	return false;

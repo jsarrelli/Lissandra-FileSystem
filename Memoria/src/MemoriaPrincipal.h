@@ -51,7 +51,7 @@ void journalMemoria();
 void freeSegmento(Segmento* segmentoAEliminar);
 
 bool isModificada(Pagina* pagina);
-bool existeSegmentoFS(Segmento* segmento);
+bool existeSegmentoFS(char* nombreSegmento);
 bool validarValueMaximo(char* value);
 
 Segmento* newSegmento(char* nombreSegmento);

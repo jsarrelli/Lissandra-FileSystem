@@ -19,4 +19,12 @@
 int socketFileSystem;
 void procesarAccion(int socketMemoria);
 void escuchar(int listenningSocket, int socketFileSystemRecibido);
+
+void procesarRequestSELECT(char* request, int socketKernel);
+void procesarRequestINSERT(char* request, int socketKernel);
+void procesarRequestCREATE(char* request, int socketKernel);
+void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel);
+void procesarRequestDESCRIBE_ALL(int socketKernel);
+void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel);
 #endif /* SERVER_H_ */
+

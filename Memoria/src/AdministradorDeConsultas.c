@@ -28,15 +28,16 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 
 	if (validarValueMaximo(value)) {
 		Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla);
+		printf("Se ha insertado el siguiente registro: %d %s en la tabla %s \n", key, value, nombreTabla);
 		return pagina->registro;
 	}
 	return NULL;
 }
 
 void DROP_MEMORIA(char* nombreTabla) {
-	Segmento* segmento = buscarSegmento(nombreTabla);
-	if (segmento != NULL) {
-		eliminarSegmentoDeMemoria(segmento);
+	Segmento* segmentoEnMemoria = buscarSegmentoEnMemoria(nombreTabla);
+	if (segmentoEnMemoria!=NULL) {
+		eliminarSegmentoDeMemoria(segmentoEnMemoria);
 	}
 	eliminarSegmentoFileSystem(nombreTabla);
 
@@ -67,8 +68,17 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 }
 
 t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
+
+	void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata) {
+		printf("Segmento: %s \n", nombreSegmento);
+		printf("Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d \n",
+				getConsistenciaCharByEnum(metadata->CONSISTENCIA),
+				metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
+	}
+
 	t_metadata_tabla* metadata = describeSegmento(nombreTabla);
 	if (metadata == NULL) {
+		printf("La tabla: %s no se encuentra en sistema" ,nombreTabla);
 		return NULL;
 	} else {
 		return metadata;
@@ -76,6 +86,18 @@ t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
 }
 
 t_list* DESCRIBE_ALL_MEMORIA() {
-	return describeAllFileSystem();
+	void mostrarMetadataSerializada(char* tablaSerializada) {
+		char* tablaSerializadaAux = malloc(strlen(tablaSerializada) + 1);
+		strcpy(tablaSerializadaAux, tablaSerializada);
+		char** valores = string_split(tablaSerializada, " ");
+
+		printf("Segmento: %s \n", valores[0]);
+		printf("Consistencia: %s / cantParticiones: %s / tiempoCompactacion: %s \n", valores[1],
+				valores[2], valores[3]);
+		free(valores);
+	}
+	t_list* tablas = describeAllFileSystem();
+	list_iterate(tablas, (void*) mostrarMetadataSerializada);
+	return tablas;
 
 }

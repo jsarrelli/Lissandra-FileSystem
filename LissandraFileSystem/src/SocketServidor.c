@@ -14,7 +14,8 @@ void escuchar(int listenningSocket) {
 	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
-		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
+		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente,
+				&datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			pthread_t threadId;
 			printf("Escuchando.. \n");
@@ -28,10 +29,10 @@ void escuchar(int listenningSocket) {
 
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
-
+	void* datos;
 	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
 		if (paquete.header.quienEnvia == MEMORIA) {
-			void* datos;
+
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
 			int valueMaximo = 100;
@@ -140,8 +141,9 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
-		sprintf(respuesta, "%s %s %d %d",nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
-		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta)+1, DESCRIBE);
+		sprintf(respuesta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA),
+				metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta) + 1, DESCRIBE);
 		return;
 	}
 	enviarSuccess(1, DESCRIBE, socketMemoria);
@@ -149,9 +151,8 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {
-
-	char success [2];
-	sprintf(success,"%d",resultado);
+	char success[2];
+	sprintf(success, "%d", resultado);
 	EnviarDatosTipo(socketMemoria, FILESYSTEM, success, 2, protocolo);
 }
 

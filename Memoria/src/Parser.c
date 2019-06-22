@@ -1,27 +1,27 @@
 #include "Parser.h"
-void* procesarConsulta(char* consulta) {
+void procesarConsulta(char* consulta) {
 	char** comandos = string_n_split(consulta, 2, " ");
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
 
 	if (strcmp(operacion, "SELECT/0") == 0) {
-		return procesarSELECT(argumentos);
+		 procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
-		 return procesarINSERT(argumentos);
+		 procesarINSERT(argumentos);
 	} else if (strcmp(operacion, "CREATE") == 0) {
-		return procesarCREATE(argumentos);
+		 procesarCREATE(argumentos);
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
-		return procesarDESCRIBE(argumentos);
+		 procesarDESCRIBE(argumentos);
 	} else if (strcmp(operacion, "DROP") == 0) {
-		return procesarDROP(argumentos);
+		procesarDROP(argumentos);
 	} else if (strcmp(operacion, "JOURNAL") == 0) {
 		journalMemoria();
 	} else {
 		puts("Comando no encontrado");
 	}
-	liberarPunteroDePunterosAChar(comandos);
+	free(operacion);
 	free(comandos);
-	return NULL;
+
 }
 
 void* procesarSELECT(char* argumentos) {
@@ -35,7 +35,9 @@ void* procesarSELECT(char* argumentos) {
 	} else {
 		puts("Registro no encontrado");
 	}
-	return NULL;
+
+	freePunteroAPunteros(valores);
+	return registro;
 
 }
 
@@ -52,83 +54,38 @@ void* procesarINSERT(char* consulta) {
 		timeStamp = atof(valores[2]);
 	}
 
-	INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
-	printf("Se ha insertado el siguiente registro: %d %s en la tabla %s \n", key, value, nombreTabla);
-	return NULL;
+	freePunteroAPunteros(valores);
+	return INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
+
 }
 
-void* procesarCREATE(char* consulta) {
+int procesarCREATE(char* consulta) {
 	char** valores = string_split(consulta, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];
 	int cantParticiones = atoi(valores[2]);
 	int tiempoCompactacion = atoi(valores[3]);
 	t_consistencia consistencia = getConsistenciaByChar(consistenciaChar);
-	CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
-
-	return NULL;
+	return CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 
 }
 
-void* procesarDROP(char* nombreTabla) {
+void procesarDROP(char* nombreTabla) {
 	DROP_MEMORIA(nombreTabla);
 	printf("Se ha eliminado la tabla: %s", nombreTabla);
-	return NULL;
 }
 
-void* procesarDESCRIBE(char* nombreTabla) {
+void procesarDESCRIBE(char* nombreTabla) {
 
-	void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata) {
-		printf("Segmento: %s \n", nombreSegmento);
-		printf("Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d \n", getConsistenciaCharByEnum(metadata->CONSISTENCIA),
-				metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
-	}
-
-	void mostrarMetadataSerializada(char* tablaSerializada) {
-		char* tablaSerializadaAux= malloc(strlen(tablaSerializada)+1);
-		strcpy(tablaSerializadaAux,tablaSerializada);
-		char** valores= string_split(tablaSerializada, " ");
-
-			printf("Segmento: %s \n", valores[0]);
-			printf("Consistencia: %s / cantParticiones: %s / tiempoCompactacion: %s \n", valores[1],
-					valores[2], valores[3]);
-			free(valores);
-		}
-
-
-	if (nombreTabla==NULL) {
+	if (nombreTabla == NULL) {
 		t_list* tablas = DESCRIBE_ALL_MEMORIA();
-		list_iterate(tablas, (void*) mostrarMetadataSerializada);
-
+		list_destroy(tablas);
 
 	} else {
 		t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
-		if(metaData!=NULL){
-			mostrarMetadata(nombreTabla,metaData);
-		}else{
-			printf("La tabla: %s no se encuentra en sistema" ,nombreTabla);
-		}
-
+		free(metaData);
 
 	}
 
-	return NULL;
-
 }
-
-t_registro procesarRegistro(char* cadenaRecibida){
-	char** datos=string_split(cadenaRecibida, " ");
-	int key=atoi(datos[0]);
-	char* valueRecibido=datos[1];
-	double timeStamp = atof(datos[2]);
-
-	t_registro registro;
-	registro.key=key;
-	strcpy(registro.value,valueRecibido);
-	registro.timestamp=timeStamp;
-	return registro;
-
-}
-
-
 

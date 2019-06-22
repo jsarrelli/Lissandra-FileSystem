@@ -4,10 +4,9 @@
 #include "AdministradorDeConsultas.h"
 #include <Libraries.h>
 
-void* procesarConsulta(char* consulta);
+void procesarConsulta(char* consulta);
 void* procesarINSERT(char* consulta);
 void* procesarSELECT(char* consulta);
-void* procesarCREATE(char* consulta);
-void* procesarDROP(char* consulta);
-void* procesarDESCRIBE(char* consulta);
-t_registro procesarRegistro(char* datos);
+int procesarCREATE(char* consulta);
+void procesarDROP(char* consulta);
+void procesarDESCRIBE(char* consulta);
