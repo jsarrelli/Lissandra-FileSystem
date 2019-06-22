@@ -80,4 +80,4 @@ KernelV2/tracesKernel.log
 LissandraFileSystem/Debug/LissandraFileSystem
 
 # Excepciones
-!KernelV2/Debug
+!KernelV2/DebugLissandraFileSystem/infoLFS.log
