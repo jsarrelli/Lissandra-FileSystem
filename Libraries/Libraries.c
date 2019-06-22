@@ -60,6 +60,11 @@ void liberarPunteroDePunterosAChar(char** palabras) {
 
 }
 
+void freePunteroAPunteros(char** palabras){
+	liberarPunteroDePunterosAChar(palabras);
+	free(palabras);
+}
+
 void crearHilo(pthread_t * nombreHilo, void * nombreFuncion, void * parametros) {
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
