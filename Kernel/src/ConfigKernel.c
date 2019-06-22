@@ -221,6 +221,7 @@ void comandoRun(char*path){
 	FILE* fd = NULL;
 //	escriboComandosHardcodeados(fd, path2);
 	int num_lineas = contarLineasArchivo(fd, path);
+	info.num_requests = num_lineas;
 
 	// Inicializar puntero
 	info.script = (char**) malloc(num_lineas * sizeof(char*));
@@ -245,11 +246,11 @@ void comandoRun(char*path){
 
 			// Libero memoria, por ahora no la libero a proposito porque necesito la info
 
-		//	for (int i = 0; i < num_lineas; i++) {
-		//		free(info.script[i]);
-		//	}
-		//	free(info.script);
-		//	info.script=NULL;
+//			for (int i = 0; i < num_lineas; i++) {
+//				free(info.script[i]);
+//			}
+//			free(info.script);
+//			info.script=NULL;
 
 	}
 }

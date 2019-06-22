@@ -9,9 +9,18 @@ int ConectarAServidor(int puerto, char* ip) {
 	direccion.sin_port = htons(puerto);
 	direccion.sin_addr.s_addr = inet_addr(ip);
 	memset(&(direccion.sin_zero), '\0', 8);
+	int conexion;
 
-	while (connect(socketFD, (struct sockaddr *) &direccion, sizeof(struct sockaddr))<0)
-		sleep(1); //Espera un segundo y se vuelve a tratar de conectar.
+
+	do{
+		conexion=connect(socketFD, (struct sockaddr *) &direccion, sizeof(struct sockaddr));
+		if(conexion==-1){
+			usleep(1);
+		}else{
+			break;
+		}
+	}while(1);
+
 	return socketFD;
 
 }

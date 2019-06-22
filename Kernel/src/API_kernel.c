@@ -29,9 +29,10 @@
 //}
 
 void consolaKernel(int socketMemoriaRecibido) {
-socketMemoria=socketMemoriaRecibido;
+	socketMemoria = socketMemoriaRecibido;
 	char * consulta;
-	while (1) {
+//	while (1) {
+	for(int i=0; i<5;i++){
 
 		puts("\nBienvenido a la consola del Kernel. \nIngrese un comando:");
 		consulta = readline(">");
@@ -42,6 +43,7 @@ socketMemoria=socketMemoriaRecibido;
 			return;
 		}
 		procesarInput(consulta);
+		free(consulta);
 
 	}
 
@@ -110,11 +112,13 @@ void procesarInput(char* linea) {
 	} else if (strcmp(operacion, "ADD") == 0) {
 		return consolaAdd(linea);
 	}else if (strcmp(operacion, "RUN") == 0) {
-		return consolaAdd(linea);
+		return consolaRun(argumentos);
 	}
 	else {
 		puts("Comando no encontrado");
 	}
+
+//	free(comandos);
 	return;
 }
 
@@ -172,8 +176,7 @@ void consolaAdd(char* consulta) {
 }
 
 void consolaRun(char* consulta){
-	char** valores= string_n_split(consulta, 2, " ");
-	comandoRun(valores[1]);
+	comandoRun(consulta);
 }
 /*
 

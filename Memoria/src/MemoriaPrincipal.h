@@ -12,42 +12,18 @@
 #include "Parser.h"
 #include "Sockets/Conexiones.h"
 #include "Sockets/Serializacion.h"
+#include "SocketClienteMemoria.h"
+#include "EstructurasMemoria.h"
+
+
 
 int valueMaximo;
 t_log* logger;
 void* memoria;
-t_list* segmentos;
+
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
 int socketFileSystem;
-
-typedef struct Segmento {
-	char* nombreTabla;
-	char* nombreViejo;
-	t_list* paginas;
-	int nombreModificado;
-	t_metadata_tabla* metaData;
-} Segmento;
-
-typedef enum{
-	NO_MODIFICADO = 0,
-	MODIFICADO = 1
-}t_modificado;
-
-typedef struct Pagina {
-	t_modificado modificado;
-	t_registro* registro;
-} Pagina;
-
-typedef enum {
-	LIBRE = 0,
-	OCUPADO
-} t_estado;
-
-
-typedef struct EstadoFrame {
-	t_estado estado;
-	double fechaObtencion;
-} EstadoFrame;
+int tamanioRegistro;
 
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystem);
 
@@ -57,8 +33,8 @@ Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
 Pagina* buscarPaginaEnMemoria(Segmento* segmento, int key);
 Pagina* buscarPagina(Segmento* segmento, int key);
 
-Segmento* insertarSegmentoEnMemoria(char* nombreSegmento, t_metadata_tabla* metaData);
-Pagina* insertarPaginaEnMemoria(int key, char value[112], double timeStamp, Segmento* segmento);
+Segmento* insertarSegmentoEnMemoria(char* nombreSegmento);
+Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento);
 
 bool memoriaLlena();
 void* darMarcoVacio();
@@ -69,9 +45,15 @@ t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar);
-void eliminarSegmentoFileSystem(char* nombreTabla);
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
 void journalMemoria();
 
-t_list* obtenerPaginasModificadas();
+void freeSegmento(Segmento* segmentoAEliminar);
+
+bool isModificada(Pagina* pagina);
+bool existeSegmentoFS(Segmento* segmento);
+bool validarValueMaximo(char* value);
+
+Segmento* newSegmento(char* nombreSegmento);
+
 #endif /*MEMORIAPRINCIPAL_H_*/

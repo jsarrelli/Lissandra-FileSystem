@@ -16,7 +16,7 @@ void escuchar(int listenningSocket, int socketFileSystemRecibido) {
 			pthread_detach(threadId);
 			printf("Escuchando.. \n");
 		}
-		close(socketKernel);
+
 	}
 
 }
@@ -42,7 +42,6 @@ void procesarAccion(int socketKernel) {
 
 			case (DESCRIBE):
 				datos = procesarConsulta(paquete.mensaje);
-				//aca vamos a tener que enviar algo, proximamente..
 				break;
 
 			case (DROP):
@@ -53,7 +52,7 @@ void procesarAccion(int socketKernel) {
 
 		}
 		else {
-			log_info(logger, "No es ningun proceso de Memoria");
+			log_info(logger, "No es ningun proceso de Kernel");
 		}
 
 	}
@@ -61,5 +60,6 @@ void procesarAccion(int socketKernel) {
 	if (paquete.mensaje != NULL) {
 		free(paquete.mensaje);
 	}
+	close(socketKernel);
 }
 

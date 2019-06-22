@@ -3,7 +3,6 @@
 	<name>LissandraFileSystem</name>
 	<comment></comment>
 	<projects>
-		<project>Lib</project>
 		<project>Libraries</project>
 	</projects>
 	<buildSpec>

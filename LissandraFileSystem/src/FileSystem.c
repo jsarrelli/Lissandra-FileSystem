@@ -116,7 +116,7 @@ int cargarMetadata(t_configuracion_LFS* config){
 			rutas.Bloques = path;
 			mkdir(rutas.Bloques, 0777);
 
-		free(config);
+
 
 		return 1;
 }

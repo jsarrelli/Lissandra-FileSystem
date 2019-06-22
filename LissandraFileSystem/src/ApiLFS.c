@@ -9,12 +9,13 @@
 #include "funcionesLFS.h"
 #include "FileSystem.h"
 
-void consolaLFS(){
-	puts("Bienvenido a la consola de LFS. Ingrese un comando:");
-	while(1){
+void consolaLFS() {
+	puts("Bienvenido a la consola de LFS");
+	while (1) {
+		puts("Ingrese un comando:");
 		char *linea = readline(">");
 
-		if(!strcmp(linea, "")){
+		if (!strcmp(linea, "")) {
 			free(linea);
 			continue;
 		}
@@ -23,114 +24,61 @@ void consolaLFS(){
 	}
 }
 
-void procesarInput(char* linea) {
-	int cantidad;
-	char **palabras = string_split(linea, " ");
-	cantidad = cantidadParametros(palabras);
-	if (!strcmp(*palabras, "INSERT")) {
-		consolaInsert(palabras, cantidad);
+void procesarInput(char* consulta) {
+	char** comandos = string_n_split(consulta, 2, " ");
+	char* operacion = comandos[0];
+	char* argumentos = comandos[1];
 
-	} else if (!strcmp(*palabras, "SELECT")) {
-		//consolaSelect(palabras,cantidad);
-	} else if (!strcmp(*palabras, "CREATE")) {
-		consolaCreate(palabras,cantidad);
-	} else if (!strcmp(*palabras, "DESCRIBE")) {
-		consolaDescribe(palabras,cantidad);
-	} else if (!strcmp(*palabras, "DROP")) {
-		consolaDrop(palabras,cantidad);
-	} else if(!strcmp(*palabras, "exit")){
-		printf("Finalizando consola\n");
-
-
-
+	if (strcmp(operacion, "SELECT") == 0) {
+		//return procesarSELECT(argumentos);
+	} else if (strcmp(operacion, "INSERT") == 0) {
+		return consolaInsert(argumentos);
+	} else if (strcmp(operacion, "CREATE") == 0) {
+		return consolaCreate(argumentos);
+	} else if (strcmp(operacion, "DESCRIBE") == 0) {
+		return consolaDescribe(argumentos);
+	} else if (strcmp(operacion, "DROP") == 0) {
+		return consolaDrop(argumentos);
 	} else {
-		puts("El comando no existe.");
+		puts("Comando no encontrado");
 	}
-	liberarPunteroDePunterosAChar(palabras);
-	free(palabras);
 
 }
 
+void consolaCreate(char*argumentos) {
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	char* consistenciaChar = valores[1];
+	char* cantParticiones = valores[2];
+	char* tiempoCompactacion = valores[3];
 
-void consolaCreate(char**palabras, int cantidad){
-	if(cantidad == 4){
-
-			if(existeTabla(palabras[1])){
-				puts("Ya existe una tabla con ese nombre.");
-			}
-			else{
-
-
-				crearTablaYParticiones(palabras[1], palabras[3]);
-				crearMetadataTabla(palabras[1],palabras[2], palabras[3], palabras[4]);
-
-			}
-	}
-	else{
-		puts("Error en la cantidad de parametros.");
-	}
+	funcionCREATE(nombreTabla, cantParticiones, consistenciaChar, tiempoCompactacion);
 }
 
-void consolaDescribe(char**palabras, int cantidad){
-	if(cantidad == 1){
+void consolaDescribe(char* nombreTabla) {
 
-			if(existeTabla(palabras[1])){
-				mostrarMetadataTabla(palabras[1]);
-
-			}else{
-				printf("La %s no existe", palabras[1]);
-			}
-
-	}else if(cantidad==0){
-		mostrarMetadataTodasTablas(rutas.Tablas);
-		crearYEscribirArchivosTemporales(rutas.Tablas);
-
-
-	}
-	else{
-		puts("Error en la cantidad de parametros.");
-	}
+	if (nombreTabla!=NULL&&existeTabla(nombreTabla)) {
+		funcionDESCRIBE(nombreTabla);
+	} else
+		funcionDESCRIBE_ALL();
 }
 
-
-void consolaDrop(char**palabras, int cantidad){
-	if(cantidad == 1){
-
-			if(existeTabla(palabras[1])){
-				removerTabla(palabras[1]);
-				printf("%s eliminada\n\n", palabras[1]);
-			}
-
-	}
-	else{
-		puts("Error en la cantidad de parametros.");
-	}
+void consolaDrop(char* nombreTabla) {
+	funcionDROP(nombreTabla);
 }
 
-void consolaInsert(char**palabras, int cantidad){
-	if(cantidad == 4){
-
-			if(existeTabla(palabras[1])){
-				double timestamp = atof(palabras[4]);
-				insertarKey(palabras[1], palabras[2], palabras[3],timestamp);
-				log_info(logger, "Insert realizado en memtable");
-
-			} else{
-				printf("La %s no existe", palabras[1]);
-			}
-
-	}else if(cantidad==3){
-		if(existeTabla(palabras[1])){
-		double timestamp = getCurrentTime();
-		insertarKey(palabras[1], palabras[2], palabras[3], timestamp);
-		log_info(logger, "Insert realizado en memtable");
-
-		}else{
-			printf("La %s no existe", palabras[1]);
-		}
-
+void consolaInsert(char* argumentos) {
+	char** valores = string_split(argumentos, "\""); //34 son las " en ASCII
+	char** valoresAux = string_split(valores[0], " ");
+	char* nombreTabla = valoresAux[0];
+	char* key = valoresAux[1];
+	char* value = valores[1];
+	double timeStamp;
+	if (valores[2] == NULL) {
+		timeStamp = getCurrentTime();
+	} else {
+		timeStamp = atof(valores[2]);
 	}
-	else{
-		puts("Error en la cantidad de parametros.");
-	}
+
+	funcionINSERT(timeStamp, nombreTabla, key, value);
 }

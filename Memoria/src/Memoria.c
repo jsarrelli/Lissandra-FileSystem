@@ -11,18 +11,19 @@
 
 
 
+
+
 int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 	log_info(logger, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
-
-	int valueMaximoPagina;
-	int socketFileSystem = HandshakeInicial(&valueMaximoPagina);
-	inicializarMemoria(valueMaximoPagina, configuracion->TAM_MEMORIA,socketFileSystem);
+	int socketFileSystem = HandshakeInicial();
+	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
 	pthread_create(&threadId, NULL, leerConsola, NULL);
 	pthread_detach(threadId);
+
 
 	//pruebas varias
 //	insertarSegmentoEnMemoria("TABLA1",NULL);
@@ -31,11 +32,18 @@ int main() {
 //	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
 //	//SELECT_MEMORIA("TABLA1" , 3);
 
+//	pthread_create(&intTemporalJournal, NULL, procesoTemporalJournal, NULL);
+//	pthread_detach(intTemporalJournal);
+//
+//	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
+//	pthread_detach(intTemporalGossiping);
+
 	log_info(logger, "Configurando Listening Socket...");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != -1) {
 		escuchar(listenningSocket, socketFileSystem);
 	}
+
 
 	close(listenningSocket);
 	log_destroy(logger);
@@ -50,7 +58,7 @@ void* leerConsola()
 	char * consulta;
 	while (1) {
 
-		puts("Ingrese comandos a ejecutar. Para salir presione enter");
+		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
 		if (consulta) {
 			add_history(consulta);
@@ -72,7 +80,7 @@ int HandshakeInicial()
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
 	void* datos;
-	while (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
+	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
 		datos = malloc(paquete.header.tamanioMensaje);
 		datos = paquete.mensaje;
 		memcpy(&valueMaximoPaginas, datos, sizeof(int));
@@ -83,6 +91,7 @@ int HandshakeInicial()
 }
 
 void cargarConfiguracion() {
+	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
 	configuracion = (MEMORIA_configuracion*) malloc(sizeof(MEMORIA_configuracion));
 	if (configuracion == NULL) {
@@ -101,6 +110,21 @@ void cargarConfiguracion() {
 	configuracion->TIEMPO_GOSSIPING = get_campo_config_int(archivo_configuracion, "TIEMPO_GOSSIPING");
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
 	log_info(logger, "Archivo de configuracion levantado");
+
+}
+
+void procesoTemporalJournal(){
+	while(1){
+		usleep(configuracion->TIEMPO_JOURNAL);
+		journalMemoria();
+	}
+}
+
+void procesoTemporalGossiping(){
+	while(1){
+		usleep(configuracion->TIEMPO_GOSSIPING);
+		//falta funcion gossiping
+	}
 
 }
 

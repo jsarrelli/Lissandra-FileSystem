@@ -9,19 +9,10 @@
 #define FUNCIONESLFS_H_
 
 #include <Libraries.h>
-#include "FileSystem.h"
-
+#include "LissandraFileSystem.h"
+#include "EstructurasFileSystem.h"
 //t_list* listaNombresTablas;
 
-//consola
-
-void procesarInput(char * linea);
-void consolaLFS(void);
-void consolaDrop(char** palabras, int cantidadParametros);
-void consolaInsert(char**palabras, int cantidadParametros);
-void consolaSelect(char**palabras, int cantidadParametros);
-void consolaCreate(char**palabras, int cantidadParametros);
-void consolaDescribe(char**palabras, int cantidadParametros);
 
 //tablas
 
@@ -30,16 +21,19 @@ char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
-void mostrarMetadataTabla(char* nombreTabla);
+void mostrarMetadataTabla(t_metadata_tabla metadataTabla,char* nombreTabla);
 void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
-char** buscarRegistrosDeTabla(char*nombreTabla);
+//char** buscarRegistrosDeTabla(char*nombreTabla);
+void buscarDirectorios(char * ruta, t_list* listaDirectorios);
 void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioArrayRegistros(char** registros);
 
+t_metadata_tabla obtenerMetadata(char* nombreTabla);
+void mostrarMetadataTodasTablas(char *ruta);
 
 //ARCHIVOS DE TABLA
 
@@ -56,5 +50,7 @@ void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 int contarArchivosTemporales(char ** puntero);
 int escribirEnTmp (char*nombreTabla,char*rutaTmp);
+
+char* obtenerNombreTablaByRuta(char* rutaTabla);
 
 #endif /* FUNCIONESLFS_H_ */

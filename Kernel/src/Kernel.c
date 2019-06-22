@@ -21,6 +21,9 @@ static const char* RUTA_CONFIG_KERNEL =
 
 int main(void) {
 
+	t_queue* colaReady = queue_create();
+	t_list* lista_threads_exec = list_create();
+
 	inicializarArchivoDeLogs((char*) ERRORES_KERNEL);
 	inicializarArchivoDeLogs((char*) INFO_KERNEL);
 
@@ -60,21 +63,21 @@ int main(void) {
 
 	// Empezar a conectarse con memoria
 
-	log_info(logger, "Conectandose a memoria..");
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
-	log_info(logger, "Memoria conectada");
+//	log_info(logger, "Conectandose a memoria..");
+//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+//	log_info(logger, "Memoria conectada");
 //
 //	char* consulta ="INSERT TABLA1 3 'CASA'";
 //	EnviarDatosTipo(socketMemoria, KERNEL, consulta, strlen(consulta),INSERT);
 
 
-	deNewAReady(logger);
+	deNewAReady(logger, colaReady, lista_threads_exec);
 
 //	printf("El multiprocesamiento extraido del archivo de configuracion es: %d\n", config->MULTIPROCESAMIENTO);
 
 	consolaKernel(socketMemoria);
 
-//	printf("%s", info.script[0]);
+	printf("%d", info.num_requests);
 
 	// Libero memoria
 

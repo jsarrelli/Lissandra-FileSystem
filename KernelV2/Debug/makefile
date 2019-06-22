@@ -23,25 +23,21 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: Kernel
-
-dependents:
-	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) clean all
+all: KernelV2
 
 # Tool invocations
-Kernel: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so
+KernelV2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug -o "Kernel" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "KernelV2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) Kernel
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) KernelV2
 	-@echo ' '
 
 .PHONY: all clean dependents
-/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so:
 
 -include ../makefile.targets

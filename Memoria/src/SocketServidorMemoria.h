@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <stdint.h>
 #include "Parser.h"
+#include "Memoria.h"
+
 int socketFileSystem;
 void procesarAccion(int socketMemoria);
 void escuchar(int listenningSocket, int socketFileSystemRecibido);
