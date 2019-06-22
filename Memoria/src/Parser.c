@@ -19,6 +19,7 @@ void* procesarConsulta(char* consulta) {
 	} else {
 		puts("Comando no encontrado");
 	}
+	liberarPunteroDePunterosAChar(comandos);
 	free(comandos);
 	return NULL;
 }
