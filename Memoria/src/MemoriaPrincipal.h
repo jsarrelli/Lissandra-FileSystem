@@ -18,7 +18,6 @@
 
 
 int valueMaximo;
-t_log* logger;
 void* memoria;
 
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria

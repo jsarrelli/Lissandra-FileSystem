@@ -94,3 +94,21 @@ t_list* describeAllFileSystem() {
 
 	return segmentosRecibidos;
 }
+
+int HandshakeInicial()
+{
+	log_info(logger, "Intentandose conectar a File System..");
+	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	log_info(logger, "Memoria conectada a File System");
+	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+	Paquete paquete;
+	void* datos;
+	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
+		datos = malloc(paquete.header.tamanioMensaje);
+		datos = paquete.mensaje;
+		memcpy(&valueMaximoPaginas, datos, sizeof(int));
+	}
+
+	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
+	return socketFileSystem;
+}

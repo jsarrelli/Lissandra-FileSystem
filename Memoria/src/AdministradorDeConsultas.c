@@ -36,7 +36,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 
 void DROP_MEMORIA(char* nombreTabla) {
 	Segmento* segmentoEnMemoria = buscarSegmentoEnMemoria(nombreTabla);
-	if (segmentoEnMemoria!=NULL) {
+	if (segmentoEnMemoria != NULL) {
 		eliminarSegmentoDeMemoria(segmentoEnMemoria);
 	}
 	eliminarSegmentoFileSystem(nombreTabla);
@@ -78,7 +78,7 @@ t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
 
 	t_metadata_tabla* metadata = describeSegmento(nombreTabla);
 	if (metadata == NULL) {
-		printf("La tabla: %s no se encuentra en sistema" ,nombreTabla);
+		printf("La tabla: %s no se encuentra en sistema", nombreTabla);
 		return NULL;
 	} else {
 		return metadata;
@@ -92,9 +92,9 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 		char** valores = string_split(tablaSerializada, " ");
 
 		printf("Segmento: %s \n", valores[0]);
-		printf("Consistencia: %s / cantParticiones: %s / tiempoCompactacion: %s \n", valores[1],
-				valores[2], valores[3]);
-		free(valores);
+		printf("Consistencia: %s / cantParticiones: %s / tiempoCompactacion: %s \n", valores[1], valores[2],
+				valores[3]);
+		freePunteroAPunteros(valores);
 	}
 	t_list* tablas = describeAllFileSystem();
 	list_iterate(tablas, (void*) mostrarMetadataSerializada);

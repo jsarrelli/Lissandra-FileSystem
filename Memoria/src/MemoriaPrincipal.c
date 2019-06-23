@@ -27,7 +27,6 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int
 
 	segmentos = list_create();
 	inicializarEstadoMemoria();
-	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
 }
 
 Segmento* newSegmento(char* nombreSegmento)

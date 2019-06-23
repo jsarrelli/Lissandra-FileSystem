@@ -14,30 +14,30 @@
 
 
 int main() {
-	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_DEBUG);
+	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
 	log_info(logger, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
+
+	//HANDSHAKE INICIAL CON FILESYSTEM
 	int socketFileSystem = HandshakeInicial();
+
+	//INICIALIZACION DE MEMORIA PRINCIPAL
 	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
-	pthread_create(&threadId, NULL, leerConsola, NULL);
-	pthread_detach(threadId);
+	//HILO DE CONSOLA
+	pthread_create(&consoleThread, NULL, leerConsola, NULL);
+	pthread_detach(consoleThread);
 
-
-	//pruebas varias
-//	insertarSegmentoEnMemoria("TABLA1",NULL);
-//	insertarSegmentoEnMemoria("TABLA2",NULL);
-//	Segmento* tabla1= buscarSegmentoEnMemoria("TABLA1");
-//	insertarPaginaEnMemoria(3,"juli" ,tabla1,100);
-//	//SELECT_MEMORIA("TABLA1" , 3);
-
-//	pthread_create(&intTemporalJournal, NULL, procesoTemporalJournal, NULL);
+	//HILO DE JOURNAL
+//	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
 //	pthread_detach(intTemporalJournal);
-//
+
+	//HILO DE GOSSIPING
 //	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
 //	pthread_detach(intTemporalGossiping);
 
+	//PUERTO DE ESCUCHA
 	log_info(logger, "Configurando Listening Socket...");
 	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != -1) {
@@ -73,22 +73,6 @@ void* leerConsola()
 	return NULL;
 }
 
-int HandshakeInicial()
-{
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	log_info(logger, "Memoria conectada a File System");
-	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
-	Paquete paquete;
-	void* datos;
-	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
-		datos = malloc(paquete.header.tamanioMensaje);
-		datos = paquete.mensaje;
-		memcpy(&valueMaximoPaginas, datos, sizeof(int));
-	}
-
-	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
-	return socketFileSystem;
-}
 
 void cargarConfiguracion() {
 	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
@@ -115,14 +99,14 @@ void cargarConfiguracion() {
 
 void procesoTemporalJournal(){
 	while(1){
-		usleep(configuracion->TIEMPO_JOURNAL);
+		usleep(configuracion->TIEMPO_JOURNAL*1000);
 		journalMemoria();
 	}
 }
 
 void procesoTemporalGossiping(){
 	while(1){
-		usleep(configuracion->TIEMPO_GOSSIPING);
+		usleep(configuracion->TIEMPO_GOSSIPING*1000);
 		//falta funcion gossiping
 	}
 

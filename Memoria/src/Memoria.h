@@ -31,10 +31,9 @@ typedef struct MEMORIA_configuracion{
 	int MEMORY_NUMBER;
 }MEMORIA_configuracion;
 
-t_log* logger;
 char* pathMEMConfig;
 MEMORIA_configuracion* configuracion;
-pthread_t threadId;
+pthread_t consoleThread;
 pthread_t intTemporalJournal;
 pthread_t intTemporalGossiping;
 t_config*  archivo_configuracion;
@@ -42,7 +41,6 @@ int valueMaximoPaginas;
 
 void cargarConfiguracion();
 void* leerConsola();
-int HandshakeInicial();
 void procesoTemporalJournal();
 void procesoTemporalGossiping();
 #endif /*MEMORIA_H_ */
