@@ -26,7 +26,7 @@ endif
 all: Kernel
 
 dependents:
-	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) clean all
+	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) all
 
 # Tool invocations
 Kernel: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so

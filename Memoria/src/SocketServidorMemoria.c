@@ -108,16 +108,15 @@ void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
 
 }
 
-
-void procesarRequestDESCRIBE_ALL(int socketKernel){
-	t_list* metaDatas= DESCRIBE_ALL_MEMORIA();
-	void enviarMetadataAKernel(char* metadata){
-		EnviarDatosTipo(socketKernel, MEMORIA, metadata, strlen(metadata)+1, DESCRIBE);
+void procesarRequestDESCRIBE_ALL(int socketKernel) {
+	t_list* metaDatas = DESCRIBE_ALL_MEMORIA();
+	void enviarMetadataAKernel(char* metadata) {
+		EnviarDatosTipo(socketKernel, MEMORIA, metadata, strlen(metadata) + 1, DESCRIBE);
 	}
-	list_iterate(metaDatas,(void*)enviarMetadataAKernel);
+	list_iterate(metaDatas, (void*) enviarMetadataAKernel);
 }
 
-void procesarRequestDROP(char* nombreTabla){
+void procesarRequestDROP(char* nombreTabla) {
 	procesarDROP(nombreTabla);
 	//este no le avisa nada a nadie, porque es rebelde
 	//y porque el enunciado no dice que avise

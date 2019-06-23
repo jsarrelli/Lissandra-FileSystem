@@ -2,8 +2,8 @@
 
 t_metadata_tabla* deserealizarTabla(Paquete* paquete)
 {
-	char* mensaje= malloc(paquete->header.tamanioMensaje+1);
-	mensaje=strcpy(mensaje,(char*)paquete->mensaje);
+	char* mensaje = malloc(paquete->header.tamanioMensaje + 1);
+	mensaje = strcpy(mensaje, (char*) paquete->mensaje);
 	char** datos = string_split(mensaje, " ");
 
 	t_consistencia consistencia = getConsistenciaByChar(datos[1]);
@@ -15,7 +15,6 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete)
 	metadata->CANT_PARTICIONES = cantParticiones;
 	metadata->T_COMPACTACION = tiempoCompactacion;
 
-
 	free(datos);
 	return metadata;
 }
@@ -23,7 +22,7 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete)
 t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 
-	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento)+1, DESCRIBE);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento) + 1, DESCRIBE);
 	Paquete paquete;
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
@@ -66,8 +65,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla)
 	Paquete paquete;
 	int succes = 0;
 	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-		succes=atoi(paquete.mensaje);
-
+		succes = atoi(paquete.mensaje);
 
 	}
 
@@ -82,13 +80,13 @@ t_list* describeAllFileSystem() {
 	Paquete paquete;
 
 	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-		if(strcmp(paquete.mensaje,"fin")==0){
+		if (strcmp(paquete.mensaje, "fin") == 0) {
 			break;
 		}
 
 		char* tablaSerializada = malloc(paquete.header.tamanioMensaje);
-		strcpy(tablaSerializada,paquete.mensaje);
-		list_add(segmentosRecibidos,tablaSerializada);
+		strcpy(tablaSerializada, paquete.mensaje);
+		list_add(segmentosRecibidos, tablaSerializada);
 		free(paquete.mensaje);
 	}
 

@@ -5,13 +5,13 @@ void procesarConsulta(char* consulta) {
 	char* argumentos = comandos[1];
 
 	if (strcmp(operacion, "SELECT/0") == 0) {
-		 procesarSELECT(argumentos);
+		procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
-		 procesarINSERT(argumentos);
+		procesarINSERT(argumentos);
 	} else if (strcmp(operacion, "CREATE") == 0) {
-		 procesarCREATE(argumentos);
+		procesarCREATE(argumentos);
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
-		 procesarDESCRIBE(argumentos);
+		procesarDESCRIBE(argumentos);
 	} else if (strcmp(operacion, "DROP") == 0) {
 		procesarDROP(argumentos);
 	} else if (strcmp(operacion, "JOURNAL") == 0) {
@@ -19,8 +19,7 @@ void procesarConsulta(char* consulta) {
 	} else {
 		puts("Comando no encontrado");
 	}
-	free(operacion);
-	free(comandos);
+	freePunteroAPunteros(comandos);
 
 }
 

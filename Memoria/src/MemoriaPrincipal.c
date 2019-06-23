@@ -8,7 +8,7 @@ t_list* segmentos;
 void inicializarEstadoMemoria() {
 	memoriaStatus = list_create();
 	int i;
-	for (i = 0; i < cantFrames ; i++) {
+	for (i = 0; i < cantFrames; i++) {
 		EstadoFrame* estadoMemoria = malloc(sizeof(EstadoFrame));
 		estadoMemoria->estado = LIBRE;
 		estadoMemoria->fechaObtencion = 0;
@@ -320,7 +320,7 @@ void journalMemoria() {
 }
 
 bool existeSegmentoFS(char* nombreSegmento) {
-	if(describeSegmento(nombreSegmento) != NULL) {
+	if (describeSegmento(nombreSegmento) != NULL) {
 		return true;
 	}
 	return false;
