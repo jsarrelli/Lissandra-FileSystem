@@ -9,8 +9,8 @@
 #include "APIKernel.h"
 
 void destruirElementosMain(t_list* lista, t_queue* cola){
-	list_destroy_and_destroy_elements(lista, (void*) free);
-	queue_destroy_and_destroy_elements(cola, (void*) free);
+	list_destroy_and_destroy_elements(lista, (void*) destruirProceso);
+	queue_destroy_and_destroy_elements(cola, (void*) destruirProceso);
 //	log_destroy(logger);
 }
 
@@ -109,7 +109,6 @@ int cantidadParametros(char ** palabras) {
 	return i - 1;
 }
 
-
 void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
@@ -126,15 +125,9 @@ void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 		log_error(log_master->logError, "Error: no existe memoria con ese criterio");
 }
 
-
-
-
-
-
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
 	list_add(proceso->script, operacion);
 }
-
 
 void* funcionThread(void* args){
 	sem_wait(&ejecutarHilos);
@@ -163,7 +156,6 @@ void* funcionThread(void* args){
 	return NULL;
 }
 
-
 void agregarHiloAListaHilosEInicializo(t_list* hilos){
 //	for(int i=0; i < cantProcesos;i++){
 //		pthread_create(&(hilos[i]), NULL, funcionThread, NULL);
@@ -181,13 +173,9 @@ void agregarHiloAListaHilosEInicializo(t_list* hilos){
 	list_iterate(hilos, (void*)_agregarHilo);
 }
 
-
 void ejecutarProcesos(){
 	sem_post(&ejecutarHilos);
 }
-
-
-
 
 void inicializarLogStruct(){
 	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
@@ -198,13 +186,11 @@ void inicializarLogStruct(){
 			LOG_LEVEL_TRACE);
 }
 
-
 infoMemoria* obtenerMemoriaAlAzar(){
 //	srand(time(NULL));
 	int numeroAleatorio = rand() % list_size(listaMemorias);
 	return list_get(listaMemorias, numeroAleatorio);
 }
-
 
 infoMemoria* obtenerMemoriaAlAzarParaFunciones(){
 	infoMemoria* memoriaAlAzar = NULL;
@@ -216,13 +202,11 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones(){
 	// Aca va la funcion enviar de las sockets
 }
 
-
 infoMemoria* obtenerMemoria(char* nombreTabla, int key){
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
 }
-
 
 consistencia obtenerConsistenciaDe(char* nombreTabla){
 	bool _condicion(metadataTablas* metadata, char*nombreTabla){
@@ -235,7 +219,6 @@ consistencia obtenerConsistenciaDe(char* nombreTabla){
 	metadata = list_find((t_list*)listaMetadataTabla,condicionObtenerConsistencia);
 	return metadata->consistencia;
 }
-
 
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key){
 	t_list* memoriasEncontradas=NULL;
@@ -274,18 +257,15 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, i
 
 }
 
-
 infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key){
 	int posicionMemoria = funcionHash(memoriasEncontradas, key);
 	return list_get(memoriasEncontradas, posicionMemoria);
 }
 
-
 int funcionHash(t_list* memoriasEncontradas, int key){
 	int size = list_size(memoriasEncontradas);
 	return key % size;
 }
-
 
 infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
 //	srand(time(NULL));
@@ -293,7 +273,6 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas){
 
 	return list_get(memoriasEncontradas, randomNumber);
 }
-
 
 infoMemoria* newInfoMemoria(){
 	infoMemoria* memoria = malloc(sizeof(infoMemoria));
@@ -318,8 +297,6 @@ infoMemoria* newInfoMemoria(){
 //	return ERROR_CONSISTENCIA;
 //}
 
-
-
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons){
 	if(!haySC && cons == SC){
 		(memoria->criterios)[0] = true;
@@ -336,3 +313,11 @@ void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons){
 void destruirListaMemorias(){
 	list_destroy_and_destroy_elements(listaMemorias, (void*) free);
 }
+
+void crearProcesoYMandarloAReady(char* operacion) {
+	procExec* proceso = newProceso();
+	agregarRequestAlProceso(proceso, operacion);
+	deNewAReady(proceso);
+}
+
+

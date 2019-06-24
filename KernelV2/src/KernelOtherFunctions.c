@@ -140,4 +140,15 @@ void hardcodearListaMetadataTabla(){
 	list_add(listaMetadataTabla, metadata3);
 }
 
+int contarLineasArchivo(FILE* fichero, char* path) {
+	fichero = fopen(path, "rt");
 
+	if(fichero==NULL)
+		return 0;
+	int caracter, num_lineas = 0;
+	while ((caracter = fgetc(fichero)) != EOF)
+		if (caracter == '\n')
+			num_lineas++;
+	fclose(fichero);
+	return num_lineas;
+}

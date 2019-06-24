@@ -22,6 +22,10 @@
 #include <commons/collections/queue.h>
 #include <commons/config.h>
 
+#define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
+#define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
+#define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
+#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
 
 // Estructuras de datos
 
@@ -68,10 +72,6 @@ typedef struct{
 
 
 // Variables globales
-#define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
-#define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
-#define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
-#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
 
 t_queue* colaReady;
 t_list* listaHilos;
@@ -101,6 +101,7 @@ infoMemoria* obtenerMemoriaAlAzar();
 
 
 // Funciones importantes
+void crearProcesoYMandarloAReady(char* operacion);
 void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);

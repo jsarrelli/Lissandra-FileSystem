@@ -64,11 +64,7 @@ int main(void) {
 
 	operacion = readline(">");
 	while(!instruccionSeaSalir(operacion)){
-		procExec* proceso = newProceso();
-		agregarRequestAlProceso(proceso, operacion);
-
-		deNewAReady(proceso);
-
+		crearProcesoYMandarloAReady(operacion);
 //		deReadyAExec();
 
 		// Por ahora lo hago con un solo proceso y lo hago manual

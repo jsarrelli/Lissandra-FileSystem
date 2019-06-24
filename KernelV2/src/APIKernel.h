@@ -22,5 +22,6 @@ void consolaSelect(char*argumentos);
 void consolaCreate(char*argumentos);
 void consolaDescribe(char*nombreTabla);
 void consolaDrop(char*nombreTabla);
+void consolaRun(char*path);
 
 #endif /* APIKERNEL_H_ */

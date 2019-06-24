@@ -42,7 +42,13 @@ void procesarInput(char* linea) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
 		consolaAdd(argumentos);
-	} else if (strcmp(operacion, "SALIR") == 0) {
+	}
+	else if (strcmp(operacion, "RUN") == 0) {
+		//	ADD MEMORY [id] TO [consistencia]
+		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
+		consolaRun(argumentos);
+	}
+	else if (strcmp(operacion, "SALIR") == 0) {
 		log_trace(log_master->logTrace, "Finalizando consola");
 	} else {
 		log_trace(log_master->logTrace,
@@ -198,3 +204,34 @@ void consolaDrop(char*nombreTabla){
 
 	printf("Aca se tienen que poner las sockets\n");
 }
+
+void consolaRun(char*path){
+	FILE* fd = NULL;
+	int num_lineas = contarLineasArchivo(fd, path);
+	if(num_lineas!=0){
+		fd = fopen(path, "rt");
+		procExec* proceso = newProceso();
+
+		for(int i=0;i<num_lineas;i++){
+			char ejemplo[200];
+			fgets(ejemplo, sizeof(ejemplo), fd);
+			size_t tam = strlen(ejemplo) + 1;
+			char* aGuardar = (char*) malloc(tam);
+			strcpy(aGuardar, ejemplo);
+			agregarRequestAlProceso(proceso, aGuardar);
+//			printf("La instruccion es: %s", (char*)list_get(proceso->script, i));
+		}
+
+		fclose(fd);
+		deNewAReady(proceso);
+
+		void imprimirRequest(char*request){
+			printf("La instruccion es: %s", request);
+		}
+		list_iterate(((procExec*)queue_peek(colaReady))->script, (void*) imprimirRequest);
+
+	}else
+		log_error(log_master->logError, "El path no es correcto o el archivo esta dañado");
+}
+
+
