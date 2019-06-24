@@ -69,7 +69,7 @@ int main(void) {
 
 		// Por ahora lo hago con un solo proceso y lo hago manual
 		ejecutarProcesos();
-		funcionThread((int*)2); // El 2 es un ejemplo porque no me importa lo que reciba pero si que reciba algo
+		funcionThread(NULL);
 
 
 

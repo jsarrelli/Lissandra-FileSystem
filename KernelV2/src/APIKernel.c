@@ -48,6 +48,10 @@ void procesarInput(char* linea) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
 		consolaRun(argumentos);
 	}
+	else if (strcmp(operacion, "EXECUTE") == 0) {
+			//	ADD MEMORY [id] TO [consistencia]
+			log_trace(log_master->logTrace, "Se ha escrito el comando EXECUTE");
+	}
 	else if (strcmp(operacion, "SALIR") == 0) {
 		log_trace(log_master->logTrace, "Finalizando consola");
 	} else {
@@ -213,10 +217,11 @@ void consolaRun(char*path){
 		procExec* proceso = newProceso();
 
 		for(int i=0;i<num_lineas;i++){
-			char ejemplo[200];
+			char ejemplo[500];
 			fgets(ejemplo, sizeof(ejemplo), fd);
 			size_t tam = strlen(ejemplo) + 1;
-			char* aGuardar = (char*) malloc(tam);
+			ejemplo[tam-2] = '\0';
+			char* aGuardar = (char*) malloc(tam-1);
 			strcpy(aGuardar, ejemplo);
 			agregarRequestAlProceso(proceso, aGuardar);
 //			printf("La instruccion es: %s", (char*)list_get(proceso->script, i));
@@ -226,7 +231,7 @@ void consolaRun(char*path){
 		deNewAReady(proceso);
 
 		void imprimirRequest(char*request){
-			printf("La instruccion es: %s", request);
+			printf("La instruccion es: %s\n", request);
 		}
 		list_iterate(((procExec*)queue_peek(colaReady))->script, (void*) imprimirRequest);
 
@@ -234,4 +239,16 @@ void consolaRun(char*path){
 		log_error(log_master->logError, "El path no es correcto o el archivo esta dañado");
 }
 
+/*
+ * Aclaracion: esta funcion no funciona con los archivos de ejemplo
+ * del tp (sin sockets) ya que para eso tendria que hardcodear una bocha de cosas
+ *
+ * Solo para probar el funcionamiento basico del Kernel (con un solo procesador) y sin sockets
+ *
+ * (No soy el LFS)
+ */
 
+void consolaExecute(){
+	for(int i=0;i < queue_size(colaReady)-1;i++)
+		funcionThread(NULL);
+}
