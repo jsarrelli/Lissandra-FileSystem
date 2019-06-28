@@ -44,6 +44,7 @@ void removerArchivosDeTabla(char * rutaTabla);
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
 int liberarBloquesDeArchivo(char *rutaArchivo);
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
+char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal);
 void crearYEscribirArchivosTemporales(char*ruta);
 void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);

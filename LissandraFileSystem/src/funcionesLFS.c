@@ -33,6 +33,13 @@ char * obtenerExtensionDeUnArchivo(char * nombreArchivoConExtension) {
 
 }
 
+char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal){
+	char * archivoConExtension = obtenerNombreDeArchivoDeUnaRuta(rutaLocal);
+	char * extension = obtenerExtensionDeUnArchivo(archivoConExtension);
+	free(archivoConExtension);
+	return extension;
+}
+
 int existeTabla(char* nombreTabla) {
 	char* rutaTabla = malloc(100);
 	DIR* tablaActual;

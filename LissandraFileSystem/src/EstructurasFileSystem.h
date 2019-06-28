@@ -1,6 +1,8 @@
 #ifndef EstructurasFileSystem_H_
 #define EstructurasFileSystem_H_
 
+#include <commons/log.h>
+#include <commons/collections/list.h>
 
 typedef struct{
 	char* PUERTO_ESCUCHA;
