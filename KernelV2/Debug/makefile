@@ -29,7 +29,7 @@ all: KernelV2
 KernelV2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "KernelV2" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug -o "KernelV2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
