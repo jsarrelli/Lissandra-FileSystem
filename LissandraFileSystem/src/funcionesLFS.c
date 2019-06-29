@@ -508,7 +508,7 @@ char** buscarRegistrosDeTabla(char*nombreTabla) {
 			for (j = 0; j < list_size(tabla->registros); j++) {
 				reg = (t_registro*) list_get(tabla->registros, j);
 
-				sprintf(registro, "%f;%d;%s", reg->timestamp, reg->key, reg->value);
+				sprintf(registro, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
 
 				registros[j] = string_duplicate(registro);
 
