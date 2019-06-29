@@ -1,18 +1,11 @@
-[INFO] 14:07:38:443 LFS Logs/(5325:5325): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 16:48:00:567 LFS Logs/(13092:13092): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 14:07:38:443 LFS Logs/(5325:5325): Levantando archivo de configuracion del proceso LFS 
+[INFO] 16:48:00:567 LFS Logs/(13092:13092): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 14:07:38:444 LFS Logs/(5325:5325): Archivo de configuracion del proceso LFS levantado 
+[INFO] 16:48:00:568 LFS Logs/(13092:13092): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 14:24:10:885 LFS Logs/(5325:6354): Se creo la  julicampeon en LFS
+[INFO] 16:48:09:608 LFS Logs/(13092:13100): Se creo la  TABLA1 en LFS
 
-[INFO] 14:24:10:885 LFS Logs/(5325:6354): Metadata de julicampeon creada
+[INFO] 16:48:09:608 LFS Logs/(13092:13100): Metadata de TABLA1 creada
 
-[INFO] 15:03:58:987 LFS Logs/(5325:8130): Se creo la  gonzacampeon en LFS
-
-[INFO] 15:03:58:988 LFS Logs/(5325:8130): Metadata de gonzacampeon creada
-
-[INFO] 15:05:12:992 LFS Logs/(5325:8298): Se creo la  kevinpancho en LFS
-
-[INFO] 15:05:12:993 LFS Logs/(5325:8298): Metadata de kevinpancho creada
-
+[INFO] 16:48:53:375 LFS Logs/(13092:13100): Insert realizado en memtable

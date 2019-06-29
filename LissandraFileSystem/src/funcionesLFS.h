@@ -30,7 +30,7 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 //char** buscarRegistrosDeTabla(char*nombreTabla);
 void buscarDirectorios(char * ruta, t_list* listaDirectorios);
 void limpiarRegistrosDeTabla(char*nombreTabla);
-int obtenerTamanioArrayRegistros(char** registros);
+int obtenerTamanioArrayRegistros(t_list* registros);
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
@@ -53,5 +53,6 @@ int contarArchivosTemporales(char ** puntero);
 int escribirEnTmp (char*nombreTabla,char*rutaTmp);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);
+t_tabla_memtable* getTablaFromMemtable(char* nombreTabla);
 
 #endif /* FUNCIONESLFS_H_ */

@@ -33,7 +33,7 @@ char * obtenerExtensionDeUnArchivo(char * nombreArchivoConExtension) {
 
 }
 
-char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal){
+char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal) {
 	char * archivoConExtension = obtenerNombreDeArchivoDeUnaRuta(rutaLocal);
 	char * extension = obtenerExtensionDeUnArchivo(archivoConExtension);
 	free(archivoConExtension);
@@ -95,7 +95,8 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 	armarRutaTabla(rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	FILE*arch = fopen(rutaTabla, "w+");
-	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones, tiempoCompactacion);
+	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones,
+			tiempoCompactacion);
 
 	fclose(arch);
 	log_info(logger, "Metadata de %s creada\n", nombreTabla);
@@ -117,7 +118,8 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 
 void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
 	printf("\nMetadata de %s: \n", nombreTabla);
-	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA,
+			metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 }
 
 char* armarRutaTabla(char* rutaTabla, char* nombreTabla) {
@@ -395,7 +397,6 @@ void mostrarMetadataTodasTablas(char *ruta) {
 
 }
 
-
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 	int i;
 	int clave = atoi(key);
@@ -405,12 +406,14 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 		if (strcmp(tabla->tabla, nombreTabla) == 0) {
 
 			t_registro* registro = malloc(sizeof(t_registro));
+			registro->value = malloc(strlen(value) + 1);
 			registro->timestamp = timestamp;
 			registro->key = clave;
 			strcpy(registro->value, value);
 
 			list_add(tabla->registros, registro);
-			printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", timestamp, registro->key, registro->value, nombreTabla);
+			printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", timestamp, registro->key,
+					registro->value, nombreTabla);
 
 			break;
 		}
@@ -436,10 +439,14 @@ void crearYEscribirTemporal(char*rutaTabla) {
 
 	string_append(&rutaTabla, "/");
 	string_append_with_format(&rutaTabla, "%stmp%d.tmp", nombTabla, cantidadTmp);
-	crearArchReservarBloqueYEscribirBitmap(rutaTabla);
-	printf("Archivo temporal creado en %s\n\n", nombTabla);
-	escribirEnTmp(nombTabla, rutaTabla);
-	limpiarRegistrosDeTabla(nombTabla);
+
+	t_tabla_memtable* tabla = getTablaFromMemtable(nombTabla);
+	if (tabla != NULL && !list_is_empty(tabla->registros)) {
+		crearArchReservarBloqueYEscribirBitmap(rutaTabla);
+		printf("Archivo temporal creado en %s\n\n", nombTabla);
+		escribirEnTmp(nombTabla, rutaTabla);
+		limpiarRegistrosDeTabla(nombTabla);
+	}
 
 	liberarPunteroDePunterosAChar(palabras);
 	free(palabras);
@@ -495,40 +502,43 @@ void crearArchReservarBloqueYEscribirBitmap(char* rutaArch) {
 	free(bloque);
 
 }
-char** buscarRegistrosDeTabla(char*nombreTabla) {
-	char** registros = malloc(500);
-	t_registro* reg;
-	t_tabla_memtable* tabla;
-	int i, j;
-	char* registro = malloc(100);
+t_list* buscarRegistrosDeTabla(char*nombreTabla) {
 
-	for (i = 0; i < list_size(memtable); i++) {
-		tabla = (t_tabla_memtable*) list_get(memtable, i);
-		if (!strcmp(tabla->tabla, nombreTabla)) {
-			for (j = 0; j < list_size(tabla->registros); j++) {
-				reg = (t_registro*) list_get(tabla->registros, j);
+	t_tabla_memtable* tabla = getTablaFromMemtable(nombreTabla);
 
-				sprintf(registro, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
+	if (tabla != NULL && !list_is_empty(tabla->registros)) {
+		t_list* registros = list_create();
 
-				registros[j] = string_duplicate(registro);
-
-			}
+		void agregarARegistros(t_registro* reg) {
+			char registro[100];
+			sprintf(registro, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
+			list_add(registros, string_duplicate(registro));
 		}
+
+		list_iterate(tabla->registros,(void*) agregarARegistros);
+		return registros;
+
 	}
-	registros[j] = NULL;
-	free(registro);
-	return registros;
+	return NULL;
 
 }
-int obtenerTamanioArrayRegistros(char** registros) {
-	int tamanio = 0, i = 0, j = 0;
+int obtenerTamanioArrayRegistros(t_list* registros) {
+	int tamanioTotal=0;
 
-	while (registros[i] != NULL) {
-		tamanio += strlen(registros[i]);
-		i++;
-		j++;
+	void acumularTamanioRegistro(char* registroActual){
+		tamanioTotal += strlen(registroActual)+1;
 	}
-	return tamanio + j;
+	list_iterate(registros, (void*)acumularTamanioRegistro);
+
+	return tamanioTotal;
+}
+
+t_tabla_memtable* getTablaFromMemtable(char* nombreTabla) {
+
+	bool isTablaBuscada(t_tabla_memtable* tablaActual) {
+		return strcmp(tablaActual->tabla, nombreTabla) == 0;
+	}
+	return (t_tabla_memtable*) list_find(memtable, (void*)isTablaBuscada);
 }
 
 int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
@@ -539,7 +549,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 	//char*registro = malloc(100);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	strcpy(rutaBloque, rutas.Bloques);
-	char**registros = buscarRegistrosDeTabla(nombreTabla);
+	t_list* registros = buscarRegistrosDeTabla(nombreTabla);
 	int res = leerArchivoDeTabla(rutaTmp, archivo);
 	if (res < 0) {
 		return -1;
@@ -578,6 +588,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 
 	FILE*archivoBloque;
 	i = 0, j = 0;
+	char* registroActual = list_get(registros,j);
 
 	while (archivo->BLOQUES[i] != NULL) {
 		int tamanioArchBloque = 0;
@@ -591,9 +602,9 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 		}
 
 		//int cantBytes = strlen(registros[j]) + 1;
-		while (tamanioArchBloque + (strlen(registros[j]) + 1) < metadata.BLOCK_SIZE && registros[j] != NULL) {
-			char registro[strlen(registros[j]) + 1];
-			strcpy(registro, registros[j]);
+		while (tamanioArchBloque + (strlen(registroActual) + 1) < metadata.BLOCK_SIZE && j<list_size(registros)) {
+			char registro[strlen(registroActual) + 1];
+			strcpy(registro, registroActual);
 			//registro = string_duplicate(registros[j]);
 			fwrite(registro, 1, sizeof(registro), archivoBloque);
 			printf("Registro %s insertado en bloque de .tmp\n", registro);
@@ -608,12 +619,13 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 				free(arrBloques);
 				free(archivo);
 				free(rutaBloque);
+				list_destroy(registros);
 				puts("Se termino de escribir en el temporal\n");
 				//free(registro);
 				return 1;
 			}
 
-			j++;
+			registroActual= list_get(registros,j++);
 		}
 		fclose(archivoBloque);
 		archivo->TAMANIO += tamanioArchBloque;
