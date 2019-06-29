@@ -81,6 +81,7 @@ t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
 		printf("La tabla: %s no se encuentra en sistema", nombreTabla);
 		return NULL;
 	} else {
+		mostrarMetadata(nombreTabla, metadata);
 		return metadata;
 	}
 }

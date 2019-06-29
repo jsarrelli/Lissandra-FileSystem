@@ -18,7 +18,7 @@
 
 int socketFileSystem;
 void procesarAccion(int socketMemoria);
-void escuchar(int listenningSocket, int socketFileSystemRecibido);
+void escuchar(int listenningSocket);
 
 void procesarRequestSELECT(char* request, int socketKernel);
 void procesarRequestINSERT(char* request, int socketKernel);

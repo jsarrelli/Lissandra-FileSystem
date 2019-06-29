@@ -1,7 +1,6 @@
 #include "SocketServidorMemoria.h"
 
-void escuchar(int listenningSocket, int socketFileSystemRecibido) {
-	socketFileSystem = socketFileSystemRecibido;
+void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
 	printf("Escuchando...\n");
 
