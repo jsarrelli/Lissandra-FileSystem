@@ -36,7 +36,7 @@ typedef struct MEMORIA_configuracion{
 
 char* pathMEMConfig;
 MEMORIA_configuracion* configuracion;
-pthread_t consoleThread;
+pthread_t serverThread;
 pthread_t intTemporalJournal;
 pthread_t intTemporalGossiping;
 t_config*  archivo_configuracion;

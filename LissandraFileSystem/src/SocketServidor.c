@@ -14,11 +14,12 @@ void escuchar(int listenningSocket) {
 	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
+		printf("Escuchando.. \n");
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente,
 				&datosConexionClienteSize);
 		if (socketMemoria != -1) {
+			printf("Request de memoria recibida.. \n");
 			pthread_t threadId;
-			printf("Escuchando.. \n");
 			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
 			pthread_detach(threadId);
 

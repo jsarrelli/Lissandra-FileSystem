@@ -31,12 +31,15 @@ t_configuracion_LFS* cargarConfig(char* ruta) {
 void iniciarSocketServidor(t_configuracion_LFS* config) {
 	//OJO lo que estas haciendo aca con la variable config
 	int listenningSocket = configurarSocketServidor(config->PUERTO_ESCUCHA);
-	escuchar(listenningSocket);
+	if(listenningSocket!=0){
+		escuchar(listenningSocket);
+	}
+
 }
 
 int main(void) {
 	t_configuracion_LFS* config;
-	pthread_t hiloConsolaLFS;
+	pthread_t serverThread;
 	//listaNombresTablas = list_create();
 	memtable = list_create();
 	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
@@ -55,10 +58,10 @@ int main(void) {
 	leerBitmap();
 	printf("Bitmap creado\n\n");
 
-	pthread_create(&hiloConsolaLFS, NULL, (void*) consolaLFS, NULL);
-	pthread_detach(hiloConsolaLFS);
+	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, config);
+	pthread_detach(serverThread);
 
-	iniciarSocketServidor(config);
+	consolaLFS();
 	free(config);
 	return EXIT_SUCCESS;
 }

@@ -29,8 +29,8 @@ int main() {
 	log_info(logger, "--Memoria inicializada--");
 
 	//INICIAR SERVIDOR
-	pthread_create(&consoleThread, NULL, (void*)iniciarSocketServidor, NULL);
-	pthread_detach(consoleThread);
+	pthread_create(&serverThread, NULL, (void*)iniciarSocketServidor, NULL);
+	pthread_detach(serverThread);
 
 	//HILO DE JOURNAL
 //	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
