@@ -134,6 +134,10 @@ void enviarTablaGossiping(int socketMemoriaDestino)
 
 void intercambiarTablasGossiping(t_memoria* memoria) {
 	int socketMemoria = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
+
+	if (socketMemoria != -1) {
+		return;
+	}
 	enviarTablaGossiping(socketMemoria);
 
 	Paquete paquete;
@@ -145,5 +149,4 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 	}
 
 }
-
 
