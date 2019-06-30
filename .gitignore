@@ -72,10 +72,6 @@ KernelV2/erroresKernel.log
 KernelV2/tracesKernel.log
 
 # Eclipse
-*.classpath
-*.project
-*.cproject
-*.settings/
 *valgrind*
 LissandraFileSystem/Debug/LissandraFileSystem
 
