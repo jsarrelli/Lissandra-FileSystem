@@ -9,7 +9,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <commons/string.h>
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
 #include <readline/readline.h>
