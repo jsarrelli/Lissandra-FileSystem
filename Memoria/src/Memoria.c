@@ -11,8 +11,6 @@
 
 
 
-
-
 int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
 	log_info(logger, "--Inicializando proceso MEMORIA--");
@@ -25,8 +23,8 @@ int main() {
 	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
-	//HILO DE CONSOLA
-	pthread_create(&consoleThread, NULL, leerConsola, NULL);
+	//INICIAR SERVIDOR
+	pthread_create(&consoleThread, NULL, (void*)iniciarSocketServidor, NULL);
 	pthread_detach(consoleThread);
 
 	//HILO DE JOURNAL
@@ -37,12 +35,8 @@ int main() {
 //	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
 //	pthread_detach(intTemporalGossiping);
 
-	//PUERTO DE ESCUCHA
-	log_info(logger, "Configurando Listening Socket...");
-	int listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
-	if (listenningSocket != -1) {
-		escuchar(listenningSocket);
-	}
+	//HILO DE CONSOLA
+	leerConsola();
 
 
 	close(listenningSocket);
@@ -94,6 +88,16 @@ void cargarConfiguracion() {
 	configuracion->TIEMPO_GOSSIPING = get_campo_config_int(archivo_configuracion, "TIEMPO_GOSSIPING");
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
 	log_info(logger, "Archivo de configuracion levantado");
+
+}
+
+void iniciarSocketServidor()
+{
+	log_info(logger, "Configurando Listening Socket...");
+	listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
+	if (listenningSocket != -1) {
+		escuchar(listenningSocket);
+	}
 
 }
 

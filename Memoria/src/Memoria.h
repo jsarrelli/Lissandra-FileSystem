@@ -37,10 +37,12 @@ pthread_t consoleThread;
 pthread_t intTemporalJournal;
 pthread_t intTemporalGossiping;
 t_config*  archivo_configuracion;
+int listenningSocket;
 int valueMaximoPaginas;
 
 void cargarConfiguracion();
 void* leerConsola();
 void procesoTemporalJournal();
 void procesoTemporalGossiping();
+void iniciarSocketServidor();
 #endif /*MEMORIA_H_ */
