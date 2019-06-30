@@ -51,20 +51,6 @@ Module.symvers
 dkms.conf
 /.metadata/
 LissandraFileSystem/FS_LISSANDRA/
-LissandraFileSystem/.settings/org.eclipse.cdt.ui.prefs
-LissandraFileSystem/.settings/org.eclipse.cdt.core.prefs
-LissandraFileSystem/.settings/org.eclipse.cdt.codan.core.prefs
-Memoria/.settings/language.settings.xml
-Memoria/.project
-Memoria/.cproject
-Memoria/.settings/language.settings.xml
-Memoria/.project
-Memoria/.project
-Memoria/.cproject
-LissandraFileSystem/.settings/language.settings.xml
-Libraries/.settings/language.settings.xml
-Kernel/.settings/language.settings.xml
-Libraries/.settings/language.settings.xml
 
 # Kernel2
 KernelV2/infoKernel.log
