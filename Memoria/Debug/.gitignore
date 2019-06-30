@@ -1,7 +1,6 @@
 # .gitignore's para los modulos del tp
 
 *language.settings.xml
-commons
 *.swp
 *.o
 Kernel
