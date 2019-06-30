@@ -16,13 +16,16 @@
 #include "Sockets/Serializacion.h"
 #include "Parser.h"
 #include "SocketServidorMemoria.h"
+#include <Sockets/Conexiones.h>
+#include "FuncionesGossiping.h"
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;
+	char* IP_ESCUCHA;
 	char* IP_FS;
 	int PUERTO_FS;
-	char* IP_SEEDS;
-	char* PUERTOS_SEEDS;
+	char** IP_SEEDS;
+	char** PUERTOS_SEEDS;
 	int RETARDO_MEMORIA;
 	int RETARDO_FS;
 	int TAM_MEMORIA;
@@ -39,10 +42,13 @@ pthread_t intTemporalGossiping;
 t_config*  archivo_configuracion;
 int listenningSocket;
 int valueMaximoPaginas;
+t_list* tablaGossiping;
+t_list* seeds;
 
 void cargarConfiguracion();
 void* leerConsola();
 void procesoTemporalJournal();
 void procesoTemporalGossiping();
 void iniciarSocketServidor();
+void liberarVariables();
 #endif /*MEMORIA_H_ */

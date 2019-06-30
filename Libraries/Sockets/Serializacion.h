@@ -25,8 +25,7 @@ typedef enum t_protocolo {
 	NOTFOUND,
 	SELECT_TABLE,
 	CONEXION_INICIAL_FILESYSTEM_MEMORIA,
-	SUCCESS,
-	ERROR
+	GOSSIPING
 } t_protocolo;
 
 //////////////////////////////////////////

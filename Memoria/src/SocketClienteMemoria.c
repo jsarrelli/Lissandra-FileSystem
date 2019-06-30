@@ -97,6 +97,10 @@ int HandshakeInicial()
 {
 	log_info(logger, "Intentandose conectar a File System..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	if (socketFileSystem == -1) {
+		log_info(logger, "Fallo la conexion a File System");
+		return socketFileSystem;
+	}
 	log_info(logger, "Memoria conectada a File System");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
@@ -110,3 +114,36 @@ int HandshakeInicial()
 	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
 	return socketFileSystem;
 }
+
+void gossiping() {
+
+	list_iterate(seeds, (void*) intercambiarTablasGossiping);
+}
+
+void enviarTablaGossiping(int socketMemoriaDestino)
+{
+
+	void enviarMemoriaConocida(t_memoria* memoriaConocida)
+	{
+		char request[100];
+		sprintf(request, "%s %s", memoriaConocida->ip, memoriaConocida->puerto);
+		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
+	}
+	list_iterate(tablaGossiping, (void*) enviarMemoriaConocida);
+}
+
+void intercambiarTablasGossiping(t_memoria* memoria) {
+	int socketMemoria = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
+	enviarTablaGossiping(socketMemoria);
+
+	Paquete paquete;
+	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+
+		t_memoria* memoriaRecibida = deserealizarMemoria(paquete.mensaje);
+		agregarMemoriaNueva(memoriaRecibida);
+		free(paquete.mensaje);
+	}
+
+}
+
+

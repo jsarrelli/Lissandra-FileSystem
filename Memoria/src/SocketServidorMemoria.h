@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include "Parser.h"
+#include "SocketClienteMemoria.h"
 #include "Memoria.h"
 
 int socketFileSystem;
@@ -26,5 +27,6 @@ void procesarRequestCREATE(char* request, int socketKernel);
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel);
 void procesarRequestDESCRIBE_ALL(int socketKernel);
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel);
+void procesarGossiping(char* memoriaGossiping,int socketMemoria);
 #endif /* SERVER_H_ */
 

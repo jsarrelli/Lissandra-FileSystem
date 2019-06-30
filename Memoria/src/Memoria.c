@@ -10,14 +10,19 @@
 #include "Memoria.h"
 
 
-
 int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
 	log_info(logger, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
+	cargarEstructurasGossiping();
 
 	//HANDSHAKE INICIAL CON FILESYSTEM
 	int socketFileSystem = HandshakeInicial();
+	if(socketFileSystem == -1){
+		log_info(logger, "--Memoria finalizada--");
+		liberarVariables();
+		return EXIT_SUCCESS;
+	}
 
 	//INICIALIZACION DE MEMORIA PRINCIPAL
 	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
@@ -35,15 +40,12 @@ int main() {
 //	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
 //	pthread_detach(intTemporalGossiping);
 
-	//HILO DE CONSOLA
+	//CONSOLA
 	leerConsola();
 
 
 	close(listenningSocket);
-	log_destroy(logger);
-	free(configuracion);
-	config_destroy(archivo_configuracion);
-
+	liberarVariables();
 	return EXIT_SUCCESS;
 }
 
@@ -79,14 +81,15 @@ void cargarConfiguracion() {
 	configuracion->PUERTO_ESCUCHA = get_campo_config_string(archivo_configuracion, "PUERTO_ESCUCHA");
 	configuracion->IP_FS = get_campo_config_string(archivo_configuracion, "IP_FS");
 	configuracion->PUERTO_FS = get_campo_config_int(archivo_configuracion, "PUERTO_FS");
-	configuracion->IP_SEEDS = get_campo_config_string(archivo_configuracion, "IP_SEEDS");
-	configuracion->PUERTOS_SEEDS = get_campo_config_string(archivo_configuracion, "PUERTOS_SEEDS");
+	configuracion->IP_SEEDS = get_campo_config_array(archivo_configuracion, "IP_SEEDS");
+	configuracion->PUERTOS_SEEDS = get_campo_config_array(archivo_configuracion, "PUERTOS_SEEDS");
 	configuracion->RETARDO_MEMORIA = get_campo_config_int(archivo_configuracion, "RETARDO_MEMORIA");
 	configuracion->RETARDO_FS = get_campo_config_int(archivo_configuracion, "RETARDO_FS");
 	configuracion->TAM_MEMORIA = get_campo_config_int(archivo_configuracion, "TAM_MEMORIA");
 	configuracion->TIEMPO_JOURNAL = get_campo_config_int(archivo_configuracion, "TIEMPO_JOURNAL");
 	configuracion->TIEMPO_GOSSIPING = get_campo_config_int(archivo_configuracion, "TIEMPO_GOSSIPING");
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
+	configuracion->IP_ESCUCHA = get_campo_config_string(archivo_configuracion, "IP_ESCUCHA");
 	log_info(logger, "Archivo de configuracion levantado");
 
 }
@@ -95,7 +98,7 @@ void iniciarSocketServidor()
 {
 	log_info(logger, "Configurando Listening Socket...");
 	listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
-	if (listenningSocket != -1) {
+	if (listenningSocket != 0) {
 		escuchar(listenningSocket);
 	}
 
@@ -111,8 +114,23 @@ void procesoTemporalJournal(){
 void procesoTemporalGossiping(){
 	while(1){
 		usleep(configuracion->TIEMPO_GOSSIPING*1000);
-		//falta funcion gossiping
+		gossiping();
 	}
 
 }
 
+
+void liberarVariables()
+{
+	void liberarDatosConfiguracion()
+	{
+		liberarPunteroDePunterosAChar(configuracion->PUERTOS_SEEDS);
+		liberarPunteroDePunterosAChar(configuracion->IP_SEEDS);
+		free(configuracion);
+		config_destroy(archivo_configuracion);
+	}
+	log_destroy(logger);
+	liberarDatosConfiguracion();
+	list_destroy(tablaGossiping);
+	list_destroy(seeds);
+}

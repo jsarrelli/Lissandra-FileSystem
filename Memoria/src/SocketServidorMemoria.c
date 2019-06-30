@@ -21,30 +21,30 @@ void escuchar(int listenningSocket) {
 
 }
 
-void procesarAccion(int socketKernel) {
+void procesarAccion(int socketEntrante) {
 	Paquete paquete;
 	void* datos;
-	if (RecibirPaqueteServidor(socketKernel, FILESYSTEM, &paquete) > 0) {
+	if (RecibirPaqueteServidor(socketEntrante, MEMORIA, &paquete) > 0) {
 		if (paquete.header.quienEnvia == KERNEL) {
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
-				procesarRequestSELECT(datos, socketKernel);
+				procesarRequestSELECT(datos, socketEntrante);
 				break;
 			case (INSERT):
-				procesarRequestINSERT(datos, socketKernel);
+				procesarRequestINSERT(datos, socketEntrante);
 				break;
 			case (CREATE):
-				procesarRequestCREATE(datos, socketKernel);
+				procesarRequestCREATE(datos, socketEntrante);
 				break;
 
 			case (DESCRIBE):
-				procesarRequestDESCRIBE(datos, socketKernel);
+				procesarRequestDESCRIBE(datos, socketEntrante);
 				break;
 
 			case (DESCRIBE_ALL):
-				procesarRequestDESCRIBE_ALL(socketKernel);
+				procesarRequestDESCRIBE_ALL(socketEntrante);
 				break;
 
 			case (DROP):
@@ -54,8 +54,10 @@ void procesarAccion(int socketKernel) {
 			}
 
 		}
-		else {
-			log_info(logger, "No es ningun proceso de Kernel");
+		else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
+			procesarGossiping(paquete.mensaje, socketEntrante);
+		} else {
+			log_info(logger, "No es ningun proceso valido para Memoria");
 		}
 
 	}
@@ -63,7 +65,7 @@ void procesarAccion(int socketKernel) {
 	if (paquete.mensaje != NULL) {
 		free(paquete.mensaje);
 	}
-	close(socketKernel);
+	close(socketEntrante);
 }
 
 void procesarRequestSELECT(char* request, int socketKernel) {
@@ -126,4 +128,21 @@ void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {
 	char success[2];
 	sprintf(success, "%d", resultado);
 	EnviarDatosTipo(socketKernel, MEMORIA, success, 2, protocolo);
+}
+
+void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
+	//recibimos toda la tabla
+	t_memoria* memoriaRecibida = deserealizarMemoria(memoriaGossiping);
+	agregarMemoriaNueva(memoriaRecibida);
+
+	Paquete paquete;
+	while (RecibirPaqueteServidor(socketMemoria, MEMORIA, &paquete) > 0) {
+		t_memoria* memoriaRecibida = deserealizarMemoria(memoriaGossiping);
+		agregarMemoriaNueva(memoriaRecibida);
+		free(paquete.mensaje);
+	}
+
+	//enviamos nuestra tabla
+	enviarTablaGossiping(socketMemoria);
+
 }

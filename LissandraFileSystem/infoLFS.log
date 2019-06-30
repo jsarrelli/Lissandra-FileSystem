@@ -1,11 +1,6 @@
-[INFO] 16:48:00:567 LFS Logs/(13092:13092): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 02:47:47:459 LFS Logs/(21629:21629): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 16:48:00:567 LFS Logs/(13092:13092): Levantando archivo de configuracion del proceso LFS 
+[INFO] 02:47:47:459 LFS Logs/(21629:21629): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 16:48:00:568 LFS Logs/(13092:13092): Archivo de configuracion del proceso LFS levantado 
+[INFO] 02:47:47:459 LFS Logs/(21629:21629): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 16:48:09:608 LFS Logs/(13092:13100): Se creo la  TABLA1 en LFS
-
-[INFO] 16:48:09:608 LFS Logs/(13092:13100): Metadata de TABLA1 creada
-
-[INFO] 16:48:53:375 LFS Logs/(13092:13100): Insert realizado en memtable
