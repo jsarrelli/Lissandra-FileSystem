@@ -48,9 +48,12 @@ void procesarAccion(int socketEntrante) {
 				break;
 
 			case (DROP):
-				procesarRequestDROP(datos,socketEntrante);
+				procesarRequestDROP(datos, socketEntrante);
 				break;
 
+			case (TABLA_GOSSIPING):
+				procesarRequestTABLA_GOSSIPING(socketEntrante);
+				break;
 			}
 
 		}
@@ -144,5 +147,14 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 
 	//enviamos nuestra tabla
 	enviarTablaGossiping(socketMemoria);
+}
 
+void procesarRequestTABLA_GOSSIPING(int socketKernel) {
+	void enviarMemoria(t_memoria* memoria) {
+		char response[20];
+		scanf(response, "%s %s", memoria->ip, memoria->puerto);
+		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, TABLA_GOSSIPING);
+	}
+
+	list_iterate(tablaGossiping, (void*) enviarMemoria);
 }

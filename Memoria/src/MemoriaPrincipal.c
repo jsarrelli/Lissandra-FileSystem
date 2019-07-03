@@ -61,7 +61,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
-		log_info(logger, "Insertando registro en memoria");
+		log_info(logger, "Insertando registro en memoria..");
 		t_registro registro;
 		registro.key = key;
 		registro.timestamp = timeStamp;
