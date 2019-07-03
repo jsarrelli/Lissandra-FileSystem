@@ -8,5 +8,5 @@ void procesarConsulta(char* consulta);
 void* procesarINSERT(char* consulta);
 void* procesarSELECT(char* consulta);
 int procesarCREATE(char* consulta);
-void procesarDROP(char* consulta);
+int procesarDROP(char* consulta);
 void procesarDESCRIBE(char* consulta);

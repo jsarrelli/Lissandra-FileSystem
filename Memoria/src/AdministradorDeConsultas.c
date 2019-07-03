@@ -34,12 +34,12 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 	return NULL;
 }
 
-void DROP_MEMORIA(char* nombreTabla) {
+int DROP_MEMORIA(char* nombreTabla) {
 	Segmento* segmentoEnMemoria = buscarSegmentoEnMemoria(nombreTabla);
 	if (segmentoEnMemoria != NULL) {
 		eliminarSegmentoDeMemoria(segmentoEnMemoria);
 	}
-	eliminarSegmentoFileSystem(nombreTabla);
+	return eliminarSegmentoFileSystem(nombreTabla);
 
 }
 
@@ -58,11 +58,11 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	int succes = enviarCreateAFileSystem(metaData, nombreTabla);
 	if (succes == 0) {
 		insertarSegmentoEnMemoria(nombreTabla);
-		printf("Se ha creado la tabla %s", nombreTabla);
+		printf("Se ha creado la tabla %s \n \n", nombreTabla);
 
 		return 0;
 	}
-	printf("Hubo un error al crear la tabla %s, la tabla ya existe", nombreTabla);
+	printf("Hubo un error al crear la tabla %s, la tabla ya existe \n \n", nombreTabla);
 
 	return 1;
 }

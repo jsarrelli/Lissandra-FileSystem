@@ -27,6 +27,7 @@ void procesarRequestCREATE(char* request, int socketKernel);
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel);
 void procesarRequestDESCRIBE_ALL(int socketKernel);
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel);
+void procesarRequestDROP(char* nombreTabla,int socketKernel);
 void procesarGossiping(char* memoriaGossiping,int socketMemoria);
 #endif /* SERVER_H_ */
 

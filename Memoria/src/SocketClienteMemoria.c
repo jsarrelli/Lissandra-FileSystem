@@ -45,12 +45,20 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
 }
 
-void eliminarSegmentoFileSystem(char* nombreSegmento) {
+int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 
 	char* consulta = malloc(strlen(nombreSegmento) + 1); // +1 por el espacio
 	sprintf(consulta, "%s", nombreSegmento);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), DROP);
+	Paquete paquete;
+	int succes = 0;
+		if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+			succes = atoi(paquete.mensaje);
+
+		}
+
+		return succes;
 }
 
 int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla)

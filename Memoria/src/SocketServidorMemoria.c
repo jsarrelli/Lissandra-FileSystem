@@ -48,7 +48,7 @@ void procesarAccion(int socketEntrante) {
 				break;
 
 			case (DROP):
-				procesarConsulta(paquete.mensaje);
+				procesarRequestDROP(datos,socketEntrante);
 				break;
 
 			}
@@ -118,10 +118,10 @@ void procesarRequestDESCRIBE_ALL(int socketKernel) {
 	list_iterate(metaDatas, (void*) enviarMetadataAKernel);
 }
 
-void procesarRequestDROP(char* nombreTabla) {
-	procesarDROP(nombreTabla);
-	//este no le avisa nada a nadie, porque es rebelde
-	//y porque el enunciado no dice que avise
+void procesarRequestDROP(char* nombreTabla, int socketKernel) {
+	int succes = procesarDROP(nombreTabla);
+	enviarSuccess(succes, DROP, socketKernel);
+
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {

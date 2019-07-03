@@ -1,29 +1,28 @@
-[INFO] 18:36:16:222 LFS Logs/(1394:1394): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 21:17:51:125 LFS Logs/(7318:7318): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 18:36:16:240 LFS Logs/(1394:1394): Levantando archivo de configuracion del proceso LFS 
+[INFO] 21:17:51:125 LFS Logs/(7318:7318): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 18:36:16:240 LFS Logs/(1394:1394): Archivo de configuracion del proceso LFS levantado 
+[INFO] 21:17:51:125 LFS Logs/(7318:7318): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 18:38:26:429 LFS Logs/(1394:1496): Se creo la  TABLA2 en LFS
+[INFO] 21:18:54:298 LFS Logs/(7318:7454): Se creo la  TABLA en LFS
 
-[INFO] 18:38:26:430 LFS Logs/(1394:1496): Metadata de TABLA2 creada
+[INFO] 21:18:54:301 LFS Logs/(7318:7454): Metadata de TABLA creada
 
-[INFO] 18:52:56:771 LFS Logs/(1394:1792): Se creo la  TABLA3 en LFS
+[INFO] 21:20:23:196 LFS Logs/(7318:7501): Bloque liberado: 16
 
-[INFO] 18:52:56:771 LFS Logs/(1394:1792): Metadata de TABLA3 creada
+[INFO] 21:23:04:229 LFS Logs/(7318:7893): Se creo la  TABLA2 en LFS
 
-[INFO] 18:58:45:423 LFS Logs/(1394:2150): Se creo la  TABLA4 en LFS
+[INFO] 21:23:04:230 LFS Logs/(7318:7893): Metadata de TABLA2 creada
 
-[INFO] 18:58:45:433 LFS Logs/(1394:2150): Metadata de TABLA4 creada
+[INFO] 21:24:08:170 LFS Logs/(7318:7919): Bloque liberado: 16
 
-[INFO] 19:23:39:212 LFS Logs/(1394:3318): Se creo la  TABLA5 en LFS
+[INFO] 21:25:32:617 LFS Logs/(7318:7986): Se creo la  JULI en LFS
 
-[INFO] 19:23:39:235 LFS Logs/(1394:3318): Metadata de TABLA5 creada
+[INFO] 21:25:32:619 LFS Logs/(7318:7986): Metadata de JULI creada
 
-[INFO] 19:24:54:725 LFS Logs/(1394:1394): Insert realizado en memtable
-[INFO] 19:28:40:905 LFS Logs/(1394:1394): Bloque liberado: 0
+[INFO] 21:26:58:382 LFS Logs/(7318:8081): Se creo la  TABL5 en LFS
 
-[INFO] 19:29:40:63 LFS Logs/(1394:3687): Bloque liberado: 1
+[INFO] 21:26:58:383 LFS Logs/(7318:8081): Metadata de TABL5 creada
 
-[INFO] 19:29:40:73 LFS Logs/(1394:3687): Bloque liberado: 2
+[INFO] 21:29:52:223 LFS Logs/(7318:8168): Bloque liberado: 17
 

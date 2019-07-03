@@ -69,9 +69,15 @@ int procesarCREATE(char* consulta) {
 
 }
 
-void procesarDROP(char* nombreTabla) {
-	DROP_MEMORIA(nombreTabla);
-	printf("Se ha eliminado la tabla: %s", nombreTabla);
+int procesarDROP(char* nombreTabla) {
+	int success = DROP_MEMORIA(nombreTabla);
+	if(success == 0){
+		printf("Se ha eliminado la tabla: %s \n \n", nombreTabla);
+	}else{
+		printf("No se ha podido eliminar la tabla: %s \n \n", nombreTabla);
+	}
+	return success;
+
 }
 
 void procesarDESCRIBE(char* nombreTabla) {
