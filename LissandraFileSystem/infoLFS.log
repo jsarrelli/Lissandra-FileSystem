@@ -1,28 +1,10 @@
-[INFO] 21:17:51:125 LFS Logs/(7318:7318): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 21:55:45:506 LFS Logs/(9584:9584): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 21:17:51:125 LFS Logs/(7318:7318): Levantando archivo de configuracion del proceso LFS 
+[INFO] 21:55:45:506 LFS Logs/(9584:9584): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 21:17:51:125 LFS Logs/(7318:7318): Archivo de configuracion del proceso LFS levantado 
+[INFO] 21:55:45:506 LFS Logs/(9584:9584): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 21:18:54:298 LFS Logs/(7318:7454): Se creo la  TABLA en LFS
-
-[INFO] 21:18:54:301 LFS Logs/(7318:7454): Metadata de TABLA creada
-
-[INFO] 21:20:23:196 LFS Logs/(7318:7501): Bloque liberado: 16
-
-[INFO] 21:23:04:229 LFS Logs/(7318:7893): Se creo la  TABLA2 en LFS
-
-[INFO] 21:23:04:230 LFS Logs/(7318:7893): Metadata de TABLA2 creada
-
-[INFO] 21:24:08:170 LFS Logs/(7318:7919): Bloque liberado: 16
-
-[INFO] 21:25:32:617 LFS Logs/(7318:7986): Se creo la  JULI en LFS
-
-[INFO] 21:25:32:619 LFS Logs/(7318:7986): Metadata de JULI creada
-
-[INFO] 21:26:58:382 LFS Logs/(7318:8081): Se creo la  TABL5 en LFS
-
-[INFO] 21:26:58:383 LFS Logs/(7318:8081): Metadata de TABL5 creada
-
-[INFO] 21:29:52:223 LFS Logs/(7318:8168): Bloque liberado: 17
-
+[INFO] 21:58:21:364 LFS Logs/(7318:9656): Insert realizado en memtable
+[INFO] 21:58:31:775 LFS Logs/(7318:9702): Insert realizado en memtable
+[INFO] 22:05:07:302 LFS Logs/(7318:9985): Insert realizado en memtable
+[INFO] 22:05:13:401 LFS Logs/(7318:9995): Insert realizado en memtable

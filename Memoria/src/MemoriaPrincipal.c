@@ -295,7 +295,7 @@ t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 
 void journalMemoria() {
 	//algun semaforo
-	log_info(logger, "Realizando Journal");
+	log_info(logger, "Realizando Journal..");
 
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
 		if (isModificada(pagina)) {
@@ -316,7 +316,7 @@ void journalMemoria() {
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
 	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
-
+	log_info(logger, "Journal finalizado con exito");
 }
 
 bool existeSegmentoFS(char* nombreSegmento) {
