@@ -28,7 +28,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 
 	if (validarValueMaximo(value)) {
 		Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla);
-		printf("Se ha insertado el siguiente registro: %d %s en la tabla %s \n", key, value, nombreTabla);
+		printf("Se ha insertado el siguiente registro: %d \"%s\" en la tabla %s \n", key, value, nombreTabla);
 		return pagina->registro;
 	}
 	return NULL;

@@ -39,10 +39,9 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	t_registro* registro = pagina->registro;
-	char* consulta = malloc(
-			strlen(nombreSegmento) + sizeof(registro->key) + strlen(registro->value) + sizeof(registro->timestamp) + 4); //mas 3 espacios y el caracter de fin de cadena
-	sprintf(consulta, "%s %d %s %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), INSERT);
+	char consulta[150];
+	sprintf(consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta)+1, INSERT);
 }
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {

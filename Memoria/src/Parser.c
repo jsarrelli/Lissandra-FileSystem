@@ -4,7 +4,7 @@ void procesarConsulta(char* consulta) {
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
 
-	if (strcmp(operacion, "SELECT/0") == 0) {
+	if (strcmp(operacion, "SELECT") == 0) {
 		procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
 		procesarINSERT(argumentos);
@@ -45,7 +45,8 @@ void* procesarINSERT(char* consulta) {
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	int key = atoi(valoresAux[1]);
-	char* value = valores[1];
+	char* value = malloc (strlen(valores[1]+1));
+	strcpy(value,valores[1]);
 	double timeStamp;
 	if (valores[2] == NULL) {
 		timeStamp = getCurrentTime();

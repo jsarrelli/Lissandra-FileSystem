@@ -106,23 +106,25 @@ void consolaAdd(char*argumento) {
 
 void consolaInsert(char*argumentos) {
 	//	INSERT
-	//[NOMBRE_TABLA] [KEY] “[VALUE]”
+	//[NOMBRE_TABLA] [KEY] “[VALUE]” TIMESTAMP
 	char** valores = string_split(argumentos, "\"");
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
 	char* value = valores[1];
-	log_trace(log_master->logTrace,
-			"El nombre de la tabla es: %s, su key es %s, y su value es: %s",
-			nombreTabla, key, value);
+	double timeStamp;
+	if (valores[2] == NULL) {
+		timeStamp = getCurrentTime();
+	} else {
+		timeStamp = atof(valores[2]);
+	}
+	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key,
+			value);
 
 	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla);
 
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
-			config->IP_MEMORIA);
-	char request[150];
-	sprintf(request, "%s %s %s", nombreTabla, key, value);
-	enviarInfoMemoria(socketMemoria, request, INSERT);
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	enviarInfoMemoria(socketMemoria, argumentos, INSERT);
 
 //	printf("Aca se tienen que poner las sockets\n");
 
@@ -163,14 +165,13 @@ void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo)
 	Paquete paquete;
 	int success;
 
-	if(EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1,
-			protocolo)){
+	if (EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1,
+			protocolo)) {
 		log_trace(log_master->logTrace, "El paquete se envio exitosamente");
 	}
-	else{
+	else {
 		log_error(log_master->logError, "Error al enviar paquete");
 	}
-
 
 	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
 		success = atoi(paquete.mensaje);
