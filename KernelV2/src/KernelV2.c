@@ -13,14 +13,18 @@
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
-	//	log_info(log_master->logInfo, "Hola!!!");
+
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReady, 0, 1);
+
 	cantRequestsEjecutadas = 0;
 	haySC = false;
 	idMemoria = 1;
+
 	srand(time(NULL));
+
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
+
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
@@ -29,7 +33,27 @@ void iniciarVariablesKernel() {
 			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
 	hardcodearListaMetadataTabla();
+
 	quantum = config->QUANTUM;
+	multiprocesamiento = config->MULTIPROCESAMIENTO;
+	multiprocesamientoUsado = 0;
+	retardoEjecucion = config->SLEEP_EJECUCION;
+
+	hilosActivos = 0;
+
+	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
+	// 		de requests que haya en la cola de ready
+
+//	if(multiprocesamiento !=0){
+//		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
+//
+//		for(int i=0; i < multiprocesamiento;i++){
+//			sem_init(&arraySemaforos[i], 0, 0);
+//		}
+//	}
+
+
+
 }
 
 /*
@@ -57,7 +81,7 @@ void iniciarVariablesKernel() {
  * 	Pero lo mas importante es que ahora tenemos una muy buena base para avanzar!!!
  */
 
-void codigoConsola(){
+void hiloConsola(){
 	char* operacion = readline(">");
 
 	while(1){

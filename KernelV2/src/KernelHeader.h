@@ -89,14 +89,17 @@ int quantum;
 int cantRequestsEjecutadas;
 sem_t ejecutarHilos;
 sem_t mutex_colaReady;
+//sem_t mutex_id_proceso;
 logStruct* log_master;
 int idMemoria;
 bool haySC;
 int idHilo;
 int multiprocesamiento;
+int multiprocesamientoUsado;
 sem_t* arraySemaforos;
 int quantum;
 int hilosActivos;
+int retardoEjecucion;
 
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba

@@ -165,24 +165,71 @@ void* funcionThread(void* args){
 
 
 
-
-
-
-void* nuevaFuncionThread(void* args){
-	estadoProceso estado = OK;
-	int cantRequestsProceso = 0;
-	int cantRequestsEjecutados = 0;
-	procExec* proceso = NULL;
-
-	do{
-
-
-
-	}while(queue_size(colaReady) != 0);
-
-
-	return NULL;
+bool interrupcionPorEstado(estadoProceso estado){
+	return estado == ERROR;
 }
+
+procExec* obtenerProcesoDeColaReady(){
+	sem_wait(&mutex_colaReady);
+	procExec* proceso = NULL;
+	proceso = queue_pop(colaReady);
+	sem_post(&mutex_colaReady);
+	return proceso;
+}
+
+//void* nuevaFuncionThread(void* args){
+//	estadoProceso estado = OK;
+//	int cantRequestsProceso = 0;
+//	int cantRequestsEjecutadas = 0;
+//	procExec* proceso = NULL;
+//	static int idProceso = -1;
+//
+//	do{
+//		idProceso++;
+//
+//		sem_wait(&arraySemaforos[idProceso]);
+//
+//		if(queue_size(colaReady)!=0){
+//			proceso = obtenerProcesoDeColaReady();
+//			cantRequestsProceso = list_size(proceso->script);
+//
+//			// Ahora evaluamos cada una de las requests del script
+//			// Lo hago por un for y list_get en vez de list_itearate porque necesito varias condiciones
+//
+//			for (cantRequestsEjecutadas = 0;
+//					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
+//							&& cantRequestsEjecutadas < quantum;
+//					cantRequestsEjecutadas++)
+//			{
+//
+//
+//				estado = procesarInput(list_get(proceso->script, cantRequestsEjecutadas));
+//				sleep(retardoEjecucion);
+//
+//
+//			}
+//
+//			if(! interrupcionPorEstado(estado)){
+//				if(cantRequestsEjecutadas < cantRequestsProceso){
+//					// Borrar proceso
+//				}
+//			}
+//			if(cantRequestsEjecutadas < quantum && !(cantRequestsEjecutadas < cantRequestsProceso))
+//				queue_push(colaReady, proceso);
+//			if(interrupcionPorEstado(estado)){
+//				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
+//				// Borrar proceso
+//			}
+//
+//
+//
+//		}
+//
+//	}while(queue_size(colaReady) != 0);
+//
+//
+//	return NULL;
+//}
 
 
 
