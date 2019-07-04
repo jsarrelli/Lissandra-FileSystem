@@ -57,6 +57,24 @@ void iniciarVariablesKernel() {
  * 	Pero lo mas importante es que ahora tenemos una muy buena base para avanzar!!!
  */
 
+void codigoConsola(){
+	char* operacion = readline(">");
+
+	while(1){
+		if(!instruccionSeaSalir(operacion)){
+			break;
+			// Añadir semaforo para continuar y terminar el hilo principal
+		}
+		else{
+			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
+			// Es muy importante!!!
+			crearProcesoYMandarloAReady(operacion);
+			// free(operacion); // Para esto es importante
+		}
+	}
+//	free(operacion);
+}
+
 int main(void) {
 	iniciarVariablesKernel();
 	char*operacion;
@@ -70,14 +88,6 @@ int main(void) {
 		// Por ahora lo hago con un solo proceso y lo hago manual
 		ejecutarProcesos();
 		funcionThread(NULL);
-
-
-
-
-
-
-
-
 
 //		free(operacion);
 //		destruirProcesoExec(proceso);
@@ -93,3 +103,6 @@ int main(void) {
 //	config_destroy(config);
 	return EXIT_SUCCESS;
 }
+
+
+

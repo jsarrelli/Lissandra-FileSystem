@@ -126,6 +126,9 @@ void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion){
+//	char* operacionExtra = malloc(strlen(operacion)+1);
+//	strcpy(operacionExtra, operacion);
+
 	list_add(proceso->script, operacion);
 }
 
@@ -155,6 +158,40 @@ void* funcionThread(void* args){
 	// Creo que aca se liberan los recursos del proceso
 	return NULL;
 }
+
+
+
+
+
+
+
+
+
+
+void* nuevaFuncionThread(void* args){
+	estadoProceso estado = OK;
+	int cantRequestsProceso = 0;
+	int cantRequestsEjecutados = 0;
+	procExec* proceso = NULL;
+
+	do{
+
+
+
+	}while(queue_size(colaReady) != 0);
+
+
+	return NULL;
+}
+
+
+
+
+
+
+
+
+
 
 void agregarHiloAListaHilosEInicializo(t_list* hilos){
 //	for(int i=0; i < cantProcesos;i++){

@@ -70,6 +70,11 @@ typedef struct{
 	t_log* logTrace;
 }logStruct;
 
+typedef enum{
+	OK,
+	ERROR
+}estadoProceso;
+
 
 // Variables globales
 
@@ -87,6 +92,11 @@ sem_t mutex_colaReady;
 logStruct* log_master;
 int idMemoria;
 bool haySC;
+int idHilo;
+int multiprocesamiento;
+sem_t* arraySemaforos;
+int quantum;
+int hilosActivos;
 
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
