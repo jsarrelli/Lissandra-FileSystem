@@ -18,5 +18,7 @@ void cambiarExtensionTemporales(char** archivos, t_list* listaTmpc);
 int cambiarExtension(char* rutaVieja, char* extensionNueva, t_list* listaTmpc);
 void agregarRegistrosDeTmpc(char* rutaTmpc, t_list* listaRegistros);
 void buscarBinarios(char** archivos, t_list* archivosBin);
+int escribirEnBin(t_list* lista, char*rutaBinario);
+void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin);
 
 #endif /* COMPACTADOR_H_ */
