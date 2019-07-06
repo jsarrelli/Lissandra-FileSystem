@@ -69,10 +69,8 @@ void iniciarVariablesKernel() {
  *
  * TODO:
  * 		- Manejo de errores
- * 		- Resto de las funciones (con codigo harcodeado) -> HECHO + pequeñas modificaciones del comando RUN
- * 		- Unir los modulos con las funciones sockets
  * 		- Round Robin
- *		- Multiprocesamiento (Brian)
+ *		- Multiprocesamiento
  *
  * 	Aclaracion:
  * 		Muchas de las decisiones fueron hechas para ver los puntos que faltan

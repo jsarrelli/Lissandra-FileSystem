@@ -7,7 +7,7 @@
 
 #include "APIKernel.h"
 
-void procesarInput(char* linea) {
+void procesarInputKernel(char* linea) {
 	char** comandos = string_n_split(linea, 2, " ");
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
@@ -112,7 +112,7 @@ void consolaInsert(char*argumentos) {
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
 	char* value = valores[1];
-	double timeStamp;
+	double timeStamp=0;
 	if (valores[2] == NULL) {
 		timeStamp = getCurrentTime();
 	} else {

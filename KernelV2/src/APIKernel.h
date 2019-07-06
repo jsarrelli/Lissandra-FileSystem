@@ -16,7 +16,7 @@
  * Aca se almacenan las funciones de inicio del API Kernel
  */
 
-void procesarInput(char* linea);
+void procesarInputKernel(char* linea);
 void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo);
 void procesarAdd(int id, consistencia cons);
 void consolaAdd(char*argumento);
