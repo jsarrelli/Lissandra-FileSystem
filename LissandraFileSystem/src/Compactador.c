@@ -212,39 +212,48 @@ void agregarRegistrosDeTmpc(char* rutaTmpc, t_list* listaRegistros) {
 	int i = 0;
 	log_info(logger, "Leyendo registros de %s... ",rutaTmpc);
 	while (archivo->BLOQUES[i] != NULL) {
-		char * archivoMapeado;
+
 		char* rutaArchivoBloque = string_new();
 		strcpy(rutaArchivoBloque, rutas.Bloques);
 		string_append_with_format(&rutaArchivoBloque, "%s.bin", archivo->BLOQUES[i]);
-
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
-
-		FILE* archivoBloque = fopen(rutaArchivoBloque, "rb");
-		int tamanioArchBloque = tamanioArchivo(archivoBloque);
-		int fileDescriptor = fileno(archivoBloque);
-
-		//mapeamos el archivo a memoria
-		if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
-			logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
-		}
-
-		//cargo la lista con los registros obtenidos
-		char ** registros = string_split(archivoMapeado, "\n");
-		int j = 0;
-		while (registros[j] != NULL) {
-			list_add(listaRegistros, registros[j]);
-			j++;
-		}
-
-		munmap(archivoMapeado, tamanioArchBloque);
-		fclose(archivoBloque);
+		t_list* registrosObtenidos= obtenerRegistrosFromBloque(rutaArchivoBloque);
+		list_add_all(listaRegistros,registrosObtenidos);
+		//borro la referecia a registros obtenidos ya que ya estan cargados en listaRegistros
+		free(registrosObtenidos);
 		free(rutaArchivoBloque);
-		freePunteroAPunteros(registros);
-		close(fileDescriptor);
 		i++;
 	}
 
 	free(archivo);
+}
+
+
+t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque){
+	t_list* listaRegistros = list_create();
+	FILE* archivoBloque = fopen(rutaArchivoBloque, "rb");
+	int tamanioArchBloque = tamanioArchivo(archivoBloque);
+	int fileDescriptor = fileno(archivoBloque);
+
+	//mapeamos el archivo a memoria
+	char * archivoMapeado;
+	if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
+		logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
+	}
+
+	//cargo la lista con los registros obtenidos
+	char ** registros = string_split(archivoMapeado, "\n");
+	int j = 0;
+	while (registros[j] != NULL) {
+		list_add(listaRegistros, registros[j]);
+		j++;
+	}
+
+	freePunteroAPunteros(registros);
+	munmap(archivoMapeado, tamanioArchBloque);
+	fclose(archivoBloque);
+	close(fileDescriptor);
+	return listaRegistros;
 }
 
 void cambiarExtensionTemporales(t_list* listaTemporalesTmp) {

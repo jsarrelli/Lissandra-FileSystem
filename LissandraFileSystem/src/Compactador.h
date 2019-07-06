@@ -20,5 +20,6 @@ void agregarRegistrosDeTmpc(char* rutaTmpc, t_list* listaRegistros);
 t_list* buscarBinariosByTabla(char* nombreTabla);
 int escribirEnBin(t_list* lista, char*rutaBinario);
 void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin);
+t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque);
 
 #endif /* COMPACTADOR_H_ */
