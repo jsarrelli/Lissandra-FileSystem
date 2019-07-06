@@ -14,10 +14,10 @@
 #include "AdministradorConsultasLFS.h"
 
 void compactarTabla(char*nombreTabla);
-void cambiarExtensionTemporales(char** archivos, t_list* listaTmpc);
-int cambiarExtension(char* rutaVieja, char* extensionNueva, t_list* listaTmpc);
+void cambiarExtensionTemporales(t_list* listaTemporalesTmp);
+t_list* buscarTemporalesByNombreTabla(char* nombreTabla);
 void agregarRegistrosDeTmpc(char* rutaTmpc, t_list* listaRegistros);
-void buscarBinarios(char** archivos, t_list* archivosBin);
+t_list* buscarBinariosByTabla(char* nombreTabla);
 int escribirEnBin(t_list* lista, char*rutaBinario);
 void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin);
 

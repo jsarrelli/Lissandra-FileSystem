@@ -30,14 +30,14 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 //char** buscarRegistrosDeTabla(char*nombreTabla);
 void buscarDirectorios(char * ruta, t_list* listaDirectorios);
 void limpiarRegistrosDeTabla(char*nombreTabla);
-int obtenerTamanioArrayRegistros(t_list* registros);
+int obtenerTamanioListaRegistros(t_list* registros);
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
 
 //ARCHIVOS DE TABLA
 
-char** buscarArchivos(char * rutaTabla);
+t_list* buscarArchivos(char* nombreTabla);
 char** buscarArchivosTemporales(char * rutaTabla);
 int esArchivo (char* ruta);
 void removerArchivosDeTabla(char * rutaTabla);

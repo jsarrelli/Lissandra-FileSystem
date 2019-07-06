@@ -41,9 +41,9 @@ char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal) {
 }
 
 int existeTabla(char* nombreTabla) {
-	char* rutaTabla = malloc(100);
+	char* rutaTabla = armarRutaTabla(nombreTabla);
 	DIR* tablaActual;
-	armarRutaTabla(rutaTabla, nombreTabla);
+
 	tablaActual = opendir(rutaTabla);
 
 	if (tablaActual != NULL) {
@@ -91,8 +91,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones) {
 }
 
 void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion) {
-	char*rutaTabla = malloc(100);
-	armarRutaTabla(rutaTabla, nombreTabla);
+	char*rutaTabla = armarRutaTabla(nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	FILE*arch = fopen(rutaTabla, "w+");
 	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones,
@@ -104,8 +103,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 }
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla) {
-	char* rutaTabla = malloc(100);
-	armarRutaTabla(rutaTabla, nombreTabla);
+	char* rutaTabla = armarRutaTabla(rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	t_config* configMetadata = config_create(rutaTabla);
 	t_metadata_tabla metadataTabla;
@@ -122,8 +120,8 @@ void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
 			metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 }
 
-char* armarRutaTabla(char* rutaTabla, char* nombreTabla) {
-
+char* armarRutaTabla(char* nombreTabla) {
+	char* rutaTabla = string_new();
 	strcpy(rutaTabla, rutas.Tablas);
 	string_append(&rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "/");
@@ -131,71 +129,37 @@ char* armarRutaTabla(char* rutaTabla, char* nombreTabla) {
 	return rutaTabla;
 }
 
-int contarArchivosTemporales(char ** puntero) {
-	char ** aux = puntero;
-	int contador = 0;
-	char* nombreArchivoConExtension;
-	char*extension;
-	while (*aux != NULL) {
-		nombreArchivoConExtension = obtenerNombreDeArchivoDeUnaRuta(*aux);
-		extension = obtenerExtensionDeUnArchivo(nombreArchivoConExtension);
-		if (!strcmp(extension, "tmp")) {
-			contador++;
-			aux++;
-		} else {
-			aux++;
-		}
+int contarArchivosTemporales(t_list* archivos) {
+	bool isTmp(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		return strcmp(extension, "tmp") == 0;
 	}
+	return list_count_satisfying(archivos, isTmp);
 
-	free(nombreArchivoConExtension);
-	free(extension);
-	return contador;
 }
 
-int existeArchivo(char*nombreTabla, char * rutaArchivo) {
+int existeArchivo(char*nombreTabla, char * rutaArchivoBuscado) {
 	int i = 0;
-	char ** archivos;
+
 	char *archivo;
-	char * ruta = malloc(100);
-	char ** carpetas = string_split(rutaArchivo, "/");
+	t_list* archivos = buscarArchivos(nombreTabla);
 
-	armarRutaTabla(ruta, nombreTabla);
-	archivos = buscarArchivos(ruta);
-	archivo = (char*) obtenerUltimoElementoDeUnSplit(carpetas);
-	string_append(&ruta, archivo);
-
-	if (archivos[i] != NULL) {
-		while (archivos[i] != NULL) {
-			if (string_equals_ignore_case(archivos[i], ruta)) {
-				liberarPunteroDePunterosAChar(carpetas);
-				free(carpetas);
-				liberarPunteroDePunterosAChar(archivos);
-				free(archivos);
-				free(archivo);
-				free(ruta);
-				return 1;
-			}
-			i++;
-		}
-		liberarPunteroDePunterosAChar(archivos);
+	bool isArchivoBuscado(char* rutaArchivoActual) {
+		return strcmp(rutaArchivoActual, rutaArchivoBuscado) == 0;
 	}
-	liberarPunteroDePunterosAChar(carpetas);
-	free(carpetas);
-	free(archivos);
-	free(archivo);
-	free(ruta);
-	return 0;
+
+	bool respuesta = list_any_satisfy(archivos, isArchivoBuscado);
+	list_destroy(archivos);
+	return respuesta;
+
 }
 
-char** buscarArchivos(char * rutaTabla) {
+t_list* buscarArchivos(char* nombreTabla) {
+	char* rutaTabla = armarRutaTabla(nombreTabla);
 
-	DIR *directorioActual;
+	DIR *directorioActual = opendir(rutaTabla);
 	struct dirent *archivo;
-	char ** archivos = malloc(100);
-	char * rutaNueva;
-	int i = 0;
-
-	directorioActual = opendir(rutaTabla);
+	t_list* archivos = list_create();
 
 	if (directorioActual == NULL) {
 		puts("No se pudo abrir el directorio.");
@@ -208,23 +172,18 @@ char** buscarArchivos(char * rutaTabla) {
 			//Con readdir aparece siempre . y .. como no me interesa no lo contemplo
 			if ((strcmp(archivo->d_name, ".") != 0) && (strcmp(archivo->d_name, "..") != 0)) {
 
-				rutaNueva = string_duplicate(rutaTabla);
+				char * rutaNueva = string_duplicate(rutaTabla);
 				string_append(&rutaNueva, "/");
 				string_append(&rutaNueva, archivo->d_name);
-				archivos[i] = malloc(256);
-				if (esArchivo(rutaNueva)) {
-					strcpy(archivos[i], rutaNueva);
-					i++;
-				}
-				free(rutaNueva);
 
+				if (esArchivo(rutaNueva)) {
+					list_add(archivos, rutaNueva);
+
+				}
 			}
 		}
 		closedir(directorioActual);
 	}
-
-	archivos[i] = NULL;
-
 	return archivos;
 }
 
@@ -249,22 +208,15 @@ int esDirectorio(char * ruta) {
 }
 
 void removerArchivosDeTabla(char * rutaTabla) {
-	char ** archivos;
-	int i = 0;
-	archivos = buscarArchivos(rutaTabla);
+	t_list* archivos = buscarArchivos(rutaTabla);
 
-	if (archivos[i] != NULL) {
-		while (archivos[i] != NULL) {
-			liberarBloquesDeArchivo(archivos[i]);
-			remove(archivos[i]);
-			i++;
+	void eliminarArchivo(char* rutaArchivo) {
+		liberarBloquesDeArchivo(rutaArchivo);
+		remove(rutaArchivo);
 
-		}
-		liberarPunteroDePunterosAChar(archivos);
-		free(archivos);
-	} else {
-		free(archivos);
 	}
+	list_destroy_and_destroy_elements(archivos, (void*) eliminarArchivo);
+
 }
 
 int liberarBloquesDeArchivo(char *rutaArchivo) {
@@ -329,8 +281,7 @@ void removerTabla(char* nombreTabla) {
 		i++;
 	}
 
-	char* rutaTabla = malloc(200);
-	armarRutaTabla(rutaTabla, nombreTabla);
+	char* rutaTabla = armarRutaTabla(nombreTabla);
 	removerArchivosDeTabla(rutaTabla);
 	rmdir(rutaTabla);
 	free(rutaTabla);
@@ -340,7 +291,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 
 	DIR *directorioActual;
 	struct dirent *directorio;
-	//aca estamos limitando los
+//aca estamos limitando los
 	char * rutaNueva;
 	directorioActual = opendir(ruta);
 
@@ -434,7 +385,7 @@ void crearYEscribirTemporal(char*rutaTabla) {
 	char* nombTabla = malloc(50);
 	char**palabras = string_split(rutaTabla, "/");
 	nombTabla = (char*) obtenerUltimoElementoDeUnSplit(palabras);
-	char**archivos = buscarArchivos(rutaTabla);
+	t_list*archivos = buscarArchivos(rutaTabla);
 	int cantidadTmp = contarArchivosTemporales(archivos);
 
 	string_append(&rutaTabla, "/");
@@ -450,8 +401,7 @@ void crearYEscribirTemporal(char*rutaTabla) {
 
 	liberarPunteroDePunterosAChar(palabras);
 	free(palabras);
-	liberarPunteroDePunterosAChar(archivos);
-	free(archivos);
+	list_destroy(archivos);
 	free(nombTabla);
 
 }
@@ -515,20 +465,20 @@ t_list* buscarRegistrosDeTabla(char*nombreTabla) {
 			list_add(registros, string_duplicate(registro));
 		}
 
-		list_iterate(tabla->registros,(void*) agregarARegistros);
+		list_iterate(tabla->registros, (void*) agregarARegistros);
 		return registros;
 
 	}
 	return NULL;
 
 }
-int obtenerTamanioArrayRegistros(t_list* registros) {
-	int tamanioTotal=0;
+int obtenerTamanioListaRegistros(t_list* registros) {
+	int tamanioTotal = 0;
 
-	void acumularTamanioRegistro(char* registroActual){
-		tamanioTotal += strlen(registroActual)+1;
+	void acumularTamanioRegistro(char* registroActual) {
+		tamanioTotal += strlen(registroActual) + 1;
 	}
-	list_iterate(registros, (void*)acumularTamanioRegistro);
+	list_iterate(registros, (void*) acumularTamanioRegistro);
 
 	return tamanioTotal;
 }
@@ -538,7 +488,7 @@ t_tabla_memtable* getTablaFromMemtable(char* nombreTabla) {
 	bool isTablaBuscada(t_tabla_memtable* tablaActual) {
 		return strcmp(tablaActual->tabla, nombreTabla) == 0;
 	}
-	return (t_tabla_memtable*) list_find(memtable, (void*)isTablaBuscada);
+	return (t_tabla_memtable*) list_find(memtable, (void*) isTablaBuscada);
 }
 
 int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
@@ -546,7 +496,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 	int*bloques;
 	char *rutaBloque = malloc(150);
 	char **arrBloques = malloc(40);
-	//char*registro = malloc(100);
+//char*registro = malloc(100);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	strcpy(rutaBloque, rutas.Bloques);
 	t_list* registros = buscarRegistrosDeTabla(nombreTabla);
@@ -588,7 +538,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 
 	FILE*archivoBloque;
 	i = 0, j = 0;
-	char* registroActual = list_get(registros,j);
+	char* registroActual = list_get(registros, j);
 
 	while (archivo->BLOQUES[i] != NULL) {
 		int tamanioArchBloque = 0;
@@ -602,7 +552,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 		}
 
 		//int cantBytes = strlen(registros[j]) + 1;
-		while (tamanioArchBloque + (strlen(registroActual) + 1) < metadata.BLOCK_SIZE && j<list_size(registros)) {
+		while (tamanioArchBloque + (strlen(registroActual) + 1) < metadata.BLOCK_SIZE && j < list_size(registros)) {
 			char registro[strlen(registroActual) + 1];
 			strcpy(registro, registroActual);
 			//registro = string_duplicate(registros[j]);
@@ -625,7 +575,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 				return 1;
 			}
 
-			registroActual= list_get(registros,j++);
+			registroActual = list_get(registros, j++);
 		}
 		fclose(archivoBloque);
 		archivo->TAMANIO += tamanioArchBloque;
@@ -652,180 +602,3 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 	fprintf(arch, "]");
 	fclose(arch);
 }
-
-/*
- int guardarDatosEnArchivo(char *path, int offset, int size, void* buffer)
- {
- char** directorios = string_split("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt", "\n");
- t_archivo *archivo = newArchivo();
- int res = leerArchivo(path, archivo);
- if(res<0){
- return -1;
- }
- //Calculo bloques necesarios y los reservo
- int tamanio = tamanioArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/archivoRegistros.txt");
- int bloquesNecesarios = (tamanio + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
- int bloquesReservados = archivo->cantBloques;
- if(bloquesNecesarios>bloquesReservados){
- int cantBloques = bloquesNecesarios-bloquesReservados;
- int *bloques = buscarBloquesLibres(cantBloques);
- if(bloques==NULL){
- puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
- return -1;
- }
- int i;
- char **arrBloques = (char**) malloc(sizeof(char*)*bloquesNecesarios);
- for (i = 0; i < archivo->cantBloques ; ++i) {
- arrBloques[i] = archivo->BLOQUES[i];
- }
- int j;
- for (j = 0; j < cantBloques; ++j) {
- reservarBloque(bloques[j]);
- arrBloques[i] = string_itoa(bloques[j]);
- i++;
- }
- free(archivo->BLOQUES);
- free(bloques);
- archivo->BLOQUES=arrBloques;
- archivo->cantBloques = bloquesNecesarios;
- }
- //Escribir datos en bloques
- int bloqueActual = archivo->BLOQUES[0]; //Bloque inicial
- int offsetBloque;
- int bytesAEscribir = tamanio;
- while(bytesAEscribir){
- offsetBloque = offset - bloqueActual * metadata.BLOCK_SIZE;
- char *pat = string_new();
- string_append(&pat,rutas.Bloques);
- string_append(&pat,archivo->BLOQUES[bloqueActual]);
- string_append(&pat,".bin");
- FILE* archBloque = fopen(pat,"rb+");
- if(archBloque == NULL){
- puts("Error al guardar datos en bloques");
- return -1;
- }
- fseek(archBloque,offsetBloque,SEEK_SET);
- int bytesLibres = metadata.BLOCK_SIZE - offsetBloque;
- int cant = (bytesAEscribir<=bytesLibres)? bytesAEscribir : bytesLibres;
- fwrite(buffer+size-bytesAEscribir,1,cant,archBloque);
- fclose(archBloque);
- free(pat);
- bytesAEscribir-=cant;
- offset+=cant;
- bloqueActual++;
- }
- //Escribo nuevo tamaño
- archivo->TAMANIO = (tamanio>archivo->TAMANIO)? tamanio : archivo->TAMANIO;
- //Escribo archivos de metadata
- escribirArchivo(path, archivo);
- escribirBitmap();
- free(archivo->BLOQUES);
- free(archivo);
- return 1;
- }
- */
-
-/*int escribirEnTmp(char* rutaTmp, char* rutaTxt, int tamanioTxt){
- FILE*arch = fopen(rutaTmp,"w+" );
- int i,j,k=0;
- char** directorios = string_split(rutaTxt, "\n");
- //int cantReg = contarPunteroDePunteros(directorios);
- int bytesAEscribir = tamanioTxt;
- int tamanioMaxBloque = metadata.BLOCK_SIZE;
- t_archivo *archivo = malloc(sizeof(t_archivo));
- int res = leerArchivoDeTabla(rutaTmp, archivo);
- if(res<0){ return -1;}
- int bloquesNecesarios = (tamanioTxt + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
- int bloquesReservados = archivo->cantBloques;
- if(bloquesNecesarios>bloquesReservados){
- int cantBloques = bloquesNecesarios-bloquesReservados;
- int *bloques = buscarBloquesLibres(cantBloques);
- if(bloques==NULL){
- puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
- return -1;
- }
-
- char **arrBloques = (char**) malloc(sizeof(char*)*bloquesNecesarios);
- for (i = 0; i < archivo->cantBloques ; ++i) {
- arrBloques[i] = archivo->BLOQUES[i];
- }
-
- for (j = 0; j < cantBloques; ++j) {
- reservarBloque(bloques[j]);
- arrBloques[i] = string_itoa(bloques[j]);
- i++;
- }
- free(archivo->BLOQUES);
- free(bloques);
- archivo->BLOQUES=arrBloques;
- archivo->cantBloques = bloquesNecesarios;
- }
- i=0;
-
- while(archivo->BLOQUES[i] != NULL){
- int tamanioArchBloque =0;
- char *rutaBloque = string_new();
- string_append(&rutaBloque,rutas.Bloques);
- string_append(&rutaBloque,archivo->BLOQUES[i]);
- string_append(&rutaBloque,".bin");
- FILE* archBloque = fopen(rutaBloque,"w+");
- if(archBloque == NULL){
- puts("Error al guardar datos en bloques");
- return -1;
- }
- while(bytesAEscribir){
- if(tamanioArchBloque < tamanioMaxBloque){
- t_registro * reg = malloc(sizeof(t_registro));
- char ** directorio = string_split(directorios[k],";");
- reg->timestamp = atof(directorio[0]);
- reg->key = directorio[1];
- strcpy(reg->value, directorio[2]);
- fprintf(archBloque, "%f;%d;%s\n", reg->timestamp, reg->key, reg->value);
- tamanioArchBloque += tamanioArchivo(archBloque);
- bytesAEscribir-= tamanioArchivo(archBloque);
-
- free(reg);
- liberarPunteroDePunterosAChar(directorio);
- free(directorio);
- k++;
- } else{
- archivo->TAMANIO += tamanioArchivo(archBloque);
- fclose(archBloque);
- break;
- }
- }
-
- i++;
- }
- escribirArchivo(arch, archivo);
- liberarPunteroDePunterosAChar(directorios);
- free(directorios);
- free(archivo);
-
-
- for(k=0; k < cantReg; k++){
- t_registro * reg = malloc(sizeof(t_registro));
- char ** directorio = string_split(directorios[k],";");
- reg->timestamp = directorio[0];
- strcpy(reg->value, directorio[2]);
- list_add(listaReg, reg);
- }
- return 1;
- }
-
- void escribirArchivo(FILE* arch, t_archivo *archivo){
-
-
- fprintf(arch, "TAMANIO=%i\n", archivo->TAMANIO);
- fprintf(arch, "BLOQUES=[");
- int i;
- for (i = 0; i < archivo->cantBloques ; ++i) {
- if(i!=0){
- fprintf(arch, ",");
- }
- fprintf(arch, "%s", archivo->BLOQUES[i]);
- }
- fprintf(arch, "]");
- fclose(arch);
- }*/
-

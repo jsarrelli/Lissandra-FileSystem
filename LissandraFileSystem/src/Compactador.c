@@ -7,52 +7,57 @@
 
 #include "Compactador.h"
 
-void compactarTabla(char*nombreTabla){
+void compactarTabla(char*nombreTabla) {
 	t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
-	t_list* archivosBin =list_create();
-	char* nombLista = string_new();
 	char* registro = string_new();
-	int i,j, resto;
+	int  resto;
 
-	t_list* listaTmpc = list_create();
-	t_list* listaRegistros = list_create();
+	t_list* registrosNuevos = list_create();
+
 	t_list* listaRegistrosViejos = list_create();
-	t_list* listaListasParticiones=list_create();
-	char*rutaTabla = malloc(100);
-	armarRutaTabla(rutaTabla, nombreTabla);
-	char** archivos = buscarArchivos(rutaTabla);
-	buscarBinarios(archivos, archivosBin);
-	int tamanioListaBinarios = list_size(archivosBin);
+	t_list* particionesDeRegistrosNuevos = list_create();
 
-	for(i=0; i<tamanioListaBinarios; i++){
-		sprintf(nombLista, "lista%d", i);
-		t_list* nombLista = list_create();
-		list_add(listaListasParticiones, nombLista);
+	log_info(logger, "Obteniendo archivos binarios..");
+	t_list* archivosBinarios = buscarBinariosByTabla(nombreTabla);
+	int tamanioListaBinarios = list_size(archivosBinarios);
+
+	log_info(logger, "Modificando tmp a tmpc..");
+	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
+	cambiarExtensionTemporales(archivosTemporales);
+	log_info(logger, "Se cambio la extension de los temporales");
+
+	list_iterate2(archivosTemporales, (void*) agregarRegistrosDeTmpc, registrosNuevos);
+	log_info(logger, "Lectura de registros de los tmpc finalizada");
+	//aca filtramos los registros nuevos
+
+	/*aca vamos a crear una lista de particiones
+	 * y a su vez en cada particion vamos a guardar una lista de los registros nuevos que corresponden a cada una*/
+	for (int i = 0; i < tamanioListaBinarios; i++) {
+		t_list* particionRegistrosNuevos = list_create();
+		list_add(particionesDeRegistrosNuevos, particionRegistrosNuevos);
 	}
+	/////////////////////////
 	puts("Archivos de particiones abiertos");
-	cambiarExtensionTemporales(archivos, listaTmpc);
-	puts("Se cambio la extension de los temporales");
-	log_info(logger,"Se cambio la extension de los temporales");
-	list_iterate2(listaTmpc, (void*) agregarRegistrosDeTmpc, listaRegistros);
+
 	list_iterate2(archivosBin, (void*) agregarRegistrosDeBin, listaRegistrosViejos);
-	list_add_all(listaRegistros, listaRegistrosViejos);
-	int tamanioListaRegistros = list_size(listaRegistros);
+	list_add_all(registrosNuevos, listaRegistrosViejos);
+	int tamanioListaRegistros = list_size(registrosNuevos);
 
-	for(j=0;j<tamanioListaRegistros; j++){
-		registro = list_get(listaRegistros,j);
+	for (int j = 0; j < tamanioListaRegistros; j++) {
+		registro = list_get(registrosNuevos, j);
 		char** reg = string_split(registro, ";");
-		resto = (atoi(reg[1]))%metadata.CANT_PARTICIONES;
-		list_add(list_get(listaListasParticiones, resto), registro);
+		resto = (atoi(reg[1])) % metadata.CANT_PARTICIONES;
+		list_add(list_get(particionesDeRegistrosNuevos, resto), registro);
 	}
-	list_destroy(listaRegistros);
+	list_destroy(registrosNuevos);
 
-	persistirParticionesDeTabla(listaListasParticiones, archivosBin);
+	persistirParticionesDeTabla(particionesDeRegistrosNuevos, archivosBin);
 }
-void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin){
-	char*rutaBinario=string_new();
+void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin) {
+	char*rutaBinario = string_new();
 	int i;
 	t_list*lista;
-	for(i=0; i<list_size(archivosBin);i++){
+	for (i = 0; i < list_size(archivosBin); i++) {
 		rutaBinario = list_get(archivosBin, i);
 		lista = list_get(listaListas, i);
 
@@ -60,13 +65,13 @@ void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin){
 	}
 }
 
-int escribirEnBin(t_list* lista, char*rutaBinario){
+int escribirEnBin(t_list* lista, char*rutaBinario) {
 	int*bloques;
-	t_archivo*archivo= malloc(sizeof(t_archivo));
+	t_archivo*archivo = malloc(sizeof(t_archivo));
 	leerArchivoDeTabla(rutaBinario, archivo);
 	char *rutaBloque = malloc(150);
 	char **arrBloques = malloc(40);
-	char*reg= string_new();
+	char*reg = string_new();
 	int bytesAEscribir = obtenerTamanioListaRegistros(lista);
 
 	int bloquesNecesarios = (bytesAEscribir + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
@@ -115,7 +120,7 @@ int escribirEnBin(t_list* lista, char*rutaBinario){
 		}
 
 		//int cantBytes = strlen(registros[j]) + 1;
-		while (tamanioArchBloque + (strlen(reg) + 1) < metadata.BLOCK_SIZE && j<list_size(lista)) {
+		while (tamanioArchBloque + (strlen(reg) + 1) < metadata.BLOCK_SIZE && j < list_size(lista)) {
 			char registro[strlen(reg) + 1];
 			strcpy(registro, registro);
 			//registro = string_duplicate(registros[j]);
@@ -138,7 +143,7 @@ int escribirEnBin(t_list* lista, char*rutaBinario){
 				return 1;
 			}
 
-			reg= list_get(lista,j++);
+			reg = list_get(lista, j++);
 		}
 		fclose(archivoBloque);
 		archivo->TAMANIO += tamanioArchBloque;
@@ -149,10 +154,10 @@ int escribirEnBin(t_list* lista, char*rutaBinario){
 
 	return 1;
 }
-void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos){
+void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	leerArchivoDeTabla(rutaBinario, archivo);
-	int i=0, j;
+	int i = 0, j;
 	char* rutaArchBloque = malloc(100);
 	strcpy(rutaArchBloque, rutas.Bloques);
 	int tamanioArchBloque, fd;
@@ -161,30 +166,28 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos){
 	char * archivoMapeado;
 	char ** registros;
 
-	while(archivo->BLOQUES[i] !=NULL){
+	while (archivo->BLOQUES[i] != NULL) {
 		string_append_with_format(&rutaArchBloque, "%s.bin", archivo->BLOQUES[i]);
 		archivoBloque = fopen(rutaArchBloque, "rb");
 		tamanioArchBloque = tamanioArchivo(archivoBloque);
 		fd = fileno(archivoBloque);
 
-		if ((archivoMapeado = mmap(NULL,tamanioArchBloque, PROT_READ, MAP_SHARED,fd, 0)) == MAP_FAILED) {
-				logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
-			}
-			fclose(archivoBloque);
-			close(fd);
+		if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED) {
+			logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
+		}
+		fclose(archivoBloque);
+		close(fd);
 
-			registros = string_split(archivoMapeado,"\n");
-			int cant= contarPunteroDePunteros(registros);
-			for(j=0;j<cant; j++){
-				list_add(listaRegistrosViejos, registros[j]);
-			}
+		registros = string_split(archivoMapeado, "\n");
+		int cant = contarPunteroDePunteros(registros);
+		for (j = 0; j < cant; j++) {
+			list_add(listaRegistrosViejos, registros[j]);
+		}
 
+		munmap(archivoMapeado, tamanioArchBloque);
 
-			munmap(archivoMapeado,tamanioArchBloque);
-
-
-			rutaArchBloque = obtenerRutaTablaSinArchivo(rutaArchBloque);
-			i++;
+		rutaArchBloque = obtenerRutaTablaSinArchivo(rutaArchBloque);
+		i++;
 	}
 
 	liberarPunteroDePunterosAChar(registros);
@@ -193,89 +196,78 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos){
 	free(archivo);
 }
 
-void buscarBinarios(char** archivos, t_list* archivosBin){
-	int i =0;
-	char*extension = string_new();
-
-		while(archivos[i]!=NULL){
-			extension = obtenerExtensionDeArchivoDeUnaRuta(archivos[i]);
-			if(strcmp(extension, "bin") ==0){
-				list_add(archivosBin, archivos[i]);
-
-			}
-		}
+t_list* buscarBinariosByTabla(char* nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
+	bool isBin(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		return strcmp(extension, "bin") == 0;
+	}
+	list_destroy(archivos);
+	return list_filter(archivos, (void*)isBin);
 }
 
-void agregarRegistrosDeTmpc(char* rutaTmpc, t_list* listaRegistros){
+void agregarRegistrosDeTmpc(char* rutaTmpc, t_list* listaRegistros) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	leerArchivoDeTabla(rutaTmpc, archivo);
-	int i=0, j;
-	char* rutaArchBloque = malloc(100);
-	strcpy(rutaArchBloque, rutas.Bloques);
-	int tamanioArchBloque, fd;
-	FILE* archivoBloque;
+	int i = 0;
+	log_info(logger, "Leyendo registros de %s... ",rutaTmpc);
+	while (archivo->BLOQUES[i] != NULL) {
+		char * archivoMapeado;
+		char* rutaArchivoBloque = string_new();
+		strcpy(rutaArchivoBloque, rutas.Bloques);
+		string_append_with_format(&rutaArchivoBloque, "%s.bin", archivo->BLOQUES[i]);
 
-	char * archivoMapeado;
-	char ** registros;
+		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
 
-	while(archivo->BLOQUES[i] !=NULL){
-		string_append_with_format(&rutaArchBloque, "%s.bin", archivo->BLOQUES[i]);
-		archivoBloque = fopen(rutaArchBloque, "rb");
-		tamanioArchBloque = tamanioArchivo(archivoBloque);
-		fd = fileno(archivoBloque);
+		FILE* archivoBloque = fopen(rutaArchivoBloque, "rb");
+		int tamanioArchBloque = tamanioArchivo(archivoBloque);
+		int fileDescriptor = fileno(archivoBloque);
 
-		if ((archivoMapeado = mmap(NULL,tamanioArchBloque, PROT_READ, MAP_SHARED,fd, 0)) == MAP_FAILED) {
-				logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
-			}
-			fclose(archivoBloque);
-			close(fd);
+		//mapeamos el archivo a memoria
+		if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
+			logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
+		}
 
-			registros = string_split(archivoMapeado,"\n");
-			int cant= contarPunteroDePunteros(registros);
-			for(j=0;j<cant; j++){
-				list_add(listaRegistros, registros[j]);
-			}
+		//cargo la lista con los registros obtenidos
+		char ** registros = string_split(archivoMapeado, "\n");
+		int j = 0;
+		while (registros[j] != NULL) {
+			list_add(listaRegistros, registros[j]);
+			j++;
+		}
 
-
-			munmap(archivoMapeado,tamanioArchBloque);
-
-
-			rutaArchBloque = obtenerRutaTablaSinArchivo(rutaArchBloque);
-			i++;
+		munmap(archivoMapeado, tamanioArchBloque);
+		fclose(archivoBloque);
+		free(rutaArchivoBloque);
+		freePunteroAPunteros(registros);
+		close(fileDescriptor);
+		i++;
 	}
 
-	liberarPunteroDePunterosAChar(registros);
-	free(registros);
-	free(rutaArchBloque);
 	free(archivo);
 }
 
-void cambiarExtensionTemporales(char** archivos, t_list* listaTmpc){
-	int i =0;
-	char*extension = string_new();
+void cambiarExtensionTemporales(t_list* listaTemporalesTmp) {
 
-	while(archivos[i]!=NULL){
-		extension = obtenerExtensionDeArchivoDeUnaRuta(archivos[i]);
-		if(strcmp(extension, "tmp") ==0){
-			cambiarExtension(archivos[i], "tmpc", listaTmpc);
-
-		}
+	void cambiarExtensionATmpc(char* rutaTmpActual) {
+		char* rutaTmpAux = string_duplicate(rutaTmpActual);
+		string_append(&rutaTmpActual, "c");
+		rename(rutaTmpAux, rutaTmpActual);
+		free(rutaTmpAux);
 	}
+
+	list_iterate(listaTemporalesTmp, (void*) cambiarExtensionATmpc);
+
 }
 
-int cambiarExtension(char* rutaVieja, char* extensionNueva, t_list* listaTmpc){
-	char* rutaNueva = malloc(100);
-	strcpy(rutaNueva, obtenerRutaTablaSinArchivo(rutaVieja));
-	string_append_with_format(&rutaNueva, "%s.%s", obtenerNombreDeArchivoDeUnaRuta(rutaVieja), extensionNueva);
+t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
 
-	if (rename(rutaVieja, rutaNueva) == 0) {
-		list_add(listaTmpc, rutaNueva);
-		return 1;
-	} else {
-		puts("No se pudo renombrar el archivo temporal");
-		log_error(loggerError, "No se pudo renombrar el archivo temporal");
-		return 0;
+	bool isTemporal(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		return strcmp(extension, "tmp") == 0;
 	}
-
+	list_destroy(archivos);
+	return list_filter(archivos, (void*)isTemporal);
 
 }
