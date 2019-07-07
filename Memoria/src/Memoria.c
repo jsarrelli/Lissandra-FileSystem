@@ -68,7 +68,7 @@ void* leerConsola()
 }
 
 void cargarConfiguracion() {
-	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
+	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
 	configuracion = (MEMORIA_configuracion*) malloc(sizeof(MEMORIA_configuracion));
 	if (configuracion == NULL) {
@@ -89,7 +89,7 @@ void cargarConfiguracion() {
 	configuracion->IP_ESCUCHA = get_campo_config_string(archivo_configuracion, "IP_ESCUCHA");
 	log_info(logger, "Archivo de configuracion levantado");
 
-	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria", cargarConfiguracion);
+	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config", cargarConfiguracion);
 
 }
 
