@@ -18,6 +18,7 @@
 #include "SocketServidorMemoria.h"
 #include <Sockets/Conexiones.h>
 #include "FuncionesGossiping.h"
+#include <Inotify.h>
 
 typedef struct MEMORIA_configuracion{
 	char* PUERTO_ESCUCHA;

@@ -4,12 +4,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Inotify.c \
 ../Libraries.c 
 
 OBJS += \
+./Inotify.o \
 ./Libraries.o 
 
 C_DEPS += \
+./Inotify.d \
 ./Libraries.d 
 
 

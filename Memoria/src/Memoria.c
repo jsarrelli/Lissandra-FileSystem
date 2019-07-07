@@ -9,40 +9,38 @@
  */
 #include "Memoria.h"
 
-
 int main() {
 	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
 	log_info(logger, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
 	cargarEstructurasGossiping();
 
-	//HANDSHAKE INICIAL CON FILESYSTEM
+//	//HANDSHAKE INICIAL CON FILESYSTEM
 	int socketFileSystem = HandshakeInicial();
 	if(socketFileSystem == -1){
 		log_info(logger, "--Memoria finalizada--");
 		liberarVariables();
 		return EXIT_SUCCESS;
 	}
-
-	//INICIALIZACION DE MEMORIA PRINCIPAL
+//
+//	//INICIALIZACION DE MEMORIA PRINCIPAL
 	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
-	//INICIAR SERVIDOR
-	pthread_create(&serverThread, NULL, (void*)iniciarSocketServidor, NULL);
+//INICIAR SERVIDOR
+	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, NULL);
 	pthread_detach(serverThread);
 
 	//HILO DE JOURNAL
 //	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
 //	pthread_detach(intTemporalJournal);
 
-	//HILO DE GOSSIPING
-//	pthread_create(&intTemporalGossiping, NULL, procesoTemporalGossiping, NULL);
-//	pthread_detach(intTemporalGossiping);
+//HILO DE GOSSIPING
+	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
+	pthread_detach(intTemporalGossiping);
 
 	//CONSOLA
 	leerConsola();
-
 
 	close(listenningSocket);
 	liberarVariables();
@@ -69,7 +67,6 @@ void* leerConsola()
 	return NULL;
 }
 
-
 void cargarConfiguracion() {
 	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/configMEM.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
@@ -92,6 +89,8 @@ void cargarConfiguracion() {
 	configuracion->IP_ESCUCHA = get_campo_config_string(archivo_configuracion, "IP_ESCUCHA");
 	log_info(logger, "Archivo de configuracion levantado");
 
+	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria", cargarConfiguracion);
+
 }
 
 void iniciarSocketServidor()
@@ -104,21 +103,20 @@ void iniciarSocketServidor()
 
 }
 
-void procesoTemporalJournal(){
-	while(1){
-		usleep(configuracion->TIEMPO_JOURNAL*1000);
+void procesoTemporalJournal() {
+	while (1) {
+		usleep(configuracion->TIEMPO_JOURNAL * 1000);
 		journalMemoria();
 	}
 }
 
-void procesoTemporalGossiping(){
-	while(1){
-		usleep(configuracion->TIEMPO_GOSSIPING*1000);
+void procesoTemporalGossiping() {
+	while (1) {
+		usleep(configuracion->TIEMPO_GOSSIPING * 1000);
 		gossiping();
 	}
 
 }
-
 
 void liberarVariables()
 {
