@@ -20,7 +20,7 @@ int existeTabla(char* nombreTabla);
 char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
 void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
-char* armarRutaTabla(char* rutaTabla, char* nombreTabla);
+char* armarRutaTabla(char* nombreTabla);
 void mostrarMetadataTabla(t_metadata_tabla metadataTabla,char* nombreTabla);
 void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
@@ -49,7 +49,7 @@ void crearYEscribirArchivosTemporales(char*ruta);
 void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
-int contarArchivosTemporales(char ** puntero);
+int contarArchivosTemporales(t_list* archivos) ;
 int escribirEnTmp (char*nombreTabla,char*rutaTmp);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);

@@ -103,7 +103,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 }
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla) {
-	char* rutaTabla = armarRutaTabla(rutaTabla, nombreTabla);
+	char* rutaTabla = armarRutaTabla(nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	t_config* configMetadata = config_create(rutaTabla);
 	t_metadata_tabla metadataTabla;
@@ -134,21 +134,18 @@ int contarArchivosTemporales(t_list* archivos) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
 		return strcmp(extension, "tmp") == 0;
 	}
-	return list_count_satisfying(archivos, isTmp);
+	return list_count_satisfying(archivos, (void*)isTmp);
 
 }
 
 int existeArchivo(char*nombreTabla, char * rutaArchivoBuscado) {
-	int i = 0;
-
-	char *archivo;
 	t_list* archivos = buscarArchivos(nombreTabla);
 
 	bool isArchivoBuscado(char* rutaArchivoActual) {
 		return strcmp(rutaArchivoActual, rutaArchivoBuscado) == 0;
 	}
 
-	bool respuesta = list_any_satisfy(archivos, isArchivoBuscado);
+	bool respuesta = list_any_satisfy(archivos, (void*)isArchivoBuscado);
 	list_destroy(archivos);
 	return respuesta;
 
@@ -504,7 +501,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 	if (res < 0) {
 		return -1;
 	}
-	int bytesAEscribir = obtenerTamanioArrayRegistros(registros);
+	int bytesAEscribir = obtenerTamanioListaRegistros(registros);
 	int bloquesNecesarios = (bytesAEscribir + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
 	int bloquesReservados = archivo->cantBloques;
 	int i, j;

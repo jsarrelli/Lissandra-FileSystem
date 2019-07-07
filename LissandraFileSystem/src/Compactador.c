@@ -8,16 +8,10 @@
 #include "Compactador.h"
 
 void compactarTabla(char*nombreTabla) {
-	t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
-	char* registro = string_new();
-	int resto;
 
-	t_list* listaRegistrosViejos = list_create();
-	t_list* particionesDeRegistrosNuevos = list_create();
-
-	log_info(logger, "Obteniendo archivos binarios..");
+	log_info(logger, "Obteniendo directorios de archivos binarios..");
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
-	int tamanioListaBinarios = list_size(archivosBinarios);
+	int cantParticiones = list_size(archivosBinarios);
 
 	log_info(logger, "Modificando tmp a tmpc..");
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
@@ -29,32 +23,74 @@ void compactarTabla(char*nombreTabla) {
 	log_info(logger, "Lectura de registros de los tmpc finalizada");
 	filtrarRegistros(registrosNuevos);
 
+	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
+
+	//mergeamos los registros viejos con los nuevos
+	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
+
+	/////////////////////////
+//	puts("Archivos de particiones abiertos");
+//
+//	list_iterate2(archivosBin, (void*) agregarRegistrosDeBin, listaRegistrosViejos);
+//	list_add_all(registrosNuevos, listaRegistrosViejos);
+//	int tamanioListaRegistros = list_size(registrosNuevos);
+//
+//	for (int j = 0; j < tamanioListaRegistros; j++) {
+//		registro = list_get(registrosNuevos, j);
+//		char** reg = string_split(registro, ";");
+//		resto = (atoi(reg[1])) % metadata.CANT_PARTICIONES;
+//		list_add(list_get(particionesDeRegistrosNuevos, resto), registro);
+//	}
+//	list_destroy(registrosNuevos);
+//
+//	persistirParticionesDeTabla(particionesDeRegistrosNuevos, archivosBin);
+}
+
+void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
+	int numeroParticionActual = 0;
+
+	void mergearParticion(t_list* registrosNuevos) {
+
+		//obtengo los registros del bin correspondiente
+		t_list* listaRegistrosViejos = list_create();
+		agregarRegistrosFromBloqueByPath(list_get(archivosBinarios, numeroParticionActual), listaRegistrosViejos);
+
+		//agarro los registros nuevos de la particion actual
+		t_list* registrosParticionActual = list_get(particionesRegistrosNuevos, numeroParticionActual);
+
+		//armo una lista con los registros nuevos y viejos
+		list_add_all(registrosParticionActual, registrosNuevos);
+		list_destroy(listaRegistrosViejos);
+
+		//los filtro para que de los que tengan la misma key se quede con el de mayor timeStamp
+		filtrarRegistros(registrosParticionActual);
+
+		numeroParticionActual++;
+	}
+
+	list_iterate(particionesRegistrosNuevos, (void*) mergearParticion);
+}
+
+t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list* registrosNuevos) {
+	t_list* particionesDeRegistrosNuevos = list_create();
 	/*aca vamos a crear una lista de particiones
 	 * y a su vez en cada particion vamos a guardar una lista de los registros nuevos que corresponden a cada una*/
-	for (int i = 0; i < tamanioListaBinarios; i++) {
+	for (int i = 0; i < cantParticiones; i++) {
 		t_list* particionRegistrosNuevos = list_create();
 		list_add(particionesDeRegistrosNuevos, particionRegistrosNuevos);
 	}
-	/////////////////////////
-	puts("Archivos de particiones abiertos");
 
-	list_iterate2(archivosBin, (void*) agregarRegistrosDeBin, listaRegistrosViejos);
-	list_add_all(registrosNuevos, listaRegistrosViejos);
-	int tamanioListaRegistros = list_size(registrosNuevos);
-
-	for (int j = 0; j < tamanioListaRegistros; j++) {
-		registro = list_get(registrosNuevos, j);
-		char** reg = string_split(registro, ";");
-		resto = (atoi(reg[1])) % metadata.CANT_PARTICIONES;
-		list_add(list_get(particionesDeRegistrosNuevos, resto), registro);
+	void cargarEnParticionCorrespondiente(t_registro* registroNuevo) {
+		int numeroParticionCorrespondiente = registroNuevo->key % cantParticiones;
+		t_list* particionCorrespondiente = list_get(particionesDeRegistrosNuevos, numeroParticionCorrespondiente);
+		list_add(particionCorrespondiente, registroNuevo);
 	}
+	list_iterate(registrosNuevos, (void*) cargarEnParticionCorrespondiente);
 	list_destroy(registrosNuevos);
-
-	persistirParticionesDeTabla(particionesDeRegistrosNuevos, archivosBin);
+	return particionesDeRegistrosNuevos;
 }
 
-void filtrarPorTimeStamp(t_list* registros)
-{
+void filtrarPorTimeStamp(t_list* registros) {
 	t_link_element* ptr = registros->head;
 	while (ptr != NULL) {
 		t_registro* registroActual = ptr->data;
@@ -243,11 +279,11 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
-void agregarRegistrosFromBloqueByPath(char* rutaTmpc, t_list* listaRegistros) {
+void agregarRegistrosFromBloqueByPath(char* path, t_list* listaRegistros) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
-	leerArchivoDeTabla(rutaTmpc, archivo);
+	leerArchivoDeTabla(path, archivo);
 	int i = 0;
-	log_info(logger, "Leyendo registros de %s... ", rutaTmpc);
+	log_info(logger, "Leyendo registros de %s... ", path);
 	while (archivo->BLOQUES[i] != NULL) {
 
 		char* rutaArchivoBloque = string_new();
@@ -257,7 +293,7 @@ void agregarRegistrosFromBloqueByPath(char* rutaTmpc, t_list* listaRegistros) {
 		t_list* registrosObtenidos = obtenerRegistrosFromBloque(rutaArchivoBloque);
 		list_add_all(listaRegistros, registrosObtenidos);
 		//borro la referecia a registros obtenidos ya que ya estan cargados en listaRegistros
-		free(registrosObtenidos);
+		list_destroy(registrosObtenidos);
 		free(rutaArchivoBloque);
 		i++;
 	}
