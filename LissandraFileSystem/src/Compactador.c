@@ -25,7 +25,7 @@ void compactarTabla(char*nombreTabla) {
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
 
-	//mergeamos los registros viejos con los nuevos
+	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
 }
 
