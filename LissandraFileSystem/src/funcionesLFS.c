@@ -146,7 +146,7 @@ int existeArchivo(char*nombreTabla, char * rutaArchivoBuscado) {
 	}
 
 	bool respuesta = list_any_satisfy(archivos, (void*)isArchivoBuscado);
-	list_destroy(archivos);
+	list_destroy_and_destroy_elements(archivos,free);
 	return respuesta;
 
 }
@@ -204,14 +204,15 @@ int esDirectorio(char * ruta) {
 	return i;
 }
 
+void eliminarArchivo(char* rutaArchivo) {
+	liberarBloquesDeArchivo(rutaArchivo);
+	remove(rutaArchivo);
+}
+
 void removerArchivosDeTabla(char * rutaTabla) {
 	t_list* archivos = buscarArchivos(rutaTabla);
 
-	void eliminarArchivo(char* rutaArchivo) {
-		liberarBloquesDeArchivo(rutaArchivo);
-		remove(rutaArchivo);
 
-	}
 	list_destroy_and_destroy_elements(archivos, (void*) eliminarArchivo);
 
 }
@@ -341,7 +342,7 @@ void mostrarMetadataTodasTablas(char *ruta) {
 	}
 
 	list_iterate(listaDirectorios, (void*) describeDirectorio);
-	list_destroy(listaDirectorios);
+	list_destroy_and_destroy_elements(listaDirectorios,free);
 
 }
 
@@ -374,7 +375,7 @@ void crearYEscribirArchivosTemporales(char*ruta) {
 	buscarDirectorios(ruta, listaDirectorios);
 
 	list_iterate(listaDirectorios, (void*) crearYEscribirTemporal);
-	list_destroy(listaDirectorios);
+	list_destroy_and_destroy_elements(listaDirectorios,free);
 }
 
 void crearYEscribirTemporal(char*rutaTabla) {
@@ -398,7 +399,7 @@ void crearYEscribirTemporal(char*rutaTabla) {
 
 	liberarPunteroDePunterosAChar(palabras);
 	free(palabras);
-	list_destroy(archivos);
+	list_clean_and_destroy_elements(archivos,free);
 	free(nombTabla);
 
 }
@@ -566,7 +567,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 				free(arrBloques);
 				free(archivo);
 				free(rutaBloque);
-				list_destroy(registros);
+				list_destroy_and_destroy_elements(registros,free);
 				puts("Se termino de escribir en el temporal\n");
 				//free(registro);
 				return 1;

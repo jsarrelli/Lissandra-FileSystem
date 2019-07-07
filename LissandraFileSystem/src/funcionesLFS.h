@@ -54,5 +54,6 @@ int escribirEnTmp (char*nombreTabla,char*rutaTmp);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);
 t_tabla_memtable* getTablaFromMemtable(char* nombreTabla);
+void eliminarArchivo(char* rutaArchivo);
 
 #endif /* FUNCIONESLFS_H_ */
