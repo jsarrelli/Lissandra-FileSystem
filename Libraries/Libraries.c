@@ -60,7 +60,7 @@ void liberarPunteroDePunterosAChar(char** palabras) {
 
 }
 
-void freePunteroAPunteros(char** palabras){
+void freePunteroAPunteros(char** palabras) {
 	liberarPunteroDePunterosAChar(palabras);
 	free(palabras);
 }
@@ -292,9 +292,9 @@ double getCurrentTime() {
 
 t_consistencia getConsistenciaByChar(char* consistenciaChar) {
 	t_consistencia consistencia;
-	if (strcmp(consistenciaChar, "SC")==0) {
+	if (strcmp(consistenciaChar, "SC") == 0) {
 		consistencia = STRONG;
-	} else if (strcmp(consistenciaChar, "SHC")==0) {
+	} else if (strcmp(consistenciaChar, "SHC") == 0) {
 		consistencia = STRONG_HASH;
 	} else {
 		consistencia = EVENTUAL;
@@ -316,12 +316,31 @@ char* getConsistenciaCharByEnum(t_consistencia consistencia) {
 
 }
 
-void list_iterate2(t_list* self, void (*closure)(void*,void*), void* segundoParametro) {
+void list_iterate2(t_list* self, void (*closure)(void*, void*), void* segundoParametro) {
 	t_link_element *element = self->head;
 	t_link_element *aux = NULL;
 	while (element != NULL) {
 		aux = element->next;
 		closure(element->data, segundoParametro);
 		element = aux;
+	}
+}
+
+t_registro* registro_new(char** valores) {
+	t_registro* registro = malloc(sizeof(t_registro));
+	registro->key = atoi(valores[0]);
+	registro->value = string_new();
+	strcpy(registro->value, valores[1]);
+	registro->timestamp = atof(valores[2]);
+	freePunteroAPunteros(valores);
+	return registro;
+}
+
+void freeRegistro(t_registro* registro) {
+	if (registro != NULL) {
+		if (registro->value != NULL) {
+			free(registro->value);
+		}
+		free(registro);
 	}
 }

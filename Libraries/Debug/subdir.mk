@@ -4,14 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../BubbleSort.c \
 ../Inotify.c \
 ../Libraries.c 
 
 OBJS += \
+./BubbleSort.o \
 ./Inotify.o \
 ./Libraries.o 
 
 C_DEPS += \
+./BubbleSort.d \
 ./Inotify.d \
 ./Libraries.d 
 
