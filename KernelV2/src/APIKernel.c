@@ -214,6 +214,11 @@ int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 	return TODO_OK;
 }
 
+void enviarJournalMemoria(int socketMemoria){
+	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
+	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+}
+
 int consolaCreate(char*argumentos) {
 	char** valores = string_split(argumentos, " ");
 	char* nombreTabla = valores[0];

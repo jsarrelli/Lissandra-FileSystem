@@ -16,6 +16,6 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consitencia, int cantPartic
 t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla);
 t_list* DESCRIBE_ALL_MEMORIA();
 int DROP_MEMORIA(char* nombreTabla);
-void* JORUNAL();
+void* JOURNAL_MEMORIA();
 
 #endif /*ADMINISTRADORCONSULTAS_H_*/
