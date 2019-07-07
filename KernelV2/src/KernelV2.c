@@ -16,6 +16,8 @@ void iniciarVariablesKernel() {
 
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReady, 0, 1);
+	sem_init(&mutex_id_proceso, 0, 1);
+	sem_init(&bin_main, 0, 0);
 
 	cantRequestsEjecutadas = 0;
 	haySC = false;
@@ -40,6 +42,7 @@ void iniciarVariablesKernel() {
 	retardoEjecucion = config->SLEEP_EJECUCION;
 
 	hilosActivos = 0;
+	idHilo=0;
 
 	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
 	// 		de requests que haya en la cola de ready

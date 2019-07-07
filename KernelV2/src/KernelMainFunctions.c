@@ -121,9 +121,9 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 		imprimirCriterio(memoriaAEnviar->criterios);
 		log_trace(log_master->logTrace, "Id de la memoria: %d",
 				memoriaAEnviar->id);
-	} else{
+	} else {
 		log_error(log_master->logError,
-						"Error: no existe memoria con ese criterio");
+				"Error: no existe memoria con ese criterio");
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
@@ -163,12 +163,24 @@ void* funcionThread(void* args) {
 	return NULL;
 }
 
+void otorgarId(bool* tieneID) {
+	if (!(*tieneID)) {
+		sem_wait(&mutex_id_proceso);
+		idHilo++;
+		sem_post(&mutex_id_proceso);
 
+		*tieneID = true;
 
-void desbloquearHilos(){
+		if (idHilo == multiprocesamientoUsado)
+			sem_post(&bin_main);
+	}
+
+}
+
+void desbloquearHilos() {
 	int tamCola = queue_size(colaReady);
-	if(tamCola <= multiprocesamiento)
-		for(int i =0; i < tamCola ;i++)
+	if (tamCola <= multiprocesamiento)
+		for (int i = 0; i < tamCola; i++)
 			sem_post(&arraySemaforos[i]);
 }
 
@@ -184,19 +196,22 @@ procExec* obtenerProcesoDeColaReady() {
 	return proceso;
 }
 
-void* nuevaFuncionThread(void* args){
+void* nuevaFuncionThread(void* args) {
 	estadoProceso estado = OK;
 	int cantRequestsProceso = 0;
 	int cantRequestsEjecutadas = 0;
 	procExec* proceso = NULL;
-	static int idProceso = -1;
+//	static int idProceso = -1;
+//	int idProceso = -1;
+	static bool tieneID = false;
 
-	do{
-		idProceso++;
+	do {
+//		idProceso++;
 
-		sem_wait(&arraySemaforos[idProceso]);
+		otorgarId(&tieneID);
+		sem_wait(&arraySemaforos[idHilo]);
 
-		if(queue_size(colaReady)!=0){
+		if (queue_size(colaReady) != 0) {
 			proceso = obtenerProcesoDeColaReady();
 			cantRequestsProceso = list_size(proceso->script);
 
@@ -206,46 +221,36 @@ void* nuevaFuncionThread(void* args){
 			for (cantRequestsEjecutadas = 0;
 					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
 							&& cantRequestsEjecutadas < quantum;
-					cantRequestsEjecutadas++)
-			{
+					cantRequestsEjecutadas++) {
 
-
-				estado = procesarInputKernel(list_get(proceso->script, cantRequestsEjecutadas));
+				estado = procesarInputKernel(
+						list_get(proceso->script, cantRequestsEjecutadas));
 //				usleep(retardoEjecucion*1000);
-
 
 			}
 
-			if(! interrupcionPorEstado(estado)){
-				if(cantRequestsEjecutadas == cantRequestsProceso){ // Esta verificacion no tiene sentido, pero esta buena para que se vea como funciona
+			if (!interrupcionPorEstado(estado)) {
+				if (cantRequestsEjecutadas == cantRequestsProceso) { // Esta verificacion no tiene sentido, pero esta buena para que se vea como funciona
 					// Borrar proceso
 					destruirProceso(proceso);
 				}
 			}
-			if(cantRequestsEjecutadas >= quantum && !(cantRequestsEjecutadas < cantRequestsProceso))
+			if (cantRequestsEjecutadas >= quantum
+					&& !(cantRequestsEjecutadas < cantRequestsProceso))
 				queue_push(colaReady, proceso);
-			if(interrupcionPorEstado(estado)){
-				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
+			if (interrupcionPorEstado(estado)) {
+				log_error(log_master->logError,
+						"Error: Una request no se pudo cumplir");
 				// Borrar proceso
 				destruirProceso(proceso);
 			}
 
-
-
 		}
 
-	}while(queue_size(colaReady) != 0);
-
+	} while (queue_size(colaReady) != 0);
 
 	return NULL;
 }
-
-
-
-
-
-
-
 
 void agregarHiloAListaHilosEInicializo(t_list* hilos) {
 //	for(int i=0; i < cantProcesos;i++){
