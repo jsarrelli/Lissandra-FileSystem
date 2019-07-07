@@ -11,8 +11,6 @@ int procesarInputKernel(char* linea) {
 	char** comandos = string_n_split(linea, 2, " ");
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
-//	char **palabras = string_split(linea, " ");
-//	int cantidad = cantidadParametros(comandos);
 	if (strcmp(operacion, "INSERT") == 0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
@@ -140,9 +138,10 @@ int consolaInsert(char*argumentos) {
 
 	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla);
 
-//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
-//	if(enviarInfoMemoria(socketMemoria, argumentos, INSERT)==SUPER_ERROR)
-//		return SUPER_ERROR;
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
+			config->IP_MEMORIA);
+	if (enviarInfoMemoria(socketMemoria, argumentos, INSERT) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 //	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
@@ -167,8 +166,8 @@ int consolaSelect(char*argumentos) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
 
-//	if(obtenerMemoriaSegunTablaYKey(key, nombreTabla)==SUPER_ERROR)
-//		return SUPER_ERROR;
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 	free(valores[1]);
 	free(nombreTabla);
@@ -204,17 +203,17 @@ int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 		char* consistenciaChar) {
 
-//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
-//			config->IP_MEMORIA);
-//	char request[100];
-//	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
-//			cantParticiones, tiempoCompactacion);
-//	if (enviarInfoMemoria(socketMemoria, request, CREATE) == SUPER_ERROR)
-//		return SUPER_ERROR;
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
+			config->IP_MEMORIA);
+	char request[100];
+	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
+			cantParticiones, tiempoCompactacion);
+	if (enviarInfoMemoria(socketMemoria, request, CREATE) == SUPER_ERROR)
+		return SUPER_ERROR;
 	return TODO_OK;
 }
 
-void enviarJournalMemoria(int socketMemoria){
+void enviarJournalMemoria(int socketMemoria) {
 	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
 }
@@ -236,9 +235,9 @@ int consolaCreate(char*argumentos) {
 //	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
 	obtenerMemoriaAlAzarParaFunciones();
 
-//	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla,
-//			consistenciaChar) == SUPER_ERROR)
-//		return SUPER_ERROR;
+	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla,
+			consistenciaChar) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 	free(valores[3]);
 	free(valores[2]);
@@ -271,46 +270,46 @@ void deserealizarYMostrarMetadata(Paquete* paquete) {
 
 int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
-//	if (EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0,
-//			DESCRIBE_ALL)==SUPER_ERROR)
-//		return SUPER_ERROR;
-//	while (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) > 0) {
-//		deserealizarYMostrarMetadata(&*paquete);
-//	}
+	if (EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0,
+			DESCRIBE_ALL)==SUPER_ERROR)
+		return SUPER_ERROR;
+	while (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) > 0) {
+		deserealizarYMostrarMetadata(&*paquete);
+	}
 	return TODO_OK;
 }
 
 int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 	log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
-//	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1,
-//			DESCRIBE);
-//	if (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) < 0)
-//		return SUPER_ERROR;
-//	if (atoi(paquete->mensaje) == 1) {
-//		puts("La tabla no existe");
-//		//la tabla no existe
-//	}
-//	t_metadata_tabla* metadataRecibida = deserealizarTabla(&*paquete);
-//	mostrarMetadata(nombreTabla, metadataRecibida);
-//	//falta free metadata
-//	free(paquete->mensaje);
+	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1,
+			DESCRIBE);
+	if (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) < 0)
+		return SUPER_ERROR;
+	if (atoi(paquete->mensaje) == 1) {
+		puts("La tabla no existe");
+		//la tabla no existe
+	}
+	t_metadata_tabla* metadataRecibida = deserealizarTabla(&*paquete);
+	mostrarMetadata(nombreTabla, metadataRecibida);
+	//falta free metadata
+	free(paquete->mensaje);
 	return TODO_OK;
 }
 
 int consolaDescribe(char*nombreTabla) {
 	obtenerMemoriaAlAzarParaFunciones();
-//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
-//			config->IP_MEMORIA);
-//	Paquete paquete;
-//	if (nombreTabla == NULL) {
-//		if (procesarDescribeAll(socketMemoria, &paquete) == SUPER_ERROR)
-//			return SUPER_ERROR;
-//	} else {
-//		if (procesarDescribe(socketMemoria, &paquete, nombreTabla)==SUPER_ERROR)
-//			return SUPER_ERROR;
-//	}
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
+			config->IP_MEMORIA);
+	Paquete paquete;
+	if (nombreTabla == NULL) {
+		if (procesarDescribeAll(socketMemoria, &paquete) == SUPER_ERROR)
+			return SUPER_ERROR;
+	} else {
+		if (procesarDescribe(socketMemoria, &paquete, nombreTabla)==SUPER_ERROR)
+			return SUPER_ERROR;
+	}
 
-	// El DESCRIBE es igual que el CREATE y que el DROP
+//	 El DESCRIBE es igual que el CREATE y que el DROP
 //	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
 
 	return TODO_OK;
@@ -354,13 +353,13 @@ int consolaDrop(char*nombreTabla) {
 	}
 
 //	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
-//	obtenerMemoriaAlAzarParaFunciones();
-//
-//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
-//			config->IP_MEMORIA);
-//	char request[100];
-//	sprintf(request, "%s", nombreTabla);
-//	enviarInfoMemoria(socketMemoria, request, DROP);
+	obtenerMemoriaAlAzarParaFunciones();
+
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
+			config->IP_MEMORIA);
+	char request[100];
+	sprintf(request, "%s", nombreTabla);
+	enviarInfoMemoria(socketMemoria, request, DROP);
 
 	return TODO_OK;
 }
