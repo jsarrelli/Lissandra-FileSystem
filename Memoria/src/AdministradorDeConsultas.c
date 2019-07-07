@@ -102,3 +102,7 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 	return tablas;
 
 }
+
+void JOURNAL_MEMORIA(){
+	journalMemoria();
+}
