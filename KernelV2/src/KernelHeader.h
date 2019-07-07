@@ -27,6 +27,13 @@
 #define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
 #define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
 
+// Para el manejo de errores
+
+#define TODO_OK 1
+#define SUPER_ERROR 0
+
+
+
 // Estructuras de datos
 
 typedef struct{
@@ -83,8 +90,6 @@ t_list* listaHilos;
 t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
-//t_log* logger;
-//t_log* loggerError;
 int quantum;
 int cantRequestsEjecutadas;
 sem_t ejecutarHilos;
@@ -115,7 +120,7 @@ infoMemoria* obtenerMemoriaAlAzar();
 
 // Funciones importantes
 void crearProcesoYMandarloAReady(char* operacion);
-void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();

@@ -110,7 +110,7 @@ int cantidadParametros(char ** palabras) {
 	return i - 1;
 }
 
-void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
@@ -121,9 +121,12 @@ void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 		imprimirCriterio(memoriaAEnviar->criterios);
 		log_trace(log_master->logTrace, "Id de la memoria: %d",
 				memoriaAEnviar->id);
-	} else
+	} else{
 		log_error(log_master->logError,
-				"Error: no existe memoria con ese criterio");
+						"Error: no existe memoria con ese criterio");
+		return SUPER_ERROR;
+	}
+	return TODO_OK;
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion) {
@@ -172,59 +175,61 @@ procExec* obtenerProcesoDeColaReady() {
 	return proceso;
 }
 
-//void* nuevaFuncionThread(void* args){
-//	estadoProceso estado = OK;
-//	int cantRequestsProceso = 0;
-//	int cantRequestsEjecutadas = 0;
-//	procExec* proceso = NULL;
-//	static int idProceso = -1;
-//
-//	do{
-//		idProceso++;
-//
-//		sem_wait(&arraySemaforos[idProceso]);
-//
-//		if(queue_size(colaReady)!=0){
-//			proceso = obtenerProcesoDeColaReady();
-//			cantRequestsProceso = list_size(proceso->script);
-//
-//			// Ahora evaluamos cada una de las requests del script
-//			// Lo hago por un for y list_get en vez de list_itearate porque necesito varias condiciones
-//
-//			for (cantRequestsEjecutadas = 0;
-//					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
-//							&& cantRequestsEjecutadas < quantum;
-//					cantRequestsEjecutadas++)
-//			{
-//
-//
-//				estado = procesarInputKernel(list_get(proceso->script, cantRequestsEjecutadas));
-//				sleep(retardoEjecucion);
-//
-//
-//			}
-//
-//			if(! interrupcionPorEstado(estado)){
-//				if(cantRequestsEjecutadas < cantRequestsProceso){
-//					// Borrar proceso
-//				}
-//			}
-//			if(cantRequestsEjecutadas < quantum && !(cantRequestsEjecutadas < cantRequestsProceso))
-//				queue_push(colaReady, proceso);
-//			if(interrupcionPorEstado(estado)){
-//				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
-//				// Borrar proceso
-//			}
-//
-//
-//
-//		}
-//
-//	}while(queue_size(colaReady) != 0);
-//
-//
-//	return NULL;
-//}
+void* nuevaFuncionThread(void* args){
+	estadoProceso estado = OK;
+	int cantRequestsProceso = 0;
+	int cantRequestsEjecutadas = 0;
+	procExec* proceso = NULL;
+	static int idProceso = -1;
+
+	do{
+		idProceso++;
+
+		sem_wait(&arraySemaforos[idProceso]);
+
+		if(queue_size(colaReady)!=0){
+			proceso = obtenerProcesoDeColaReady();
+			cantRequestsProceso = list_size(proceso->script);
+
+			// Ahora evaluamos cada una de las requests del script
+			// Lo hago por un for y list_get en vez de list_itearate porque necesito varias condiciones
+
+			for (cantRequestsEjecutadas = 0;
+					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
+							&& cantRequestsEjecutadas < quantum;
+					cantRequestsEjecutadas++)
+			{
+
+
+				estado = procesarInputKernel(list_get(proceso->script, cantRequestsEjecutadas));
+				sleep(retardoEjecucion);
+
+
+			}
+
+			if(! interrupcionPorEstado(estado)){
+				if(cantRequestsEjecutadas < cantRequestsProceso){
+					// Borrar proceso
+					destruirProceso(proceso);
+				}
+			}
+			if(cantRequestsEjecutadas < quantum && !(cantRequestsEjecutadas < cantRequestsProceso))
+				queue_push(colaReady, proceso);
+			if(interrupcionPorEstado(estado)){
+				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
+				// Borrar proceso
+				destruirProceso(proceso);
+			}
+
+
+
+		}
+
+	}while(queue_size(colaReady) != 0);
+
+
+	return NULL;
+}
 
 void agregarHiloAListaHilosEInicializo(t_list* hilos) {
 //	for(int i=0; i < cantProcesos;i++){

@@ -16,16 +16,16 @@
  * Aca se almacenan las funciones de inicio del API Kernel
  */
 
-void procesarInputKernel(char* linea);
-void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo);
-void procesarAdd(int id, consistencia cons);
-void consolaAdd(char*argumento);
-void consolaInsert(char*request);
-void consolaSelect(char*argumentos);
-void consolaCreate(char*argumentos);
-void consolaDescribe(char*nombreTabla);
-void consolaDrop(char*nombreTabla);
-void consolaRun(char*path);
+int procesarInputKernel(char* linea);
+int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo);
+int procesarAdd(int id, consistencia cons);
+int consolaAdd(char*argumento);
+int consolaInsert(char*request);
+int consolaSelect(char*argumentos);
+int consolaCreate(char*argumentos);
+int consolaDescribe(char*nombreTabla);
+int consolaDrop(char*nombreTabla);
+int consolaRun(char*path);
 void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);
 
