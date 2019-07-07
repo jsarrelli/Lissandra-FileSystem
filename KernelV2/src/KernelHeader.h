@@ -27,6 +27,13 @@
 #define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
 #define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
 
+// Para el manejo de errores
+
+#define TODO_OK 0
+#define SUPER_ERROR 1
+
+
+
 // Estructuras de datos
 
 typedef struct{
@@ -83,13 +90,12 @@ t_list* listaHilos;
 t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
-//t_log* logger;
-//t_log* loggerError;
 int quantum;
 int cantRequestsEjecutadas;
 sem_t ejecutarHilos;
 sem_t mutex_colaReady;
-//sem_t mutex_id_proceso;
+sem_t mutex_id_proceso;
+sem_t bin_main;
 logStruct* log_master;
 int idMemoria;
 bool haySC;
@@ -114,8 +120,9 @@ infoMemoria* obtenerMemoriaAlAzar();
 
 
 // Funciones importantes
+void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
-void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();
@@ -128,6 +135,7 @@ void deReadyAExec();
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
+void* nuevaFuncionThread(void*args);
 void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);
 void ejecutarProcesos();

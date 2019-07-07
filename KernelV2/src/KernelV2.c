@@ -16,6 +16,8 @@ void iniciarVariablesKernel() {
 
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReady, 0, 1);
+	sem_init(&mutex_id_proceso, 0, 1);
+	sem_init(&bin_main, 0, 0);
 
 	cantRequestsEjecutadas = 0;
 	haySC = false;
@@ -40,17 +42,18 @@ void iniciarVariablesKernel() {
 	retardoEjecucion = config->SLEEP_EJECUCION;
 
 	hilosActivos = 0;
+	idHilo=0;
 
 	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
 	// 		de requests que haya en la cola de ready
 
-//	if(multiprocesamiento !=0){
-//		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
-//
-//		for(int i=0; i < multiprocesamiento;i++){
-//			sem_init(&arraySemaforos[i], 0, 0);
-//		}
-//	}
+	if(multiprocesamiento !=0){
+		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
+
+		for(int i=0; i < multiprocesamiento;i++){
+			sem_init(&arraySemaforos[i], 0, 0);
+		}
+	}
 
 
 
@@ -69,10 +72,8 @@ void iniciarVariablesKernel() {
  *
  * TODO:
  * 		- Manejo de errores
- * 		- Resto de las funciones (con codigo harcodeado) -> HECHO + pequeñas modificaciones del comando RUN
- * 		- Unir los modulos con las funciones sockets
  * 		- Round Robin
- *		- Multiprocesamiento (Brian)
+ *		- Multiprocesamiento
  *
  * 	Aclaracion:
  * 		Muchas de las decisiones fueron hechas para ver los puntos que faltan
@@ -99,31 +100,35 @@ void hiloConsola(){
 //	free(operacion);
 }
 
-int main(void) {
-	iniciarVariablesKernel();
-	char*operacion;
-//	agregarHiloAListaHilosEInicializo(listaHilos);
-
+void inicioKernelUnProcesador() {
+	char* operacion;
+	//	agregarHiloAListaHilosEInicializo(listaHilos);
 	operacion = readline(">");
-	while(!instruccionSeaSalir(operacion)){
+	while (!instruccionSeaSalir(operacion)) {
 		crearProcesoYMandarloAReady(operacion);
-//		deReadyAExec();
-
+		//		deReadyAExec();
 		// Por ahora lo hago con un solo proceso y lo hago manual
 		ejecutarProcesos();
-		funcionThread(NULL);
-
-//		free(operacion);
-//		destruirProcesoExec(proceso);
+		// Prueba multiprocesamiento
+		desbloquearHilos();
+		nuevaFuncionThread(NULL);
+		//		funcionThread(NULL);
+		//		free(operacion);
+		//		destruirProcesoExec(proceso);
 		operacion = readline(">");
 	}
 	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
 	free(operacion);
-//	free(hilos);
+	//	free(hilos);
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
+}
+
+int main(void) {
+	iniciarVariablesKernel();
+	inicioKernelUnProcesador();
 //	config_destroy(config);
 	return EXIT_SUCCESS;
 }

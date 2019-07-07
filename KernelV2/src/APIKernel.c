@@ -7,49 +7,55 @@
 
 #include "APIKernel.h"
 
-void procesarInput(char* linea) {
+int procesarInputKernel(char* linea) {
 	char** comandos = string_n_split(linea, 2, " ");
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
-//	char **palabras = string_split(linea, " ");
-//	int cantidad = cantidadParametros(comandos);
 	if (strcmp(operacion, "INSERT") == 0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
-		consolaInsert(argumentos);
+		if (consolaInsert(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 	} else if (strcmp(operacion, "SELECT") == 0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
 		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
-		consolaSelect(argumentos);
+		if (consolaSelect(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 	} else if (strcmp(operacion, "CREATE") == 0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
-		consolaCreate(argumentos);
+		if (consolaCreate(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 		//consolaCreate(palabras,cantidad);
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
 		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
-		consolaDescribe(argumentos);
+		if (consolaDescribe(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 		//consolaDescribe(palabras,cantidad);
 	} else if (strcmp(operacion, "DROP") == 0) {
 		//	DROP [NOMBRE_TABLA]
 		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
-		consolaDrop(argumentos);
+		if (consolaDrop(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 		//consolaDrop(palabras,cantidad);
 	} else if (strcmp(operacion, "ADD") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
-		consolaAdd(argumentos);
+		if (consolaAdd(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 	} else if (strcmp(operacion, "RUN") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
-		consolaRun(argumentos);
+		if (consolaRun(argumentos) == SUPER_ERROR)
+			return SUPER_ERROR;
 	} else if (strcmp(operacion, "EXECUTE") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando EXECUTE");
 	} else if (strcmp(operacion, "SALIR") == 0) {
 		log_trace(log_master->logTrace, "Finalizando consola");
+		return SUPER_ERROR;
 	} else {
 		log_trace(log_master->logTrace,
 				"El comando no es el correcto. Por favor intente nuevamente");
@@ -64,9 +70,11 @@ void procesarInput(char* linea) {
 
 //	liberarPunteroDePunterosAChar(palabras);
 //	free(palabras);
+
+	return TODO_OK;
 }
 
-void procesarAdd(int id, consistencia cons) {
+int procesarAdd(int id, consistencia cons) {
 	bool condicionAdd(int id, infoMemoria* memoria) {
 		return id == memoria->id;
 	}
@@ -85,26 +93,32 @@ void procesarAdd(int id, consistencia cons) {
 		imprimirCriterio(memoriaEncontrada->criterios);
 		log_trace(log_master->logTrace, "El id de esta memoria es: %d",
 				memoriaEncontrada->id);
-	} else
+	} else {
 		log_error(log_master->logError, "Problemas con el comando ADD");
+		return SUPER_ERROR;
+	}
+	return TODO_OK;
 }
 
-void consolaAdd(char*argumento) {
+int consolaAdd(char*argumento) {
 	char** valores = string_split(argumento, " ");
 //	add(atoi(valores[1]), valores[3]);
 	consistencia cons = procesarConsistencia(valores[3]);
 
 	int id = atoi(valores[1]);
-	procesarAdd(id, cons);
+	if (procesarAdd(id, cons) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 	free(valores[0]);
 	free(valores[1]);
 	free(valores[2]);
 	free(valores[3]);
 	free(valores);
+
+	return TODO_OK;
 }
 
-void consolaInsert(char*argumentos) {
+int consolaInsert(char*argumentos) {
 	//	INSERT
 	//[NOMBRE_TABLA] [KEY] “[VALUE]” TIMESTAMP
 	char** valores = string_split(argumentos, "\"");
@@ -112,26 +126,24 @@ void consolaInsert(char*argumentos) {
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
 	char* value = valores[1];
-	double timeStamp;
+	double timeStamp = 0;
 	if (valores[2] == NULL) {
 		timeStamp = getCurrentTime();
 	} else {
 		timeStamp = atof(valores[2]);
 	}
-	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, y su value es: %s", nombreTabla, key,
-			value);
+	log_trace(log_master->logTrace,
+			"El nombre de la tabla es: %s, su key es %s, y su value es: %s",
+			nombreTabla, key, value);
 
 	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla);
 
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
-	enviarInfoMemoria(socketMemoria, argumentos, INSERT);
-
-//	printf("Aca se tienen que poner las sockets\n");
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
+			config->IP_MEMORIA);
+	if (enviarInfoMemoria(socketMemoria, argumentos, INSERT) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 //	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
-
-	// Primero hay que obtener una memoria que cumpla con el criterio de la tabla (hecho)
-	// Ahora, se usa las funciones sockets para enviar el mensaje a Memoria y luego a LFS; y listo (no requiere mensaje de retorno)
 
 	free(valoresAux[1]);
 	free(valoresAux[0]);
@@ -139,9 +151,11 @@ void consolaInsert(char*argumentos) {
 	free(valores[1]);
 	free(valores[0]);
 	free(valores);
+
+	return TODO_OK;
 }
 
-void consolaSelect(char*argumentos) {
+int consolaSelect(char*argumentos) {
 	char** valores = string_split(argumentos, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
@@ -152,25 +166,26 @@ void consolaSelect(char*argumentos) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
 
-	obtenerMemoriaSegunTablaYKey(key, nombreTabla);
-
-	printf("Aca se tienen que poner las sockets\n");
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 	free(valores[1]);
 	free(nombreTabla);
 	free(valores);
+
+	return TODO_OK;
 }
 
-void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) {
+int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) {
 	Paquete paquete;
 	int success;
 
 	if (EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1,
 			protocolo)) {
 		log_trace(log_master->logTrace, "El paquete se envio exitosamente");
-	}
-	else {
+	} else {
 		log_error(log_master->logError, "Error al enviar paquete");
+		return SUPER_ERROR;
 	}
 
 	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
@@ -179,27 +194,31 @@ void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo)
 	if (success == 0) {
 		log_trace(log_master->logTrace, "Paquete recibido correctamente");
 	} else {
-		log_error(log_master->logError,
-				"Error al recibir el paquete");
+		log_error(log_master->logError, "Error al recibir el paquete");
+		return SUPER_ERROR;
 	}
+	return ERROR;
 }
 
-void enviarJournalMemoria(int socketMemoria){
-	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
-	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
-}
+int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
+		char* consistenciaChar) {
 
-void enviarCREATE(int cantParticiones, int tiempoCompactacion,
-		char* nombreTabla, char* consistenciaChar) {
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
 	char request[100];
 	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
 			cantParticiones, tiempoCompactacion);
-	enviarInfoMemoria(socketMemoria, request, CREATE);
+	if (enviarInfoMemoria(socketMemoria, request, CREATE) == SUPER_ERROR)
+		return SUPER_ERROR;
+	return TODO_OK;
 }
 
-void consolaCreate(char*argumentos) {
+void enviarJournalMemoria(int socketMemoria) {
+	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
+	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+}
+
+int consolaCreate(char*argumentos) {
 	char** valores = string_split(argumentos, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];
@@ -216,14 +235,17 @@ void consolaCreate(char*argumentos) {
 //	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
 	obtenerMemoriaAlAzarParaFunciones();
 
-	enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla,
-			consistenciaChar);
+	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla,
+			consistenciaChar) == SUPER_ERROR)
+		return SUPER_ERROR;
 
 	free(valores[3]);
 	free(valores[2]);
 	free(valores[1]);
 	free(valores[0]);
 	free(valores);
+
+	return TODO_OK;
 
 }
 
@@ -246,19 +268,23 @@ void deserealizarYMostrarMetadata(Paquete* paquete) {
 	free(nombreTabla);
 }
 
-void procesarDescribeAll(int socketMemoria, Paquete* paquete) {
+int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
-	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
+	if (EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0,
+			DESCRIBE_ALL)==SUPER_ERROR)
+		return SUPER_ERROR;
 	while (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) > 0) {
 		deserealizarYMostrarMetadata(&*paquete);
 	}
+	return TODO_OK;
 }
 
-void procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
+int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 	log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
 	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1,
 			DESCRIBE);
-	RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete);
+	if (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) < 0)
+		return SUPER_ERROR;
 	if (atoi(paquete->mensaje) == 1) {
 		puts("La tabla no existe");
 		//la tabla no existe
@@ -267,22 +293,26 @@ void procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 	mostrarMetadata(nombreTabla, metadataRecibida);
 	//falta free metadata
 	free(paquete->mensaje);
+	return TODO_OK;
 }
 
-void consolaDescribe(char*nombreTabla) {
+int consolaDescribe(char*nombreTabla) {
 	obtenerMemoriaAlAzarParaFunciones();
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
 	Paquete paquete;
 	if (nombreTabla == NULL) {
-		procesarDescribeAll(socketMemoria, &paquete);
+		if (procesarDescribeAll(socketMemoria, &paquete) == SUPER_ERROR)
+			return SUPER_ERROR;
 	} else {
-		procesarDescribe(socketMemoria, &paquete, nombreTabla);
+		if (procesarDescribe(socketMemoria, &paquete, nombreTabla)==SUPER_ERROR)
+			return SUPER_ERROR;
 	}
 
-	// El DESCRIBE es igual que el CREATE y que el DROP
+//	 El DESCRIBE es igual que el CREATE y que el DROP
 //	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
 
+	return TODO_OK;
 }
 
 void mostrarMetadata(char* nombreTabla, t_metadata_tabla* metadata) {
@@ -312,14 +342,15 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 	return metadata;
 }
 
-void consolaDrop(char*nombreTabla) {
+int consolaDrop(char*nombreTabla) {
 	if (nombreTabla != NULL)
 		log_trace(log_master->logTrace, "Se desea elminar la tabla %s",
 				nombreTabla);
-
-	else
+	else {
 		log_error(log_master->logError,
 				"Error: ingresar el nombre de la tabla a eliminar");
+		return SUPER_ERROR;
+	}
 
 //	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
 	obtenerMemoriaAlAzarParaFunciones();
@@ -330,9 +361,10 @@ void consolaDrop(char*nombreTabla) {
 	sprintf(request, "%s", nombreTabla);
 	enviarInfoMemoria(socketMemoria, request, DROP);
 
+	return TODO_OK;
 }
 
-void consolaRun(char*path) {
+int consolaRun(char*path) {
 	FILE* fd = NULL;
 	int num_lineas = contarLineasArchivo(fd, path);
 	if (num_lineas != 0) {
@@ -359,9 +391,12 @@ void consolaRun(char*path) {
 		list_iterate(((procExec*) queue_peek(colaReady))->script,
 				(void*) imprimirRequest);
 
-	} else
+	} else {
 		log_error(log_master->logError,
 				"El path no es correcto o el archivo esta dañado");
+		return SUPER_ERROR;
+	}
+	return TODO_OK;
 }
 
 /*
