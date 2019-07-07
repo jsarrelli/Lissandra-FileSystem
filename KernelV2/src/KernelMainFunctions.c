@@ -163,6 +163,15 @@ void* funcionThread(void* args) {
 	return NULL;
 }
 
+
+
+void desbloquearHilos(){
+	int tamCola = queue_size(colaReady);
+	if(tamCola <= multiprocesamiento)
+		for(int i =0; i < tamCola ;i++)
+			sem_post(&arraySemaforos[i]);
+}
+
 bool interrupcionPorEstado(estadoProceso estado) {
 	return estado == ERROR;
 }
@@ -202,18 +211,18 @@ void* nuevaFuncionThread(void* args){
 
 
 				estado = procesarInputKernel(list_get(proceso->script, cantRequestsEjecutadas));
-				sleep(retardoEjecucion);
+//				usleep(retardoEjecucion*1000);
 
 
 			}
 
 			if(! interrupcionPorEstado(estado)){
-				if(cantRequestsEjecutadas < cantRequestsProceso){
+				if(cantRequestsEjecutadas == cantRequestsProceso){ // Esta verificacion no tiene sentido, pero esta buena para que se vea como funciona
 					// Borrar proceso
 					destruirProceso(proceso);
 				}
 			}
-			if(cantRequestsEjecutadas < quantum && !(cantRequestsEjecutadas < cantRequestsProceso))
+			if(cantRequestsEjecutadas >= quantum && !(cantRequestsEjecutadas < cantRequestsProceso))
 				queue_push(colaReady, proceso);
 			if(interrupcionPorEstado(estado)){
 				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
@@ -230,6 +239,13 @@ void* nuevaFuncionThread(void* args){
 
 	return NULL;
 }
+
+
+
+
+
+
+
 
 void agregarHiloAListaHilosEInicializo(t_list* hilos) {
 //	for(int i=0; i < cantProcesos;i++){

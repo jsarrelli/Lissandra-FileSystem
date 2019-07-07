@@ -204,11 +204,11 @@ int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 		char* consistenciaChar) {
 
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
-			config->IP_MEMORIA);
-	char request[100];
-	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
-			cantParticiones, tiempoCompactacion);
+//	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
+//			config->IP_MEMORIA);
+//	char request[100];
+//	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
+//			cantParticiones, tiempoCompactacion);
 //	if (enviarInfoMemoria(socketMemoria, request, CREATE) == SUPER_ERROR)
 //		return SUPER_ERROR;
 	return TODO_OK;

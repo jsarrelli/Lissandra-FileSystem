@@ -29,8 +29,8 @@
 
 // Para el manejo de errores
 
-#define TODO_OK 1
-#define SUPER_ERROR 0
+#define TODO_OK 0
+#define SUPER_ERROR 1
 
 
 
@@ -119,6 +119,7 @@ infoMemoria* obtenerMemoriaAlAzar();
 
 
 // Funciones importantes
+void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
 int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
@@ -133,6 +134,7 @@ void deReadyAExec();
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
+void* nuevaFuncionThread(void*args);
 void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);
 void ejecutarProcesos();
