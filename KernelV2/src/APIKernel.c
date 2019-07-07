@@ -184,6 +184,11 @@ void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo)
 	}
 }
 
+void enviarJournalMemoria(int socketMemoria){
+	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
+	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+}
+
 void enviarCREATE(int cantParticiones, int tiempoCompactacion,
 		char* nombreTabla, char* consistenciaChar) {
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
