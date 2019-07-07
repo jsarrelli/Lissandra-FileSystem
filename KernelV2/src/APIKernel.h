@@ -18,6 +18,7 @@
 
 void procesarInput(char* linea);
 void enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo);
+void enviarJournalMemoria(int socketMemoria);
 void procesarAdd(int id, consistencia cons);
 void consolaAdd(char*argumento);
 void consolaInsert(char*request);
