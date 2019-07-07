@@ -54,6 +54,9 @@ void procesarAccion(int socketEntrante) {
 			case (TABLA_GOSSIPING):
 				procesarRequestTABLA_GOSSIPING(socketEntrante);
 				break;
+			case (JOURNAL):
+				JOURNAL_MEMORIA();
+				break;
 			}
 
 		}
