@@ -404,7 +404,7 @@ void limpiarRegistrosDeTabla(char*nombreTabla) {
 	for (i = 0; i < list_size(memtable); i++) {
 		tabla = (t_tabla_memtable*) list_get(memtable, i);
 		if (!strcmp(tabla->tabla, nombreTabla)) {
-			list_clean(tabla->registros);
+			list_clean_and_destroy_elements(tabla->registros, (void*) freeRegistro);
 		}
 
 	}

@@ -43,7 +43,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		t_list* registrosParticionActual = list_get(particionesRegistrosNuevos, numeroParticionActual);
 
 		//armo una lista con los registros nuevos y viejos
-		list_add_all(registrosParticionActual, registrosNuevos);
+		list_add_all(registrosParticionActual, listaRegistrosViejos);
 		list_destroy(listaRegistrosViejos);
 
 		//los filtro para que de los que tengan la misma key se quede con el de mayor timeStamp
