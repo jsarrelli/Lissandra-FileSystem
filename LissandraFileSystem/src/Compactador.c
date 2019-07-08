@@ -25,25 +25,8 @@ void compactarTabla(char*nombreTabla) {
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
 
-	//mergeamos los registros viejos con los nuevos
+	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
-
-	/////////////////////////
-//	puts("Archivos de particiones abiertos");
-//
-//	list_iterate2(archivosBin, (void*) agregarRegistrosDeBin, listaRegistrosViejos);
-//	list_add_all(registrosNuevos, listaRegistrosViejos);
-//	int tamanioListaRegistros = list_size(registrosNuevos);
-//
-//	for (int j = 0; j < tamanioListaRegistros; j++) {
-//		registro = list_get(registrosNuevos, j);
-//		char** reg = string_split(registro, ";");
-//		resto = (atoi(reg[1])) % metadata.CANT_PARTICIONES;
-//		list_add(list_get(particionesDeRegistrosNuevos, resto), registro);
-//	}
-//	list_destroy(registrosNuevos);
-//
-//	persistirParticionesDeTabla(particionesDeRegistrosNuevos, archivosBin);
 }
 
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
@@ -53,7 +36,8 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 		//obtengo los registros del bin correspondiente
 		t_list* listaRegistrosViejos = list_create();
-		agregarRegistrosFromBloqueByPath(list_get(archivosBinarios, numeroParticionActual), listaRegistrosViejos);
+		char* rutaArchivoBinarioActual  = list_get(archivosBinarios, numeroParticionActual);
+		agregarRegistrosFromBloqueByPath(rutaArchivoBinarioActual, listaRegistrosViejos);
 
 		//agarro los registros nuevos de la particion actual
 		t_list* registrosParticionActual = list_get(particionesRegistrosNuevos, numeroParticionActual);
@@ -65,10 +49,25 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		//los filtro para que de los que tengan la misma key se quede con el de mayor timeStamp
 		filtrarRegistros(registrosParticionActual);
 
+		//pasamos la lista de registros a una lista de char* para escribirlos en el binario
+		char* registroToChar(t_registro* registro) {
+			char* registroChar = string_new();
+			scanf(registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
+			return registroChar;
+		}
+		t_list* registrosChar = list_map(registrosParticionActual, (void*)registroToChar);
+
+		//escribimos en el binario y los bloques de ese archivo
+		escribirEnBin(registrosChar, rutaArchivoBinarioActual);
+
+		list_destroy_and_destroy_elements(registrosParticionActual,(void*)freeRegistro);
+		list_destroy_and_destroy_elements(registrosChar,free);
+
 		numeroParticionActual++;
 	}
 
 	list_iterate(particionesRegistrosNuevos, (void*) mergearParticion);
+	list_destroy(particionesRegistrosNuevos);
 }
 
 t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list* registrosNuevos) {
@@ -136,7 +135,7 @@ void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin) {
 	}
 }
 
-int escribirEnBin(t_list* lista, char*rutaBinario) {
+int escribirEnBin(t_list* lista, char* rutaBinario) {
 	int*bloques;
 	t_archivo*archivo = malloc(sizeof(t_archivo));
 	leerArchivoDeTabla(rutaBinario, archivo);
@@ -184,6 +183,8 @@ int escribirEnBin(t_list* lista, char*rutaBinario) {
 
 		string_append(&rutaBloque, archivo->BLOQUES[i]);
 		string_append(&rutaBloque, ".bin");
+
+		remove(rutaBloque);
 		archivoBloque = fopen(rutaBloque, "wb");
 		if (archivoBloque == NULL) {
 			puts("Error al guardar datos en bloques");
@@ -305,7 +306,7 @@ t_list* obtenerRegistrosFromBinByNombreTabla(char* nombreTabla) {
 	t_list* binarios = buscarBinariosByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(binarios, (void*) agregarRegistrosFromBloqueByPath, registros);
-	list_destroy(binarios);
+	list_destroy_and_destroy_elements(binarios,free);
 	return registros;
 
 }
@@ -314,7 +315,7 @@ t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
 	t_list* binarios = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(binarios, (void*) agregarRegistrosFromBloqueByPath, registros);
-	list_destroy(binarios);
+	list_destroy_and_destroy_elements(binarios,free);
 	return registros;
 
 }
