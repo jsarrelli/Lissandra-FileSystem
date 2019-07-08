@@ -15,7 +15,8 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete)
 	metadata->CANT_PARTICIONES = cantParticiones;
 	metadata->T_COMPACTACION = tiempoCompactacion;
 
-	free(datos);
+	freePunteroAPunteros(datos);
+	free(mensaje);
 	return metadata;
 }
 
@@ -27,6 +28,7 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
 	if (atoi(paquete.mensaje) == 1) {
+		free(paquete.mensaje);
 		return NULL;
 		//la tabla no existe
 	}

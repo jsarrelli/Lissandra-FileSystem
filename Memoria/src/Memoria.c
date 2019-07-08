@@ -59,6 +59,7 @@ void* leerConsola()
 			add_history(consulta);
 		}
 		if (consulta == NULL) {
+			free(consulta);
 			return NULL;
 		}else{
 			procesarConsulta(consulta);

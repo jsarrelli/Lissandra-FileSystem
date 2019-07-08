@@ -324,9 +324,12 @@ void journalMemoria() {
 }
 
 bool existeSegmentoFS(char* nombreSegmento) {
-	if (describeSegmento(nombreSegmento) != NULL) {
+	t_metadata_tabla* metadata= describeSegmento(nombreSegmento);
+	if (metadata!= NULL) {
+		free(metadata);
 		return true;
 	}
+	free(metadata);
 	return false;
 }
 

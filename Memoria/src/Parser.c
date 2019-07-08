@@ -70,6 +70,8 @@ int procesarCREATE(char* consulta) {
 
 	int succes = CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 	freePunteroAPunteros(valores);
+	free(nombreTabla);
+	free(consistenciaChar);
 	return succes;
 }
 
