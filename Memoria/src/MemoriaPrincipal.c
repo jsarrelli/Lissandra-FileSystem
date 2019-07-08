@@ -293,6 +293,10 @@ t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 	return paginasModificadas;
 }
 
+void vaciarMemoria() {
+	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
+}
+
 void journalMemoria() {
 	//algun semaforo
 	log_info(logger, "Realizando Journal..");
@@ -315,7 +319,7 @@ void journalMemoria() {
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
-	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
+	vaciarMemoria();
 	log_info(logger, "Journal finalizado con exito");
 }
 

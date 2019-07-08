@@ -94,8 +94,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 	char*rutaTabla = armarRutaTabla(nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	FILE*arch = fopen(rutaTabla, "w+");
-	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones,
-			tiempoCompactacion);
+	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones, tiempoCompactacion);
 
 	fclose(arch);
 	log_info(logger, "Metadata de %s creada\n", nombreTabla);
@@ -111,13 +110,14 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 	metadataTabla.CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
 	metadataTabla.T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
 	free(rutaTabla);
+	config_destroy(configMetadata);
 	return metadataTabla;
 }
 
 void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
 	printf("\nMetadata de %s: \n", nombreTabla);
-	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA,
-			metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES,
+			metadataTabla.T_COMPACTACION);
 }
 
 char* armarRutaTabla(char* nombreTabla) {
@@ -131,9 +131,11 @@ char* armarRutaTabla(char* nombreTabla) {
 int contarArchivosTemporales(t_list* archivos) {
 	bool isTmp(char* rutaArchivoActual) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
-		return strcmp(extension, "tmp") == 0;
+		bool response = strcmp(extension, "tmp") == 0;
+		free(extension);
+		return response;
 	}
-	return list_count_satisfying(archivos, (void*)isTmp);
+	return list_count_satisfying(archivos, (void*) isTmp);
 
 }
 
@@ -144,8 +146,8 @@ int existeArchivo(char*nombreTabla, char * rutaArchivoBuscado) {
 		return strcmp(rutaArchivoActual, rutaArchivoBuscado) == 0;
 	}
 
-	bool respuesta = list_any_satisfy(archivos, (void*)isArchivoBuscado);
-	list_destroy_and_destroy_elements(archivos,free);
+	bool respuesta = list_any_satisfy(archivos, (void*) isArchivoBuscado);
+	list_destroy_and_destroy_elements(archivos, free);
 	return respuesta;
 
 }
@@ -169,7 +171,6 @@ t_list* buscarArchivos(char* nombreTabla) {
 			if ((strcmp(archivo->d_name, ".") != 0) && (strcmp(archivo->d_name, "..") != 0)) {
 
 				char * rutaNueva = string_duplicate(rutaTabla);
-				string_append(&rutaNueva, "/");
 				string_append(&rutaNueva, archivo->d_name);
 
 				if (esArchivo(rutaNueva)) {
@@ -180,13 +181,13 @@ t_list* buscarArchivos(char* nombreTabla) {
 		}
 		closedir(directorioActual);
 	}
+	free(rutaTabla);
 	return archivos;
 }
 
 int esArchivo(char* ruta) {
 	struct stat estado;
 	int i;
-
 	stat(ruta, &estado);
 	i = S_ISREG(estado.st_mode);
 
@@ -208,9 +209,8 @@ void eliminarArchivo(char* rutaArchivo) {
 	remove(rutaArchivo);
 }
 
-void removerArchivosDeTabla(char * rutaTabla) {
-	t_list* archivos = buscarArchivos(rutaTabla);
-
+void removerArchivosDeTabla(char * nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
 
 	list_destroy_and_destroy_elements(archivos, (void*) eliminarArchivo);
 
@@ -278,8 +278,8 @@ void removerTabla(char* nombreTabla) {
 		i++;
 	}
 
+	removerArchivosDeTabla(nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
-	removerArchivosDeTabla(rutaTabla);
 	rmdir(rutaTabla);
 	free(rutaTabla);
 }
@@ -289,7 +289,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 	DIR *directorioActual;
 	struct dirent *directorio;
 //aca estamos limitando los
-	char * rutaNueva;
+
 	directorioActual = opendir(ruta);
 
 	if (directorioActual == NULL) {
@@ -302,16 +302,11 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 			//Con readdir aparece siempre . y .. como no me interesa no lo contemplo
 			if ((strcmp(directorio->d_name, ".") != 0) && (strcmp(directorio->d_name, "..") != 0)) {
 
-				rutaNueva = string_duplicate(ruta);
+				char * rutaNueva = string_duplicate(ruta);
 				string_append(&rutaNueva, directorio->d_name);
-
 				if (esDirectorio(rutaNueva)) {
-					//strcpy(directorios[i], rutaNueva);
-					char* direccion = malloc(strlen(rutaNueva));
-					strcpy(direccion, rutaNueva);
-					list_add(listaDirectorios, direccion);
+					list_add(listaDirectorios, rutaNueva);
 				}
-				free(rutaNueva);
 			}
 
 		}
@@ -332,16 +327,19 @@ void mostrarMetadataTodasTablas(char *ruta) {
 
 	char* obtenerNombreTablaByRuta(char* rutaTabla) {
 		char** directorios = string_split(rutaTabla, "/");
-		return (char*) obtenerUltimoElementoDeUnSplit(directorios);
+		char* nombreTabla = obtenerUltimoElementoDeUnSplit(directorios);
+		freePunteroAPunteros(directorios);
+		return nombreTabla;
 	}
 
 	void describeDirectorio(char* directorio) {
 		char* nombreTabla = obtenerNombreTablaByRuta(directorio);
 		funcionDESCRIBE(nombreTabla);
+		free(nombreTabla);
 	}
 
 	list_iterate(listaDirectorios, (void*) describeDirectorio);
-	list_destroy_and_destroy_elements(listaDirectorios,free);
+	list_destroy_and_destroy_elements(listaDirectorios, free);
 
 }
 
@@ -360,8 +358,7 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 			strcpy(registro->value, value);
 
 			list_add(tabla->registros, registro);
-			printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", timestamp, registro->key,
-					registro->value, nombreTabla);
+			printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", timestamp, registro->key, registro->value, nombreTabla);
 
 			break;
 		}
@@ -374,19 +371,17 @@ void crearYEscribirArchivosTemporales(char*ruta) {
 	buscarDirectorios(ruta, listaDirectorios);
 
 	list_iterate(listaDirectorios, (void*) crearYEscribirTemporal);
-	list_destroy_and_destroy_elements(listaDirectorios,free);
+	list_destroy_and_destroy_elements(listaDirectorios, free);
 }
 
 void crearYEscribirTemporal(char*rutaTabla) {
-
-	char* nombTabla = malloc(50);
 	char**palabras = string_split(rutaTabla, "/");
-	nombTabla = (char*) obtenerUltimoElementoDeUnSplit(palabras);
-	t_list*archivos = buscarArchivos(rutaTabla);
+	char* nombTabla = (char*) obtenerUltimoElementoDeUnSplit(palabras);
+	t_list*archivos = buscarArchivos(nombTabla);
 	int cantidadTmp = contarArchivosTemporales(archivos);
 
 	string_append(&rutaTabla, "/");
-	string_append_with_format(&rutaTabla, "%stmp%d.tmp", nombTabla, cantidadTmp);
+	string_append_with_format(&rutaTabla, "tmp%d.tmp", cantidadTmp);
 
 	t_tabla_memtable* tabla = getTablaFromMemtable(nombTabla);
 	if (tabla != NULL && !list_is_empty(tabla->registros)) {
@@ -396,9 +391,8 @@ void crearYEscribirTemporal(char*rutaTabla) {
 		limpiarRegistrosDeTabla(nombTabla);
 	}
 
-	liberarPunteroDePunterosAChar(palabras);
-	free(palabras);
-	list_clean_and_destroy_elements(archivos,free);
+	freePunteroAPunteros(palabras);
+	list_destroy_and_destroy_elements(archivos, free);
 	free(nombTabla);
 
 }
@@ -566,7 +560,7 @@ int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
 				free(arrBloques);
 				free(archivo);
 				free(rutaBloque);
-				list_destroy_and_destroy_elements(registros,free);
+				list_destroy_and_destroy_elements(registros, free);
 				puts("Se termino de escribir en el temporal\n");
 				//free(registro);
 				return 1;

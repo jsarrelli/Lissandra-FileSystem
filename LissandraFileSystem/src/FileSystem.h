@@ -10,19 +10,19 @@
 #include <Libraries.h>
 #include "LissandraFileSystem.h"
 
-typedef struct{
+typedef struct {
 	int BLOCK_SIZE;
 	int BLOCKS;
 	char* MAGIC_NUMBER;
-}t_metadata;
+} t_metadata;
 
-typedef struct{
+typedef struct {
 	char* Tablas;
 	char* Bloques;
 	char* Metadata;
 	char* Bitmap;
 
-}t_rutas;
+} t_rutas;
 
 t_rutas rutas;
 t_metadata metadata;
@@ -39,8 +39,5 @@ int* buscarBloquesLibres(int cant);
 void reservarBloque(int index);
 void liberarBloque(int index);
 //int crearStructRegistro(int tamanio);
-
-
-
 
 #endif /* FILESYSTEM_H_ */

@@ -20,5 +20,5 @@
 #include "ApiLFS.h"
 #include "AdministradorConsultasLFS.h"
 
-
+t_config *fsConfig;
 #endif /* LISSANDRAFILESYSTEM_H_ */

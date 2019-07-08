@@ -122,6 +122,8 @@ void procesarRequestDESCRIBE_ALL(int socketKernel) {
 		EnviarDatosTipo(socketKernel, MEMORIA, metadata, strlen(metadata) + 1, DESCRIBE);
 	}
 	list_iterate(metaDatas, (void*) enviarMetadataAKernel);
+	list_destroy_and_destroy_elements(metaDatas,free);
+
 }
 
 void procesarRequestDROP(char* nombreTabla, int socketKernel) {

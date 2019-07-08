@@ -44,6 +44,7 @@ int main() {
 
 	close(listenningSocket);
 	liberarVariables();
+	vaciarMemoria();
 	return EXIT_SUCCESS;
 }
 

@@ -36,7 +36,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 		//obtengo los registros del bin correspondiente
 		t_list* listaRegistrosViejos = list_create();
-		char* rutaArchivoBinarioActual  = list_get(archivosBinarios, numeroParticionActual);
+		char* rutaArchivoBinarioActual = list_get(archivosBinarios, numeroParticionActual);
 		agregarRegistrosFromBloqueByPath(rutaArchivoBinarioActual, listaRegistrosViejos);
 
 		//agarro los registros nuevos de la particion actual
@@ -55,13 +55,13 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 			scanf(registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
 			return registroChar;
 		}
-		t_list* registrosChar = list_map(registrosParticionActual, (void*)registroToChar);
+		t_list* registrosChar = list_map(registrosParticionActual, (void*) registroToChar);
 
 		//escribimos en el binario y los bloques de ese archivo
 		escribirEnBin(registrosChar, rutaArchivoBinarioActual);
 
-		list_destroy_and_destroy_elements(registrosParticionActual,(void*)freeRegistro);
-		list_destroy_and_destroy_elements(registrosChar,free);
+		list_destroy_and_destroy_elements(registrosParticionActual, (void*) freeRegistro);
+		list_destroy_and_destroy_elements(registrosChar, free);
 
 		numeroParticionActual++;
 	}
@@ -306,7 +306,7 @@ t_list* obtenerRegistrosFromBinByNombreTabla(char* nombreTabla) {
 	t_list* binarios = buscarBinariosByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(binarios, (void*) agregarRegistrosFromBloqueByPath, registros);
-	list_destroy_and_destroy_elements(binarios,free);
+	list_destroy_and_destroy_elements(binarios, free);
 	return registros;
 
 }
@@ -315,7 +315,7 @@ t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
 	t_list* binarios = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(binarios, (void*) agregarRegistrosFromBloqueByPath, registros);
-	list_destroy_and_destroy_elements(binarios,free);
+	list_destroy_and_destroy_elements(binarios, free);
 	return registros;
 
 }

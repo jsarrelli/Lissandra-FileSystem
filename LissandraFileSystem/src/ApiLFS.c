@@ -9,19 +9,19 @@
 #include "funcionesLFS.h"
 #include "FileSystem.h"
 
-void consolaLFS() {
+int consolaLFS() {
 	puts("Bienvenido a la consola de LFS");
 	while (1) {
 		puts("Ingrese un comando:");
 		char *linea = readline(">");
 
-		if (!strcmp(linea, "")) {
-			free(linea);
-			continue;
+		if (linea == NULL) {
+			return 0;
 		}
 		procesarInput(linea);
 		free(linea);
 	}
+	return 0;
 }
 
 void procesarInput(char* consulta) {
@@ -32,16 +32,18 @@ void procesarInput(char* consulta) {
 	if (strcmp(operacion, "SELECT") == 0) {
 		//return procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
-		return consolaInsert(argumentos);
+		consolaInsert(argumentos);
 	} else if (strcmp(operacion, "CREATE") == 0) {
-		return consolaCreate(argumentos);
+		consolaCreate(argumentos);
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
-		return consolaDescribe(argumentos);
+		consolaDescribe(argumentos);
 	} else if (strcmp(operacion, "DROP") == 0) {
-		return consolaDrop(argumentos);
+		consolaDrop(argumentos);
 	} else {
 		puts("Comando no encontrado");
 	}
+
+	freePunteroAPunteros(comandos);
 
 }
 
@@ -57,7 +59,7 @@ void consolaCreate(char*argumentos) {
 
 void consolaDescribe(char* nombreTabla) {
 
-	if (nombreTabla!=NULL&&existeTabla(nombreTabla)) {
+	if (nombreTabla != NULL && existeTabla(nombreTabla)) {
 		funcionDESCRIBE(nombreTabla);
 	} else
 		funcionDESCRIBE_ALL();

@@ -6,7 +6,7 @@
 #include <Sockets/Conexiones.h>
 #include "AdministradorConsultasLFS.h"
 
-void consolaLFS();
+int consolaLFS();
 void procesarInput(char* consulta);
 void consolaCreate(char*argumentos);
 void consolaDescribe(char* nombreTabla);

@@ -54,5 +54,6 @@ bool existeSegmentoFS(char* nombreSegmento);
 bool validarValueMaximo(char* value);
 
 Segmento* newSegmento(char* nombreSegmento);
+void vaciarMemoria();
 
 #endif /*MEMORIAPRINCIPAL_H_*/

@@ -56,6 +56,7 @@ t_metadata_tabla* newMetadata(t_consistencia consistencia, int cantParticiones, 
 int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metaData = newMetadata(consistencia, cantParticiones, tiempoCompactacion);
 	int succes = enviarCreateAFileSystem(metaData, nombreTabla);
+	free(metaData);
 	if (succes == 0) {
 		insertarSegmentoEnMemoria(nombreTabla);
 		printf("Se ha creado la tabla %s \n \n", nombreTabla);
@@ -96,6 +97,7 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 		printf("Consistencia: %s / cantParticiones: %s / tiempoCompactacion: %s \n", valores[1], valores[2],
 				valores[3]);
 		freePunteroAPunteros(valores);
+		free(tablaSerializadaAux);
 	}
 	t_list* tablas = describeAllFileSystem();
 	list_iterate(tablas, (void*) mostrarMetadataSerializada);

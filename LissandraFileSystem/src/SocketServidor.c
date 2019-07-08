@@ -15,8 +15,7 @@ void escuchar(int listenningSocket) {
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
 		printf("Escuchando.. \n");
-		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente,
-				&datosConexionClienteSize);
+		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			printf("Request de memoria recibida.. \n");
 			pthread_t threadId;
@@ -76,9 +75,9 @@ void procesarAccion(int socketMemoria) {
 
 void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 	printf("Nueva memoria conectada. Socket N:%d", socketMemoria);
-	char valueMaximoChar [10];
-	sprintf(valueMaximoChar,"%d",valueMaximo);
-	EnviarDatosTipo(socketMemoria, FILESYSTEM, valueMaximoChar, strlen(valueMaximoChar)+1, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+	char valueMaximoChar[10];
+	sprintf(valueMaximoChar, "%d", valueMaximo);
+	EnviarDatosTipo(socketMemoria, FILESYSTEM, valueMaximoChar, strlen(valueMaximoChar) + 1, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 
 }
 
@@ -144,8 +143,8 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
-		sprintf(respuesta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA),
-				metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
+		sprintf(respuesta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES,
+				metadata.T_COMPACTACION);
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta) + 1, DESCRIBE);
 		return;
 	}

@@ -50,11 +50,12 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	char* consulta = malloc(strlen(nombreSegmento) + 1); // +1 por el espacio
 	sprintf(consulta, "%s", nombreSegmento);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), DROP);
+	free(consulta);
 	Paquete paquete;
 	int succes = 0;
 		if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
 			succes = atoi(paquete.mensaje);
-
+			free(paquete.mensaje);
 		}
 
 		return succes;
@@ -73,7 +74,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla)
 	int succes = 0;
 	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
-
+		free(paquete.mensaje);
 	}
 
 	return succes;
@@ -88,6 +89,7 @@ t_list* describeAllFileSystem() {
 
 	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
 		if (strcmp(paquete.mensaje, "fin") == 0) {
+			free(paquete.mensaje);
 			break;
 		}
 
@@ -121,7 +123,6 @@ int HandshakeInicial()
 }
 
 void gossiping() {
-
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
 }
 

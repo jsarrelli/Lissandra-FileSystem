@@ -15,7 +15,7 @@ int funcionDROP(char* nombreTabla) {
 		removerTabla(nombreTabla);
 		printf("%s eliminada\n\n", nombreTabla);
 		return 0;
-	} else{
+	} else {
 		puts("La tabla que se quiere eliminar no existe");
 	}
 	return 1;

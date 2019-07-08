@@ -13,15 +13,14 @@
 #include "EstructurasFileSystem.h"
 //t_list* listaNombresTablas;
 
-
 //tablas
 
 int existeTabla(char* nombreTabla);
 char * obtenerRutaTablaSinArchivo(char * rutaTabla);
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones);
-void crearMetadataTabla (char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
+void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion);
 char* armarRutaTabla(char* nombreTabla);
-void mostrarMetadataTabla(t_metadata_tabla metadataTabla,char* nombreTabla);
+void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla);
 void mostrarMetadataTabla2(char* nombreTabla);
 void removerTabla(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
@@ -39,8 +38,8 @@ void mostrarMetadataTodasTablas(char *ruta);
 
 t_list* buscarArchivos(char* nombreTabla);
 char** buscarArchivosTemporales(char * rutaTabla);
-int esArchivo (char* ruta);
-void removerArchivosDeTabla(char * rutaTabla);
+int esArchivo(char* ruta);
+void removerArchivosDeTabla(char * nombreTabla);
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
 int liberarBloquesDeArchivo(char *rutaArchivo);
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
@@ -49,8 +48,8 @@ void crearYEscribirArchivosTemporales(char*ruta);
 void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
-int contarArchivosTemporales(t_list* archivos) ;
-int escribirEnTmp (char*nombreTabla,char*rutaTmp);
+int contarArchivosTemporales(t_list* archivos);
+int escribirEnTmp(char*nombreTabla, char*rutaTmp);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);
 t_tabla_memtable* getTablaFromMemtable(char* nombreTabla);
