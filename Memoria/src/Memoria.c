@@ -59,8 +59,10 @@ void* leerConsola()
 		}
 		if (consulta == NULL) {
 			return NULL;
+		}else{
+			procesarConsulta(consulta);
 		}
-		procesarConsulta(consulta);
+
 
 	}
 	log_info(logger, "Fin de leectura por consola");

@@ -76,7 +76,9 @@ void procesarAccion(int socketMemoria) {
 
 void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 	printf("Nueva memoria conectada. Socket N:%d", socketMemoria);
-	EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+	char valueMaximoChar [10];
+	sprintf(valueMaximoChar,"%d",valueMaximo);
+	EnviarDatosTipo(socketMemoria, FILESYSTEM, valueMaximoChar, strlen(valueMaximoChar)+1, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 
 }
 

@@ -23,7 +23,7 @@ void cargarEstructurasGossiping(){
 	tablaGossiping = list_create();
 	t_memoria* memoria = malloc(sizeof(t_memoria));
 	memoria->ip = malloc (strlen(configuracion->IP_ESCUCHA)+1);
-	memoria->puerto = malloc(strlen(configuracion->PUERTO_ESCUCHA));
+	memoria->puerto = malloc(strlen(configuracion->PUERTO_ESCUCHA)+1);
 	strcpy(memoria->ip,configuracion->IP_ESCUCHA);
 	strcpy(memoria->puerto,configuracion->PUERTO_ESCUCHA);
 

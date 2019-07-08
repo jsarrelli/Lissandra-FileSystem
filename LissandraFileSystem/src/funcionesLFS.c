@@ -121,8 +121,7 @@ void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
 }
 
 char* armarRutaTabla(char* nombreTabla) {
-	char* rutaTabla = string_new();
-	strcpy(rutaTabla, rutas.Tablas);
+	char* rutaTabla = string_duplicate(rutas.Tablas);
 	string_append(&rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "/");
 

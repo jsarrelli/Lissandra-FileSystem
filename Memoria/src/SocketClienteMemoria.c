@@ -111,11 +111,9 @@ int HandshakeInicial()
 	log_info(logger, "Memoria conectada a File System");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
-	void* datos;
 	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
-		datos = malloc(paquete.header.tamanioMensaje);
-		datos = paquete.mensaje;
-		memcpy(&valueMaximoPaginas, datos, sizeof(int));
+		valueMaximoPaginas = atoi (paquete.mensaje);
+		free(paquete.mensaje);
 	}
 
 	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
