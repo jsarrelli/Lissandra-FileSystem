@@ -18,6 +18,7 @@ void iniciarVariablesKernel() {
 	sem_init(&mutex_colaReady, 0, 1);
 	sem_init(&mutex_id_proceso, 0, 1);
 	sem_init(&bin_main, 0, 0);
+	sem_init(&fin, 0, 0);
 
 	cantRequestsEjecutadas = 0;
 	haySC = false;
@@ -62,9 +63,7 @@ void iniciarVariablesKernel() {
 /*
  * Estado del Kernel:
  *
- * Actualmente, el Kernel funciona con codigo hardcodeado ya que todavia no usa las funciones sockets
- *
- * A pesar de eso, se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
+ * Se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
  *
  * Se puede asignar un criterio a una memoria (comando ADD)
  *
@@ -72,21 +71,17 @@ void iniciarVariablesKernel() {
  *
  * TODO:
  * 		- Manejo de errores
- * 		- Round Robin
+ * 		- Round Robin (Creo que  ya esta resuelto)
  *		- Multiprocesamiento
  *
- * 	Aclaracion:
- * 		Muchas de las decisiones fueron hechas para ver los puntos que faltan
- *
- *
- * 	Pero lo mas importante es que ahora tenemos una muy buena base para avanzar!!!
  */
 
-void hiloConsola(){
+void iniciarConsolaKernel(){
 	char* operacion = readline(">");
 
 	while(1){
-		if(!instruccionSeaSalir(operacion)){
+		if(instruccionSeaSalir(operacion)){
+			sem_post(&fin);
 			break;
 			// Añadir semaforo para continuar y terminar el hilo principal
 		}
@@ -94,6 +89,8 @@ void hiloConsola(){
 			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
 			// Es muy importante!!!
 			crearProcesoYMandarloAReady(operacion);
+			desbloquearHilos();
+			sem_post(&bin_main);
 			// free(operacion); // Para esto es importante
 		}
 	}
@@ -127,8 +124,34 @@ void inicioKernelUnProcesador() {
 }
 
 int main(void) {
+//	pthread_t hiloConsola;
+//	pthread_t hiloMultiprocesamiento;
 	iniciarVariablesKernel();
 	inicioKernelUnProcesador();
+
+	// Hilo de consola
+
+//	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
+//	pthread_detach(hiloConsola);
+//
+////	iniciarConsolaKernel();
+//
+//	// Este semaforo es muy importante
+//	sem_wait(&bin_main);
+//
+//	// Hilo de multiprocesamiento
+//	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
+//	pthread_detach(hiloMultiprocesamiento);
+//
+//	sem_wait(&fin);
+
+	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
+
+	destruirArraySemaforos();
+
+//	for(int i = multiprocesamiento; i > 0; i--)
+//		free(&arraySemaforos[i]);
+
 //	config_destroy(config);
 	return EXIT_SUCCESS;
 }

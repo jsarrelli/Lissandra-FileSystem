@@ -23,5 +23,6 @@ void imprimirCriterio(bool* criterio);
 bool instruccionSeaSalir(char* operacion);
 void hardcodearListaMetadataTabla();
 int contarLineasArchivo(FILE* fichero, char* path);
+void destruirArraySemaforos();
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */

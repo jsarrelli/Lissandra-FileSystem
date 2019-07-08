@@ -269,13 +269,16 @@ void deserealizarYMostrarMetadata(Paquete* paquete) {
 }
 
 int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
+	int estadoRecibir=0;
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
 	if (EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0,
 			DESCRIBE_ALL)==SUPER_ERROR)
 		return SUPER_ERROR;
-	while (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) > 0) {
+	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete)) > 0) {
 		deserealizarYMostrarMetadata(&*paquete);
 	}
+	if(estadoRecibir < 0)
+		return SUPER_ERROR;
 	return TODO_OK;
 }
 
@@ -359,7 +362,8 @@ int consolaDrop(char*nombreTabla) {
 			config->IP_MEMORIA);
 	char request[100];
 	sprintf(request, "%s", nombreTabla);
-	enviarInfoMemoria(socketMemoria, request, DROP);
+	if(enviarInfoMemoria(socketMemoria, request, DROP)==SUPER_ERROR)
+		return SUPER_ERROR;
 
 	return TODO_OK;
 }

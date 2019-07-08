@@ -152,3 +152,10 @@ int contarLineasArchivo(FILE* fichero, char* path) {
 	fclose(fichero);
 	return num_lineas;
 }
+
+void destruirArraySemaforos() {
+	for (int i = 0; i < multiprocesamiento; i++)
+		sem_destroy(&arraySemaforos[i]);
+
+	free(arraySemaforos);
+}
