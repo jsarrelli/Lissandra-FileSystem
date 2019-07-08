@@ -83,4 +83,7 @@ void consolaInsert(char* argumentos) {
 	}
 
 	funcionINSERT(timeStamp, nombreTabla, key, value);
+
+	freePunteroAPunteros(valoresAux);
+	freePunteroAPunteros(valores);
 }

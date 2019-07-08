@@ -28,50 +28,58 @@ void crearBloques() {
 	}
 }
 
-int* buscarBloquesLibres(int cant) {
-	int i;
-	int j = 0;
-	int *bloques = (int*) malloc(sizeof(int) * cant);
-	for (i = 0; i < metadata.BLOCKS && j != cant; ++i) {
+t_list* buscarBloquesLibres(int cant) {
+	t_list* bloquesLibres = list_create();
+	for (int i = 0; i < metadata.BLOCKS && list_size(bloquesLibres) < cant; ++i) {
 		if (bitarray_test_bit(bitmap, i) == 0) {
-			bloques[j] = i;
-			j++;
+			list_add(bloquesLibres,i);
 		}
 	}
-	return (j == cant) ? bloques : NULL;
+
+	if(list_is_empty(bloquesLibres)){
+		list_destroy(bloquesLibres);
+		return NULL;
+	}
+	return bloquesLibres;
 }
 
 void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
+	log_info(logger, "Bloque %d liberado",index);
 }
 
 void reservarBloque(int index) {
 	bitarray_set_bit(bitmap, index);
 }
 
-void crearBitmap() {
-	int cantidad = ((metadata.BLOCKS + 8 - 1) / 8); //Redondeado para arriba
-	char * bitarray = (char*) malloc(sizeof(char) * cantidad);
-	memset(bitarray, 0, cantidad);
-	bitmap = bitarray_create_with_mode(bitarray, (metadata.BLOCKS + 8 - 1) / 8, LSB_FIRST);
-}
-
 void leerBitmap() {
-	FILE *archivo = fopen(rutas.Bitmap, "rb");
-	if (archivo == NULL) {
-		archivo = fopen(rutas.Bitmap, "wb");
-		crearBitmap();
-		fclose(archivo);
-	} else {
-		crearBitmap();
-		fread(bitmap->bitarray, sizeof(char), (metadata.BLOCKS + 8 - 1) / 8, archivo);
-		fclose(archivo);
+	int cantidadBloques = (metadata.BLOCKS / 8) ;
+
+	int fd = open(rutas.Bitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+	ftruncate(fd, cantidadBloques);
+	if (fd == -1) {
+		log_error(loggerError, "No se pudo abrir el archivo de bitmap");
 	}
+
+	char * bitarray = mmap(NULL, cantidadBloques, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	if(strlen(bitarray)==0){
+		bitarray= malloc(cantidadBloques);
+		memset(bitarray,0,cantidadBloques);
+	}
+
+	bitmap = bitarray_create_with_mode(bitarray, cantidadBloques,LSB_FIRST);
+	msync(bitarray,cantidadBloques,MS_SYNC);
+
+	log_info(logger, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
+
+	//munmap(bitarray,cantidadBloques);
+	close(fd);
+
 }
 
 void escribirBitmap() {
 	FILE *archivo = fopen(rutas.Bitmap, "wb");
-	fwrite(bitmap->bitarray, sizeof(char), (metadata.BLOCKS + 8 - 1) / 8, archivo);
+	msync(bitmap->bitarray,metadata.BLOCKS /8, MS_SYNC);
 	fclose(archivo);
 }
 
@@ -82,7 +90,7 @@ void destruirBitmap(t_bitarray *bitmap) {
 
 int cargarMetadata(t_configuracion_LFS* config) {
 	char*path;
-	t_config* configFs = config_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
+	configFs = config_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
 
 	config->PUNTO_MONTAJE = config_get_string_value(configFs, "PUNTO_MONTAJE");
 	mkdir(config->PUNTO_MONTAJE, 0777);
@@ -102,7 +110,6 @@ int cargarMetadata(t_configuracion_LFS* config) {
 	string_append(&path, config->PUNTO_MONTAJE);
 	string_append(&path, "/Metadata/Bitmap.bin");
 	rutas.Bitmap = path;
-	leerBitmap();
 
 	path = string_new();
 	string_append(&path, config->PUNTO_MONTAJE);
@@ -116,7 +123,11 @@ int cargarMetadata(t_configuracion_LFS* config) {
 	rutas.Bloques = path;
 	mkdir(rutas.Bloques, 0777);
 
-	config_destroy(configFs);
+	leerMetadata();
+	printf("Metadata  leida \n");
+
+	leerBitmap();
+	printf("Bitmap creado\n\n");
 	return 1;
 }
 

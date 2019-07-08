@@ -223,13 +223,10 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 	if (result < 0) {
 		return -1;
 	}
-	int i;
-	for (i = 0; i < archivo->cantBloques; ++i) {
-		liberarBloque(strtol(archivo->BLOQUES[i], NULL, 10));
-		log_info(logger, "Bloque liberado: %s\n", archivo->BLOQUES[i]);
-		printf("Bloque liberado: %s\n", archivo->BLOQUES[i]);
-		i++;
+	if (list_is_empty(archivo->BLOQUES)) {
+		return -1;
 	}
+	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
 	escribirBitmap();
 
 	free(archivo);
@@ -251,11 +248,14 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 		return -2; //Archivo corrupto
 	}
 	if (config_has_property(config, "BLOQUES")) {
-		archivo->BLOQUES = config_get_array_value(config, "BLOQUES");
-		int cant = 0;
-		for (cant = 0; archivo->BLOQUES[cant]; cant++)
-			;
-		archivo->cantBloques = cant;
+
+		char** arrayBloques = config_get_array_value(config, "BLOQUES");
+		int i = 0;
+		while (arrayBloques[i] != NULL) {
+			list_add(archivo->BLOQUES, (void*) atoi(arrayBloques[i]));
+			i++;
+		}
+		archivo->cantBloques = list_size(archivo->BLOQUES);
 	} else {
 		return -2;
 	}
@@ -374,41 +374,36 @@ void crearYEscribirArchivosTemporales(char*ruta) {
 	list_destroy_and_destroy_elements(listaDirectorios, free);
 }
 
-void crearYEscribirTemporal(char*rutaTabla) {
-	char**palabras = string_split(rutaTabla, "/");
+void crearYEscribirTemporal(char* rutaTabla) {
+	char* rutaTablaAux = string_duplicate(rutaTabla);
+	char**palabras = string_split(rutaTablaAux, "/");
 	char* nombTabla = (char*) obtenerUltimoElementoDeUnSplit(palabras);
 	t_list*archivos = buscarArchivos(nombTabla);
 	int cantidadTmp = contarArchivosTemporales(archivos);
 
-	string_append(&rutaTabla, "/");
-	string_append_with_format(&rutaTabla, "tmp%d.tmp", cantidadTmp);
+	string_append(&rutaTablaAux, "/");
+	string_append_with_format(&rutaTablaAux, "tmp%d.tmp", cantidadTmp);
 
 	t_tabla_memtable* tabla = getTablaFromMemtable(nombTabla);
 	if (tabla != NULL && !list_is_empty(tabla->registros)) {
-		crearArchReservarBloqueYEscribirBitmap(rutaTabla);
+		crearArchReservarBloqueYEscribirBitmap(rutaTablaAux);
 		printf("Archivo temporal creado en %s\n\n", nombTabla);
-		escribirEnTmp(nombTabla, rutaTabla);
+		t_list* registros = buscarRegistrosDeTabla(nombTabla);
+		escribirRegistrosEnBloquesByPath(registros, rutaTablaAux);
+		list_destroy_and_destroy_elements(registros, free);
 		limpiarRegistrosDeTabla(nombTabla);
 	}
 
 	freePunteroAPunteros(palabras);
+//	free(rutaTablaAux);
 	list_destroy_and_destroy_elements(archivos, free);
 	free(nombTabla);
 
 }
 
 void limpiarRegistrosDeTabla(char*nombreTabla) {
-	t_tabla_memtable* tabla;
-	int i;
-
-	for (i = 0; i < list_size(memtable); i++) {
-		tabla = (t_tabla_memtable*) list_get(memtable, i);
-		if (!strcmp(tabla->tabla, nombreTabla)) {
-			list_clean_and_destroy_elements(tabla->registros, (void*) freeRegistro);
-		}
-
-	}
-
+	t_tabla_memtable* tabla = getTablaFromMemtable(nombreTabla);
+	list_clean_and_destroy_elements(tabla->registros, (void*) freeRegistro);
 	printf("Lista de Registros de %s limpia\n", nombreTabla);
 }
 
@@ -427,20 +422,22 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
 
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch) {
 	FILE*archivo = fopen(rutaArch, "w");
-	int *bloque = buscarBloquesLibres(1);
 
-	if (bloque == NULL) {
+	t_list* bloquesLibres = buscarBloquesLibres(1);
+	if (bloquesLibres == NULL) {
 		logErrorAndExit("No hay bloques libres para crear el archivo");
+		return;
 	}
+	int bloqueLibre = (int) list_get(bloquesLibres, 0);
 
-	reservarBloque(bloque[0]);
+	reservarBloque(bloqueLibre);
 	escribirBitmap();
 
 	fprintf(archivo, "TAMANIO=0\n");
 
-	fprintf(archivo, "BLOQUES=[%i]", bloque[0]);
+	fprintf(archivo, "BLOQUES=[%i]", bloqueLibre);
+	list_destroy(bloquesLibres);
 	fclose(archivo);
-	free(bloque);
 
 }
 t_list* buscarRegistrosDeTabla(char*nombreTabla) {
@@ -482,99 +479,76 @@ t_tabla_memtable* getTablaFromMemtable(char* nombreTabla) {
 	return (t_tabla_memtable*) list_find(memtable, (void*) isTablaBuscada);
 }
 
-int escribirEnTmp(char*nombreTabla, char*rutaTmp) {
+FILE* obtenerArchivoBloque(int numeroBloque) {
+	char* rutaBloque = string_new();
+	string_append(&rutaBloque, rutas.Bloques);
+	string_append(&rutaBloque, "/");
+	string_append(&rutaBloque, string_itoa(numeroBloque));
+	string_append(&rutaBloque, ".bin");
+	FILE* archivoBloque = fopen(rutaBloque, "wb");
+	if (archivoBloque == NULL) {
+		puts("Error al guardar datos en bloques");
+		free(rutaBloque);
+		return NULL;
+	}
+	free(rutaBloque);
+	return archivoBloque;
+}
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
 
-	int*bloques;
-	char *rutaBloque = malloc(150);
-	char **arrBloques = malloc(40);
-//char*registro = malloc(100);
-	t_archivo *archivo = malloc(sizeof(t_archivo));
-	strcpy(rutaBloque, rutas.Bloques);
-	t_list* registros = buscarRegistrosDeTabla(nombreTabla);
-	int res = leerArchivoDeTabla(rutaTmp, archivo);
+	t_archivo *archivoTmp = malloc(sizeof(t_archivo));
+	int res = leerArchivoDeTabla(pathArchivoAEscribir, archivoTmp);
 	if (res < 0) {
 		return -1;
 	}
-	int bytesAEscribir = obtenerTamanioListaRegistros(registros);
+
+	int bytesAEscribir = obtenerTamanioListaRegistros(registrosAEscribir);
 	int bloquesNecesarios = (bytesAEscribir + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
-	int bloquesReservados = archivo->cantBloques;
-	int i, j;
+	int bloquesReservados = archivoTmp->cantBloques;
 
 	if (bloquesNecesarios > bloquesReservados) {
 		int cantBloques = bloquesNecesarios - bloquesReservados;
-		bloques = buscarBloquesLibres(cantBloques);
-		if (bloques == NULL) {
-			puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
+		t_list* bloquesLibres = buscarBloquesLibres(cantBloques);
+
+		if (bloquesLibres == NULL) {
+			puts("Error al guardar datos en el archivoTmp. No hay suficientes bloques libres");
 			return -1;
 		}
 
-		for (i = 0; i < archivo->cantBloques; ++i) {
-			arrBloques[i] = archivo->BLOQUES[i];
-		}
-
-		for (j = 0; j < cantBloques; ++j) {
-			reservarBloque(bloques[j]);
-			arrBloques[i] = string_itoa(bloques[j]);
-			i++;
-		}
-
-		archivo->cantBloques = bloquesNecesarios;
-		for (i = 0; i < archivo->cantBloques; i++) {
-			archivo->BLOQUES[i] = arrBloques[i];
-		}
-
-		free(bloques);
-
+		list_iterate(bloquesLibres, (void*) reservarBloque);
+		list_add_all(archivoTmp->BLOQUES, bloquesLibres);
+		archivoTmp->cantBloques = list_size(archivoTmp->BLOQUES);
+		list_destroy(bloquesLibres);
 	}
 
-	FILE*archivoBloque;
-	i = 0, j = 0;
-	char* registroActual = list_get(registros, j);
+	int indexArchivoBloque = 0;
+	int tamanioTotalBloquesEscritos = 0;
+	void agregarRegistroEnBloque(char* registro) {
 
-	while (archivo->BLOQUES[i] != NULL) {
-		int tamanioArchBloque = 0;
+		int bloqueActual = (int) list_get(archivoTmp->BLOQUES, indexArchivoBloque);
+		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual);
 
-		string_append(&rutaBloque, archivo->BLOQUES[i]);
-		string_append(&rutaBloque, ".bin");
-		archivoBloque = fopen(rutaBloque, "wb");
-		if (archivoBloque == NULL) {
-			puts("Error al guardar datos en bloques");
-			return -1;
+		//preguntamos si el registro entra en el bloque
+		if (tamanioArchivo(archivoBloque) + (strlen(registro) + 1) <= metadata.BLOCK_SIZE) {
+			fprintf(archivoBloque, "%s", registro);
+			tamanioTotalBloquesEscritos += strlen(registro) + 1;
+
+		} else {
+			indexArchivoBloque++;
+			fclose(archivoBloque);
+			agregarRegistroEnBloque(registro);
+			//el problema si en si un registro del ciclo entra en algun bloque pasado... nos chupa un huevo
+
 		}
 
-		//int cantBytes = strlen(registros[j]) + 1;
-		while (tamanioArchBloque + (strlen(registroActual) + 1) < metadata.BLOCK_SIZE && j < list_size(registros)) {
-			char registro[strlen(registroActual) + 1];
-			strcpy(registro, registroActual);
-			//registro = string_duplicate(registros[j]);
-			fwrite(registro, 1, sizeof(registro), archivoBloque);
-			printf("Registro %s insertado en bloque de .tmp\n", registro);
-			tamanioArchBloque += (sizeof(registro));
-			bytesAEscribir -= (sizeof(registro));
-			if (bytesAEscribir == 0) {
-				fclose(archivoBloque);
-				archivo->TAMANIO += tamanioArchBloque;
-				escribirArchivo(rutaTmp, archivo);
-				escribirBitmap();
-				free(archivo->BLOQUES);
-				free(arrBloques);
-				free(archivo);
-				free(rutaBloque);
-				list_destroy_and_destroy_elements(registros, free);
-				puts("Se termino de escribir en el temporal\n");
-				//free(registro);
-				return 1;
-			}
-
-			registroActual = list_get(registros, j++);
-		}
 		fclose(archivoBloque);
-		archivo->TAMANIO += tamanioArchBloque;
-		rutaBloque = obtenerRutaTablaSinArchivo(rutaBloque);
-		string_append(&rutaBloque, "/");
-		i++;
+
 	}
 
+	list_iterate(registrosAEscribir, (void*) agregarRegistroEnBloque);
+	archivoTmp->TAMANIO = tamanioTotalBloquesEscritos;
+	escribirArchivo(pathArchivoAEscribir, archivoTmp);
+	free(archivoTmp);
 	return 1;
 }
 
@@ -583,13 +557,17 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 	FILE* arch = fopen(rutaArchivo, "w+");
 	fprintf(arch, "TAMANIO=%i\n", archivo->TAMANIO);
 	fprintf(arch, "BLOQUES=[");
-	int i;
-	for (i = 0; i < archivo->cantBloques; ++i) {
-		if (i != 0) {
+
+	int index = 0;
+	void escribirBloque(int bloque) {
+		fprintf(arch, "%d", bloque);
+
+		if (index < list_size(archivo->BLOQUES) - 1) {
 			fprintf(arch, ",");
 		}
-		fprintf(arch, "%s", archivo->BLOQUES[i]);
+		index++;
 	}
+	list_iterate(archivo->BLOQUES, (void*) escribirBloque);
 	fprintf(arch, "]");
 	fclose(arch);
 }

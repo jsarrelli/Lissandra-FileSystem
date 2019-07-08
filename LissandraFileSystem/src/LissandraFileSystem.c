@@ -51,13 +51,11 @@ int main(void) {
 	config = cargarConfig("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
 
 	//crearStructRegistro(config->TAMANIO_VALUE);
+
 	cargarMetadata(config);
 	printf("Metadata cargada \n ");
-	leerMetadata();
-	printf("Metadata  leida \n");
 
-	leerBitmap();
-	printf("Bitmap creado\n\n");
+
 
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, config);
 	pthread_detach(serverThread);
@@ -65,6 +63,7 @@ int main(void) {
 	consolaLFS();
 	free(config);
 	config_destroy(fsConfig);
+	config_destroy(configFs);
 	free(bitmap->bitarray);
 	bitarray_destroy(bitmap);
 	return EXIT_SUCCESS;

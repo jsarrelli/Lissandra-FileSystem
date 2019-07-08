@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
 	int TAMANIO;
-	char **BLOQUES;
+	t_list* BLOQUES;
 	int cantBloques;
 } t_archivo;
 

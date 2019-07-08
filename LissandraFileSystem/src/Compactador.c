@@ -58,7 +58,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		t_list* registrosChar = list_map(registrosParticionActual, (void*) registroToChar);
 
 		//escribimos en el binario y los bloques de ese archivo
-		escribirEnBin(registrosChar, rutaArchivoBinarioActual);
+		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
 		list_destroy_and_destroy_elements(registrosParticionActual, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
@@ -123,109 +123,6 @@ void filtrarRegistros(t_list* registros) {
 	filtrarPorTimeStamp(registros);
 }
 
-void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin) {
-	char*rutaBinario = string_new();
-	int i;
-	t_list*lista;
-	for (i = 0; i < list_size(archivosBin); i++) {
-		rutaBinario = list_get(archivosBin, i);
-		lista = list_get(listaListas, i);
-
-		escribirEnBin(lista, rutaBinario);
-	}
-}
-
-int escribirEnBin(t_list* lista, char* rutaBinario) {
-	int*bloques;
-	t_archivo*archivo = malloc(sizeof(t_archivo));
-	leerArchivoDeTabla(rutaBinario, archivo);
-	char *rutaBloque = malloc(150);
-	char **arrBloques = malloc(40);
-	char*reg = string_new();
-	int bytesAEscribir = obtenerTamanioListaRegistros(lista);
-
-	int bloquesNecesarios = (bytesAEscribir + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
-	int bloquesReservados = archivo->cantBloques;
-	int i, j;
-
-	if (bloquesNecesarios > bloquesReservados) {
-		int cantBloques = bloquesNecesarios - bloquesReservados;
-		bloques = buscarBloquesLibres(cantBloques);
-		if (bloques == NULL) {
-			puts("Error al guardar datos en el archivo. No hay suficientes bloques libres");
-			return -1;
-		}
-
-		for (i = 0; i < archivo->cantBloques; ++i) {
-			arrBloques[i] = archivo->BLOQUES[i];
-		}
-
-		for (j = 0; j < cantBloques; ++j) {
-			reservarBloque(bloques[j]);
-			arrBloques[i] = string_itoa(bloques[j]);
-			i++;
-		}
-
-		archivo->cantBloques = bloquesNecesarios;
-		for (i = 0; i < archivo->cantBloques; i++) {
-			archivo->BLOQUES[i] = arrBloques[i];
-		}
-
-		free(bloques);
-
-	}
-
-	FILE*archivoBloque;
-	i = 0, j = 0;
-	reg = list_get(lista, j);
-	while (archivo->BLOQUES[i] != NULL) {
-		int tamanioArchBloque = 0;
-
-		string_append(&rutaBloque, archivo->BLOQUES[i]);
-		string_append(&rutaBloque, ".bin");
-
-		remove(rutaBloque);
-		archivoBloque = fopen(rutaBloque, "wb");
-		if (archivoBloque == NULL) {
-			puts("Error al guardar datos en bloques");
-			return -1;
-		}
-
-		//int cantBytes = strlen(registros[j]) + 1;
-		while (tamanioArchBloque + (strlen(reg) + 1) < metadata.BLOCK_SIZE && j < list_size(lista)) {
-			char registro[strlen(reg) + 1];
-			strcpy(registro, registro);
-			//registro = string_duplicate(registros[j]);
-			fwrite(registro, 1, sizeof(registro), archivoBloque);
-			printf("Registro %s insertado en bloque de particion .bin\n", registro);
-			tamanioArchBloque += (sizeof(registro));
-			bytesAEscribir -= (sizeof(registro));
-			if (bytesAEscribir == 0) {
-				fclose(archivoBloque);
-				archivo->TAMANIO += tamanioArchBloque;
-				escribirArchivo(rutaBinario, archivo);
-				escribirBitmap();
-				free(archivo->BLOQUES);
-				free(arrBloques);
-				free(archivo);
-				free(reg);
-				free(rutaBloque);
-				puts("Se termino de escribir en el temporal\n");
-				//free(registro);
-				return 1;
-			}
-
-			reg = list_get(lista, j++);
-		}
-		fclose(archivoBloque);
-		archivo->TAMANIO += tamanioArchBloque;
-		rutaBloque = obtenerRutaTablaSinArchivo(rutaBloque);
-		string_append(&rutaBloque, "/");
-		i++;
-	}
-
-	return 1;
-}
 void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	leerArchivoDeTabla(rutaBinario, archivo);
@@ -238,7 +135,7 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 	char * archivoMapeado;
 	char ** registros;
 
-	while (archivo->BLOQUES[i] != NULL) {
+	void levantarRegistrosDeBloque(int bloque) {
 		string_append_with_format(&rutaArchBloque, "%s.bin", archivo->BLOQUES[i]);
 		archivoBloque = fopen(rutaArchBloque, "rb");
 		tamanioArchBloque = tamanioArchivo(archivoBloque);
@@ -262,6 +159,8 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 		i++;
 	}
 
+	list_iterate(archivo->BLOQUES,(void*)levantarRegistrosDeBloque);
+
 	liberarPunteroDePunterosAChar(registros);
 	free(registros);
 	free(rutaArchBloque);
@@ -274,22 +173,25 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
 		return strcmp(extension, "bin") == 0;
 	}
+
+	t_list* archivosBinarios = list_filter(archivos, (void*) isBin);
 	list_destroy(archivos);
-	return list_filter(archivos, (void*) isBin);
+	return archivosBinarios;
 }
 
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
-void agregarRegistrosFromBloqueByPath(char* path, t_list* listaRegistros) {
+void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
-	leerArchivoDeTabla(path, archivo);
+	leerArchivoDeTabla(pathArchivo, archivo);
 	int i = 0;
-	log_info(logger, "Leyendo registros de %s... ", path);
-	while (archivo->BLOQUES[i] != NULL) {
+	log_info(logger, "Leyendo registros de %s... ", pathArchivo);
+
+	void cargarRegistrosDeBloque(int bloque){
 
 		char* rutaArchivoBloque = string_new();
 		strcpy(rutaArchivoBloque, rutas.Bloques);
-		string_append_with_format(&rutaArchivoBloque, "%s.bin", archivo->BLOQUES[i]);
+		string_append_with_format(&rutaArchivoBloque, "%s.bin", string_itoa(bloque));
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
 		t_list* registrosObtenidos = obtenerRegistrosFromBloque(rutaArchivoBloque);
 		list_add_all(listaRegistros, registrosObtenidos);
@@ -298,6 +200,8 @@ void agregarRegistrosFromBloqueByPath(char* path, t_list* listaRegistros) {
 		free(rutaArchivoBloque);
 		i++;
 	}
+
+	list_iterate(archivo->BLOQUES,(void*)cargarRegistrosDeBloque);
 
 	free(archivo);
 }
@@ -372,7 +276,8 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
 		return strcmp(extension, "tmp") == 0;
 	}
+	t_list* archivosTemporales=list_filter(archivos, (void*) isTemporal);
 	list_destroy(archivos);
-	return list_filter(archivos, (void*) isTemporal);
+	return archivosTemporales;
 
 }

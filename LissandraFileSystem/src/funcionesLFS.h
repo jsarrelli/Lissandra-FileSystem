@@ -27,7 +27,7 @@ void mostrarMetadataTodasTablas(char *ruta);
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 //char** buscarRegistrosDeTabla(char*nombreTabla);
-void buscarDirectorios(char * ruta, t_list* listaDirectorios);
+
 void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioListaRegistros(t_list* registros);
 
@@ -35,9 +35,10 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
 
 //ARCHIVOS DE TABLA
-
+void buscarDirectorios(char * ruta, t_list* listaDirectorios);
 t_list* buscarArchivos(char* nombreTabla);
 char** buscarArchivosTemporales(char * rutaTabla);
+
 int esArchivo(char* ruta);
 void removerArchivosDeTabla(char * nombreTabla);
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
@@ -49,7 +50,8 @@ void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 int contarArchivosTemporales(t_list* archivos);
-int escribirEnTmp(char*nombreTabla, char*rutaTmp);
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir);
+t_list* buscarRegistrosDeTabla(char*nombreTabla);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);
 t_tabla_memtable* getTablaFromMemtable(char* nombreTabla);
