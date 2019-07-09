@@ -25,7 +25,7 @@ pthread_t dumpThread;
 pthread_t serverThread;
 
 t_configuracion_LFS* config;
-t_config *fsConfig;
+
 
 void cargarConfig();
 

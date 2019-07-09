@@ -16,15 +16,16 @@ void cargarConfig() {
 	char* configPath = "/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Config/fsConfig.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso LFS \n");
 	config = malloc(sizeof(t_configuracion_LFS));
-	fsConfig = config_create(configPath);
+	t_config *fsConfig = config_create(configPath);
 
-	config->PUERTO_ESCUCHA = get_campo_config_string(fsConfig, "PUERTO_ESCUCHA");
-	config->PUNTO_MONTAJE = get_campo_config_string(fsConfig, "PUNTO_MONTAJE");
+	config->PUERTO_ESCUCHA = string_duplicate(get_campo_config_string(fsConfig, "PUERTO_ESCUCHA"));
+	config->PUNTO_MONTAJE = string_duplicate(get_campo_config_string(fsConfig, "PUNTO_MONTAJE"));
 	config->RETARDO = get_campo_config_int(fsConfig, "RETARDO");
 	config->TAMANIO_VALUE = get_campo_config_int(fsConfig, "TAMANIO_VALUE");
 	config->TIEMPO_DUMP = get_campo_config_int(fsConfig, "TIEMPO_DUMP");
 	log_info(logger, "Archivo de configuracion del proceso LFS levantado \n");
 
+	config_destroy(fsConfig);
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Config", cargarConfig);
 
 }
@@ -67,7 +68,6 @@ int main(void) {
 
 	consolaLFS();
 	free(config);
-	config_destroy(fsConfig);
 	//free(bitmap->bitarray);
 	bitarray_destroy(bitmap);
 	return EXIT_SUCCESS;

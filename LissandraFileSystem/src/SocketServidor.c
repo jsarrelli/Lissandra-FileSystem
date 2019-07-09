@@ -18,9 +18,10 @@ void escuchar(int listenningSocket) {
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			printf("Request de memoria recibida.. \n");
-			pthread_t threadId;
-			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
-			pthread_detach(threadId);
+//			pthread_t threadId;
+//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
+//			pthread_detach(threadId);
+			procesarAccion(socketMemoria);
 
 		}
 
@@ -31,7 +32,7 @@ void procesarAccion(int socketMemoria) {
 	Paquete paquete;
 
 	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
-
+		usleep(config->RETARDO * 1000);
 		if (paquete.header.quienEnvia == MEMORIA) {
 			int valueMaximo = 100;
 			switch ((int) paquete.header.tipoMensaje) {

@@ -1,8 +1,65 @@
-[INFO] 09:09:18:109 LFS Logs/(10889:10889): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 16:27:05:410 LFS Logs/(7723:7723): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 09:09:18:109 LFS Logs/(10889:10889): Levantando archivo de configuracion del proceso LFS 
+[INFO] 16:27:05:411 LFS Logs/(7723:7723): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 09:09:18:109 LFS Logs/(10889:10889): Archivo de configuracion del proceso LFS levantado 
+[INFO] 16:27:05:411 LFS Logs/(7723:7723): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 09:09:18:149 LFS Logs/(10889:10889): El tamanio del bitmap es de 3000 bits
-[INFO] 09:09:18:149 LFS Logs/(10889:10889): Levantando tablas ya existentes..
+[INFO] 16:27:05:559 LFS Logs/(7723:7723): El tamanio del bitmap es de 3000 bits
+[INFO] 16:27:05:560 LFS Logs/(7723:7723): Levantando tablas ya existentes..
+[INFO] 16:27:10:762 LFS Logs/(7723:7723): Se creo la tabla: TABLA en LFS
+
+[INFO] 16:27:10:762 LFS Logs/(7723:7723): Metadata de TABLA creada
+
+[INFO] 16:27:24:484 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:27:47:834 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:27:51:203 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:27:53:151 LFS Logs/(7723:7723): Obteniendo directorios de archivos binarios..
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Modificando tmp a tmpc..
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Se cambio la extension de los temporales
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Lectura de registros de los tmpc finalizada
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Mergeando registros viejos con nuevos
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:27:53:152 LFS Logs/(7723:7723): Bloque 0 liberado
+[INFO] 16:27:53:153 LFS Logs/(7723:7723): Bloque 2 liberado
+[INFO] 16:27:53:153 LFS Logs/(7723:7723): Compactacion de <TABLA> exitosa
+[INFO] 16:30:24:689 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:30:28:461 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:30:32:283 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:30:34:337 LFS Logs/(7723:7723): Obteniendo directorios de archivos binarios..
+[INFO] 16:30:34:337 LFS Logs/(7723:7723): Modificando tmp a tmpc..
+[INFO] 16:30:34:337 LFS Logs/(7723:7723): Se cambio la extension de los temporales
+[INFO] 16:32:44:663 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 16:32:44:663 LFS Logs/(7723:7723): Lectura de registros de los tmpc finalizada
+[INFO] 16:32:44:663 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:32:44:663 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:32:44:663 LFS Logs/(7723:7723): Mergeando registros viejos con nuevos
+[INFO] 16:33:47:264 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 16:33:47:264 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:33:47:264 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:33:47:265 LFS Logs/(7723:7723): Bloque 0 liberado
+[INFO] 16:34:10:628 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
+[INFO] 16:34:10:629 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:34:10:629 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:34:10:629 LFS Logs/(7723:7723): Bloque 1 liberado
+[INFO] 16:34:10:629 LFS Logs/(7723:7723): Bloque 2 liberado
+[INFO] 16:34:10:629 LFS Logs/(7723:7723): Compactacion de <TABLA> exitosa
+[INFO] 16:40:27:237 LFS Logs/(7723:7723): Insert realizado en memtable
+[INFO] 16:40:29:987 LFS Logs/(7723:7723): Obteniendo directorios de archivos binarios..
+[INFO] 16:40:29:987 LFS Logs/(7723:7723): Modificando tmp a tmpc..
+[INFO] 16:40:29:987 LFS Logs/(7723:7723): Se cambio la extension de los temporales
+[INFO] 16:45:00:768 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 16:45:00:769 LFS Logs/(7723:7723): Lectura de registros de los tmpc finalizada
+[INFO] 16:45:00:769 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:45:00:769 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:45:00:769 LFS Logs/(7723:7723): Mergeando registros viejos con nuevos
+[INFO] 16:45:03:139 LFS Logs/(7723:7723): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 16:45:03:139 LFS Logs/(7723:7723): Filtrando registros..
+[INFO] 16:45:03:139 LFS Logs/(7723:7723): Filtrado completo
+[INFO] 16:45:03:139 LFS Logs/(7723:7723): Bloque 0 liberado
+[INFO] 16:45:03:140 LFS Logs/(7723:7723): Bloque 2 liberado
+[INFO] 16:45:03:140 LFS Logs/(7723:7723): Compactacion de <TABLA> exitosa
