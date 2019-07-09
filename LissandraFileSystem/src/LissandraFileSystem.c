@@ -24,7 +24,6 @@ t_configuracion_LFS* cargarConfig(char* ruta) {
 	config->TIEMPO_DUMP = get_campo_config_int(fsConfig, "TIEMPO_DUMP");
 	log_info(logger, "Archivo de configuracion del proceso LFS levantado \n");
 
-
 	return config;
 }
 
@@ -57,9 +56,14 @@ int main(void) {
 
 	cargarMemtable();
 
-
+	//HILO ESCUCHA SERVIDOR
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, config);
 	pthread_detach(serverThread);
+
+	//HILO DUMP
+	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
+	pthread_detach(dumpThread);
+
 
 	consolaLFS();
 	free(config);

@@ -42,3 +42,11 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 		return 1;
 	}
 }
+
+
+void procesoDump(){
+	while (1) {
+			usleep(config->TIEMPO_DUMP* 1000);
+			crearYEscribirArchivosTemporales(rutas.Tablas);
+		}
+}
