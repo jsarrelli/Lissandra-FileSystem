@@ -105,7 +105,7 @@ void inicioKernelUnProcesador() {
 		crearProcesoYMandarloAReady(operacion);
 		//		deReadyAExec();
 		// Por ahora lo hago con un solo proceso y lo hago manual
-		ejecutarProcesos();
+//		ejecutarProcesos();
 		// Prueba multiprocesamiento
 		desbloquearHilos();
 		nuevaFuncionThread(NULL);

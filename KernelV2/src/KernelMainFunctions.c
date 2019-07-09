@@ -123,7 +123,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 				memoriaAEnviar->id);
 	} else {
 		log_error(log_master->logError,
-				"Error: no existe memoria con ese criterio");
+				"Error: no existe memoria con ese criterio o tabla no existe");
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
@@ -302,6 +302,9 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
+	if(consistenciaDeTabla == ERROR_CONSISTENCIA)
+		return NULL;
+
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
 }
 
@@ -315,6 +318,10 @@ consistencia obtenerConsistenciaDe(char* nombreTabla) {
 	metadataTablas* metadata = NULL;
 	metadata = list_find((t_list*) listaMetadataTabla,
 			condicionObtenerConsistencia);
+
+	if(metadata==NULL)
+		return ERROR_CONSISTENCIA;
+
 	return metadata->consistencia;
 }
 
