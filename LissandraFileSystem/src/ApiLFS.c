@@ -9,22 +9,25 @@
 #include "funcionesLFS.h"
 #include "FileSystem.h"
 
-int consolaLFS() {
-	puts("Bienvenido a la consola de LFS");
+void* consolaLFS() {
+	char * consulta;
 	while (1) {
-		puts("Ingrese un comando:");
-		char *linea = readline(">");
-		if (linea == NULL) {
-			return 0;
+
+		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
+		consulta = readline(">");
+		if (consulta) {
+			add_history(consulta);
 		}
-		if (linea) {
-			add_history(linea);
+		if (consulta == NULL || strlen(consulta) == 0) {
+			free(consulta);
+			return NULL;
+		} else {
+			procesarInput(consulta);
 		}
 
-		procesarInput(linea);
-		free(linea);
 	}
-	return 0;
+	log_info(logger, "Fin de leectura por consola");
+	return NULL;
 }
 
 void procesarInput(char* consulta) {
