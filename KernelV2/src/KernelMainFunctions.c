@@ -24,6 +24,7 @@ void destruirLogStruct(logStruct* log_master) {
 procExec* newProceso() {
 	procExec* proceso = malloc(sizeof(procExec));
 	proceso->script = list_create();
+	proceso->contadorRequests = 0;
 //	proceso->estaEjecutandose=false;
 //	list_add(proceso->script, instruccion);
 	return proceso;
@@ -41,8 +42,9 @@ void destruirProceso(procExec* proceso) {
 void deNewAReady(procExec* proceso) {
 	sem_wait(&mutex_colaReadyPUSH);
 	queue_push(colaReady, proceso);
-	sem_post(&mutex_colaReadyPUSH);
 	sem_post(&cantProcesosColaReady);
+	sem_post(&mutex_colaReadyPUSH);
+//	sem_post(&cantProcesosColaReady);
 }
 
 void deReadyAExec() {
@@ -207,6 +209,7 @@ void* nuevaFuncionThread(void* args) {
 	int cantRequestsProceso = 0;
 	int cantRequestsEjecutadas = 0;
 	procExec* proceso = NULL;
+	int cantRequestsEjecutadasPorQuantum = 0;
 //	static int idProceso = -1;
 //	int idProceso = -1;
 //	static bool tieneID = false;
@@ -227,26 +230,33 @@ void* nuevaFuncionThread(void* args) {
 			// Ahora evaluamos cada una de las requests del script
 			// Lo hago por un for y list_get en vez de list_itearate porque necesito varias condiciones
 
-			for (cantRequestsEjecutadas = 0;
+			for (cantRequestsEjecutadas = proceso->contadorRequests;
 					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
-							&& cantRequestsEjecutadas < quantum;
+							&& cantRequestsEjecutadasPorQuantum < quantum;
 					cantRequestsEjecutadas++) {
 
-				usleep(retardoEjecucion*1000);
+//				usleep(retardoEjecucion*1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
+				cantRequestsEjecutadasPorQuantum++;
 
 			}
 
 			if (!interrupcionPorEstado(estado)) {
-				if (cantRequestsEjecutadas == cantRequestsProceso) { // Esta verificacion no tiene sentido, pero esta buena para que se vea como funciona
+				if (cantRequestsEjecutadas == cantRequestsProceso) {
 					// Borrar proceso
 					destruirProceso(proceso);
 				}
 			}
-			if (cantRequestsEjecutadas >= quantum
-					&& !(cantRequestsEjecutadas < cantRequestsProceso))
-				queue_push(colaReady, proceso);
+			if (!interrupcionPorEstado(estado) && cantRequestsEjecutadasPorQuantum == quantum
+					&& cantRequestsEjecutadas < cantRequestsProceso){
+				log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
+//				queue_push(colaReady, proceso);
+				proceso->contadorRequests = cantRequestsEjecutadas;
+				cantRequestsEjecutadasPorQuantum = 0;
+				usleep(retardoEjecucion*1000);
+				deNewAReady(proceso);
+			}
 			if (interrupcionPorEstado(estado)) {
 				log_error(log_master->logError,
 						"Error: Una request no se pudo cumplir");
@@ -256,6 +266,8 @@ void* nuevaFuncionThread(void* args) {
 
 //		}
 		}
+
+		estado = OK;
 
 	} while (puedeHaberRequests);
 
