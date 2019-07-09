@@ -62,8 +62,8 @@ int main(void) {
 	pthread_detach(serverThread);
 
 	//HILO DUMP
-	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
-	pthread_detach(dumpThread);
+//	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
+//	pthread_detach(dumpThread);
 
 	consolaLFS();
 	free(config);

@@ -93,7 +93,7 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 void filtrarPorTimeStamp(t_list* registros) {
 	t_link_element* ptr = registros->head;
-	while (ptr != NULL) {
+	while (ptr->next != NULL) {
 		t_registro* registroActual = ptr->data;
 		t_link_element* next = ptr->next;
 		t_registro* registroSiguiente = next->data;
@@ -191,9 +191,8 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 
 	void cargarRegistrosDeBloque(int bloque) {
 
-		char* rutaArchivoBloque = string_new();
-		strcpy(rutaArchivoBloque, rutas.Bloques);
-		string_append_with_format(&rutaArchivoBloque, "%s.bin", string_itoa(bloque));
+		char* rutaArchivoBloque = string_duplicate(rutas.Bloques);
+		string_append_with_format(&rutaArchivoBloque, "%d.bin\0", bloque);
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
 		t_list* registrosObtenidos = obtenerRegistrosFromBloque(rutaArchivoBloque);
 		list_add_all(listaRegistros, registrosObtenidos);

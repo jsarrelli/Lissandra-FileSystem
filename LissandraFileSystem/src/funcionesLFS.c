@@ -48,9 +48,10 @@ int existeTabla(char* nombreTabla) {
 
 	if (tablaActual != NULL) {
 		closedir(tablaActual);
+		free(rutaTabla);
 		return 1;
 	}
-
+	closedir(tablaActual);
 	free(rutaTabla);
 	return 0;
 }
@@ -98,6 +99,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 	fprintf(arch, "CONSISTENCIA=%s\nPARTICIONES=%s\nTIEMPO_COMPACTACION=%s\n", consistencia, cantidadParticiones, tiempoCompactacion);
 
 	fclose(arch);
+	free(rutaTabla);
 	log_info(logger, "Metadata de %s creada\n", nombreTabla);
 
 }
@@ -125,7 +127,6 @@ char* armarRutaTabla(char* nombreTabla) {
 	char* rutaTabla = string_duplicate(rutas.Tablas);
 	string_append(&rutaTabla, nombreTabla);
 	string_append(&rutaTabla, "/");
-
 	return rutaTabla;
 }
 
@@ -323,6 +324,7 @@ char* obtenerNombreTablaByRuta(char* rutaTabla) {
 	char** directorios = string_split(rutaAux, "/");
 	char* nombreTabla = (char*) obtenerUltimoElementoDeUnSplit(directorios);
 	freePunteroAPunteros(directorios);
+	free(rutaAux);
 	return nombreTabla;
 }
 
@@ -541,21 +543,12 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 	void escribirRegistroEnBloque(char* registro) {
 
 		int bloqueActual = (int) list_get(archivoTmp->BLOQUES, indexArchivoBloque);
-		//			archivoBloque = obtenerArchivoBloque(bloqueActual, true);
-//		//si el archivo de bloque no esta abierto, lo abrimos
-//		if (archivoBloque == NULL) {
-//			int bloqueActual = (int) list_get(archivoTmp->BLOQUES, indexArchivoBloque);
-//			archivoBloque = obtenerArchivoBloque(bloqueActual, true);
-//			if (archivoBloque == NULL) {
-//				return;
-//			}
-//		}
 		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual, true);
 		//preguntamos si el registro entra en el bloque
 		if (tamanioArchivo(archivoBloque) + (strlen(registro) + 1) <= metadata.BLOCK_SIZE) {
 			fprintf(archivoBloque, "%s", registro);
 			tamanioTotalBloquesEscritos += strlen(registro) + 1;
-
+			fclose(archivoBloque);
 		} else {
 
 			indexArchivoBloque++;
@@ -564,7 +557,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 			//el problema si en si un registro del ciclo entra en algun bloque pasado... nos chupa un huevo
 
 		}
-		fclose(archivoBloque);
+
 	}
 
 	list_iterate(registrosAEscribir, (void*) escribirRegistroEnBloque);

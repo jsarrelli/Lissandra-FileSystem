@@ -87,8 +87,8 @@ void cargarMemtable() {
 
 	list_iterate(nombreTablas, (void*) insertarTablaEnMemtable);
 
-	list_clean_and_destroy_elements(nombreTablas, free);
-	list_clean_and_destroy_elements(listaDirectorios, free);
+	list_destroy_and_destroy_elements(nombreTablas, free);
+	list_destroy_and_destroy_elements(listaDirectorios, free);
 
 }
 

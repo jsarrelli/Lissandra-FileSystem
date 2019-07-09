@@ -14,7 +14,9 @@ int consolaLFS() {
 	while (1) {
 		puts("Ingrese un comando:");
 		char *linea = readline(">");
-
+		if (linea) {
+			add_history(linea);
+		}
 		if (linea == NULL) {
 			return 0;
 		}
@@ -55,6 +57,7 @@ void consolaCreate(char*argumentos) {
 	char* tiempoCompactacion = valores[3];
 
 	funcionCREATE(nombreTabla, cantParticiones, consistenciaChar, tiempoCompactacion);
+	freePunteroAPunteros(valores);
 }
 
 void consolaDescribe(char* nombreTabla) {
