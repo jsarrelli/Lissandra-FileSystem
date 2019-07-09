@@ -32,11 +32,11 @@ t_list* buscarBloquesLibres(int cant) {
 	t_list* bloquesLibres = list_create();
 	for (int i = 0; i < metadata.BLOCKS && list_size(bloquesLibres) < cant; ++i) {
 		if (bitarray_test_bit(bitmap, i) == 0) {
-			list_add(bloquesLibres,i);
+			list_add(bloquesLibres, (void*) i);
 		}
 	}
 
-	if(list_is_empty(bloquesLibres)){
+	if (list_is_empty(bloquesLibres)) {
 		list_destroy(bloquesLibres);
 		return NULL;
 	}
@@ -45,7 +45,7 @@ t_list* buscarBloquesLibres(int cant) {
 
 void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
-	log_info(logger, "Bloque %d liberado",index);
+	log_info(logger, "Bloque %d liberado", index);
 }
 
 void reservarBloque(int index) {
@@ -53,7 +53,7 @@ void reservarBloque(int index) {
 }
 
 void leerBitmap() {
-	int cantidadBloques = (metadata.BLOCKS / 8) ;
+	int cantidadBloques = (metadata.BLOCKS / 8);
 
 	int fd = open(rutas.Bitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	ftruncate(fd, cantidadBloques);
@@ -62,13 +62,13 @@ void leerBitmap() {
 	}
 
 	char * bitarray = mmap(NULL, cantidadBloques, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-	if(strlen(bitarray)==0){
-		bitarray= malloc(cantidadBloques);
-		memset(bitarray,0,cantidadBloques);
+	if (strlen(bitarray) == 0) {
+		bitarray = malloc(cantidadBloques);
+		memset(bitarray, 0, cantidadBloques);
 	}
 
-	bitmap = bitarray_create_with_mode(bitarray, cantidadBloques,LSB_FIRST);
-	msync(bitarray,cantidadBloques,MS_SYNC);
+	bitmap = bitarray_create_with_mode(bitarray, cantidadBloques, LSB_FIRST);
+	msync(bitarray, cantidadBloques, MS_SYNC);
 
 	log_info(logger, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
 
@@ -77,9 +77,24 @@ void leerBitmap() {
 
 }
 
+void cargarMemtable() {
+
+	log_info(logger, "Levantando tablas ya existentes..");
+	t_list* listaDirectorios = list_create();
+	buscarDirectorios(rutas.Tablas, listaDirectorios);
+
+	t_list* nombreTablas = list_map(listaDirectorios, (void*) obtenerNombreTablaByRuta);
+
+	list_iterate(nombreTablas, (void*) insertarTablaEnMemtable);
+
+	list_clean_and_destroy_elements(nombreTablas, free);
+	list_clean_and_destroy_elements(listaDirectorios, free);
+
+}
+
 void escribirBitmap() {
 	FILE *archivo = fopen(rutas.Bitmap, "wb");
-	msync(bitmap->bitarray,metadata.BLOCKS /8, MS_SYNC);
+	msync(bitmap->bitarray, metadata.BLOCKS / 8, MS_SYNC);
 	fclose(archivo);
 }
 
@@ -164,13 +179,3 @@ int leerMetadata() {
 	config_destroy(config);
 	return 1;
 }
-
-/*int crearStructRegistro(int tamanio){
- typedef struct{
- double timestamp;
- int key;
- char value[tamanio];
- }t_registros;
-
- return 1;
- }*/

@@ -55,6 +55,7 @@ int main(void) {
 	cargarMetadata(config);
 	printf("Metadata cargada \n ");
 
+	cargarMemtable();
 
 
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, config);

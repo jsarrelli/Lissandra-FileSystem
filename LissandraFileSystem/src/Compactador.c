@@ -50,11 +50,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		filtrarRegistros(registrosParticionActual);
 
 		//pasamos la lista de registros a una lista de char* para escribirlos en el binario
-		char* registroToChar(t_registro* registro) {
-			char* registroChar = string_new();
-			scanf(registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
-			return registroChar;
-		}
+
 		t_list* registrosChar = list_map(registrosParticionActual, (void*) registroToChar);
 
 		//escribimos en el binario y los bloques de ese archivo
@@ -68,6 +64,12 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 	list_iterate(particionesRegistrosNuevos, (void*) mergearParticion);
 	list_destroy(particionesRegistrosNuevos);
+}
+
+char* registroToChar(t_registro* registro) {
+	char* registroChar = string_new();
+	string_append_with_format(&registroChar, "%d;%s;%f\n",registro->key, registro->value, registro->timestamp);
+	return registroChar;
 }
 
 t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list* registrosNuevos) {
@@ -159,7 +161,7 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 		i++;
 	}
 
-	list_iterate(archivo->BLOQUES,(void*)levantarRegistrosDeBloque);
+	list_iterate(archivo->BLOQUES, (void*) levantarRegistrosDeBloque);
 
 	liberarPunteroDePunterosAChar(registros);
 	free(registros);
@@ -187,7 +189,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	int i = 0;
 	log_info(logger, "Leyendo registros de %s... ", pathArchivo);
 
-	void cargarRegistrosDeBloque(int bloque){
+	void cargarRegistrosDeBloque(int bloque) {
 
 		char* rutaArchivoBloque = string_new();
 		strcpy(rutaArchivoBloque, rutas.Bloques);
@@ -201,7 +203,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		i++;
 	}
 
-	list_iterate(archivo->BLOQUES,(void*)cargarRegistrosDeBloque);
+	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
 
 	free(archivo);
 }
@@ -276,7 +278,7 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
 		return strcmp(extension, "tmp") == 0;
 	}
-	t_list* archivosTemporales=list_filter(archivos, (void*) isTemporal);
+	t_list* archivosTemporales = list_filter(archivos, (void*) isTemporal);
 	list_destroy(archivos);
 	return archivosTemporales;
 

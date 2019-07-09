@@ -1,16 +1,10 @@
-[INFO] 17:09:47:724 LFS Logs/(23254:23254): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 22:34:28:265 LFS Logs/(13791:13791): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 17:09:47:726 LFS Logs/(23254:23254): Levantando archivo de configuracion del proceso LFS 
+[INFO] 22:34:28:266 LFS Logs/(13791:13791): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 17:09:47:726 LFS Logs/(23254:23254): Archivo de configuracion del proceso LFS levantado 
+[INFO] 22:34:28:266 LFS Logs/(13791:13791): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 17:09:47:813 LFS Logs/(23254:23254): El tamanio del bitmap es de 3000 bits
-[INFO] 17:10:02:518 LFS Logs/(23254:23254): Se creo la  KEVIN en LFS
-
-[INFO] 17:10:06:398 LFS Logs/(23254:23254): Metadata de KEVIN creada
-
-[INFO] 17:11:13:582 LFS Logs/(23254:23254): Insert realizado en memtable
-[INFO] 17:12:39:166 LFS Logs/(23254:23254): Insert realizado en memtable
-[INFO] 17:12:47:534 LFS Logs/(23254:23254): Insert realizado en memtable
-[INFO] 17:14:18:561 LFS Logs/(23254:23254): Insert realizado en memtable
-[INFO] 17:14:25:1 LFS Logs/(23254:23254): Insert realizado en memtable
+[INFO] 22:34:28:301 LFS Logs/(13791:13791): El tamanio del bitmap es de 3000 bits
+[INFO] 22:34:28:301 LFS Logs/(13791:13791): Levantando tablas ya existentes..
+[INFO] 22:34:37:402 LFS Logs/(13791:13791): Insert realizado en memtable
+[INFO] 22:34:42:421 LFS Logs/(13791:13791): Insert realizado en memtable

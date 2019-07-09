@@ -43,6 +43,7 @@ void destruirBitmap();
 t_list* buscarBloquesLibres(int cant);
 void reservarBloque(int index);
 void liberarBloque(int index);
+void cargarMemtable();
 //int crearStructRegistro(int tamanio);
 
 #endif /* FILESYSTEM_H_ */

@@ -11,6 +11,7 @@
 #include <Libraries.h>
 #include "LissandraFileSystem.h"
 #include "EstructurasFileSystem.h"
+#include "Compactador.h"
 //t_list* listaNombresTablas;
 
 //tablas
@@ -56,5 +57,9 @@ t_list* buscarRegistrosDeTabla(char*nombreTabla);
 char* obtenerNombreTablaByRuta(char* rutaTabla);
 t_tabla_memtable* getTablaFromMemtable(char* nombreTabla);
 void eliminarArchivo(char* rutaArchivo);
+
+void insertarTablaEnMemtable(char* nombreTabla);
+t_tabla_memtable* newTablaMemtable(char* nombreTabla);
+FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode);
 
 #endif /* FUNCIONESLFS_H_ */

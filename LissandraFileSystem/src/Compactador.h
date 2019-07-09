@@ -31,4 +31,6 @@ t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla);
 void filtrarRegistros(t_list* registros);
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos);
 t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list* registrosNuevos);
+
+char* registroToChar(t_registro* registro);
 #endif /* COMPACTADOR_H_ */

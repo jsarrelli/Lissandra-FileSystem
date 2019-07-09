@@ -13,7 +13,7 @@ typedef struct {
 } t_configuracion_LFS;
 
 typedef struct {
-	char tabla[100];
+	char* tabla;
 	t_list* registros;
 } t_tabla_memtable;
 

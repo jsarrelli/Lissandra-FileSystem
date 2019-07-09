@@ -29,10 +29,11 @@ void escuchar(int listenningSocket) {
 
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
-	void* datos;
-	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
-		if (paquete.header.quienEnvia == MEMORIA) {
 
+	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
+
+		if (paquete.header.quienEnvia == MEMORIA) {
+			void* datos;
 			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
 			int valueMaximo = 100;
@@ -130,6 +131,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 	void describeDirectorio(char* directorio) {
 		char* nombreTabla = obtenerNombreTablaByRuta(directorio);
 		procesarDESCRIBE(nombreTabla, socketMemoria);
+		free(nombreTabla);
 	}
 
 	list_iterate(listaDirectorios, (void*) describeDirectorio);
