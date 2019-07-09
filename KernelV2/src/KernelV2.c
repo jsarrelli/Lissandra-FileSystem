@@ -15,13 +15,16 @@ void iniciarVariablesKernel() {
 	inicializarLogStruct();
 
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
-	sem_init(&mutex_colaReady, 0, 1);
+	sem_init(&mutex_colaReadyPOP, 0, 1);
+	sem_init(&mutex_colaReadyPUSH, 0, 1);
 	sem_init(&mutex_id_proceso, 0, 1);
 	sem_init(&bin_main, 0, 0);
 	sem_init(&fin, 0, 0);
+	sem_init(&cantProcesosColaReady, 0, 0);
 
 	cantRequestsEjecutadas = 0;
 	haySC = false;
+	puedeHaberRequests = true;
 	idMemoria = 1;
 
 	srand(time(NULL));
@@ -77,22 +80,32 @@ void iniciarVariablesKernel() {
  */
 
 void iniciarConsolaKernel(){
-	char* operacion = readline(">");
+	char* operacion;
+	operacion = readline(">");
 
 	while(1){
-		if(instruccionSeaSalir(operacion)){
-			sem_post(&fin);
-			break;
-			// Añadir semaforo para continuar y terminar el hilo principal
-		}
-		else{
-			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
-			// Es muy importante!!!
-			crearProcesoYMandarloAReady(operacion);
-			desbloquearHilos();
-			sem_post(&bin_main);
-			// free(operacion); // Para esto es importante
-		}
+//		if(instruccionSeaSalir(operacion)){
+////			puedeHaberRequests = false;
+////			sem_post(&cantProcesosColaReady);
+////			sem_post(&fin);
+//			break;
+//			// Añadir semaforo para continuar y terminar el hilo principal
+//		}
+//		else{
+//			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
+//			// Es muy importante!!!
+//			crearProcesoYMandarloAReady(operacion);
+//			desbloquearHilos();
+//			sem_post(&bin_main);
+//			// free(operacion); // Para esto es importante
+//		}
+
+
+
+		crearProcesoYMandarloAReady(operacion);
+//		desbloquearHilos();
+		sem_post(&bin_main);
+		operacion = readline(">");
 	}
 //	free(operacion);
 }
@@ -107,7 +120,7 @@ void inicioKernelUnProcesador() {
 		// Por ahora lo hago con un solo proceso y lo hago manual
 //		ejecutarProcesos();
 		// Prueba multiprocesamiento
-		desbloquearHilos();
+//		desbloquearHilos();
 		nuevaFuncionThread(NULL);
 		//		funcionThread(NULL);
 		//		free(operacion);
@@ -124,26 +137,26 @@ void inicioKernelUnProcesador() {
 }
 
 int main(void) {
-//	pthread_t hiloConsola;
-//	pthread_t hiloMultiprocesamiento;
+	pthread_t hiloConsola;
+	pthread_t hiloMultiprocesamiento;
 	iniciarVariablesKernel();
-	inicioKernelUnProcesador();
+//	inicioKernelUnProcesador();
 
 	// Hilo de consola
 
-//	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
-//	pthread_detach(hiloConsola);
-//
-////	iniciarConsolaKernel();
-//
-//	// Este semaforo es muy importante
-//	sem_wait(&bin_main);
-//
-//	// Hilo de multiprocesamiento
-//	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
-//	pthread_detach(hiloMultiprocesamiento);
-//
-//	sem_wait(&fin);
+	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
+	pthread_detach(hiloConsola);
+
+//	iniciarConsolaKernel();
+
+	// Este semaforo es muy importante
+	sem_wait(&bin_main);
+
+	// Hilo de multiprocesamiento
+	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
+	pthread_detach(hiloMultiprocesamiento);
+
+	sem_wait(&fin);
 
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 

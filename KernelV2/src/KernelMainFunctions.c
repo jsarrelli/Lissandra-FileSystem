@@ -39,7 +39,10 @@ void destruirProceso(procExec* proceso) {
 //}
 
 void deNewAReady(procExec* proceso) {
+	sem_wait(&mutex_colaReadyPUSH);
 	queue_push(colaReady, proceso);
+	sem_post(&mutex_colaReadyPUSH);
+	sem_post(&cantProcesosColaReady);
 }
 
 void deReadyAExec() {
@@ -139,11 +142,11 @@ void agregarRequestAlProceso(procExec* proceso, char* operacion) {
 void* funcionThread(void* args) {
 	sem_wait(&ejecutarHilos);
 
-	sem_wait(&mutex_colaReady);
+	sem_wait(&mutex_colaReadyPOP);
 //	procExec* proceso = newProceso();
 	procExec* proceso = NULL;
 	proceso = queue_pop(colaReady);
-	sem_post(&mutex_colaReady);
+	sem_post(&mutex_colaReadyPOP);
 
 //	int tam_script = list_size(proceso->script);
 //	for(int i=0; i< tam_script;i++){
@@ -189,10 +192,13 @@ bool interrupcionPorEstado(estadoProceso estado) {
 }
 
 procExec* obtenerProcesoDeColaReady() {
-	sem_wait(&mutex_colaReady);
+	sem_wait(&cantProcesosColaReady);
+
+	sem_wait(&mutex_colaReadyPOP);
 	procExec* proceso = NULL;
 	proceso = queue_pop(colaReady);
-	sem_post(&mutex_colaReady);
+	sem_post(&mutex_colaReadyPOP);
+
 	return proceso;
 }
 
@@ -203,16 +209,19 @@ void* nuevaFuncionThread(void* args) {
 	procExec* proceso = NULL;
 //	static int idProceso = -1;
 //	int idProceso = -1;
-	static bool tieneID = false;
+//	static bool tieneID = false;
 
 	do {
 //		idProceso++;
 
-		otorgarId(&tieneID);
-		sem_wait(&arraySemaforos[idHilo]);
+//		otorgarId(&tieneID);
+//		sem_wait(&arraySemaforos[idHilo]);
 
-		if (queue_size(colaReady) != 0) {
-			proceso = obtenerProcesoDeColaReady();
+//		if (queue_size(colaReady) != 0) {
+		proceso = obtenerProcesoDeColaReady();
+
+		if (proceso != NULL) {
+
 			cantRequestsProceso = list_size(proceso->script);
 
 			// Ahora evaluamos cada una de las requests del script
@@ -223,9 +232,9 @@ void* nuevaFuncionThread(void* args) {
 							&& cantRequestsEjecutadas < quantum;
 					cantRequestsEjecutadas++) {
 
+				usleep(retardoEjecucion*1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
-//				usleep(retardoEjecucion*1000);
 
 			}
 
@@ -245,9 +254,10 @@ void* nuevaFuncionThread(void* args) {
 				destruirProceso(proceso);
 			}
 
+//		}
 		}
 
-	} while (queue_size(colaReady) != 0);
+	} while (puedeHaberRequests);
 
 	return NULL;
 }
@@ -302,7 +312,7 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
-	if(consistenciaDeTabla == ERROR_CONSISTENCIA)
+	if (consistenciaDeTabla == ERROR_CONSISTENCIA)
 		return NULL;
 
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
@@ -319,7 +329,7 @@ consistencia obtenerConsistenciaDe(char* nombreTabla) {
 	metadata = list_find((t_list*) listaMetadataTabla,
 			condicionObtenerConsistencia);
 
-	if(metadata==NULL)
+	if (metadata == NULL)
 		return ERROR_CONSISTENCIA;
 
 	return metadata->consistencia;
