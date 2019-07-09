@@ -27,6 +27,12 @@ void compactarTabla(char*nombreTabla) {
 
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
+
+	list_iterate(archivosTemporales, (void*) eliminarArchivo);
+	list_destroy_and_destroy_elements(archivosTemporales, free);
+	list_destroy_and_destroy_elements(archivosBinarios, free);
+
+	log_info(logger, "Compactacion de <%s> exitosa", nombreTabla);
 }
 
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
@@ -34,6 +40,11 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 	void mergearParticion(t_list* registrosNuevos) {
 
+		if (list_is_empty(registrosNuevos)) {
+			//si no hay registros nuevos en esta particion ni te calentes en entrar
+			list_destroy(registrosNuevos);
+			return;
+		}
 		//obtengo los registros del bin correspondiente
 		t_list* listaRegistrosViejos = list_create();
 		char* rutaArchivoBinarioActual = list_get(archivosBinarios, numeroParticionActual);
@@ -53,7 +64,9 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 		t_list* registrosChar = list_map(registrosParticionActual, (void*) registroToChar);
 
-		//escribimos en el binario y los bloques de ese archivo
+		//escribimos en el binario y sobreescribimos los bloques de ese archivo
+
+		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
 		list_destroy_and_destroy_elements(registrosParticionActual, (void*) freeRegistro);
@@ -68,7 +81,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 char* registroToChar(t_registro* registro) {
 	char* registroChar = string_new();
-	string_append_with_format(&registroChar, "%d;%s;%f\n",registro->key, registro->value, registro->timestamp);
+	string_append_with_format(&registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
 	return registroChar;
 }
 
@@ -83,6 +96,11 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 	void cargarEnParticionCorrespondiente(t_registro* registroNuevo) {
 		int numeroParticionCorrespondiente = registroNuevo->key % cantParticiones;
+		if (numeroParticionCorrespondiente > list_size(particionesDeRegistrosNuevos)) {
+			freeRegistro(registroNuevo);
+			log_error(logger, "Hermano me metiste un registro de una particion que esta tabla no tiene, no te hagas el loco");
+			return;
+		}
 		t_list* particionCorrespondiente = list_get(particionesDeRegistrosNuevos, numeroParticionCorrespondiente);
 		list_add(particionCorrespondiente, registroNuevo);
 	}
@@ -91,39 +109,95 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 	return particionesDeRegistrosNuevos;
 }
 
-void filtrarPorTimeStamp(t_list* registros) {
-	t_link_element* ptr = registros->head;
-	while (ptr->next != NULL) {
-		t_registro* registroActual = ptr->data;
-		t_link_element* next = ptr->next;
-		t_registro* registroSiguiente = next->data;
-		if (registroActual->key == registroSiguiente->key) {
-			t_link_element* aux;
-			if (registroActual->timestamp > registroSiguiente->timestamp) {
-				aux = next;
-				ptr->next = next->next;
-				freeRegistro(registroSiguiente);
-			} else {
-				aux = ptr;
-				ptr = next;
-				freeRegistro(registroActual);
-			}
-			free(aux);
-		} else {
-			ptr = next;
-		}
-	}
-}
+//void filtrarPorTimeStamp(t_list* registros) {
+//	log_info(logger, "Filtrando Registros por TimeStamp..");
+//
+//	void eliminar(t_link_element* ptr) {
+//		if (ptr->data != NULL) {
+//			freeRegistro(ptr->data);
+//			free(ptr);
+//		}
+//	}
+//	t_link_element* ant;
+//	void compararYeliminar(t_link_element* ptr) {
+//		if (ptr->next == NULL) {
+//			return;
+//			//llego al final
+//		}
+//
+//		t_link_element* next = ptr->next;
+//		t_registro* registroActual = ptr->data;
+//		t_registro* registroSiguiente = next->data;
+//
+//		if (registroActual->key == registroSiguiente->key) {
+//			t_link_element* victima;
+//
+//			if (registroActual->timestamp > registroSiguiente->timestamp) {
+//				victima = ptr->next;
+//
+//				ptr->next = victima->next;
+//
+//				eliminar(victima);
+//				compararYeliminar(ptr);
+//			} else {
+//
+//				victima = ptr;
+//
+//				ptr = ptr->next;
+//				if (victima == registros->head) {
+//					registros->head = ptr;
+//				}
+//
+//				eliminar(victima);
+//				//avanzo
+//				ant->next = ptr;
+//				compararYeliminar(ptr);
+//			}
+//		}
+//		ant = ptr;
+//		compararYeliminar(ptr->next);
+//	}
+//
+//}
 
+//hay una funcion mucho mas linda, pero son las 5 am tengo suenio y la vida es una mierda
 void filtrarRegistros(t_list* registros) {
+
+	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
+
+		bool isDuplicadoConTimeStampMenor(t_registro* registroActual) {
+			return registroActual->key == registro->timestamp && registro->timestamp > registroActual->timestamp;
+		}
+		t_registro* registroDuplicado = list_find(registros, (void*) isDuplicadoConTimeStampMenor);
+
+		if (registroDuplicado != NULL) {
+
+			list_remove_and_destroy_by_condition(registros,(void*) isDuplicadoConTimeStampMenor, (void*) freeRegistro);
+		}
+
+	}
+
+	list_iterate(registros, (void*) eliminarDuplicadoIfTimestampMenor);
 
 	bool sortByKey(t_registro* registro1, t_registro* registro2) {
 		return registro1->key >= registro2->key;
 	}
-	ordernarLista(registros, (void*) sortByKey);
 
-	filtrarPorTimeStamp(registros);
+	list_sort(registros, (void*) sortByKey);
+
 }
+//void filtrarRegistros(t_list* registros) {
+//
+//	if (registros != NULL && !list_is_empty(registros)) {
+//
+//		bool sortByKey(t_registro* registro1, t_registro* registro2) {
+//			return registro1->key >= registro2->key;
+//		}
+//		ordernarLista(registros, (void*) sortByKey);
+//
+//		filtrarPorTimeStamp(registros);
+//	}
+//}
 
 void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
@@ -195,9 +269,14 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		string_append_with_format(&rutaArchivoBloque, "%d.bin\0", bloque);
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
 		t_list* registrosObtenidos = obtenerRegistrosFromBloque(rutaArchivoBloque);
-		list_add_all(listaRegistros, registrosObtenidos);
-		//borro la referecia a registros obtenidos ya que ya estan cargados en listaRegistros
-		list_destroy(registrosObtenidos);
+		if (registrosObtenidos != NULL) {
+			if (!list_is_empty(registrosObtenidos)) {
+				list_add_all(listaRegistros, registrosObtenidos);
+			}
+			//borro la referecia a registros obtenidos ya que ya estan cargados en listaRegistros
+			list_destroy(registrosObtenidos);
+		}
+
 		free(rutaArchivoBloque);
 		i++;
 	}
@@ -234,18 +313,20 @@ t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque) {
 	//mapeamos el archivo a memoria
 	char * archivoMapeado;
 	if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
-		logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
+		log_error(loggerError, "Error al hacer mmap al levantar archivo de bloque");
+		return NULL;
 	}
 
 	//cargo la lista con los registros obtenidos
 	char ** registros = string_split(archivoMapeado, "\n");
 	int j = 0;
 	while (registros[j] != NULL) {
-		char* registroActual = registros[j];
+		char* registroActual = string_duplicate(registros[j]);
 		char** valores = string_split(registroActual, ";");
 		t_registro* registro = registro_new(valores);
 		list_add(listaRegistros, registro);
 		j++;
+		free(registroActual);
 	}
 
 	//fijate que este free no se este ya liberando con el free de valores

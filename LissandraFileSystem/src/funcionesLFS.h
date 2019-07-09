@@ -62,4 +62,6 @@ void insertarTablaEnMemtable(char* nombreTabla);
 t_tabla_memtable* newTablaMemtable(char* nombreTabla);
 FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode);
 
+void borrarContenidoArchivoBloque(int bloque);
+
 #endif /* FUNCIONESLFS_H_ */

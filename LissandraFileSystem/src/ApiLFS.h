@@ -5,6 +5,8 @@
 #include <Sockets/Serializacion.h>
 #include <Sockets/Conexiones.h>
 #include "AdministradorConsultasLFS.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
 int consolaLFS();
 void procesarInput(char* consulta);

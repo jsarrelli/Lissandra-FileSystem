@@ -33,9 +33,6 @@ void procesarAccion(int socketMemoria) {
 	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
 
 		if (paquete.header.quienEnvia == MEMORIA) {
-			void* datos;
-			datos = malloc(paquete.header.tamanioMensaje);
-			datos = paquete.mensaje;
 			int valueMaximo = 100;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):

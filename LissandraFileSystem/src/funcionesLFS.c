@@ -231,8 +231,14 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
 	escribirBitmap();
 
+	list_iterate(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
 	free(archivo);
 	return 1;
+}
+
+void borrarContenidoArchivoBloque(int bloque) {
+	FILE* archivoBloque = obtenerArchivoBloque(bloque, false);
+	fclose(archivoBloque);
 }
 
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
@@ -548,6 +554,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		if (tamanioArchivo(archivoBloque) + (strlen(registro) + 1) <= metadata.BLOCK_SIZE) {
 			fprintf(archivoBloque, "%s", registro);
 			tamanioTotalBloquesEscritos += strlen(registro) + 1;
+			reservarBloque(bloqueActual);
 			fclose(archivoBloque);
 		} else {
 
@@ -561,7 +568,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 	}
 
 	list_iterate(registrosAEscribir, (void*) escribirRegistroEnBloque);
-
+	escribirBitmap();
 	archivoTmp->TAMANIO = tamanioTotalBloquesEscritos;
 	escribirArchivo(pathArchivoAEscribir, archivoTmp);
 	free(archivoTmp);
