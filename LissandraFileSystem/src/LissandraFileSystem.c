@@ -15,6 +15,9 @@
 void cargarConfig() {
 	char* configPath = "/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Config/fsConfig.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso LFS \n");
+	if(config!=NULL){
+		free(config);
+	}
 	config = malloc(sizeof(t_configuracion_LFS));
 	t_config *fsConfig = config_create(configPath);
 
