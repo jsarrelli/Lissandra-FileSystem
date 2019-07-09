@@ -61,6 +61,9 @@ void procesarAccion(int socketEntrante) {
 				break;
 			}
 
+			if(datos!=NULL){
+				free(datos);
+			}
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			procesarGossiping(paquete.mensaje, socketEntrante);
 		} else {
