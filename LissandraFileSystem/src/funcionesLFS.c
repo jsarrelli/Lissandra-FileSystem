@@ -589,3 +589,54 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 	fprintf(arch, "]");
 	fclose(arch);
 }
+
+void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
+	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
+	t_list* registrosMemtableToChar= list_map(tablaMemtable->registros, (void*) registroToChar);
+	list_add_all(listaRegistros, registrosMemtableToChar);
+
+}
+
+void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
+	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
+	t_list* registros = list_create();
+	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
+	t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
+	list_add_all(listaRegistros,registrosTempToChar);
+	list_destroy(registrosTempToChar);
+}
+
+char* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
+
+	bool BuscarPorKey(char* registroActual) {
+		char** valores = string_split(registroActual, ";");
+		int keyActual = atoi(valores[1]);
+		freePunteroAPunteros(valores);
+		return keyActual == key;
+	}
+
+	return (char*)	list_find(listaRegistros, (void*) BuscarPorKey);
+}
+
+
+
+void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros){
+	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
+	t_list* listaRegistrosBin = list_create();
+	int cantParticiones = list_size(archivosBinarios);
+	int numParticionABuscarKey = keyActual % cantParticiones;
+	char* pathArchivo = list_get(archivosBinarios, numParticionABuscarKey);
+	agregarRegistrosFromBloqueByPath(pathArchivo, listaRegistrosBin);
+	t_list* registrosBinToChar = list_map(listaRegistrosBin, (void*) registroToChar);
+	list_add_all(listaRegistros, registrosBinToChar);
+	list_destroy(archivosBinarios);
+	list_destroy(registrosBinToChar);
+}
+
+void getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros){
+	getRegistrosFromBinByNombreTabla(nombreTabla, keyActual,listaRegistros);
+	getRegistrosFromMemtableByNombreTabla(nombreTabla, listaRegistros);
+	getRegistrosFromTempByNombreTabla(nombreTabla,  listaRegistros);
+	filtrarRegistros(listaRegistros);
+}
+

@@ -94,3 +94,14 @@ void consolaInsert(char* argumentos) {
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
 }
+
+void consolaSelect(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	char* key = valores[1];
+	int keyActual = atoi(key);
+
+
+	funcionSELECT(nombreTabla, keyActual);
+	freePunteroAPunteros(valores);
+}
