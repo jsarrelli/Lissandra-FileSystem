@@ -78,7 +78,7 @@ void leerBitmap() {
 }
 
 void cargarMemtable() {
-
+	memtable = list_create();
 	log_info(logger, "Levantando tablas ya existentes..");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
@@ -103,11 +103,8 @@ void destruirBitmap(t_bitarray *bitmap) {
 	bitarray_destroy(bitmap);
 }
 
-int cargarMetadata(t_configuracion_LFS* config) {
+int cargarMetadata() {
 	char*path;
-	configFs = config_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/fsConfig.cfg");
-
-	config->PUNTO_MONTAJE = config_get_string_value(configFs, "PUNTO_MONTAJE");
 	mkdir(config->PUNTO_MONTAJE, 0777);
 	path = string_new();
 	string_append(&path, config->PUNTO_MONTAJE);

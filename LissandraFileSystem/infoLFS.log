@@ -1,10 +1,16 @@
-[INFO] 22:34:28:265 LFS Logs/(13791:13791): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 22:55:26:380 LFS Logs/(15292:15292): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 22:34:28:266 LFS Logs/(13791:13791): Levantando archivo de configuracion del proceso LFS 
+[INFO] 22:55:35:510 LFS Logs/(15292:15292): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 22:34:28:266 LFS Logs/(13791:13791): Archivo de configuracion del proceso LFS levantado 
+[INFO] 22:55:37:896 LFS Logs/(15292:15292): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 22:34:28:301 LFS Logs/(13791:13791): El tamanio del bitmap es de 3000 bits
-[INFO] 22:34:28:301 LFS Logs/(13791:13791): Levantando tablas ya existentes..
-[INFO] 22:34:37:402 LFS Logs/(13791:13791): Insert realizado en memtable
-[INFO] 22:34:42:421 LFS Logs/(13791:13791): Insert realizado en memtable
+[INFO] 22:55:41:76 LFS Logs/(15292:15292): El tamanio del bitmap es de 3000 bits
+[INFO] 22:55:42:876 LFS Logs/(15292:15292): Levantando tablas ya existentes..
+[INFO] 22:56:11:83 LFS Logs/(15292:15314): Levantando archivo de configuracion del proceso LFS 
+
+[INFO] 22:56:11:83 LFS Logs/(15292:15314): Archivo de configuracion del proceso LFS levantado 
+
+[INFO] 22:56:21:804 LFS Logs/(15292:15343): Levantando archivo de configuracion del proceso LFS 
+
+[INFO] 22:56:21:804 LFS Logs/(15292:15343): Archivo de configuracion del proceso LFS levantado 
+

@@ -26,7 +26,7 @@ typedef struct {
 t_list* memtable;
 t_log* logger;
 t_log* loggerError;
-t_configuracion_LFS* config;
-t_configuracion_LFS* cargarConfig(char* ruta);
+
+
 
 #endif /* EstructurasFileSystem_H_*/

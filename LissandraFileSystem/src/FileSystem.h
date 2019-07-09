@@ -33,7 +33,7 @@ t_metadata metadata;
 t_bitarray *bitmap;
 t_config* configFs;
 
-int cargarMetadata(t_configuracion_LFS* config);
+int cargarMetadata();
 int leerMetadata();
 void crearBloques();
 void crearBitmap();
