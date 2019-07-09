@@ -165,14 +165,21 @@ void filtrarRegistros(t_list* registros) {
 
 	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
 
+		int index=0;
 		bool isDuplicadoConTimeStampMenor(t_registro* registroActual) {
-			return registroActual->key == registro->timestamp && registro->timestamp > registroActual->timestamp;
+
+			bool var= registroActual->key == registro->key && registro->timestamp > registroActual->timestamp;
+			if(!var){
+				index++;
+			}
+			return var;
+
 		}
 		t_registro* registroDuplicado = list_find(registros, (void*) isDuplicadoConTimeStampMenor);
 
 		if (registroDuplicado != NULL) {
 
-			list_remove_and_destroy_by_condition(registros,(void*) isDuplicadoConTimeStampMenor, (void*) freeRegistro);
+			list_remove_and_destroy_element(registros,index,(void*)freeRegistro);
 		}
 
 	}
