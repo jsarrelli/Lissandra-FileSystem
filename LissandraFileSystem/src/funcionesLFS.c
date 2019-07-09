@@ -514,6 +514,18 @@ FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode) {
 	return archivoBloque;
 }
 
+int agregarNuevoBloque(t_archivo* archivo) {
+	t_list* bloquesLibres = buscarBloquesLibres(1);
+	if (bloquesLibres == NULL) {
+		//no hay mas bloques libres
+		log_error(loggerError, "No hay suficientes bloques libres");
+		return -1;
+	}
+	int bloqueLibre = (int) list_get(bloquesLibres, 0);
+	list_add(archivo->BLOQUES, (void*) bloqueLibre);
+	return bloqueLibre;
+}
+
 /*le pasas el path de un archivo, se fija cuales son sus bloques
  y te escribe los registros en esos bloques*/
 int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
@@ -524,41 +536,23 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		return -1;
 	}
 
-	int bytesAEscribir = obtenerTamanioListaRegistros(registrosAEscribir);
-	int bloquesNecesarios = (bytesAEscribir + metadata.BLOCK_SIZE - 1) / metadata.BLOCK_SIZE; // redondeo para arriba
-	int bloquesReservados = archivoTmp->cantBloques;
-
-	if (bloquesNecesarios > bloquesReservados) {
-		int cantBloques = bloquesNecesarios - bloquesReservados;
-		t_list* bloquesLibres = buscarBloquesLibres(cantBloques);
-
-		if (bloquesLibres == NULL) {
-			puts("Error al guardar datos en el archivoTmp. No hay suficientes bloques libres");
-			return -1;
-		}
-
-		list_iterate(bloquesLibres, (void*) reservarBloque);
-		list_add_all(archivoTmp->BLOQUES, bloquesLibres);
-		archivoTmp->cantBloques = list_size(archivoTmp->BLOQUES);
-		list_destroy(bloquesLibres);
-	}
-
-	int indexArchivoBloque = 0;
 	int tamanioTotalBloquesEscritos = 0;
-
+	int bloqueActual = (int) list_get(archivoTmp->BLOQUES, 0);
 	void escribirRegistroEnBloque(char* registro) {
 
-		int bloqueActual = (int) list_get(archivoTmp->BLOQUES, indexArchivoBloque);
 		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual, true);
 		//preguntamos si el registro entra en el bloque
-		if (tamanioArchivo(archivoBloque) + (strlen(registro) + 1) <= metadata.BLOCK_SIZE) {
+		if (tamanioArchivo(archivoBloque) + (strlen(registro)) <= metadata.BLOCK_SIZE) {
 			fprintf(archivoBloque, "%s", registro);
-			tamanioTotalBloquesEscritos += strlen(registro) + 1;
+			tamanioTotalBloquesEscritos += strlen(registro);
 			reservarBloque(bloqueActual);
 			fclose(archivoBloque);
 		} else {
 
-			indexArchivoBloque++;
+			if ((bloqueActual = agregarNuevoBloque(archivoTmp)) == -1) {
+				//no hay mas bloques libres
+				return;
+			}
 			fclose(archivoBloque);
 			escribirRegistroEnBloque(registro);
 			//el problema si en si un registro del ciclo entra en algun bloque pasado... nos chupa un huevo
@@ -568,6 +562,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 	}
 
 	list_iterate(registrosAEscribir, (void*) escribirRegistroEnBloque);
+	tamanioTotalBloquesEscritos += 1 * list_size(archivoTmp->BLOQUES); //se ve que siempre el tamanio de bloque es la cantiadad de caracteres +1; VEMO
 	escribirBitmap();
 	archivoTmp->TAMANIO = tamanioTotalBloquesEscritos;
 	escribirArchivo(pathArchivoAEscribir, archivoTmp);

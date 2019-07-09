@@ -38,6 +38,8 @@ void compactarTabla(char*nombreTabla) {
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
 	int numeroParticionActual = 0;
 
+	log_info(logger, "Mergeando registros viejos con nuevos");
+
 	void mergearParticion(t_list* registrosNuevos) {
 
 		if (list_is_empty(registrosNuevos)) {
@@ -162,14 +164,14 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 //hay una funcion mucho mas linda, pero son las 5 am tengo suenio y la vida es una mierda
 void filtrarRegistros(t_list* registros) {
-
+	log_info(logger, "Filtrando registros..");
 	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
 
-		int index=0;
+		int index = 0;
 		bool isDuplicadoConTimeStampMenor(t_registro* registroActual) {
 
-			bool var= registroActual->key == registro->key && registro->timestamp > registroActual->timestamp;
-			if(!var){
+			bool var = registroActual->key == registro->key && registro->timestamp > registroActual->timestamp;
+			if (!var) {
 				index++;
 			}
 			return var;
@@ -179,7 +181,7 @@ void filtrarRegistros(t_list* registros) {
 
 		if (registroDuplicado != NULL) {
 
-			list_remove_and_destroy_element(registros,index,(void*)freeRegistro);
+			list_remove_and_destroy_element(registros, index, (void*) freeRegistro);
 		}
 
 	}
@@ -191,6 +193,8 @@ void filtrarRegistros(t_list* registros) {
 	}
 
 	list_sort(registros, (void*) sortByKey);
+
+	log_info(logger, "Filtrado completo");
 
 }
 //void filtrarRegistros(t_list* registros) {
@@ -312,35 +316,46 @@ t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
 }
 
 t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque) {
+
 	t_list* listaRegistros = list_create();
 	FILE* archivoBloque = fopen(rutaArchivoBloque, "rb");
-	int tamanioArchBloque = tamanioArchivo(archivoBloque);
-	int fileDescriptor = fileno(archivoBloque);
+//	int tamanioArchBloque = tamanioArchivo(archivoBloque);
+//	int fileDescriptor = fileno(archivoBloque);
+//
+//	//mapeamos el archivo a memoria
+//	char * archivoMapeado;
+//	if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
+//		log_error(loggerError, "Error al hacer mmap al levantar archivo de bloque");
+//		return NULL;
+//	}
 
-	//mapeamos el archivo a memoria
-	char * archivoMapeado;
-	if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
-		log_error(loggerError, "Error al hacer mmap al levantar archivo de bloque");
-		return NULL;
-	}
-
-	//cargo la lista con los registros obtenidos
-	char ** registros = string_split(archivoMapeado, "\n");
-	int j = 0;
-	while (registros[j] != NULL) {
-		char* registroActual = string_duplicate(registros[j]);
+//cargo la lista con los registros obtenidos
+	char registro[400];
+	while (fgets(registro, sizeof registro, archivoBloque) != NULL) {
+		char* registroActual = string_duplicate(registro);
 		char** valores = string_split(registroActual, ";");
 		t_registro* registro = registro_new(valores);
 		list_add(listaRegistros, registro);
-		j++;
 		free(registroActual);
 	}
-
-	//fijate que este free no se este ya liberando con el free de valores
-	freePunteroAPunteros(registros);
-	munmap(archivoMapeado, tamanioArchBloque);
 	fclose(archivoBloque);
-	close(fileDescriptor);
+
+//	char ** registros = string_split(archivoMapeado, "\n");
+//	int j = 0;
+//	while (registros[j] != NULL) {
+//		char* registroActual = string_duplicate(registros[j]);
+//		char** valores = string_split(registroActual, ";");
+//		t_registro* registro = registro_new(valores);
+//		list_add(listaRegistros, registro);
+//		j++;
+//		free(registroActual);
+//	}
+
+//fijate que este free no se este ya liberando con el free de valores
+//	freePunteroAPunteros(registros);
+//	munmap(archivoMapeado, tamanioArchBloque);
+	//fclose(archivoBloque);
+//	close(fileDescriptor);
 	return listaRegistros;
 }
 

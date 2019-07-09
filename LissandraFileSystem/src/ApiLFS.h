@@ -8,7 +8,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-int consolaLFS();
+void* consolaLFS();
 void procesarInput(char* consulta);
 void consolaCreate(char*argumentos);
 void consolaDescribe(char* nombreTabla);

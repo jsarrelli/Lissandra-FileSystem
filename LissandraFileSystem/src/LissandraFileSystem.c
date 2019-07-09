@@ -68,8 +68,7 @@ int main(void) {
 	consolaLFS();
 	free(config);
 	config_destroy(fsConfig);
-	config_destroy(configFs);
-	free(bitmap->bitarray);
+	//free(bitmap->bitarray);
 	bitarray_destroy(bitmap);
 	return EXIT_SUCCESS;
 }

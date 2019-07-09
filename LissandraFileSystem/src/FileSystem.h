@@ -31,7 +31,6 @@ typedef struct {
 t_rutas rutas;
 t_metadata metadata;
 t_bitarray *bitmap;
-t_config* configFs;
 
 int cargarMetadata();
 int leerMetadata();
