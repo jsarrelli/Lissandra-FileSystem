@@ -385,3 +385,17 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 	return archivosTemporales;
 
 }
+
+void iniciarThreadCompactacion(char* nombreTabla) {
+	pthread_t threadCompactacion;
+	t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
+	while (0) {
+		if (!existeTabla(nombreTabla)) {
+			return;
+		}
+		usleep(metadata.T_COMPACTACION * 1000);
+		pthread_create(&threadCompactacion, NULL, (void*) crearYEscribirArchivosTemporales, rutas.Tablas);
+		pthread_detach(threadCompactacion);
+	}
+
+}

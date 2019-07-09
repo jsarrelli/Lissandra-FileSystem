@@ -7,6 +7,7 @@ int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaCh
 	}
 	crearTablaYParticiones(nombreTabla, cantParticiones);
 	crearMetadataTabla(nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
+	//iniciarThreadCompactacion(nombreTabla);
 	return 0;
 }
 
@@ -44,10 +45,11 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 }
 
-
-void procesoDump(){
+void procesoDump() {
+	pthread_t threadDump;
 	while (1) {
-			usleep(config->TIEMPO_DUMP* 1000);
-			crearYEscribirArchivosTemporales(rutas.Tablas);
-		}
+		usleep(config->TIEMPO_DUMP * 1000);
+		pthread_create(&threadDump, NULL, (void*) crearYEscribirArchivosTemporales, rutas.Tablas);
+		pthread_detach(threadDump);
+	}
 }

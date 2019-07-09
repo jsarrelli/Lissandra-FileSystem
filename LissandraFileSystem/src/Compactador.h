@@ -33,4 +33,5 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list* registrosNuevos);
 
 char* registroToChar(t_registro* registro);
+void iniciarThreadCompactacion(char* nombreTabla);
 #endif /* COMPACTADOR_H_ */
