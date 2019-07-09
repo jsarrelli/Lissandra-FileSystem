@@ -1,41 +1,38 @@
-[INFO] 07:09:19:800 LFS Logs/(3790:3790): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 08:53:13:600 LFS Logs/(9678:9678): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 07:09:19:801 LFS Logs/(3790:3790): Levantando archivo de configuracion del proceso LFS 
+[INFO] 08:53:13:603 LFS Logs/(9678:9678): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 07:09:19:801 LFS Logs/(3790:3790): Archivo de configuracion del proceso LFS levantado 
+[INFO] 08:53:13:603 LFS Logs/(9678:9678): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 07:09:19:934 LFS Logs/(3790:3790): El tamanio del bitmap es de 3000 bits
-[INFO] 07:09:19:934 LFS Logs/(3790:3790): Levantando tablas ya existentes..
-[INFO] 07:09:26:386 LFS Logs/(3790:3790): Se creo la tabla: TABLA en LFS
+[INFO] 08:53:13:633 LFS Logs/(9678:9678): El tamanio del bitmap es de 3000 bits
+[INFO] 08:53:13:634 LFS Logs/(9678:9678): Levantando tablas ya existentes..
+[INFO] 08:53:25:735 LFS Logs/(9678:9678): Se creo la tabla: TABLA en LFS
 
-[INFO] 07:09:26:386 LFS Logs/(3790:3790): Metadata de TABLA creada
+[INFO] 08:53:25:736 LFS Logs/(9678:9678): Metadata de TABLA creada
 
-[INFO] 07:09:31:767 LFS Logs/(3790:3790): Insert realizado en memtable
-[INFO] 07:09:36:438 LFS Logs/(3790:3790): Insert realizado en memtable
-[INFO] 07:09:44:69 LFS Logs/(3790:3790): Insert realizado en memtable
-[INFO] 07:09:48:638 LFS Logs/(3790:3790): Insert realizado en memtable
-[INFO] 07:09:51:216 LFS Logs/(3790:3790): Obteniendo directorios de archivos binarios..
-[INFO] 07:09:51:218 LFS Logs/(3790:3790): Modificando tmp a tmpc..
-[INFO] 07:09:51:218 LFS Logs/(3790:3790): Se cambio la extension de los temporales
-[INFO] 07:09:51:218 LFS Logs/(3790:3790): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 07:09:51:219 LFS Logs/(3790:3790): Lectura de registros de los tmpc finalizada
-[INFO] 07:09:51:219 LFS Logs/(3790:3790): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 07:09:51:220 LFS Logs/(3790:3790): Bloque 0 liberado
-[INFO] 07:09:51:220 LFS Logs/(3790:3790): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
-[INFO] 07:09:51:223 LFS Logs/(3790:3790): Bloque 1 liberado
-[INFO] 07:09:51:224 LFS Logs/(3790:3790): Bloque 2 liberado
-[INFO] 07:09:51:224 LFS Logs/(3790:3790): Bloque 3 liberado
-[INFO] 07:09:51:224 LFS Logs/(3790:3790): Compactacion de <TABLA> exitosa
-[INFO] 07:10:25:849 LFS Logs/(3790:3790): Insert realizado en memtable
-[INFO] 07:10:34:570 LFS Logs/(3790:3790): Insert realizado en memtable
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Obteniendo directorios de archivos binarios..
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Modificando tmp a tmpc..
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Se cambio la extension de los temporales
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Lectura de registros de los tmpc finalizada
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Bloque 0 liberado
-[INFO] 07:10:36:721 LFS Logs/(3790:3790): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
-[INFO] 07:10:36:722 LFS Logs/(3790:3790): Bloque 1 liberado
-[INFO] 07:10:36:723 LFS Logs/(3790:3790): Bloque 2 liberado
-[INFO] 07:10:36:723 LFS Logs/(3790:3790): Compactacion de <TABLA> exitosa
+[INFO] 08:53:33:319 LFS Logs/(9678:9678): Insert realizado en memtable
+[INFO] 08:53:38:647 LFS Logs/(9678:9678): Insert realizado en memtable
+[INFO] 08:53:43:803 LFS Logs/(9678:9678): Insert realizado en memtable
+[INFO] 08:53:49:57 LFS Logs/(9678:9678): Insert realizado en memtable
+[INFO] 08:53:53:728 LFS Logs/(9678:9678): Insert realizado en memtable
+[INFO] 08:54:01:436 LFS Logs/(9678:9678): Insert realizado en memtable
+[INFO] 08:54:42:792 LFS Logs/(9678:9678): Obteniendo directorios de archivos binarios..
+[INFO] 08:54:42:793 LFS Logs/(9678:9678): Modificando tmp a tmpc..
+[INFO] 08:54:42:793 LFS Logs/(9678:9678): Se cambio la extension de los temporales
+[INFO] 08:54:47:711 LFS Logs/(9678:9678): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 08:54:51:160 LFS Logs/(9678:9678): Lectura de registros de los tmpc finalizada
+[INFO] 08:54:51:161 LFS Logs/(9678:9678): Filtrando registros..
+[INFO] 08:54:51:161 LFS Logs/(9678:9678): Filtrado completo
+[INFO] 08:54:51:162 LFS Logs/(9678:9678): Mergeando registros viejos con nuevos
+[INFO] 08:54:51:846 LFS Logs/(9678:9678): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 08:54:53:323 LFS Logs/(9678:9678): Filtrando registros..
+[INFO] 08:54:53:324 LFS Logs/(9678:9678): Filtrado completo
+[INFO] 08:54:53:924 LFS Logs/(9678:9678): Bloque 0 liberado
+[INFO] 08:54:57:978 LFS Logs/(9678:9678): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
+[INFO] 08:54:59:621 LFS Logs/(9678:9678): Filtrando registros..
+[INFO] 08:54:59:621 LFS Logs/(9678:9678): Filtrado completo
+[INFO] 08:55:00:517 LFS Logs/(9678:9678): Bloque 1 liberado
+[INFO] 08:55:01:76 LFS Logs/(9678:9678): Bloque 2 liberado
+[INFO] 08:55:01:76 LFS Logs/(9678:9678): Bloque 3 liberado
+[INFO] 08:55:01:77 LFS Logs/(9678:9678): Bloque 4 liberado
+[INFO] 08:55:01:77 LFS Logs/(9678:9678): Compactacion de <TABLA> exitosa

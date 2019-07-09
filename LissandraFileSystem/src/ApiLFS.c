@@ -14,12 +14,13 @@ int consolaLFS() {
 	while (1) {
 		puts("Ingrese un comando:");
 		char *linea = readline(">");
-		if (linea) {
-			add_history(linea);
-		}
 		if (linea == NULL) {
 			return 0;
 		}
+		if (linea) {
+			add_history(linea);
+		}
+
 		procesarInput(linea);
 		free(linea);
 	}
