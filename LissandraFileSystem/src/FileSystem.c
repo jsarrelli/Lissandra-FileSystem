@@ -72,9 +72,19 @@ void leerBitmap() {
 
 	log_info(logger, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
 
-	//munmap(bitarray,cantidadBloques);
 	close(fd);
 
+}
+
+void escribirBitmap() {
+	FILE *archivo = fopen(rutas.Bitmap, "wb");
+	msync(bitmap->bitarray, metadata.BLOCKS / 8, MS_SYNC);
+	fclose(archivo);
+}
+
+void destruirBitmap(t_bitarray *bitmap) {
+	free(bitmap->bitarray);
+	bitarray_destroy(bitmap);
 }
 
 void cargarMemtable() {
@@ -90,17 +100,6 @@ void cargarMemtable() {
 	list_destroy_and_destroy_elements(nombreTablas, free);
 	list_destroy_and_destroy_elements(listaDirectorios, free);
 
-}
-
-void escribirBitmap() {
-	FILE *archivo = fopen(rutas.Bitmap, "wb");
-	msync(bitmap->bitarray, metadata.BLOCKS / 8, MS_SYNC);
-	fclose(archivo);
-}
-
-void destruirBitmap(t_bitarray *bitmap) {
-	free(bitmap->bitarray);
-	bitarray_destroy(bitmap);
 }
 
 int cargarMetadata() {
