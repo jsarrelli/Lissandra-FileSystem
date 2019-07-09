@@ -34,10 +34,10 @@ void procesarAccion(int socketMemoria) {
 	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
 		usleep(config->RETARDO * 1000);
 		if (paquete.header.quienEnvia == MEMORIA) {
-			int valueMaximo = 100;
+			usleep(config->RETARDO * 1000);
 			switch ((int) paquete.header.tipoMensaje) {
 			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-				configuracionNuevaMemoria(socketMemoria, valueMaximo);
+				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 				break;
 			case (SELECT):
 				//
