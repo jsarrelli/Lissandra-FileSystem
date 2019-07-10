@@ -235,26 +235,36 @@ void* nuevaFuncionThread(void* args) {
 							&& cantRequestsEjecutadasPorQuantum < quantum;
 					cantRequestsEjecutadas++) {
 
-//				usleep(retardoEjecucion*1000);
+//				usleep(retardoEjecucion * 1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
 				cantRequestsEjecutadasPorQuantum++;
 
 			}
 
-			if (!interrupcionPorEstado(estado)) {
-				if (cantRequestsEjecutadas == cantRequestsProceso) {
-					// Borrar proceso
-					destruirProceso(proceso);
+			if (!interrupcionPorEstado(estado)
+					&& cantRequestsEjecutadas == cantRequestsProceso) {
+
+				if (cantRequestsEjecutadasPorQuantum == quantum) {
+					log_info(log_master->logInfo,
+							"Llega a fin de quantum.\nDesalojando");
+//					usleep(retardoEjecucion * 1000);
+					cantRequestsEjecutadasPorQuantum = 0;
 				}
+
+				destruirProceso(proceso);
+
 			}
-			if (!interrupcionPorEstado(estado) && cantRequestsEjecutadasPorQuantum == quantum
-					&& cantRequestsEjecutadas < cantRequestsProceso){
-				log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
+			if (!interrupcionPorEstado(estado)
+					&& cantRequestsEjecutadasPorQuantum == quantum
+					&& cantRequestsEjecutadas < cantRequestsProceso) {
+
+				log_info(log_master->logInfo,
+						"Llega a fin de quantum.\nDesalojando");
 //				queue_push(colaReady, proceso);
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
-				usleep(retardoEjecucion*1000);
+//				usleep(retardoEjecucion * 1000);
 				deNewAReady(proceso);
 			}
 			if (interrupcionPorEstado(estado)) {

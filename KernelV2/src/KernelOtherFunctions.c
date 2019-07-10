@@ -150,7 +150,7 @@ int contarLineasArchivo(FILE* fichero, char* path) {
 		if (caracter == '\n')
 			num_lineas++;
 	fclose(fichero);
-	return num_lineas;
+	return num_lineas + 1;
 }
 
 void destruirArraySemaforos() {

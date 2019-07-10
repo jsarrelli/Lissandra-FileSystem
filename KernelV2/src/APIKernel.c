@@ -378,7 +378,13 @@ int consolaRun(char*path) {
 			char ejemplo[500];
 			fgets(ejemplo, sizeof(ejemplo), fd);
 			size_t tam = strlen(ejemplo) + 1;
-			ejemplo[tam - 2] = '\0';
+
+			if(ejemplo[tam-2] == '\n')
+				ejemplo[tam-2] = '\0';
+			else
+				ejemplo[tam-1] = '\0';
+
+//			ejemplo[tam-2] = '\0';
 			char* aGuardar = (char*) malloc(tam - 1);
 			strcpy(aGuardar, ejemplo);
 			agregarRequestAlProceso(proceso, aGuardar);
