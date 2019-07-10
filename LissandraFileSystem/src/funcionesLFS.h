@@ -63,5 +63,6 @@ t_tabla_memtable* newTablaMemtable(char* nombreTabla);
 FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode);
 
 void borrarContenidoArchivoBloque(int bloque);
+void freeArchivo(t_archivo *archivo);
 
 #endif /* FUNCIONESLFS_H_ */

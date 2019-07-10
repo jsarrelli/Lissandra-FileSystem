@@ -56,18 +56,24 @@ void leerBitmap() {
 	int cantidadBloques = (metadata.BLOCKS / 8);
 
 	int fd = open(rutas.Bitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+
 	ftruncate(fd, cantidadBloques);
 	if (fd == -1) {
 		log_error(loggerError, "No se pudo abrir el archivo de bitmap");
 	}
 
 	char * bitarray = mmap(NULL, cantidadBloques, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-	if (strlen(bitarray) == 0) {
-		bitarray = malloc(cantidadBloques);
-		memset(bitarray, 0, cantidadBloques);
-	}
 
 	bitmap = bitarray_create_with_mode(bitarray, cantidadBloques, LSB_FIRST);
+
+	if (strlen(bitarray) == 0) {
+		if (string_is_empty(bitarray)) {
+			for (int i = 0; i < metadata.BLOCKS; i++) {
+				bitarray_clean_bit(bitmap, i);
+			}
+		}
+	}
+
 	msync(bitarray, cantidadBloques, MS_SYNC);
 
 	log_info(logger, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
@@ -77,9 +83,7 @@ void leerBitmap() {
 }
 
 void escribirBitmap() {
-	FILE *archivo = fopen(rutas.Bitmap, "wb");
 	msync(bitmap->bitarray, metadata.BLOCKS / 8, MS_SYNC);
-	fclose(archivo);
 }
 
 void destruirBitmap(t_bitarray *bitmap) {

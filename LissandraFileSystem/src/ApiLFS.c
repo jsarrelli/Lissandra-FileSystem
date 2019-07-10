@@ -15,14 +15,13 @@ void* consolaLFS() {
 
 		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
-		if (consulta) {
-			add_history(consulta);
-		}
 		if (consulta == NULL || strlen(consulta) == 0) {
 			free(consulta);
-			return NULL;
+			break;
 		} else {
+			add_history(consulta);
 			procesarInput(consulta);
+			free(consulta);
 		}
 
 	}

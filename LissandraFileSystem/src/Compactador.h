@@ -15,7 +15,6 @@
 #include <BubbleSort.h>
 
 void compactarTabla(char*nombreTabla);
-void cambiarExtensionTemporales(t_list* listaTemporalesTmp);
 
 int escribirEnBin(t_list* lista, char*rutaBinario);
 void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin);
@@ -34,4 +33,5 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 char* registroToChar(t_registro* registro);
 void iniciarThreadCompactacion(char* nombreTabla);
+t_list* cambiarExtensionTemporales(t_list* listaTemporalesTmp);
 #endif /* COMPACTADOR_H_ */

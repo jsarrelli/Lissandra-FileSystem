@@ -1,49 +1,26 @@
-[INFO] 17:27:05:653 LFS Logs/(10570:10570): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 20:36:53:649 LFS Logs/(19591:19591): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 17:27:05:653 LFS Logs/(10570:10570): Levantando archivo de configuracion del proceso LFS 
+[INFO] 20:36:53:673 LFS Logs/(19591:19591): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 17:27:05:653 LFS Logs/(10570:10570): Archivo de configuracion del proceso LFS levantado 
+[INFO] 20:36:53:710 LFS Logs/(19591:19591): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 17:27:05:669 LFS Logs/(10570:10570): El tamanio del bitmap es de 3000 bits
-[INFO] 17:27:05:670 LFS Logs/(10570:10570): Levantando tablas ya existentes..
-[INFO] 17:34:09:747 LFS Logs/(10570:10572): Se creo la tabla: TABALAAUX en LFS
-
-[INFO] 17:34:09:748 LFS Logs/(10570:10572): Metadata de TABALAAUX creada
-
-[INFO] 17:35:05:851 LFS Logs/(10570:10571): Levantando archivo de configuracion del proceso LFS 
-
-[INFO] 17:35:05:852 LFS Logs/(10570:10571): Archivo de configuracion del proceso LFS levantado 
-
-[INFO] 17:37:53:73 LFS Logs/(10570:10572): Insert realizado en memtable
-[INFO] 18:16:01:962 LFS Logs/(10570:10572): Se creo la tabla: AUX en LFS
-
-[INFO] 18:16:01:962 LFS Logs/(10570:10572): Metadata de AUX creada
-
-[INFO] 18:16:39:356 LFS Logs/(10570:10572): Se creo la tabla: PAPA en LFS
-
-[INFO] 18:16:39:356 LFS Logs/(10570:10572): Metadata de PAPA creada
-
-[INFO] 18:16:51:520 LFS Logs/(10570:10572): Se creo la tabla: TUTU en LFS
-
-[INFO] 18:16:51:532 LFS Logs/(10570:10572): Metadata de TUTU creada
-
-[INFO] 18:17:10:355 LFS Logs/(10570:10572): Se creo la tabla: JAJA en LFS
-
-[INFO] 18:17:10:356 LFS Logs/(10570:10572): Metadata de JAJA creada
-
-[INFO] 18:17:25:292 LFS Logs/(10570:10572): Se creo la tabla: JEJE en LFS
-
-[INFO] 18:17:25:293 LFS Logs/(10570:10572): Metadata de JEJE creada
-
-[INFO] 18:17:55:434 LFS Logs/(10570:10572): Insert realizado en memtable
-[INFO] 18:17:55:837 LFS Logs/(10570:10572): Insert realizado en memtable
-[INFO] 18:19:41:803 LFS Logs/(10570:10572): Bloque 0 liberado
-[INFO] 18:19:41:803 LFS Logs/(10570:10572): Bloque 1 liberado
-[INFO] 18:19:52:993 LFS Logs/(10570:10572): Se creo la tabla: J en LFS
-
-[INFO] 18:19:52:994 LFS Logs/(10570:10572): Metadata de J creada
-
-[INFO] 18:31:43:811 LFS Logs/(10570:10572): Se creo la tabla: ALGO en LFS
-
-[INFO] 18:31:43:812 LFS Logs/(10570:10572): Metadata de ALGO creada
-
+[INFO] 20:36:53:0 LFS Logs/(19591:19591): El tamanio del bitmap es de 3000 bits
+[INFO] 20:36:53:4 LFS Logs/(19591:19591): Levantando tablas ya existentes..
+[INFO] 20:37:05:617 LFS Logs/(19591:19591): Insert realizado en memtable
+[INFO] 20:37:07:549 LFS Logs/(19591:19591): Obteniendo directorios de archivos binarios..
+[INFO] 20:37:07:564 LFS Logs/(19591:19591): Modificando tmp a tmpc..
+[INFO] 20:37:07:592 LFS Logs/(19591:19591): Se cambio la extension de los temporales
+[INFO] 20:37:07:596 LFS Logs/(19591:19591): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 20:37:07:635 LFS Logs/(19591:19591): Lectura de registros de los tmpc finalizada
+[INFO] 20:37:07:637 LFS Logs/(19591:19591): Filtrando registros..
+[INFO] 20:37:07:640 LFS Logs/(19591:19591): Filtrado completo
+[INFO] 20:37:07:644 LFS Logs/(19591:19591): Mergeando registros viejos con nuevos
+[INFO] 20:37:07:652 LFS Logs/(19591:19591): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 20:37:07:670 LFS Logs/(19591:19591): Filtrando registros..
+[INFO] 20:37:07:673 LFS Logs/(19591:19591): Filtrado completo
+[INFO] 20:37:07:682 LFS Logs/(19591:19591): Bloque 0 liberado
+[INFO] 20:37:07:689 LFS Logs/(19591:19591): Bloque 3 liberado
+[INFO] 20:37:07:691 LFS Logs/(19591:19591): Bloque 3 liberado
+[INFO] 20:37:07:739 LFS Logs/(19591:19591): Bloque 2 liberado
+[INFO] 20:37:07:760 LFS Logs/(19591:19591): Compactacion de <TABLA> exitosa
+[INFO] 20:37:55:996 LFS Logs/(19591:19591): Fin de leectura por consola

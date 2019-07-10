@@ -1,6 +1,7 @@
 #include "Inotify.h"
 void esperarModificacionArchivo() {
 
+	pthread_detach(pthread_self());
 	int EVENT_SIZE = sizeof(struct inotify_event) + strlen(rutaDirectorio);
 	int BUF_LEN = (1024 * EVENT_SIZE);
 	char buffer[BUF_LEN];
@@ -75,6 +76,6 @@ void listenArchivo(char* directorio, void (*cargarConfiguracion)(void)) {
 	funcion = cargarConfiguracion;
 	pthread_t thread;
 	pthread_create(&thread, NULL, (void*) esperarModificacionArchivo, NULL);
-	pthread_detach(thread);
+
 }
 

@@ -28,5 +28,6 @@ t_configuracion_LFS* config;
 
 
 void cargarConfig();
+void freeConfig();
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

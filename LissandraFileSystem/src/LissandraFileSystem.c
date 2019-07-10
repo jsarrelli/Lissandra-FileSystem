@@ -16,7 +16,7 @@ void cargarConfig() {
 	char* configPath = "/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Config/fsConfig.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso LFS \n");
 	if(config!=NULL){
-		free(config);
+		freeConfig();
 	}
 	config = malloc(sizeof(t_configuracion_LFS));
 	t_config *fsConfig = config_create(configPath);
@@ -39,6 +39,12 @@ void iniciarSocketServidor(t_configuracion_LFS* config) {
 		escuchar(listenningSocket);
 	}
 
+}
+
+void freeConfig(){
+	free(config->PUERTO_ESCUCHA);
+	free(config->PUNTO_MONTAJE);
+	free(config);
 }
 
 void inicializarLoggers() {
@@ -70,7 +76,8 @@ int main(void) {
 //	pthread_detach(dumpThread);
 
 	consolaLFS();
-	free(config);
+	freeConfig();
+	pthread_join(serverThread,NULL);
 	//free(bitmap->bitarray);
 	bitarray_destroy(bitmap);
 	return EXIT_SUCCESS;
