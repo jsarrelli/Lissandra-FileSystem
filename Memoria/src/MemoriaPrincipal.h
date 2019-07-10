@@ -44,7 +44,9 @@ t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar);
-void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento);
+void eliminarPaginaDeMemoria(Pagina* paginaAEliminar);
+void reemplazarPagina(Pagina* pagina, Segmento* segmento);
+void clearFrameDePagina(Pagina* paginaAEliminar);
 void journalMemoria();
 
 void freeSegmento(Segmento* segmentoAEliminar);
@@ -55,5 +57,6 @@ bool validarValueMaximo(char* value);
 
 Segmento* newSegmento(char* nombreSegmento);
 void vaciarMemoria();
+void finalizarMemoria();
 
 #endif /*MEMORIAPRINCIPAL_H_*/

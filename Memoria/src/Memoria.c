@@ -17,14 +17,14 @@ int main() {
 
 //	//HANDSHAKE INICIAL CON FILESYSTEM
 	int socketFileSystem = HandshakeInicial();
-	if(socketFileSystem == -1){
+	if (socketFileSystem == -1) {
 		log_info(logger, "--Memoria finalizada--");
 		liberarVariables();
 		return EXIT_SUCCESS;
 	}
 //
 //	//INICIALIZACION DE MEMORIA PRINCIPAL
-	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA,socketFileSystem);
+	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA, socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
 
 //INICIAR SERVIDOR
@@ -44,12 +44,11 @@ int main() {
 
 	close(listenningSocket);
 	liberarVariables();
-	vaciarMemoria();
+	finalizarMemoria();
 	return EXIT_SUCCESS;
 }
 
-void* leerConsola()
-{
+void* leerConsola() {
 	char * consulta;
 	while (1) {
 
@@ -61,10 +60,9 @@ void* leerConsola()
 		if (consulta == NULL) {
 			free(consulta);
 			return NULL;
-		}else{
+		} else {
 			procesarConsulta(consulta);
 		}
-
 
 	}
 	log_info(logger, "Fin de leectura por consola");
@@ -74,6 +72,9 @@ void* leerConsola()
 void cargarConfiguracion() {
 	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM.cfg";
 	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
+	if (configuracion != NULL) {
+		liberarDatosConfiguracion();
+	}
 	configuracion = (MEMORIA_configuracion*) malloc(sizeof(MEMORIA_configuracion));
 	if (configuracion == NULL) {
 		exit(0);
@@ -97,8 +98,7 @@ void cargarConfiguracion() {
 
 }
 
-void iniciarSocketServidor()
-{
+void iniciarSocketServidor() {
 	log_info(logger, "Configurando Listening Socket...");
 	listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != 0) {
@@ -122,15 +122,15 @@ void procesoTemporalGossiping() {
 
 }
 
-void liberarVariables()
-{
-	void liberarDatosConfiguracion()
-	{
-		liberarPunteroDePunterosAChar(configuracion->PUERTOS_SEEDS);
-		liberarPunteroDePunterosAChar(configuracion->IP_SEEDS);
-		free(configuracion);
-		config_destroy(archivo_configuracion);
-	}
+void liberarDatosConfiguracion() {
+	freePunteroAPunteros(configuracion->PUERTOS_SEEDS);
+	freePunteroAPunteros(configuracion->IP_SEEDS);
+	free(configuracion);
+	config_destroy(archivo_configuracion);
+}
+
+void liberarVariables() {
+
 	log_destroy(logger);
 	liberarDatosConfiguracion();
 	list_destroy(tablaGossiping);

@@ -1,8 +1,0 @@
-[INFO] 09:09:18:109 LFS Logs/(10889:10889): Inicializando proceso LISSANDRA FILE SYSTEM. 
-
-[INFO] 09:09:18:109 LFS Logs/(10889:10889): Levantando archivo de configuracion del proceso LFS 
-
-[INFO] 09:09:18:109 LFS Logs/(10889:10889): Archivo de configuracion del proceso LFS levantado 
-
-[INFO] 09:09:18:149 LFS Logs/(10889:10889): El tamanio del bitmap es de 3000 bits
-[INFO] 09:09:18:149 LFS Logs/(10889:10889): Levantando tablas ya existentes..

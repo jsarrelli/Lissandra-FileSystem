@@ -15,14 +15,13 @@ void* consolaLFS() {
 
 		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
-		if (consulta) {
-			add_history(consulta);
-		}
 		if (consulta == NULL || strlen(consulta) == 0) {
 			free(consulta);
-			return NULL;
+			break;
 		} else {
+			add_history(consulta);
 			procesarInput(consulta);
+			free(consulta);
 		}
 
 	}
@@ -92,5 +91,18 @@ void consolaInsert(char* argumentos) {
 	funcionINSERT(timeStamp, nombreTabla, key, value);
 
 	freePunteroAPunteros(valoresAux);
+	freePunteroAPunteros(valores);
+}
+
+void consolaSelect(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	char* key = valores[1];
+	int keyActual = atoi(key);
+
+	t_registro* registro=funcionSELECT(nombreTabla, keyActual);
+	if(registro!=NULL){
+		freeRegistro(registro);
+	}
 	freePunteroAPunteros(valores);
 }

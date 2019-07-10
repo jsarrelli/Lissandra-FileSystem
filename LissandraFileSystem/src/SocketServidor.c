@@ -18,9 +18,10 @@ void escuchar(int listenningSocket) {
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			printf("Request de memoria recibida.. \n");
-			pthread_t threadId;
-			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
-			pthread_detach(threadId);
+//			pthread_t threadId;
+//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
+//			pthread_detach(threadId);
+			procesarAccion(socketMemoria);
 
 		}
 
@@ -31,15 +32,15 @@ void procesarAccion(int socketMemoria) {
 	Paquete paquete;
 
 	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
-
+		usleep(config->RETARDO * 1000);
 		if (paquete.header.quienEnvia == MEMORIA) {
-			int valueMaximo = 100;
+			usleep(config->RETARDO * 1000);
 			switch ((int) paquete.header.tipoMensaje) {
 			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-				configuracionNuevaMemoria(socketMemoria, valueMaximo);
+				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 				break;
 			case (SELECT):
-				//
+				procesarSELECT(paquete.mensaje,socketMemoria);
 				break;
 			case (INSERT):
 				procesarINSERT(paquete.mensaje, socketMemoria);
@@ -149,6 +150,23 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 	}
 	enviarSuccess(1, DESCRIBE, socketMemoria);
 
+}
+
+void procesarSELECT(char* request, int socketMemoria){
+	char** valores = string_split(request, " ");
+	char* nombreTabla = valores[0];
+	int key = atoi(valores[1]);
+	t_registro* registro = funcionSELECT(nombreTabla, key);
+	if(registro==NULL){
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, NULL, 0, NOTFOUND);
+	}else{
+		char* response = string_new();
+		string_append_with_format(response, "%d;%s;%d",registro->key,registro->value,registro->timestamp);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response)+1, SELECT);
+		free(response);
+	}
+	freeRegistro(registro);
+	freePunteroAPunteros(valores);
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {

@@ -20,7 +20,7 @@
 #include "FuncionesGossiping.h"
 #include <Inotify.h>
 
-typedef struct MEMORIA_configuracion{
+typedef struct MEMORIA_configuracion {
 	char* PUERTO_ESCUCHA;
 	char* IP_ESCUCHA;
 	char* IP_FS;
@@ -33,14 +33,14 @@ typedef struct MEMORIA_configuracion{
 	int TIEMPO_JOURNAL;
 	int TIEMPO_GOSSIPING;
 	int MEMORY_NUMBER;
-}MEMORIA_configuracion;
+} MEMORIA_configuracion;
 
 char* pathMEMConfig;
 MEMORIA_configuracion* configuracion;
 pthread_t serverThread;
 pthread_t intTemporalJournal;
 pthread_t intTemporalGossiping;
-t_config*  archivo_configuracion;
+t_config* archivo_configuracion;
 int listenningSocket;
 int valueMaximoPaginas;
 t_list* tablaGossiping;
@@ -52,4 +52,6 @@ void procesoTemporalJournal();
 void procesoTemporalGossiping();
 void iniciarSocketServidor();
 void liberarVariables();
+void liberarDatosConfiguracion();
+
 #endif /*MEMORIA_H_ */

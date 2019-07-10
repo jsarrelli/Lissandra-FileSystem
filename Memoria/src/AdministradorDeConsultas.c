@@ -8,6 +8,7 @@
 #include "AdministradorDeConsultas.h"
 
 t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
+
 	//si aca el segmento no existe en ningun lado, lo tengo que crear?
 	Segmento* tabla = buscarSegmento(nombreTabla);
 	if (tabla != NULL) {

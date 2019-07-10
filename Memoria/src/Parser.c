@@ -46,7 +46,7 @@ void* procesarINSERT(char* consulta) {
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	int key = atoi(valoresAux[1]);
-	char* value = malloc(strlen(valores[1] + 1));
+	char* value = string_duplicate(valores[1]);
 	strcpy(value, valores[1]);
 	double timeStamp;
 	if (valores[2] == NULL) {
@@ -56,6 +56,7 @@ void* procesarINSERT(char* consulta) {
 	}
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
+	free(value);
 	return INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
 
 }

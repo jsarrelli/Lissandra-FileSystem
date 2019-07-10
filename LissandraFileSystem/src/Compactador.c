@@ -15,11 +15,11 @@ void compactarTabla(char*nombreTabla) {
 
 	log_info(logger, "Modificando tmp a tmpc..");
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
-	cambiarExtensionTemporales(archivosTemporales);
+	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
 	log_info(logger, "Se cambio la extension de los temporales");
 
 	t_list* registrosNuevos = list_create();
-	list_iterate2(archivosTemporales, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
+	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
 	log_info(logger, "Lectura de registros de los tmpc finalizada");
 	filtrarRegistros(registrosNuevos);
 
@@ -28,7 +28,8 @@ void compactarTabla(char*nombreTabla) {
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
 
-	list_iterate(archivosTemporales, (void*) eliminarArchivo);
+	list_iterate(archivosTmpc, (void*) eliminarArchivo);
+	list_destroy_and_destroy_elements(archivosTmpc, free);
 	list_destroy_and_destroy_elements(archivosTemporales, free);
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
@@ -251,18 +252,20 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 	liberarPunteroDePunterosAChar(registros);
 	free(registros);
 	free(rutaArchBloque);
-	free(archivo);
+	freeArchivo(archivo);
 }
 
 t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 	t_list* archivos = buscarArchivos(nombreTabla);
 	bool isBin(char* rutaArchivoActual) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
-		return strcmp(extension, "bin") == 0;
+		bool result = strcmp(extension, "bin") == 0;
+		free(extension);
+		return result;
 	}
 
 	t_list* archivosBinarios = list_filter(archivos, (void*) isBin);
-	list_destroy(archivos);
+	list_destroy_and_destroy_elements(archivos, free);
 	return archivosBinarios;
 }
 
@@ -270,7 +273,10 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
  y te los cargar en la lista que le pases*/
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
-	leerArchivoDeTabla(pathArchivo, archivo);
+	if (leerArchivoDeTabla(pathArchivo, archivo) == -1) {
+		return;
+	}
+
 	int i = 0;
 	log_info(logger, "Leyendo registros de %s... ", pathArchivo);
 
@@ -293,8 +299,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	}
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
-
-	free(archivo);
+	freeArchivo(archivo);
 }
 
 t_list* obtenerRegistrosFromBinByNombreTabla(char* nombreTabla) {
@@ -307,10 +312,10 @@ t_list* obtenerRegistrosFromBinByNombreTabla(char* nombreTabla) {
 }
 
 t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
-	t_list* binarios = buscarTemporalesByNombreTabla(nombreTabla);
+	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
-	list_iterate2(binarios, (void*) agregarRegistrosFromBloqueByPath, registros);
-	list_destroy_and_destroy_elements(binarios, free);
+	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
+	list_destroy_and_destroy_elements(temporales, free);
 	return registros;
 
 }
@@ -359,16 +364,16 @@ t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque) {
 	return listaRegistros;
 }
 
-void cambiarExtensionTemporales(t_list* listaTemporalesTmp) {
+t_list* cambiarExtensionTemporales(t_list* listaTemporalesTmp) {
 
-	void cambiarExtensionATmpc(char* rutaTmpActual) {
-		char* rutaTmpAux = string_duplicate(rutaTmpActual);
-		string_append(&rutaTmpActual, "c");
-		rename(rutaTmpAux, rutaTmpActual);
-		free(rutaTmpAux);
+	char* cambiarExtensionATmpc(char* rutaTmpActual) {
+		char* rutaTmpc = string_duplicate(rutaTmpActual);
+		string_append(&rutaTmpc, "c");
+		rename(rutaTmpActual, rutaTmpc);
+		return rutaTmpc;
 	}
 
-	list_iterate(listaTemporalesTmp, (void*) cambiarExtensionATmpc);
+	return list_map(listaTemporalesTmp, (void*) cambiarExtensionATmpc);
 
 }
 
@@ -378,10 +383,26 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 
 	bool isTemporal(char* rutaArchivoActual) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
-		return strcmp(extension, "tmp") == 0;
+		bool result = strcmp(extension, "tmp") == 0;
+		free(extension);
+		return result;
 	}
 	t_list* archivosTemporales = list_filter(archivos, (void*) isTemporal);
-	list_destroy(archivos);
+	list_destroy_and_destroy_elements(archivos, free);
 	return archivosTemporales;
+
+}
+
+void iniciarThreadCompactacion(char* nombreTabla) {
+	pthread_t threadCompactacion;
+	t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
+	while (0) {
+		if (!existeTabla(nombreTabla)) {
+			return;
+		}
+		usleep(metadata.T_COMPACTACION * 1000);
+		pthread_create(&threadCompactacion, NULL, (void*) crearYEscribirArchivosTemporales, rutas.Tablas);
+		pthread_detach(threadCompactacion);
+	}
 
 }
