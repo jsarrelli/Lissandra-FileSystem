@@ -139,6 +139,11 @@ void inicioKernelUnProcesador() {
 int main(void) {
 	pthread_t hiloConsola;
 	pthread_t hiloMultiprocesamiento;
+	pthread_t* arrayDeHilos=NULL;
+	pthread_t* arrayDeHilosPuntero=NULL;
+
+	arrayDeHilos = malloc(sizeof(pthread_t)* multiprocesamiento);
+
 	iniciarVariablesKernel();
 //	inicioKernelUnProcesador();
 
@@ -153,14 +158,27 @@ int main(void) {
 	sem_wait(&bin_main);
 
 	// Hilo de multiprocesamiento
-	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
-	pthread_detach(hiloMultiprocesamiento);
+
+//	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
+//	pthread_detach(hiloMultiprocesamiento);
+
+	for(int i =0; i < multiprocesamiento;i++){
+		arrayDeHilosPuntero = arrayDeHilos;
+		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*)nuevaFuncionThread, NULL);
+	}
+
+	for(int i =0; i< multiprocesamiento;i++){
+		pthread_detach(arrayDeHilosPuntero[i]);
+	}
+
 
 	sem_wait(&fin);
 
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 
 	destruirArraySemaforos();
+
+	free(arrayDeHilos);
 
 //	for(int i = multiprocesamiento; i > 0; i--)
 //		free(&arraySemaforos[i]);

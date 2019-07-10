@@ -235,7 +235,7 @@ void* nuevaFuncionThread(void* args) {
 							&& cantRequestsEjecutadasPorQuantum < quantum;
 					cantRequestsEjecutadas++) {
 
-//				usleep(retardoEjecucion * 1000);
+				usleep(retardoEjecucion * 1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
 				cantRequestsEjecutadasPorQuantum++;
@@ -248,7 +248,7 @@ void* nuevaFuncionThread(void* args) {
 				if (cantRequestsEjecutadasPorQuantum == quantum) {
 					log_info(log_master->logInfo,
 							"Llega a fin de quantum.\nDesalojando");
-//					usleep(retardoEjecucion * 1000);
+					usleep(retardoEjecucion * 1000);
 					cantRequestsEjecutadasPorQuantum = 0;
 				}
 
@@ -264,7 +264,7 @@ void* nuevaFuncionThread(void* args) {
 //				queue_push(colaReady, proceso);
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
-//				usleep(retardoEjecucion * 1000);
+				usleep(retardoEjecucion * 1000);
 				deNewAReady(proceso);
 			}
 			if (interrupcionPorEstado(estado)) {
