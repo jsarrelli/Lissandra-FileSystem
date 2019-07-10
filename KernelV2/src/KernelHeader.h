@@ -37,6 +37,7 @@
 // Estructuras de datos
 
 typedef struct{
+	int contadorRequests;
 	t_list* script;
 //	pthread_t* hilo; // Esto se va a hacer al principio, por eso no es necesario ahora
 //	bool estaEjecutandose; // Esto tampoco
@@ -91,15 +92,18 @@ t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
 int quantum;
-int cantRequestsEjecutadas;
+int cantRequestsEjecutadas;		// Borrar
 sem_t ejecutarHilos;
-sem_t mutex_colaReady;
+sem_t mutex_colaReadyPOP;
+sem_t mutex_colaReadyPUSH;
 sem_t mutex_id_proceso;
 sem_t bin_main;
 sem_t fin;
+sem_t cantProcesosColaReady;
 logStruct* log_master;
 int idMemoria;
 bool haySC;
+bool puedeHaberRequests;
 int idHilo;
 int multiprocesamiento;
 int multiprocesamientoUsado;

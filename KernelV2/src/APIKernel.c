@@ -54,10 +54,9 @@ int procesarInputKernel(char* linea) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando EXECUTE");
 	} else if (strcmp(operacion, "SALIR") == 0) {
-		log_trace(log_master->logTrace, "Finalizando consola");
-		return SUPER_ERROR;
+		consolaSALIR(argumentos);
 	} else {
-		log_trace(log_master->logTrace,
+		log_error(log_master->logError,
 				"El comando no es el correcto. Por favor intente nuevamente");
 	}
 
@@ -379,7 +378,13 @@ int consolaRun(char*path) {
 			char ejemplo[500];
 			fgets(ejemplo, sizeof(ejemplo), fd);
 			size_t tam = strlen(ejemplo) + 1;
-			ejemplo[tam - 2] = '\0';
+
+			if(ejemplo[tam-2] == '\n')
+				ejemplo[tam-2] = '\0';
+			else
+				ejemplo[tam-1] = '\0';
+
+//			ejemplo[tam-2] = '\0';
 			char* aGuardar = (char*) malloc(tam - 1);
 			strcpy(aGuardar, ejemplo);
 			agregarRequestAlProceso(proceso, aGuardar);
@@ -401,6 +406,15 @@ int consolaRun(char*path) {
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
+}
+
+
+void consolaSALIR(char*nada){
+	log_trace(log_master->logTrace, "Finalizando consola");
+
+	puedeHaberRequests = false;
+	sem_post(&cantProcesosColaReady);
+	sem_post(&fin);
 }
 
 /*

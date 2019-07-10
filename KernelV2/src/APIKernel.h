@@ -26,6 +26,7 @@ int consolaCreate(char*argumentos);
 int consolaDescribe(char*nombreTabla);
 int consolaDrop(char*nombreTabla);
 int consolaRun(char*path);
+void consolaSALIR(char*nada);
 void enviarJournalMemoria(int socketMemoria);
 void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);

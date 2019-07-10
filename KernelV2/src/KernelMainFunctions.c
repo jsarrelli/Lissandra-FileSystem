@@ -24,6 +24,7 @@ void destruirLogStruct(logStruct* log_master) {
 procExec* newProceso() {
 	procExec* proceso = malloc(sizeof(procExec));
 	proceso->script = list_create();
+	proceso->contadorRequests = 0;
 //	proceso->estaEjecutandose=false;
 //	list_add(proceso->script, instruccion);
 	return proceso;
@@ -39,7 +40,11 @@ void destruirProceso(procExec* proceso) {
 //}
 
 void deNewAReady(procExec* proceso) {
+	sem_wait(&mutex_colaReadyPUSH);
 	queue_push(colaReady, proceso);
+	sem_post(&cantProcesosColaReady);
+	sem_post(&mutex_colaReadyPUSH);
+//	sem_post(&cantProcesosColaReady);
 }
 
 void deReadyAExec() {
@@ -123,7 +128,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 				memoriaAEnviar->id);
 	} else {
 		log_error(log_master->logError,
-				"Error: no existe memoria con ese criterio");
+				"Error: no existe memoria con ese criterio o tabla no existe");
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
@@ -139,11 +144,11 @@ void agregarRequestAlProceso(procExec* proceso, char* operacion) {
 void* funcionThread(void* args) {
 	sem_wait(&ejecutarHilos);
 
-	sem_wait(&mutex_colaReady);
+	sem_wait(&mutex_colaReadyPOP);
 //	procExec* proceso = newProceso();
 	procExec* proceso = NULL;
 	proceso = queue_pop(colaReady);
-	sem_post(&mutex_colaReady);
+	sem_post(&mutex_colaReadyPOP);
 
 //	int tam_script = list_size(proceso->script);
 //	for(int i=0; i< tam_script;i++){
@@ -189,10 +194,13 @@ bool interrupcionPorEstado(estadoProceso estado) {
 }
 
 procExec* obtenerProcesoDeColaReady() {
-	sem_wait(&mutex_colaReady);
+	sem_wait(&cantProcesosColaReady);
+
+	sem_wait(&mutex_colaReadyPOP);
 	procExec* proceso = NULL;
 	proceso = queue_pop(colaReady);
-	sem_post(&mutex_colaReady);
+	sem_post(&mutex_colaReadyPOP);
+
 	return proceso;
 }
 
@@ -201,43 +209,64 @@ void* nuevaFuncionThread(void* args) {
 	int cantRequestsProceso = 0;
 	int cantRequestsEjecutadas = 0;
 	procExec* proceso = NULL;
+	int cantRequestsEjecutadasPorQuantum = 0;
 //	static int idProceso = -1;
 //	int idProceso = -1;
-	static bool tieneID = false;
+//	static bool tieneID = false;
 
 	do {
 //		idProceso++;
 
-		otorgarId(&tieneID);
-		sem_wait(&arraySemaforos[idHilo]);
+//		otorgarId(&tieneID);
+//		sem_wait(&arraySemaforos[idHilo]);
 
-		if (queue_size(colaReady) != 0) {
-			proceso = obtenerProcesoDeColaReady();
+//		if (queue_size(colaReady) != 0) {
+		proceso = obtenerProcesoDeColaReady();
+
+		if (proceso != NULL) {
+
 			cantRequestsProceso = list_size(proceso->script);
 
 			// Ahora evaluamos cada una de las requests del script
 			// Lo hago por un for y list_get en vez de list_itearate porque necesito varias condiciones
 
-			for (cantRequestsEjecutadas = 0;
+			for (cantRequestsEjecutadas = proceso->contadorRequests;
 					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
-							&& cantRequestsEjecutadas < quantum;
+							&& cantRequestsEjecutadasPorQuantum < quantum;
 					cantRequestsEjecutadas++) {
 
+				usleep(retardoEjecucion * 1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
-//				usleep(retardoEjecucion*1000);
+				cantRequestsEjecutadasPorQuantum++;
 
 			}
 
-			if (!interrupcionPorEstado(estado)) {
-				if (cantRequestsEjecutadas == cantRequestsProceso) { // Esta verificacion no tiene sentido, pero esta buena para que se vea como funciona
-					// Borrar proceso
-					destruirProceso(proceso);
+			if (!interrupcionPorEstado(estado)
+					&& cantRequestsEjecutadas == cantRequestsProceso) {
+
+				if (cantRequestsEjecutadasPorQuantum == quantum) {
+					log_info(log_master->logInfo,
+							"Llega a fin de quantum.\nDesalojando");
+					usleep(retardoEjecucion * 1000);
+					cantRequestsEjecutadasPorQuantum = 0;
 				}
+
+				destruirProceso(proceso);
+
 			}
-			if (cantRequestsEjecutadas >= quantum
-					&& !(cantRequestsEjecutadas < cantRequestsProceso))
-				queue_push(colaReady, proceso);
+			if (!interrupcionPorEstado(estado)
+					&& cantRequestsEjecutadasPorQuantum == quantum
+					&& cantRequestsEjecutadas < cantRequestsProceso) {
+
+				log_info(log_master->logInfo,
+						"Llega a fin de quantum.\nDesalojando");
+//				queue_push(colaReady, proceso);
+				proceso->contadorRequests = cantRequestsEjecutadas;
+				cantRequestsEjecutadasPorQuantum = 0;
+				usleep(retardoEjecucion * 1000);
+				deNewAReady(proceso);
+			}
 			if (interrupcionPorEstado(estado)) {
 				log_error(log_master->logError,
 						"Error: Una request no se pudo cumplir");
@@ -245,9 +274,12 @@ void* nuevaFuncionThread(void* args) {
 				destruirProceso(proceso);
 			}
 
+//		}
 		}
 
-	} while (queue_size(colaReady) != 0);
+		estado = OK;
+
+	} while (puedeHaberRequests);
 
 	return NULL;
 }
@@ -302,6 +334,9 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
+	if (consistenciaDeTabla == ERROR_CONSISTENCIA)
+		return NULL;
+
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
 }
 
@@ -315,6 +350,10 @@ consistencia obtenerConsistenciaDe(char* nombreTabla) {
 	metadataTablas* metadata = NULL;
 	metadata = list_find((t_list*) listaMetadataTabla,
 			condicionObtenerConsistencia);
+
+	if (metadata == NULL)
+		return ERROR_CONSISTENCIA;
+
 	return metadata->consistencia;
 }
 
