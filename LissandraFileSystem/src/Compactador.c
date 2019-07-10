@@ -9,12 +9,18 @@
 
 void compactarTabla(char*nombreTabla) {
 
+	log_info(logger, "Modificando tmp a tmpc..");
+	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
+	if (list_is_empty(archivosTemporales)) {
+		list_destroy(archivosTemporales);
+		log_info(logger, "No hay nada para compactar");
+		return;
+	}
+
 	log_info(logger, "Obteniendo directorios de archivos binarios..");
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
 	int cantParticiones = list_size(archivosBinarios);
 
-	log_info(logger, "Modificando tmp a tmpc..");
-	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
 	log_info(logger, "Se cambio la extension de los temporales");
 
@@ -46,6 +52,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		if (list_is_empty(registrosNuevos)) {
 			//si no hay registros nuevos en esta particion ni te calentes en entrar
 			list_destroy(registrosNuevos);
+			numeroParticionActual++;
 			return;
 		}
 		//obtengo los registros del bin correspondiente
@@ -53,26 +60,23 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		char* rutaArchivoBinarioActual = list_get(archivosBinarios, numeroParticionActual);
 		agregarRegistrosFromBloqueByPath(rutaArchivoBinarioActual, listaRegistrosViejos);
 
-		//agarro los registros nuevos de la particion actual
-		t_list* registrosParticionActual = list_get(particionesRegistrosNuevos, numeroParticionActual);
-
 		//armo una lista con los registros nuevos y viejos
-		list_add_all(registrosParticionActual, listaRegistrosViejos);
+		list_add_all(registrosNuevos, listaRegistrosViejos);
 		list_destroy(listaRegistrosViejos);
 
 		//los filtro para que de los que tengan la misma key se quede con el de mayor timeStamp
-		filtrarRegistros(registrosParticionActual);
+		filtrarRegistros(registrosNuevos);
 
 		//pasamos la lista de registros a una lista de char* para escribirlos en el binario
 
-		t_list* registrosChar = list_map(registrosParticionActual, (void*) registroToChar);
+		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
 
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
-		list_destroy_and_destroy_elements(registrosParticionActual, (void*) freeRegistro);
+		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
 
 		numeroParticionActual++;
@@ -255,20 +259,6 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 	freeArchivo(archivo);
 }
 
-t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
-	t_list* archivos = buscarArchivos(nombreTabla);
-	bool isBin(char* rutaArchivoActual) {
-		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
-		bool result = strcmp(extension, "bin") == 0;
-		free(extension);
-		return result;
-	}
-
-	t_list* archivosBinarios = list_filter(archivos, (void*) isBin);
-	list_destroy_and_destroy_elements(archivos, free);
-	return archivosBinarios;
-}
-
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
@@ -385,12 +375,32 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
 		bool result = strcmp(extension, "tmp") == 0;
 		free(extension);
+		if (!result) {
+			free(rutaArchivoActual);
+		}
 		return result;
 	}
 	t_list* archivosTemporales = list_filter(archivos, (void*) isTemporal);
-	list_destroy_and_destroy_elements(archivos, free);
+	list_destroy(archivos);
 	return archivosTemporales;
 
+}
+
+t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
+	bool isBin(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		bool result = strcmp(extension, "bin") == 0;
+		free(extension);
+		if (!result) {
+			free(rutaArchivoActual);
+		}
+		return result;
+	}
+
+	t_list* archivosBinarios = list_filter(archivos, (void*) isBin);
+	list_destroy(archivos);
+	return archivosBinarios;
 }
 
 void iniciarThreadCompactacion(char* nombreTabla) {

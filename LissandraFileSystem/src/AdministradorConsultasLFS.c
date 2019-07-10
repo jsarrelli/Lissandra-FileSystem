@@ -35,13 +35,15 @@ void funcionDESCRIBE_ALL() {
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
+
+
 	if (config->TAMANIO_VALUE < strlen(value)) {
 		log_error(loggerError, "Tamanio maximo de value excedido");
 		return 1;
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_info(logger, "Insert realizado en memtable");
+		log_info(logger, "Insert de %s;%s en %s realizado en memtable",key,value,nombreTabla);
 		return 0;
 	} else {
 		printf("La %s no existe", nombreTabla);

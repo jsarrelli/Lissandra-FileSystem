@@ -47,17 +47,19 @@ void* procesarINSERT(char* consulta) {
 	char* nombreTabla = valoresAux[0];
 	int key = atoi(valoresAux[1]);
 	char* value = string_duplicate(valores[1]);
-	strcpy(value, valores[1]);
+
 	double timeStamp;
 	if (valores[2] == NULL) {
 		timeStamp = getCurrentTime();
 	} else {
 		timeStamp = atof(valores[2]);
 	}
+
+	t_registro* registro = INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
 	free(value);
-	return INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
+	return registro;
 
 }
 

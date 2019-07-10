@@ -54,19 +54,19 @@ void* leerConsola() {
 
 		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
-		if (consulta) {
-			add_history(consulta);
-		}
-		if (consulta == NULL) {
-			free(consulta);
-			return NULL;
-		} else {
+
+		if (strlen(consulta)!=0) {
+
 			procesarConsulta(consulta);
+			add_history(consulta);
+		} else {
+			free(consulta);
+			log_info(logger, "Fin de leectura por consola");
+			return NULL;
 		}
 
 	}
-	log_info(logger, "Fin de leectura por consola");
-	return NULL;
+
 }
 
 void cargarConfiguracion() {

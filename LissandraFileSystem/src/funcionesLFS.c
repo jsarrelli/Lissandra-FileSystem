@@ -25,10 +25,10 @@ char * obtenerRutaTablaSinArchivo(char * rutaTabla) {
 }
 
 char * obtenerExtensionDeUnArchivo(char * nombreArchivoConExtension) {
-	char ** palabras = string_split(nombreArchivoConExtension, ".");
-	char * extension = strdup(palabras[1]);
-	liberarPunteroDePunterosAChar(palabras);
-	free(palabras);
+	char* nombreArchivoConExtensionAux = string_duplicate(nombreArchivoConExtension);
+	char ** palabras = string_split(nombreArchivoConExtensionAux, ".");
+	char * extension = string_duplicate(palabras[1]);
+	freePunteroAPunteros(palabras);
 	return extension;
 
 }
@@ -248,7 +248,6 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 	t_config* config = config_create(rutaArchivo);
 
 	if (config == NULL) {
-		config_destroy(config);
 		return -1;
 		puts("El archivo no existe");
 	}
@@ -364,25 +363,17 @@ void mostrarMetadataTodasTablas(char *ruta) {
 }
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
-	int i;
 	int clave = atoi(key);
+	t_tabla_memtable *tabla = getTablaFromMemtable(nombreTabla);
 
-	for (i = 0; i < list_size(memtable); i++) {
-		t_tabla_memtable *tabla = list_get(memtable, i);
-		if (strcmp(tabla->tabla, nombreTabla) == 0) {
+	t_registro* registro = malloc(sizeof(t_registro));
+	registro->value = malloc(strlen(value) + 1);
+	registro->timestamp = timestamp;
+	registro->key = clave;
+	strcpy(registro->value, value);
 
-			t_registro* registro = malloc(sizeof(t_registro));
-			registro->value = malloc(strlen(value) + 1);
-			registro->timestamp = timestamp;
-			registro->key = clave;
-			strcpy(registro->value, value);
+	list_add(tabla->registros, registro);
 
-			list_add(tabla->registros, registro);
-			printf("Registro %f;%d;%s insertado correctamente en memtable, %s\n\n", timestamp, registro->key, registro->value, nombreTabla);
-
-			break;
-		}
-	}
 }
 
 void crearYEscribirArchivosTemporales(char*ruta) {
@@ -429,11 +420,11 @@ void limpiarRegistrosDeTabla(char*nombreTabla) {
 }
 
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
-	char * archivoConExtension;
-	char ** split = string_split(ruta, "/");
-	archivoConExtension = (char*) obtenerUltimoElementoDeUnSplit(split);
-	liberarPunteroDePunterosAChar(split);
-	free(split);
+	char* rutaAux = string_duplicate(ruta);
+	char ** split = string_split(rutaAux, "/");
+	char * archivoConExtension = (char*) obtenerUltimoElementoDeUnSplit(split);
+	freePunteroAPunteros(split);
+	free(rutaAux);
 	if (strstr(archivoConExtension, ".") != NULL) {
 		return archivoConExtension;
 	}
@@ -503,7 +494,7 @@ t_tabla_memtable* getTablaFromMemtable(char* nombreTabla) {
 FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode) {
 	char* rutaBloque = string_new();
 	string_append(&rutaBloque, rutas.Bloques);
-	string_append_with_format(&rutaBloque, "/%d.bin",numeroBloque);
+	string_append_with_format(&rutaBloque, "/%d.bin", numeroBloque);
 
 	FILE* archivoBloque;
 	if (appendMode) {
@@ -604,7 +595,7 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
 	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
-	t_list* registrosMemtableToChar= list_map(tablaMemtable->registros, (void*) registroToChar);
+	t_list* registrosMemtableToChar = list_map(tablaMemtable->registros, (void*) registroToChar);
 	list_add_all(listaRegistros, registrosMemtableToChar);
 
 }
@@ -614,14 +605,14 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 	t_list* registros = list_create();
 	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
 	t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
-	list_add_all(listaRegistros,registrosTempToChar);
+	list_add_all(listaRegistros, registrosTempToChar);
 	list_destroy(registrosTempToChar);
 }
 
 char* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
 
 	bool BuscarPorKey(char* registroActual) {
-		char* registroAux= string_duplicate(registroActual);
+		char* registroAux = string_duplicate(registroActual);
 		char** valores = string_split(registroAux, ";");
 		int keyActual = atoi(valores[1]);
 		freePunteroAPunteros(valores);
@@ -629,12 +620,10 @@ char* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
 		return keyActual == key;
 	}
 
-	return (char*)	list_find(listaRegistros, (void*) BuscarPorKey);
+	return (char*) list_find(listaRegistros, (void*) BuscarPorKey);
 }
 
-
-
-void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros){
+void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros) {
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
 	t_list* listaRegistrosBin = list_create();
 	int cantParticiones = list_size(archivosBinarios);
@@ -647,11 +636,11 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	list_destroy(registrosBinToChar);
 }
 
-t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual){
+t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual) {
 	t_list* listaRegistros = list_create();
-	getRegistrosFromBinByNombreTabla(nombreTabla, keyActual,listaRegistros);
+	getRegistrosFromBinByNombreTabla(nombreTabla, keyActual, listaRegistros);
 	getRegistrosFromMemtableByNombreTabla(nombreTabla, listaRegistros);
-	getRegistrosFromTempByNombreTabla(nombreTabla,  listaRegistros);
+	getRegistrosFromTempByNombreTabla(nombreTabla, listaRegistros);
 	filtrarRegistros(listaRegistros);
 	return listaRegistros;
 }

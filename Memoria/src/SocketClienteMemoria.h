@@ -24,4 +24,5 @@ void intercambiarTablasGossiping(t_memoria* memoria);
 void gossiping();
 void enviarTablaGossiping(int socketMemoriaDestino);
 void procesarRequestTABLA_GOSSIPING(int socketKernel);
+t_registro* selectFileSystem(Segmento* segmento, int key);
 #endif /*SOCKETCLIENTEMEMORIA_H_*/

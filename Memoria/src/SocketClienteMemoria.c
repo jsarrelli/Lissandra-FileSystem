@@ -47,11 +47,7 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-
-	char* consulta = malloc(strlen(nombreSegmento) + 1); // +1 por el espacio
-	sprintf(consulta, "%s", nombreSegmento);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), DROP);
-	free(consulta);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento)+1, DROP);
 	Paquete paquete;
 	int succes = 0;
 	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
