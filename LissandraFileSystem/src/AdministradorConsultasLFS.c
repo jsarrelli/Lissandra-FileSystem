@@ -54,12 +54,10 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
 		t_list* listaRegistros = getRegistrosByKeyFromNombreTabla(nombreTabla, keyActual);
-		char* registroFinal = buscarRegistroByKeyFromListaRegistros(listaRegistros, keyActual);
+		t_registro* registroFinal = buscarRegistroByKeyFromListaRegistros(listaRegistros, keyActual);
 
 		if (registroFinal != NULL) {
-			printf("El registro solicitado es: %s\n\n", registroFinal);
-			t_registro* registro = registro_new(string_split(registroFinal, ";"));
-			return registro;
+			return registroFinal;
 
 		} else {
 			puts("No hay registros para mostrar");

@@ -14,4 +14,6 @@ void consolaCreate(char*argumentos);
 void consolaDescribe(char* nombreTabla);
 void consolaDrop(char* nombreTabla);
 void consolaInsert(char* argumentos);
+void consolaSelect(char*argumentos);
+
 #endif /* ApiLFS_H_*/

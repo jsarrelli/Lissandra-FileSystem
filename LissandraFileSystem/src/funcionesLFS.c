@@ -595,8 +595,9 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
 	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
-	t_list* registrosMemtableToChar = list_map(tablaMemtable->registros, (void*) registroToChar);
-	list_add_all(listaRegistros, registrosMemtableToChar);
+	if(tablaMemtable!=NULL){
+	list_add_all(listaRegistros, tablaMemtable->registros);
+	}
 
 }
 
@@ -604,23 +605,19 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
-	t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
-	list_add_all(listaRegistros, registrosTempToChar);
-	list_destroy(registrosTempToChar);
+	//t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
+	list_add_all(listaRegistros, registros);
+	list_destroy(registros);
 }
 
-char* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
+t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
 
-	bool BuscarPorKey(char* registroActual) {
-		char* registroAux = string_duplicate(registroActual);
-		char** valores = string_split(registroAux, ";");
-		int keyActual = atoi(valores[1]);
-		freePunteroAPunteros(valores);
-		free(registroAux);
-		return keyActual == key;
+	bool BuscarPorKey(t_registro* registroActual) {
+
+		return registroActual->key == key;
 	}
 
-	return (char*) list_find(listaRegistros, (void*) BuscarPorKey);
+	return (t_registro*) list_find(listaRegistros, (void*) BuscarPorKey);
 }
 
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros) {
@@ -630,10 +627,10 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	int numParticionABuscarKey = keyActual % cantParticiones;
 	char* pathArchivo = list_get(archivosBinarios, numParticionABuscarKey);
 	agregarRegistrosFromBloqueByPath(pathArchivo, listaRegistrosBin);
-	t_list* registrosBinToChar = list_map(listaRegistrosBin, (void*) registroToChar);
-	list_add_all(listaRegistros, registrosBinToChar);
+	//t_list* registrosBinToChar = list_map(listaRegistrosBin, (void*) registroToChar);
+	list_add_all(listaRegistros, listaRegistrosBin);
 	list_destroy(archivosBinarios);
-	list_destroy(registrosBinToChar);
+	list_destroy(listaRegistrosBin);
 }
 
 t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual) {

@@ -32,7 +32,7 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioListaRegistros(t_list* registros);
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list* listaRegistros);
-char* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
+t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual);
