@@ -100,7 +100,9 @@ void consolaSelect(char*argumentos){
 	char* key = valores[1];
 	int keyActual = atoi(key);
 
-
-	funcionSELECT(nombreTabla, keyActual);
+	t_registro* registro=funcionSELECT(nombreTabla, keyActual);
+	if(registro!=NULL){
+		freeRegistro(registro);
+	}
 	freePunteroAPunteros(valores);
 }

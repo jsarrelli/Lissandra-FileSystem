@@ -128,29 +128,17 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
-//		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
-//		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
-//		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
-//
-//		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
-//		free(consulta);
-//
-//		Paquete paquete;
-//		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
-//
-//		if (paquete.header.tipoMensaje == NOTFOUND) {
-//			return NULL;
-//		}
-//		void* datos = malloc(paquete.header.tamanioMensaje);
-//		datos = paquete.mensaje;
-//
-//		t_registro registro = procesarRegistro(datos);
-//		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
-
-	} else {
-		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
-		estadoFrame->fechaObtencion = getCurrentTime();
+		t_registro* registro = selectFileSystem(segmento, key);
+		if (registro == NULL) {
+			return NULL;
+		}
+		pagina = insertarPaginaEnMemoria(registro->key, registro->value, registro->timestamp, segmento);
+		freeRegistro(registro);
 	}
+
+	EstadoFrame* estadoFrame = getEstadoFrame(pagina);
+	estadoFrame->fechaObtencion = getCurrentTime();
+
 	return pagina;
 }
 
@@ -250,7 +238,7 @@ void reemplazarPagina(Pagina* pagina, Segmento* segmento) {
 	bool isPaginaEliminar(Pagina* paginaAEliminar) {
 		return pagina->registro->key == paginaAEliminar->registro->key;
 	}
-	list_remove_and_destroy_by_condition(segmento->paginas, (void*)isPaginaEliminar,(void*) eliminarPaginaDeMemoria);
+	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPaginaEliminar, (void*) eliminarPaginaDeMemoria);
 
 }
 

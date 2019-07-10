@@ -40,7 +40,7 @@ void procesarAccion(int socketMemoria) {
 				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 				break;
 			case (SELECT):
-				//
+				procesarSELECT(paquete.mensaje,socketMemoria);
 				break;
 			case (INSERT):
 				procesarINSERT(paquete.mensaje, socketMemoria);
@@ -150,6 +150,23 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 	}
 	enviarSuccess(1, DESCRIBE, socketMemoria);
 
+}
+
+void procesarSELECT(char* request, int socketMemoria){
+	char** valores = string_split(request, " ");
+	char* nombreTabla = valores[0];
+	int key = atoi(valores[1]);
+	t_registro* registro = funcionSELECT(nombreTabla, key);
+	if(registro==NULL){
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, NULL, 0, NOTFOUND);
+	}else{
+		char* response = string_new();
+		string_append_with_format(response, "%d;%s;%d",registro->key,registro->value,registro->timestamp);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response)+1, SELECT);
+		free(response);
+	}
+	freeRegistro(registro);
+	freePunteroAPunteros(valores);
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {

@@ -621,9 +621,11 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 char* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
 
 	bool BuscarPorKey(char* registroActual) {
-		char** valores = string_split(registroActual, ";");
+		char* registroAux= string_duplicate(registroActual);
+		char** valores = string_split(registroAux, ";");
 		int keyActual = atoi(valores[1]);
 		freePunteroAPunteros(valores);
+		free(registroAux);
 		return keyActual == key;
 	}
 
@@ -645,10 +647,12 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	list_destroy(registrosBinToChar);
 }
 
-void getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros){
+t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual){
+	t_list* listaRegistros = list_create();
 	getRegistrosFromBinByNombreTabla(nombreTabla, keyActual,listaRegistros);
 	getRegistrosFromMemtableByNombreTabla(nombreTabla, listaRegistros);
 	getRegistrosFromTempByNombreTabla(nombreTabla,  listaRegistros);
 	filtrarRegistros(listaRegistros);
+	return listaRegistros;
 }
 

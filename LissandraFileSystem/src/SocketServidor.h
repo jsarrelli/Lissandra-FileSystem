@@ -26,4 +26,5 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria);
 void procesarDROP(char* nombreTabla, int socketMemoria);
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria);
 void procesarDESCRIBE_ALL(int socketMemoria);
+void procesarSELECT(char* request, int socketMemoria);
 #endif /* SOCKETSERVIDORFILESYSTEM_H_ */

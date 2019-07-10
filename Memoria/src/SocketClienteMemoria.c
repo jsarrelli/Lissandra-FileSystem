@@ -1,7 +1,6 @@
 #include "SocketClienteMemoria.h"
 
-t_metadata_tabla* deserealizarTabla(Paquete* paquete)
-{
+t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 	char* mensaje = malloc(paquete->header.tamanioMensaje + 1);
 	mensaje = strcpy(mensaje, (char*) paquete->mensaje);
 	char** datos = string_split(mensaje, " ");
@@ -43,7 +42,7 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	t_registro* registro = pagina->registro;
 	char consulta[150];
 	sprintf(consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta)+1, INSERT);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, INSERT);
 }
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
@@ -55,20 +54,19 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	free(consulta);
 	Paquete paquete;
 	int succes = 0;
-		if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-			succes = atoi(paquete.mensaje);
-			free(paquete.mensaje);
-		}
+	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+		succes = atoi(paquete.mensaje);
+		free(paquete.mensaje);
+	}
 
-		return succes;
+	return succes;
 }
 
-int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla)
-{
+int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	char* consulta = malloc(strlen(nombreTabla) + 2 + sizeof(int) + sizeof(int) + 3);
-	sprintf(consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
-			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
+	sprintf(consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA), metadata->CANT_PARTICIONES,
+			metadata->T_COMPACTACION);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), CREATE);
 	free(consulta);
 
@@ -104,8 +102,7 @@ t_list* describeAllFileSystem() {
 	return segmentosRecibidos;
 }
 
-int HandshakeInicial()
-{
+int HandshakeInicial() {
 	log_info(logger, "Intentandose conectar a File System..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
@@ -116,7 +113,7 @@ int HandshakeInicial()
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
 	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
-		valueMaximoPaginas = atoi (paquete.mensaje);
+		valueMaximoPaginas = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
 
@@ -128,11 +125,9 @@ void gossiping() {
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
 }
 
-void enviarTablaGossiping(int socketMemoriaDestino)
-{
+void enviarTablaGossiping(int socketMemoriaDestino) {
 
-	void enviarMemoriaConocida(t_memoria* memoriaConocida)
-	{
+	void enviarMemoriaConocida(t_memoria* memoriaConocida) {
 		char request[100];
 		sprintf(request, "%s %s", memoriaConocida->ip, memoriaConocida->puerto);
 		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
@@ -158,3 +153,24 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 
 }
 
+t_registro* selectFileSystem(Segmento* segmento, int key) {
+	char* consulta = string_new();
+	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
+
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
+	free(consulta);
+
+	Paquete paquete;
+	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+
+	if (paquete.header.tipoMensaje == NOTFOUND) {
+		return NULL;
+	}
+	char** valores = string_split(paquete.mensaje, ";");
+	t_registro* registro = registro_new(valores);
+
+	freePunteroAPunteros(valores);
+	free(paquete.mensaje);
+
+	return registro;
+}
