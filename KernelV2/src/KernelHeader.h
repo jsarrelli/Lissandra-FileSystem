@@ -108,7 +108,6 @@ int idHilo;
 int multiprocesamiento;
 int multiprocesamientoUsado;
 sem_t* arraySemaforos;
-int quantum;
 int hilosActivos;
 int retardoEjecucion;
 
@@ -122,9 +121,6 @@ t_config_kernel *cargarConfig(char *ruta);
 infoMemoria* obtenerMemoriaAlAzar();
 
 
-//void hardcodearListaMetadataTabla(); // Listo
-
-
 // Funciones importantes
 void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
@@ -134,17 +130,13 @@ void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();
 infoMemoria* newInfoMemoria();
 void destruirProceso(procExec* proceso);
-//void destruirProcesoExec(procExec* proceso);
-//consistencia mejorCriterioMemoria(bool* criterios);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
-void* nuevaFuncionThread(void*args);
+void* iniciarMultiprocesamiento(void*args);
 void* funcionThread(void* args);
-void agregarHiloAListaHilosEInicializo(t_list* hilos);
-void ejecutarProcesos();
 void inicializarLogStruct();
 int funcionHash(t_list* memoriasEncontradas, int key);
 infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key);

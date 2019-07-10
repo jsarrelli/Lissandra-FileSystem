@@ -32,6 +32,4 @@ void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);
 
 
-void consolaExecute();
-
 #endif /* APIKERNEL_H_ */

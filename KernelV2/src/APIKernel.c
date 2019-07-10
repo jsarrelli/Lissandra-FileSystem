@@ -16,30 +16,32 @@ int procesarInputKernel(char* linea) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
 		if (consolaInsert(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
+
 	} else if (strcmp(operacion, "SELECT") == 0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
 		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
 		if (consolaSelect(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
+
 	} else if (strcmp(operacion, "CREATE") == 0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
 		if (consolaCreate(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
-		//consolaCreate(palabras,cantidad);
+
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
 		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
 		if (consolaDescribe(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
-		//consolaDescribe(palabras,cantidad);
+
 	} else if (strcmp(operacion, "DROP") == 0) {
 		//	DROP [NOMBRE_TABLA]
 		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
 		if (consolaDrop(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
-		//consolaDrop(palabras,cantidad);
+
 	} else if (strcmp(operacion, "ADD") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
@@ -50,25 +52,17 @@ int procesarInputKernel(char* linea) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
 		if (consolaRun(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
-	} else if (strcmp(operacion, "EXECUTE") == 0) {
-		//	ADD MEMORY [id] TO [consistencia]
-		log_trace(log_master->logTrace, "Se ha escrito el comando EXECUTE");
 	} else if (strcmp(operacion, "SALIR") == 0) {
 		consolaSALIR(argumentos);
+
 	} else {
 		log_error(log_master->logError,
 				"El comando no es el correcto. Por favor intente nuevamente");
 	}
 
-//	for(int i=0;i< cantidad;i++){
-//		free()
-//	}
 	free(argumentos);
 	free(operacion);
 	free(comandos);
-
-//	liberarPunteroDePunterosAChar(palabras);
-//	free(palabras);
 
 	return TODO_OK;
 }
@@ -101,7 +95,6 @@ int procesarAdd(int id, consistencia cons) {
 
 int consolaAdd(char*argumento) {
 	char** valores = string_split(argumento, " ");
-//	add(atoi(valores[1]), valores[3]);
 	consistencia cons = procesarConsistencia(valores[3]);
 
 	int id = atoi(valores[1]);
@@ -168,6 +161,8 @@ int consolaSelect(char*argumentos) {
 	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla) == SUPER_ERROR)
 		return SUPER_ERROR;
 
+//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+
 	free(valores[1]);
 	free(nombreTabla);
 	free(valores);
@@ -224,7 +219,6 @@ int consolaCreate(char*argumentos) {
 	int cantParticiones = atoi(valores[2]);
 	int tiempoCompactacion = atoi(valores[3]);
 
-//	consistencia cons = procesarConsistencia(consistenciaChar);
 	log_trace(log_master->logTrace,
 			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d",
 			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
@@ -268,15 +262,18 @@ void deserealizarYMostrarMetadata(Paquete* paquete) {
 }
 
 int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
-	int estadoRecibir=0;
+	int estadoRecibir = 0;
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
 	if (EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0,
 			DESCRIBE_ALL)==SUPER_ERROR)
 		return SUPER_ERROR;
-	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete)) > 0) {
+
+	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, FILESYSTEM,
+			&*paquete)) > 0) {
 		deserealizarYMostrarMetadata(&*paquete);
 	}
-	if(estadoRecibir < 0)
+
+	if (estadoRecibir < 0)
 		return SUPER_ERROR;
 	return TODO_OK;
 }
@@ -289,7 +286,6 @@ int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 		return SUPER_ERROR;
 	if (atoi(paquete->mensaje) == 1) {
 		puts("La tabla no existe");
-		//la tabla no existe
 	}
 	t_metadata_tabla* metadataRecibida = deserealizarTabla(&*paquete);
 	mostrarMetadata(nombreTabla, metadataRecibida);
@@ -361,7 +357,7 @@ int consolaDrop(char*nombreTabla) {
 			config->IP_MEMORIA);
 	char request[100];
 	sprintf(request, "%s", nombreTabla);
-	if(enviarInfoMemoria(socketMemoria, request, DROP)==SUPER_ERROR)
+	if (enviarInfoMemoria(socketMemoria, request, DROP) == SUPER_ERROR)
 		return SUPER_ERROR;
 
 	return TODO_OK;
@@ -379,26 +375,18 @@ int consolaRun(char*path) {
 			fgets(ejemplo, sizeof(ejemplo), fd);
 			size_t tam = strlen(ejemplo) + 1;
 
-			if(ejemplo[tam-2] == '\n')
-				ejemplo[tam-2] = '\0';
+			if (ejemplo[tam - 2] == '\n')
+				ejemplo[tam - 2] = '\0';
 			else
-				ejemplo[tam-1] = '\0';
+				ejemplo[tam - 1] = '\0';
 
-//			ejemplo[tam-2] = '\0';
 			char* aGuardar = (char*) malloc(tam - 1);
 			strcpy(aGuardar, ejemplo);
 			agregarRequestAlProceso(proceso, aGuardar);
-//			printf("La instruccion es: %s", (char*)list_get(proceso->script, i));
 		}
 
 		fclose(fd);
 		deNewAReady(proceso);
-
-		void imprimirRequest(char*request) {
-			printf("La instruccion es: %s\n", request);
-		}
-		list_iterate(((procExec*) queue_peek(colaReady))->script,
-				(void*) imprimirRequest);
 
 	} else {
 		log_error(log_master->logError,
@@ -408,25 +396,13 @@ int consolaRun(char*path) {
 	return TODO_OK;
 }
 
-
-void consolaSALIR(char*nada){
+void consolaSALIR(char*nada) {
 	log_trace(log_master->logTrace, "Finalizando consola");
 
 	puedeHaberRequests = false;
-	sem_post(&cantProcesosColaReady);
+	for (int i = 0; i < multiprocesamiento; i++)
+		sem_post(&cantProcesosColaReady);
+	usleep(5);
 	sem_post(&fin);
 }
 
-/*
- * Aclaracion: esta funcion no funciona con los archivos de ejemplo
- * del tp (sin sockets) ya que para eso tendria que hardcodear una bocha de cosas
- *
- * Solo para probar el funcionamiento basico del Kernel (con un solo procesador) y sin sockets
- *
- * (No soy el LFS)
- */
-
-void consolaExecute() {
-	for (int i = 0; i < queue_size(colaReady) - 1; i++)
-		funcionThread(NULL);
-}

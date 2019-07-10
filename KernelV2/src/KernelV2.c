@@ -66,17 +66,16 @@ void iniciarVariablesKernel() {
 /*
  * Estado del Kernel:
  *
- * Se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
+ * El Kernel anda, en general, bastante bien
  *
- * Se puede asignar un criterio a una memoria (comando ADD)
+ * TODO: (Cosas boludas)
+ *		- Funcion METRICS
+ *		- Agregar funcion JOURNAL (que ya estaba implementada)
+ *		- Hilo de modificar archivo
+ *		- Algunos leaks
+ *		- Conexion con memoria del SELECT
  *
- * Se pueden loggear los errores correctamente y administrativamente (Muy importante!!)
- *
- * TODO:
- * 		- Manejo de errores
- * 		- Round Robin (Creo que  ya esta resuelto)
- *		- Multiprocesamiento
- *
+ * PD: Acuerdense de usar la funcion de obtenerMemoria y obtenerMemoriaAlAzar para las sockets (ya implementadas y comentadas)
  */
 
 void iniciarConsolaKernel(){
@@ -84,52 +83,23 @@ void iniciarConsolaKernel(){
 	operacion = readline(">");
 
 	while(1){
-//		if(instruccionSeaSalir(operacion)){
-////			puedeHaberRequests = false;
-////			sem_post(&cantProcesosColaReady);
-////			sem_post(&fin);
-//			break;
-//			// Añadir semaforo para continuar y terminar el hilo principal
-//		}
-//		else{
-//			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
-//			// Es muy importante!!!
-//			crearProcesoYMandarloAReady(operacion);
-//			desbloquearHilos();
-//			sem_post(&bin_main);
-//			// free(operacion); // Para esto es importante
-//		}
-
-
-
 		crearProcesoYMandarloAReady(operacion);
 //		desbloquearHilos();
 		sem_post(&bin_main);
 		operacion = readline(">");
 	}
-//	free(operacion);
 }
 
 void inicioKernelUnProcesador() {
 	char* operacion;
-	//	agregarHiloAListaHilosEInicializo(listaHilos);
 	operacion = readline(">");
 	while (!instruccionSeaSalir(operacion)) {
 		crearProcesoYMandarloAReady(operacion);
-		//		deReadyAExec();
-		// Por ahora lo hago con un solo proceso y lo hago manual
-//		ejecutarProcesos();
-		// Prueba multiprocesamiento
-//		desbloquearHilos();
-		nuevaFuncionThread(NULL);
-		//		funcionThread(NULL);
-		//		free(operacion);
-		//		destruirProcesoExec(proceso);
+		iniciarMultiprocesamiento(NULL);
 		operacion = readline(">");
 	}
 	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
 	free(operacion);
-	//	free(hilos);
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
 	log_info(log_master->logInfo, "Consola terminada");
@@ -138,7 +108,6 @@ void inicioKernelUnProcesador() {
 
 int main(void) {
 	pthread_t hiloConsola;
-	pthread_t hiloMultiprocesamiento;
 	pthread_t* arrayDeHilos=NULL;
 	pthread_t* arrayDeHilosPuntero=NULL;
 
@@ -152,19 +121,15 @@ int main(void) {
 	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-//	iniciarConsolaKernel();
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
 
 	// Hilo de multiprocesamiento
 
-//	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
-//	pthread_detach(hiloMultiprocesamiento);
-
 	for(int i =0; i < multiprocesamiento;i++){
 		arrayDeHilosPuntero = arrayDeHilos;
-		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*)nuevaFuncionThread, NULL);
+		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*)iniciarMultiprocesamiento, NULL);
 	}
 
 	for(int i =0; i< multiprocesamiento;i++){
@@ -176,16 +141,12 @@ int main(void) {
 
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 
-	destruirArraySemaforos();
-
+	destruirElementosMain(listaHilos, colaReady);
+	destruirListaMemorias();
+	log_info(log_master->logInfo, "Consola terminada");
+	destruirLogStruct(log_master);
 	free(arrayDeHilos);
 
-//	for(int i = multiprocesamiento; i > 0; i--)
-//		free(&arraySemaforos[i]);
-
-//	config_destroy(config);
 	return EXIT_SUCCESS;
 }
-
-
 

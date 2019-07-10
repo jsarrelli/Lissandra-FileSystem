@@ -11,7 +11,6 @@
 void destruirElementosMain(t_list* lista, t_queue* cola) {
 	list_destroy_and_destroy_elements(lista, (void*) destruirProceso);
 	queue_destroy_and_destroy_elements(cola, (void*) destruirProceso);
-//	log_destroy(logger);
 }
 
 void destruirLogStruct(logStruct* log_master) {
@@ -25,7 +24,6 @@ procExec* newProceso() {
 	procExec* proceso = malloc(sizeof(procExec));
 	proceso->script = list_create();
 	proceso->contadorRequests = 0;
-//	proceso->estaEjecutandose=false;
 //	list_add(proceso->script, instruccion);
 	return proceso;
 }
@@ -35,16 +33,11 @@ void destruirProceso(procExec* proceso) {
 	free(proceso);
 }
 
-//void destruirProcesoExec(procExec* proceso){
-//	list_destroy_and_destroy_elements(proceso->script, (void*) free);
-//}
-
 void deNewAReady(procExec* proceso) {
 	sem_wait(&mutex_colaReadyPUSH);
 	queue_push(colaReady, proceso);
 	sem_post(&cantProcesosColaReady);
 	sem_post(&mutex_colaReadyPUSH);
-//	sem_post(&cantProcesosColaReady);
 }
 
 void deReadyAExec() {
@@ -74,8 +67,6 @@ char* get_campo_config_string(t_config* archivo_configuracion,
 }
 
 t_config_kernel *cargarConfig(char *ruta) {
-//	puts("!!!Hello World!!!");
-
 	log_info(log_master->logInfo,
 			"Levantando archivo de configuracion del proceso Kernel ");
 
@@ -122,7 +113,6 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 
 	if (memoriaAEnviar != NULL) {
 		log_trace(log_master->logTrace, "Los datos obtenidos son:");
-		//	log_trace(log_master->logTrace, "Criterio de la memoria: %d", mejorCriterioMemoria(memoriaAEnviar->criterios));
 		imprimirCriterio(memoriaAEnviar->criterios);
 		log_trace(log_master->logTrace, "Id de la memoria: %d",
 				memoriaAEnviar->id);
@@ -135,8 +125,6 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion) {
-//	char* operacionExtra = malloc(strlen(operacion)+1);
-//	strcpy(operacionExtra, operacion);
 
 	list_add(proceso->script, operacion);
 }
@@ -145,16 +133,9 @@ void* funcionThread(void* args) {
 	sem_wait(&ejecutarHilos);
 
 	sem_wait(&mutex_colaReadyPOP);
-//	procExec* proceso = newProceso();
 	procExec* proceso = NULL;
 	proceso = queue_pop(colaReady);
 	sem_post(&mutex_colaReadyPOP);
-
-//	int tam_script = list_size(proceso->script);
-//	for(int i=0; i< tam_script;i++){
-//		procesarInput(list_get(proceso->script, i));
-//		destruirProceso(proceso);
-//	}
 
 	void _correrProceso(char*request) {
 		procesarInputKernel(request);
@@ -204,23 +185,20 @@ procExec* obtenerProcesoDeColaReady() {
 	return proceso;
 }
 
-void* nuevaFuncionThread(void* args) {
+void* iniciarMultiprocesamiento(void* args) {
 	estadoProceso estado = OK;
 	int cantRequestsProceso = 0;
 	int cantRequestsEjecutadas = 0;
 	procExec* proceso = NULL;
 	int cantRequestsEjecutadasPorQuantum = 0;
-//	static int idProceso = -1;
-//	int idProceso = -1;
-//	static bool tieneID = false;
+
+	/*
+	 * Se que no se entiende mucho
+	 *
+	 * Intente hacer un refactor pero no se porque no me funcionaba correctamente despues
+	 */
 
 	do {
-//		idProceso++;
-
-//		otorgarId(&tieneID);
-//		sem_wait(&arraySemaforos[idHilo]);
-
-//		if (queue_size(colaReady) != 0) {
 		proceso = obtenerProcesoDeColaReady();
 
 		if (proceso != NULL) {
@@ -238,9 +216,12 @@ void* nuevaFuncionThread(void* args) {
 				usleep(retardoEjecucion * 1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
+				printf(">\n");
 				cantRequestsEjecutadasPorQuantum++;
 
 			}
+
+			// Evaluo condiciones
 
 			if (!interrupcionPorEstado(estado)
 					&& cantRequestsEjecutadas == cantRequestsProceso) {
@@ -261,7 +242,7 @@ void* nuevaFuncionThread(void* args) {
 
 				log_info(log_master->logInfo,
 						"Llega a fin de quantum.\nDesalojando");
-//				queue_push(colaReady, proceso);
+				printf(">\n");
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
 				usleep(retardoEjecucion * 1000);
@@ -270,7 +251,6 @@ void* nuevaFuncionThread(void* args) {
 			if (interrupcionPorEstado(estado)) {
 				log_error(log_master->logError,
 						"Error: Una request no se pudo cumplir");
-				// Borrar proceso
 				destruirProceso(proceso);
 			}
 
@@ -282,23 +262,6 @@ void* nuevaFuncionThread(void* args) {
 	} while (puedeHaberRequests);
 
 	return NULL;
-}
-
-void agregarHiloAListaHilosEInicializo(t_list* hilos) {
-//	for(int i=0; i < cantProcesos;i++){
-//		pthread_create(&(hilos[i]), NULL, funcionThread, NULL);
-//		pthread_detach(hilos[i]);
-//		list_add(listaHilos, (void*)hilos[i]);
-//	}
-
-	void _agregarHilo(pthread_t*hilo) {
-		pthread_create(&*hilo, NULL, (void*) funcionThread, NULL);
-		pthread_detach(*hilo);
-//		pthread_join(*hilo, NULL);
-		list_add(listaHilos, hilo);
-	}
-
-	list_iterate(hilos, (void*) _agregarHilo);
 }
 
 void ejecutarProcesos() {
@@ -328,7 +291,6 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 			memoriaAlAzar->id);
 
 	return memoriaAlAzar;
-	// Aca va la funcion enviar de las sockets
 }
 
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
@@ -363,7 +325,6 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla,
 	infoMemoria* memoriaPosta = NULL;
 
 	bool _condicion(infoMemoria*memoria, consistencia cons) {
-//		return cons == mejorCriterioMemoria(memoria->criterios);
 		return verificarCriterio(memoria->criterios, cons);
 	}
 	bool condicionParaEncontrarMemorias(void* memoria) {
@@ -386,9 +347,6 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla,
 		log_error(log_master->logError,
 				"Error: en obtenerMemoriaSegunConsistencia");
 	}
-
-//	list_destroy_and_destroy_elements(memoriasEncontradas, (void*) free);
-//	memoriasEncontradas = NULL;
 	list_destroy(memoriasEncontradas);
 	return memoriaPosta;
 
@@ -421,17 +379,6 @@ infoMemoria* newInfoMemoria() {
 	memoria->ip = NULL;
 	return memoria;
 }
-
-//consistencia mejorCriterioMemoria(bool* criterios){
-//	if(criterios[0])
-//		return SC;
-//	else if(criterios[1])
-//		return SHC;
-//	else if(criterios[2])
-//		return EC;
-//
-//	return ERROR_CONSISTENCIA;
-//}
 
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons) {
 	if (!haySC && cons == SC) {
