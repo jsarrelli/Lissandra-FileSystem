@@ -34,6 +34,8 @@ void funcionDESCRIBE_ALL() {
 	compactarTabla("TABLA");
 }
 
+
+
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	if (config->TAMANIO_VALUE < strlen(value)) {
 		log_error(loggerError, "Tamanio maximo de value excedido");
@@ -49,7 +51,24 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 }
 
-void procesoDump() {
+
+void funcionSELECT(char*nombreTabla, int keyActual){
+	if(existeTabla(nombreTabla)){
+	t_list* listaRegistros=list_create();
+	getRegistrosByKeyFromNombreTabla(nombreTabla, keyActual, listaRegistros);
+	char* registroFinal = buscarRegistroByKeyFromListaRegistros(listaRegistros,keyActual);
+		if(registroFinal!=NULL){
+			printf("%s\n\n", registroFinal);
+			list_destroy(listaRegistros);
+		}else{
+			puts("No hay registros para mostrar");
+		}
+	} else{
+		puts("La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
+	}
+}
+
+void procesoDump(){
 	pthread_t threadDump;
 	while (1) {
 		usleep(config->TIEMPO_DUMP * 1000);

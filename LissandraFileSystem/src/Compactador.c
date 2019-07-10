@@ -312,10 +312,10 @@ t_list* obtenerRegistrosFromBinByNombreTabla(char* nombreTabla) {
 }
 
 t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
-	t_list* binarios = buscarTemporalesByNombreTabla(nombreTabla);
+	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
-	list_iterate2(binarios, (void*) agregarRegistrosFromBloqueByPath, registros);
-	list_destroy_and_destroy_elements(binarios, free);
+	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
+	list_destroy_and_destroy_elements(temporales, free);
 	return registros;
 
 }
