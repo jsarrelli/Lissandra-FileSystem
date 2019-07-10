@@ -15,7 +15,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value,double timeSt
 int CREATE_MEMORIA(char* nombreTabla, t_consistencia consitencia, int cantParticiones, int tiempoCompactacion);
 t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla);
 t_list* DESCRIBE_ALL_MEMORIA();
-void DROP_MEMORIA(char* nombreTabla);
-void* JORUNAL();
+int DROP_MEMORIA(char* nombreTabla);
+void JOURNAL_MEMORIA();
 
 #endif /*ADMINISTRADORCONSULTAS_H_*/

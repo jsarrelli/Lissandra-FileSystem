@@ -22,10 +22,22 @@
 #include <commons/collections/queue.h>
 #include <commons/config.h>
 
+#define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
+#define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
+#define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
+#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
+
+// Para el manejo de errores
+
+#define TODO_OK 0
+#define SUPER_ERROR 1
+
+
 
 // Estructuras de datos
 
 typedef struct{
+	int contadorRequests;
 	t_list* script;
 //	pthread_t* hilo; // Esto se va a hacer al principio, por eso no es necesario ahora
 //	bool estaEjecutandose; // Esto tampoco
@@ -66,27 +78,40 @@ typedef struct{
 	t_log* logTrace;
 }logStruct;
 
+typedef enum{
+	OK,
+	ERROR
+}estadoProceso;
+
 
 // Variables globales
-#define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
-#define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
-#define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
-#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
 
 t_queue* colaReady;
 t_list* listaHilos;
 t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
-//t_log* logger;
-//t_log* loggerError;
 int quantum;
-int cantRequestsEjecutadas;
+int cantRequestsEjecutadas;		// Borrar
 sem_t ejecutarHilos;
-sem_t mutex_colaReady;
+sem_t mutex_colaReadyPOP;
+sem_t mutex_colaReadyPUSH;
+sem_t mutex_id_proceso;
+sem_t bin_main;
+sem_t fin;
+sem_t cantProcesosColaReady;
 logStruct* log_master;
 int idMemoria;
 bool haySC;
+bool puedeHaberRequests;
+int idHilo;
+int multiprocesamiento;
+int multiprocesamientoUsado;
+sem_t* arraySemaforos;
+int quantum;
+int hilosActivos;
+int retardoEjecucion;
+
 
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
@@ -101,7 +126,9 @@ infoMemoria* obtenerMemoriaAlAzar();
 
 
 // Funciones importantes
-void obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
+void desbloquearHilos();
+void crearProcesoYMandarloAReady(char* operacion);
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();
@@ -114,6 +141,7 @@ void deReadyAExec();
 void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
+void* nuevaFuncionThread(void*args);
 void* funcionThread(void* args);
 void agregarHiloAListaHilosEInicializo(t_list* hilos);
 void ejecutarProcesos();

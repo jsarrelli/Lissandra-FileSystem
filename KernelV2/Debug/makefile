@@ -25,11 +25,14 @@ endif
 # All Target
 all: KernelV2
 
+dependents:
+	-cd /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug && $(MAKE) all
+
 # Tool invocations
-KernelV2: $(OBJS) $(USER_OBJS)
+KernelV2: $(OBJS) $(USER_OBJS) /home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "KernelV2" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug" -L/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug -o "KernelV2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -39,5 +42,6 @@ clean:
 	-@echo ' '
 
 .PHONY: all clean dependents
+/home/utnso/tp-2019-1c-Los-Sisoperadores/Libraries/Debug/libLibraries.so:
 
 -include ../makefile.targets

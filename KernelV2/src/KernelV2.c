@@ -13,14 +13,24 @@
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
-	//	log_info(log_master->logInfo, "Hola!!!");
+
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
-	sem_init(&mutex_colaReady, 0, 1);
+	sem_init(&mutex_colaReadyPOP, 0, 1);
+	sem_init(&mutex_colaReadyPUSH, 0, 1);
+	sem_init(&mutex_id_proceso, 0, 1);
+	sem_init(&bin_main, 0, 0);
+	sem_init(&fin, 0, 0);
+	sem_init(&cantProcesosColaReady, 0, 0);
+
 	cantRequestsEjecutadas = 0;
 	haySC = false;
+	puedeHaberRequests = true;
 	idMemoria = 1;
+
 	srand(time(NULL));
+
 	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
+
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
@@ -29,15 +39,34 @@ void iniciarVariablesKernel() {
 			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
 	hardcodearListaMetadataTabla();
+
 	quantum = config->QUANTUM;
+	multiprocesamiento = config->MULTIPROCESAMIENTO;
+	multiprocesamientoUsado = 0;
+	retardoEjecucion = config->SLEEP_EJECUCION;
+
+	hilosActivos = 0;
+	idHilo=0;
+
+	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
+	// 		de requests que haya en la cola de ready
+
+	if(multiprocesamiento !=0){
+		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
+
+		for(int i=0; i < multiprocesamiento;i++){
+			sem_init(&arraySemaforos[i], 0, 0);
+		}
+	}
+
+
+
 }
 
 /*
  * Estado del Kernel:
  *
- * Actualmente, el Kernel funciona con codigo hardcodeado ya que todavia no usa las funciones sockets
- *
- * A pesar de eso, se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
+ * Se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
  *
  * Se puede asignar un criterio a una memoria (comando ADD)
  *
@@ -45,55 +74,118 @@ void iniciarVariablesKernel() {
  *
  * TODO:
  * 		- Manejo de errores
- * 		- Resto de las funciones (con codigo harcodeado) -> HECHO + pequeñas modificaciones del comando RUN
- * 		- Unir los modulos con las funciones sockets
- * 		- Round Robin
- *		- Multiprocesamiento (Brian)
+ * 		- Round Robin (Creo que  ya esta resuelto)
+ *		- Multiprocesamiento
  *
- * 	Aclaracion:
- * 		Muchas de las decisiones fueron hechas para ver los puntos que faltan
- *
- *
- * 	Pero lo mas importante es que ahora tenemos una muy buena base para avanzar!!!
  */
 
-int main(void) {
-	iniciarVariablesKernel();
-	char*operacion;
-//	agregarHiloAListaHilosEInicializo(listaHilos);
-
+void iniciarConsolaKernel(){
+	char* operacion;
 	operacion = readline(">");
-	while(!instruccionSeaSalir(operacion)){
-		procExec* proceso = newProceso();
-		agregarRequestAlProceso(proceso, operacion);
 
-		deNewAReady(proceso);
+	while(1){
+//		if(instruccionSeaSalir(operacion)){
+////			puedeHaberRequests = false;
+////			sem_post(&cantProcesosColaReady);
+////			sem_post(&fin);
+//			break;
+//			// Añadir semaforo para continuar y terminar el hilo principal
+//		}
+//		else{
+//			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
+//			// Es muy importante!!!
+//			crearProcesoYMandarloAReady(operacion);
+//			desbloquearHilos();
+//			sem_post(&bin_main);
+//			// free(operacion); // Para esto es importante
+//		}
 
-//		deReadyAExec();
 
+
+		crearProcesoYMandarloAReady(operacion);
+//		desbloquearHilos();
+		sem_post(&bin_main);
+		operacion = readline(">");
+	}
+//	free(operacion);
+}
+
+void inicioKernelUnProcesador() {
+	char* operacion;
+	//	agregarHiloAListaHilosEInicializo(listaHilos);
+	operacion = readline(">");
+	while (!instruccionSeaSalir(operacion)) {
+		crearProcesoYMandarloAReady(operacion);
+		//		deReadyAExec();
 		// Por ahora lo hago con un solo proceso y lo hago manual
-		ejecutarProcesos();
-		funcionThread((int*)2); // El 2 es un ejemplo porque no me importa lo que reciba pero si que reciba algo
-
-
-
-
-
-
-
-
-
-//		free(operacion);
-//		destruirProcesoExec(proceso);
+//		ejecutarProcesos();
+		// Prueba multiprocesamiento
+//		desbloquearHilos();
+		nuevaFuncionThread(NULL);
+		//		funcionThread(NULL);
+		//		free(operacion);
+		//		destruirProcesoExec(proceso);
 		operacion = readline(">");
 	}
 	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
 	free(operacion);
-//	free(hilos);
+	//	free(hilos);
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
+}
+
+int main(void) {
+	pthread_t hiloConsola;
+	pthread_t hiloMultiprocesamiento;
+	pthread_t* arrayDeHilos=NULL;
+	pthread_t* arrayDeHilosPuntero=NULL;
+
+	arrayDeHilos = malloc(sizeof(pthread_t)* multiprocesamiento);
+
+	iniciarVariablesKernel();
+//	inicioKernelUnProcesador();
+
+	// Hilo de consola
+
+	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
+	pthread_detach(hiloConsola);
+
+//	iniciarConsolaKernel();
+
+	// Este semaforo es muy importante
+	sem_wait(&bin_main);
+
+	// Hilo de multiprocesamiento
+
+//	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
+//	pthread_detach(hiloMultiprocesamiento);
+
+	for(int i =0; i < multiprocesamiento;i++){
+		arrayDeHilosPuntero = arrayDeHilos;
+		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*)nuevaFuncionThread, NULL);
+	}
+
+	for(int i =0; i< multiprocesamiento;i++){
+		pthread_detach(arrayDeHilosPuntero[i]);
+	}
+
+
+	sem_wait(&fin);
+
+	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
+
+	destruirArraySemaforos();
+
+	free(arrayDeHilos);
+
+//	for(int i = multiprocesamiento; i > 0; i--)
+//		free(&arraySemaforos[i]);
+
 //	config_destroy(config);
 	return EXIT_SUCCESS;
 }
+
+
+

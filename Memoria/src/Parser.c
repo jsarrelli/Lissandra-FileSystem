@@ -4,7 +4,7 @@ void procesarConsulta(char* consulta) {
 	char* operacion = comandos[0];
 	char* argumentos = comandos[1];
 
-	if (strcmp(operacion, "SELECT/0") == 0) {
+	if (strcmp(operacion, "SELECT") == 0) {
 		procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
 		procesarINSERT(argumentos);
@@ -20,6 +20,7 @@ void procesarConsulta(char* consulta) {
 		puts("Comando no encontrado");
 	}
 	freePunteroAPunteros(comandos);
+	free(consulta);
 
 }
 
@@ -45,7 +46,8 @@ void* procesarINSERT(char* consulta) {
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	int key = atoi(valoresAux[1]);
-	char* value = valores[1];
+	char* value = string_duplicate(valores[1]);
+
 	double timeStamp;
 	if (valores[2] == NULL) {
 		timeStamp = getCurrentTime();
@@ -53,8 +55,11 @@ void* procesarINSERT(char* consulta) {
 		timeStamp = atof(valores[2]);
 	}
 
+	t_registro* registro = INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
+	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
-	return INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
+	free(value);
+	return registro;
 
 }
 
@@ -65,25 +70,34 @@ int procesarCREATE(char* consulta) {
 	int cantParticiones = atoi(valores[2]);
 	int tiempoCompactacion = atoi(valores[3]);
 	t_consistencia consistencia = getConsistenciaByChar(consistenciaChar);
-	return CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 
+	int succes = CREATE_MEMORIA(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
+	freePunteroAPunteros(valores);
+	free(nombreTabla);
+	free(consistenciaChar);
+	return succes;
 }
 
-void procesarDROP(char* nombreTabla) {
-	DROP_MEMORIA(nombreTabla);
-	printf("Se ha eliminado la tabla: %s", nombreTabla);
+int procesarDROP(char* nombreTabla) {
+	int success = DROP_MEMORIA(nombreTabla);
+	if (success == 0) {
+		printf("Se ha eliminado la tabla: %s \n \n", nombreTabla);
+	} else {
+		printf("No se ha podido eliminar la tabla: %s \n \n", nombreTabla);
+	}
+	return success;
+
 }
 
 void procesarDESCRIBE(char* nombreTabla) {
 
 	if (nombreTabla == NULL) {
 		t_list* tablas = DESCRIBE_ALL_MEMORIA();
-		list_destroy(tablas);
+		list_destroy_and_destroy_elements(tablas, free);
 
 	} else {
 		t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
 		free(metaData);
-
 	}
 
 }

@@ -9,19 +9,24 @@
 #include "funcionesLFS.h"
 #include "FileSystem.h"
 
-void consolaLFS() {
-	puts("Bienvenido a la consola de LFS");
+void* consolaLFS() {
+	char * consulta;
 	while (1) {
-		puts("Ingrese un comando:");
-		char *linea = readline(">");
 
-		if (!strcmp(linea, "")) {
-			free(linea);
-			continue;
+		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
+		consulta = readline(">");
+		if (consulta == NULL || strlen(consulta) == 0) {
+			free(consulta);
+			break;
+		} else {
+			add_history(consulta);
+			procesarInput(consulta);
+			free(consulta);
 		}
-		procesarInput(linea);
-		free(linea);
+
 	}
+	log_info(logger, "Fin de leectura por consola");
+	return NULL;
 }
 
 void procesarInput(char* consulta) {
@@ -32,16 +37,18 @@ void procesarInput(char* consulta) {
 	if (strcmp(operacion, "SELECT") == 0) {
 		//return procesarSELECT(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
-		return consolaInsert(argumentos);
+		consolaInsert(argumentos);
 	} else if (strcmp(operacion, "CREATE") == 0) {
-		return consolaCreate(argumentos);
+		consolaCreate(argumentos);
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
-		return consolaDescribe(argumentos);
+		consolaDescribe(argumentos);
 	} else if (strcmp(operacion, "DROP") == 0) {
-		return consolaDrop(argumentos);
+		consolaDrop(argumentos);
 	} else {
 		puts("Comando no encontrado");
 	}
+
+	freePunteroAPunteros(comandos);
 
 }
 
@@ -53,11 +60,12 @@ void consolaCreate(char*argumentos) {
 	char* tiempoCompactacion = valores[3];
 
 	funcionCREATE(nombreTabla, cantParticiones, consistenciaChar, tiempoCompactacion);
+	freePunteroAPunteros(valores);
 }
 
 void consolaDescribe(char* nombreTabla) {
 
-	if (nombreTabla!=NULL&&existeTabla(nombreTabla)) {
+	if (nombreTabla != NULL && existeTabla(nombreTabla)) {
 		funcionDESCRIBE(nombreTabla);
 	} else
 		funcionDESCRIBE_ALL();
@@ -81,4 +89,20 @@ void consolaInsert(char* argumentos) {
 	}
 
 	funcionINSERT(timeStamp, nombreTabla, key, value);
+
+	freePunteroAPunteros(valoresAux);
+	freePunteroAPunteros(valores);
+}
+
+void consolaSelect(char*argumentos){
+	char** valores = string_split(argumentos, " ");
+	char* nombreTabla = valores[0];
+	char* key = valores[1];
+	int keyActual = atoi(key);
+
+	t_registro* registro=funcionSELECT(nombreTabla, keyActual);
+	if(registro!=NULL){
+		freeRegistro(registro);
+	}
+	freePunteroAPunteros(valores);
 }

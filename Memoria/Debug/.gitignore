@@ -1,11 +1,7 @@
 # .gitignore's para los modulos del tp
 
 *language.settings.xml
-Libraries
-commons
 *.swp
 *.o
 Kernel
 MEM_logs.txt
-Memoria
-src

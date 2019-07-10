@@ -29,8 +29,7 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int
 	inicializarEstadoMemoria();
 }
 
-Segmento* newSegmento(char* nombreSegmento)
-{
+Segmento* newSegmento(char* nombreSegmento) {
 	Segmento* segmento = malloc(sizeof(Segmento));
 	segmento->paginas = list_create();
 	segmento->nombreTabla = malloc(strlen(nombreSegmento) + 1);
@@ -46,8 +45,7 @@ Segmento* insertarSegmentoEnMemoria(char* nombreSegmento) {
 
 }
 
-bool validarValueMaximo(char* value)
-{
+bool validarValueMaximo(char* value) {
 	if (strlen(value) > valueMaximo) {
 		log_info(logger, "No se puede insertar el registro ya que el value excede el tamanio maximo");
 		return false;
@@ -61,7 +59,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
-		log_info(logger, "Insertando registro en memoria");
+		log_info(logger, "Insertando registro en memoria..");
 		t_registro registro;
 		registro.key = key;
 		registro.timestamp = timeStamp;
@@ -130,29 +128,17 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
-//		//quedaria INSERT TABLA KEY , le sumo dos por los espacios
-//		char* consulta = malloc(strlen(strlen("SELECT") + segmento->nombreTabla) + 4 + 2);
-//		sprintf(consulta, "SELECT %s %d", segmento->nombreTabla, key);
-//
-//		EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), SELECT);
-//		free(consulta);
-//
-//		Paquete paquete;
-//		RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
-//
-//		if (paquete.header.tipoMensaje == NOTFOUND) {
-//			return NULL;
-//		}
-//		void* datos = malloc(paquete.header.tamanioMensaje);
-//		datos = paquete.mensaje;
-//
-//		t_registro registro = procesarRegistro(datos);
-//		insertarPaginaEnMemoria(registro.key, registro.value, registro.timestamp, segmento);
-
-	} else {
-		EstadoFrame* estadoFrame = getEstadoFrame(pagina);
-		estadoFrame->fechaObtencion = getCurrentTime();
+		t_registro* registro = selectFileSystem(segmento, key);
+		if (registro == NULL) {
+			return NULL;
+		}
+		pagina = insertarPaginaEnMemoria(registro->key, registro->value, registro->timestamp, segmento);
+		freeRegistro(registro);
 	}
+
+	EstadoFrame* estadoFrame = getEstadoFrame(pagina);
+	estadoFrame->fechaObtencion = getCurrentTime();
+
 	return pagina;
 }
 
@@ -240,46 +226,61 @@ void* liberarUltimoUsado() {
 	}
 
 	list_iterate(segmentos, (void*) iterarEntrePaginas);
-	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
-			paginaMenosUtilizada->registro->key,
+	log_info(logger, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida", paginaMenosUtilizada->registro->key,
 			paginaMenosUtilizada->registro->timestamp);
-	eliminarPaginaDeMemoria(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
+
+	reemplazarPagina(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
 	return frameMenosUtilizado;
 }
 
-void eliminarPaginaDeMemoria(Pagina* paginaAEliminar, Segmento* segmento) {
-
-	EstadoFrame* estadoFrame = getEstadoFrame(paginaAEliminar);
-	estadoFrame->estado = LIBRE;
-
-	bool isPagina(Pagina* pagina) {
+void reemplazarPagina(Pagina* pagina, Segmento* segmento) {
+	bool isPaginaEliminar(Pagina* paginaAEliminar) {
 		return pagina->registro->key == paginaAEliminar->registro->key;
 	}
-
-	void freePagina(Pagina* pagina) {
-		free(pagina);
-	}
-
-	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPagina, (void*) freePagina);
+	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPaginaEliminar, (void*) eliminarPaginaDeMemoria);
 
 }
 
-void freeSegmento(Segmento* segmentoAEliminar) {
+void clearFrameDePagina(Pagina* paginaAEliminar) {
+	EstadoFrame* estadoFrame = getEstadoFrame(paginaAEliminar);
+	estadoFrame->estado = LIBRE;
+}
 
-	//te borra la lista de paginas pero previamente tiene que estar vacia, creo..
-	list_destroy(segmentoAEliminar->paginas);
-	free(segmentoAEliminar);
+void freePagina(Pagina* pagina) {
+	if (pagina->registro != NULL) {
+		freeRegistro(pagina->registro);
+	}
+	free(pagina);
+}
+
+void eliminarPaginaDeMemoria(Pagina* paginaAEliminar) {
+
+	clearFrameDePagina(paginaAEliminar);
+	freePagina(paginaAEliminar);
+
 }
 
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
-	//podria usar aca un list_clean and destroy pero voy a estar cargando mas funciones parecidas
-	void eliminarPaginaSegmento(Pagina* pagina) {
-		eliminarPaginaDeMemoria(pagina, segmentoAEliminar);
-	}
-	list_iterate(segmentoAEliminar->paginas, (void*) eliminarPaginaSegmento);
+	list_destroy_and_destroy_elements(segmentoAEliminar->paginas, (void*) eliminarPaginaDeMemoria);
 	freeSegmento(segmentoAEliminar);
+}
+
+void freeSegmento(Segmento* segmentoAEliminar) {
+	if (segmentoAEliminar->nombreTabla != NULL) {
+		free(segmentoAEliminar->nombreTabla);
+	}
+	free(segmentoAEliminar);
+}
+
+void vaciarMemoria() {
+	list_clean_and_destroy_elements(segmentos, (void*) eliminarSegmentoDeMemoria);
+}
+
+void finalizarMemoria() {
+	vaciarMemoria();
+	list_destroy(segmentos);
 }
 
 bool isModificada(Pagina* pagina) {
@@ -295,7 +296,7 @@ t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 
 void journalMemoria() {
 	//algun semaforo
-	log_info(logger, "Realizando Journal");
+	log_info(logger, "Realizando Journal..");
 
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
 		if (isModificada(pagina)) {
@@ -307,22 +308,24 @@ void journalMemoria() {
 		if (existeSegmentoFS(segmento->nombreTabla)) {
 			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
 		} else {
-			log_info(logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia",
-					segmento->nombreTabla);
+			log_info(logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
 		}
 
 	}
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
-	list_iterate(segmentos, (void*) eliminarSegmentoDeMemoria);
-
+	vaciarMemoria();
+	log_info(logger, "Journal finalizado con exito");
 }
 
 bool existeSegmentoFS(char* nombreSegmento) {
-	if (describeSegmento(nombreSegmento) != NULL) {
+	t_metadata_tabla* metadata = describeSegmento(nombreSegmento);
+	if (metadata != NULL) {
+		free(metadata);
 		return true;
 	}
+	free(metadata);
 	return false;
 }
 

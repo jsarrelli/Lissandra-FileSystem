@@ -19,7 +19,15 @@
 #include "funcionesLFS.h"
 #include "ApiLFS.h"
 #include "AdministradorConsultasLFS.h"
+#include "Inotify.h"
+
+pthread_t dumpThread;
+pthread_t serverThread;
+
+t_configuracion_LFS* config;
 
 
+void cargarConfig();
+void freeConfig();
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

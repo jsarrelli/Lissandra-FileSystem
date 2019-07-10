@@ -7,40 +7,42 @@
 
 #ifndef FILESYSTEM_H_
 #define FILESYSTEM_H_
+#include <math.h>
+#include <stdio.h>
 #include <Libraries.h>
 #include "LissandraFileSystem.h"
+#include <string.h>
 
-typedef struct{
+
+typedef struct {
 	int BLOCK_SIZE;
 	int BLOCKS;
 	char* MAGIC_NUMBER;
-}t_metadata;
+} t_metadata;
 
-typedef struct{
+typedef struct {
 	char* Tablas;
 	char* Bloques;
 	char* Metadata;
 	char* Bitmap;
 
-}t_rutas;
+} t_rutas;
 
 t_rutas rutas;
 t_metadata metadata;
 t_bitarray *bitmap;
 
-int cargarMetadata(t_configuracion_LFS* config);
+int cargarMetadata();
 int leerMetadata();
 void crearBloques();
 void crearBitmap();
 void leerBitmap();
 void escribirBitmap();
 void destruirBitmap();
-int* buscarBloquesLibres(int cant);
+t_list* buscarBloquesLibres(int cant);
 void reservarBloque(int index);
 void liberarBloque(int index);
+void cargarMemtable();
 //int crearStructRegistro(int tamanio);
-
-
-
 
 #endif /* FILESYSTEM_H_ */

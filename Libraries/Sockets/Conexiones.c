@@ -11,20 +11,14 @@ int ConectarAServidor(int puerto, char* ip) {
 	memset(&(direccion.sin_zero), '\0', 8);
 	int conexion;
 
-
-	do{
-		conexion=connect(socketFD, (struct sockaddr *) &direccion, sizeof(struct sockaddr));
-		if(conexion==-1){
-			usleep(1);
-		}else{
-			break;
-		}
-	}while(1);
+	conexion = connect(socketFD, (struct sockaddr *) &direccion, sizeof(struct sockaddr));
+	if (conexion == -1) {
+		return conexion;
+	}
 
 	return socketFD;
 
 }
-
 
 int configurarSocketServidor(char* puertoEscucha) {
 

@@ -14,13 +14,14 @@ void escuchar(int listenningSocket) {
 	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
-		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente,
-				&datosConexionClienteSize);
+		printf("Escuchando.. \n");
+		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
-			pthread_t threadId;
-			printf("Escuchando.. \n");
-			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
-			pthread_detach(threadId);
+			printf("Request de memoria recibida.. \n");
+//			pthread_t threadId;
+//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
+//			pthread_detach(threadId);
+			procesarAccion(socketMemoria);
 
 		}
 
@@ -29,19 +30,17 @@ void escuchar(int listenningSocket) {
 
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
-	void* datos;
-	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
-		if (paquete.header.quienEnvia == MEMORIA) {
 
-			datos = malloc(paquete.header.tamanioMensaje);
-			datos = paquete.mensaje;
-			int valueMaximo = 100;
+	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
+		usleep(config->RETARDO * 1000);
+		if (paquete.header.quienEnvia == MEMORIA) {
+			usleep(config->RETARDO * 1000);
 			switch ((int) paquete.header.tipoMensaje) {
 			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-				configuracionNuevaMemoria(socketMemoria, valueMaximo);
+				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 				break;
 			case (SELECT):
-				//
+				procesarSELECT(paquete.mensaje,socketMemoria);
 				break;
 			case (INSERT):
 				procesarINSERT(paquete.mensaje, socketMemoria);
@@ -75,7 +74,9 @@ void procesarAccion(int socketMemoria) {
 
 void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 	printf("Nueva memoria conectada. Socket N:%d", socketMemoria);
-	EnviarDatosTipo(socketMemoria, FILESYSTEM, &valueMaximo, sizeof(valueMaximo), CONEXION_INICIAL_FILESYSTEM_MEMORIA);
+	char valueMaximoChar[10];
+	sprintf(valueMaximoChar, "%d", valueMaximo);
+	EnviarDatosTipo(socketMemoria, FILESYSTEM, valueMaximoChar, strlen(valueMaximoChar) + 1, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 
 }
 
@@ -128,6 +129,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 	void describeDirectorio(char* directorio) {
 		char* nombreTabla = obtenerNombreTablaByRuta(directorio);
 		procesarDESCRIBE(nombreTabla, socketMemoria);
+		free(nombreTabla);
 	}
 
 	list_iterate(listaDirectorios, (void*) describeDirectorio);
@@ -141,13 +143,30 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
-		sprintf(respuesta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA),
-				metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
+		sprintf(respuesta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES,
+				metadata.T_COMPACTACION);
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta) + 1, DESCRIBE);
 		return;
 	}
 	enviarSuccess(1, DESCRIBE, socketMemoria);
 
+}
+
+void procesarSELECT(char* request, int socketMemoria){
+	char** valores = string_split(request, " ");
+	char* nombreTabla = valores[0];
+	int key = atoi(valores[1]);
+	t_registro* registro = funcionSELECT(nombreTabla, key);
+	if(registro==NULL){
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, NULL, 0, NOTFOUND);
+	}else{
+		char* response = string_new();
+		string_append_with_format(response, "%d;%s;%d",registro->key,registro->value,registro->timestamp);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response)+1, SELECT);
+		free(response);
+	}
+	freeRegistro(registro);
+	freePunteroAPunteros(valores);
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketMemoria) {

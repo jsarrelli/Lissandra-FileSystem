@@ -27,5 +27,9 @@ typedef struct EstadoFrame {
 	double fechaObtencion;
 } EstadoFrame;
 
+typedef struct t_memoria{
+	char* ip;
+	char* puerto;
+}t_memoria;
 
 #endif /* EstructurasMmemoria_H_*/
