@@ -33,7 +33,7 @@ void cargarConfig() {
 
 }
 
-void iniciarSocketServidor(t_configuracion_LFS* config) {
+void iniciarSocketServidor() {
 	int listenningSocket = configurarSocketServidor(config->PUERTO_ESCUCHA);
 	if (listenningSocket != 0) {
 		escuchar(listenningSocket);
@@ -68,7 +68,7 @@ int main(void) {
 	cargarMemtable();
 
 	//HILO ESCUCHA SERVIDOR
-	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, config);
+	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor,NULL);
 	pthread_detach(serverThread);
 
 	//HILO DUMP
@@ -77,7 +77,6 @@ int main(void) {
 
 	consolaLFS();
 	freeConfig();
-	pthread_join(serverThread,NULL);
 	//free(bitmap->bitarray);
 	bitarray_destroy(bitmap);
 	return EXIT_SUCCESS;

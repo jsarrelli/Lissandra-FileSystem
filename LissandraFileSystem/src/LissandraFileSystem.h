@@ -29,5 +29,6 @@ t_configuracion_LFS* config;
 
 void cargarConfig();
 void freeConfig();
+void iniciarSocketServidor();
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

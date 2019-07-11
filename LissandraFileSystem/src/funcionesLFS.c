@@ -29,6 +29,7 @@ char * obtenerExtensionDeUnArchivo(char * nombreArchivoConExtension) {
 	char ** palabras = string_split(nombreArchivoConExtensionAux, ".");
 	char * extension = string_duplicate(palabras[1]);
 	freePunteroAPunteros(palabras);
+	free(nombreArchivoConExtensionAux);
 	return extension;
 
 }
@@ -608,6 +609,7 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 	//t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
 	list_add_all(listaRegistros, registros);
 	list_destroy(registros);
+	list_destroy_and_destroy_elements(temporales,free);
 }
 
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
@@ -633,7 +635,7 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	agregarRegistrosFromBloqueByPath(pathArchivo, listaRegistrosBin);
 	//t_list* registrosBinToChar = list_map(listaRegistrosBin, (void*) registroToChar);
 	list_add_all(listaRegistros, listaRegistrosBin);
-	list_destroy(archivosBinarios);
+	list_destroy_and_destroy_elements(archivosBinarios,free);
 	list_destroy(listaRegistrosBin);
 }
 
@@ -641,7 +643,6 @@ t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 	t_registro* registro = NULL;
 
 	//primero lo busco en memtable
-
 	registro = getRegistroFromMemtableByKey(nombreTabla, keyActual);
 	if (registro == NULL) {
 		//si no esta en memtable lo busco en los .tmp

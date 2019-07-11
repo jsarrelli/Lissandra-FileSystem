@@ -161,7 +161,7 @@ void procesarSELECT(char* request, int socketMemoria){
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, NULL, 0, NOTFOUND);
 	}else{
 		char* response = string_new();
-		string_append_with_format(response, "%d;%s;%d",registro->key,registro->value,registro->timestamp);
+		string_append_with_format(&response, "%d;%s;%d",registro->key,registro->value,registro->timestamp);
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response)+1, SELECT);
 		free(response);
 	}
