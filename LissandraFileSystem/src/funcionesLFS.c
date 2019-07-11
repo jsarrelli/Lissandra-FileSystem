@@ -595,8 +595,8 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
 	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
-	if(tablaMemtable!=NULL){
-	list_add_all(listaRegistros, tablaMemtable->registros);
+	if (tablaMemtable != NULL) {
+		list_add_all(listaRegistros, tablaMemtable->registros);
 	}
 
 }
@@ -617,7 +617,11 @@ t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int ke
 		return registroActual->key == key;
 	}
 
-	return (t_registro*) list_find(listaRegistros, (void*) BuscarPorKey);
+	t_registro* registro = list_find(listaRegistros, (void*) BuscarPorKey);
+	if (registro != NULL) {
+		return registro_duplicate(registro);
+	}
+	return NULL;
 }
 
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros) {
@@ -633,12 +637,56 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	list_destroy(listaRegistrosBin);
 }
 
-t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual) {
-	t_list* listaRegistros = list_create();
-	getRegistrosFromBinByNombreTabla(nombreTabla, keyActual, listaRegistros);
-	getRegistrosFromMemtableByNombreTabla(nombreTabla, listaRegistros);
-	getRegistrosFromTempByNombreTabla(nombreTabla, listaRegistros);
-	filtrarRegistros(listaRegistros);
-	return listaRegistros;
+t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
+	t_registro* registro = NULL;
+
+	//primero lo busco en memtable
+
+	registro = getRegistroFromMemtableByKey(nombreTabla, keyActual);
+	if (registro == NULL) {
+		//si no esta en memtable lo busco en los .tmp
+		registro = getRegistroFromTmpByKey(nombreTabla, keyActual);
+	}
+	//si tampoco esta en lo tmp lo busco en los .bin
+	if (registro == NULL) {
+		registro = getRegistroFromBinByKey(nombreTabla, keyActual);
+	}
+	return registro;
+}
+
+t_registro* getRegistroFromBinByKey(char* nombreTabla, int key) {
+	t_list* registros = list_create();
+	getRegistrosFromBinByNombreTabla(nombreTabla, key, registros);
+	if (list_is_empty(registros)) {
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroEncontrado = buscarRegistroByKeyFromListaRegistros(registros, key);
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+	return registroEncontrado;
+
+}
+
+t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) {
+	t_list* registros = list_create();
+	getRegistrosFromTempByNombreTabla(nombreTabla, registros);
+	if (list_is_empty(registros)) {
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroEncontrado = buscarRegistroByKeyFromListaRegistros(registros, key);
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+	return registroEncontrado;
+}
+
+t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key) {
+	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
+	if (tablaMemtable != NULL && !list_is_empty(tablaMemtable->registros)) {
+		filtrarRegistros(tablaMemtable->registros);
+		return buscarRegistroByKeyFromListaRegistros(tablaMemtable->registros, key);
+	}
+	return NULL;
 }
 

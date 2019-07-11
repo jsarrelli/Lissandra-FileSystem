@@ -36,14 +36,13 @@ void funcionDESCRIBE_ALL() {
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 
-
 	if (config->TAMANIO_VALUE < strlen(value)) {
 		log_error(loggerError, "Tamanio maximo de value excedido");
 		return 1;
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_info(logger, "Insert de %s;%s en %s realizado en memtable",key,value,nombreTabla);
+		log_info(logger, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
 		printf("La %s no existe", nombreTabla);
@@ -53,18 +52,15 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 
 t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
-		t_list* listaRegistros = getRegistrosByKeyFromNombreTabla(nombreTabla, keyActual);
-		t_registro* registroFinal = buscarRegistroByKeyFromListaRegistros(listaRegistros, keyActual);
+		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
 
-		if (registroFinal != NULL) {
-			return registroFinal;
+		if (registro != NULL) {
+			return registro;
 
 		} else {
 			puts("No hay registros para mostrar");
 			return NULL;
 		}
-		list_destroy_and_destroy_elements(listaRegistros, free);
-
 	} else {
 		puts("La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
 		return NULL;

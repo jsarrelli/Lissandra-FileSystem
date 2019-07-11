@@ -31,13 +31,17 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp);
 
 void limpiarRegistrosDeTabla(char*nombreTabla);
 int obtenerTamanioListaRegistros(t_list* registros);
+
+//Funciones del select
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list* listaRegistros);
-t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros);
-t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual);
 
-
+t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual);
+t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key);
+t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) ;
+t_registro* getRegistroFromBinByKey(char* nombreTabla, int key);
+t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla);
 void mostrarMetadataTodasTablas(char *ruta);
@@ -71,5 +75,6 @@ FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode);
 
 void borrarContenidoArchivoBloque(int bloque);
 void freeArchivo(t_archivo *archivo);
+t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 
 #endif /* FUNCIONESLFS_H_ */

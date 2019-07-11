@@ -336,6 +336,15 @@ t_registro* registro_new(char** valores) {
 	return registro;
 }
 
+
+t_registro* registro_duplicate(t_registro* registro) {
+	t_registro* registroDuplicado = malloc(sizeof(t_registro));
+	registroDuplicado->key = registro->key;
+	registroDuplicado->value = string_duplicate(registro->value);
+	registroDuplicado->timestamp = registro->timestamp;
+	return registroDuplicado;
+}
+
 void freeRegistro(t_registro* registro) {
 	if (registro != NULL) {
 		if (registro->value != NULL) {
