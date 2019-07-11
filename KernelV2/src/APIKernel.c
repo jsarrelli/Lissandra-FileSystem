@@ -133,10 +133,21 @@ int consolaInsert(char*argumentos) {
 			"El nombre de la tabla es: %s, su key es %s, y su value es: %s",
 			nombreTabla, key, value);
 
-	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla);
+	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT);
+
+	timestampInsertAlFinalizar = getCurrentTime();
+
+	double* diferencia = malloc(sizeof(double));
+	*diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
+
+	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
+
+	cantInserts++;
+
 
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
+
 	if (enviarInfoMemoria(socketMemoria, argumentos, INSERT) == SUPER_ERROR)
 		return SUPER_ERROR;
 
@@ -148,13 +159,6 @@ int consolaInsert(char*argumentos) {
 	free(valores[1]);
 	free(valores[0]);
 	free(valores);
-
-	timestampInsertAlFinalizar = getCurrentTime();
-
-//	double diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
-//
-//	list_add(metricas.diferenciaDeTiempoWriteLatency,
-//			diferencia);
 
 	return TODO_OK;
 }
@@ -172,7 +176,7 @@ int consolaSelect(char*argumentos) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
 
-	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla) == SUPER_ERROR)
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT) == SUPER_ERROR)
 		return SUPER_ERROR;
 
 //	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
@@ -183,10 +187,12 @@ int consolaSelect(char*argumentos) {
 
 	timestampSelectAlFinalizar = getCurrentTime();
 
-//	double diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
-//
-//	list_add(metricas.diferenciaDeTiempoReadLatency,
-//			diferencia);
+	double* diferencia = malloc(sizeof(double));
+	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
+
+	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
+
+	cantSelects++;
 
 	return TODO_OK;
 }
@@ -260,23 +266,6 @@ int consolaCreate(char*argumentos) {
 	free(valores);
 
 	return TODO_OK;
-
-}
-
-void consolaMetrics() {
-
-//	void _imprimirMemoryLoad(int memoryLoad) {
-//		// Imprimir los valores
-//	}
-//
-//	puts("Las metricas son: ");
-//	printf("Read latency: %f\n", metricas.readLatency);
-//	printf("Write latency: %f\n", metricas.writeLatency);
-//	printf("Reads: %d\n", metricas.reads);
-//	printf("Writes: %d\n", metricas.writes);
-//	printf("Memory load de Insert: \n");
-//	list_iterate(metricas.memoryLoadInsert, (void*) _imprimirMemoryLoad);
-//	list_iterate(metricas.memoryLoadSelect, (void*) _imprimirMemoryLoad);
 
 }
 

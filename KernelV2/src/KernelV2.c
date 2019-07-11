@@ -15,7 +15,7 @@ void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
 
-//	crearMetrica();
+	crearMetrica();
 
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReadyPOP, 0, 1);
@@ -73,20 +73,24 @@ void iniciarVariablesKernel() {
 
 }
 
-//void hiloMetrics() {
-//
-//	while (puedeHaberRequests) {
-//
-//		usleep(30 * 1000); // algo asi...
-//
-//		consolaMetrics();
-//
-//		// Ahora reinicio los valores:
-//
-//		borrarInfoMetrics();
-//
-//	}
-//}
+void* iniciarhiloMetrics(void* args) {
+
+	while (puedeHaberRequests) {
+
+		usleep(10000 * 1000); // algo asi...
+
+		calcularMetrics();
+
+		imprimirMetrics();
+
+		// Ahora reinicio los valores:
+
+		reiniciarMetrics();
+
+	}
+
+	return NULL;
+}
 
 /*
  * Estado del Kernel:
@@ -107,10 +111,17 @@ void iniciarConsolaKernel() {
 	char* operacion;
 	operacion = readline(">");
 
-	while (1) { // Agregar condicion de si es metrics -> el comando metrics no se mete en la cola de Ready
-		crearProcesoYMandarloAReady(operacion);
-//		desbloquearHilos();
-		sem_post(&bin_main);
+	while (puedeHaberRequests) {
+		if (!instruccionSeaMetrics(operacion)) {
+			if (*operacion != '\0') {
+				crearProcesoYMandarloAReady(operacion);
+//				desbloquearHilos();
+				sem_post(&bin_main);
+			}
+		} else {
+			calcularMetrics();
+			imprimirMetrics();
+		}
 		operacion = readline(">");
 	}
 }
@@ -142,6 +153,10 @@ int main(void) {
 	iniciarVariablesKernel();
 //	inicioKernelUnProcesador();
 
+	// Hilo de metrics
+//	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
+//	pthread_detach(hiloMetrics);
+
 	// Hilo de consola
 
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
@@ -162,10 +177,6 @@ int main(void) {
 		pthread_detach(arrayDeHilosPuntero[i]);
 	}
 
-	// Hilo de metrics
-//	pthread_create(&hiloMetrics, NULL, (void*) hiloMetrics, NULL);
-//	pthread_detach(hiloMetrics);
-
 	sem_wait(&fin);
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	destruirElementosMain(listaHilos, colaReady);
@@ -174,7 +185,7 @@ int main(void) {
 	destruirLogStruct(log_master);
 	free(arrayDeHilos);
 
-//	destruirMetrica();
+	destruirMetrica();
 
 	return EXIT_SUCCESS;
 }

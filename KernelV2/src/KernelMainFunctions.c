@@ -106,19 +106,27 @@ int cantidadParametros(char ** palabras) {
 	return i - 1;
 }
 
-int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
 	if (memoriaAEnviar != NULL) {
+
+		if (protocolo == SELECT) {
+			(memoriaAEnviar->cantSelectsEjecutados)++;
+		}
+		if (protocolo == INSERT) {
+			(memoriaAEnviar->cantInsertEjecutados)++;
+		}
+
 		log_trace(log_master->logTrace, "Los datos obtenidos son:");
 		imprimirCriterio(memoriaAEnviar->criterios);
 		log_trace(log_master->logTrace, "Id de la memoria: %d",
 				memoriaAEnviar->id);
 	} else {
 		log_error(log_master->logError,
-				"Error: no existe memoria con ese criterio o tabla no existe");
+				"Error: no existe memoria con ese criterio o todavia no hay memorias con el criterio de la tabla");
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
@@ -215,7 +223,6 @@ void* iniciarMultiprocesamiento(void* args) {
 				usleep(retardoEjecucion * 1000);
 				estado = procesarInputKernel(
 						list_get(proceso->script, cantRequestsEjecutadas));
-				printf(">\n");
 				cantRequestsEjecutadasPorQuantum++;
 			}
 
@@ -225,9 +232,9 @@ void* iniciarMultiprocesamiento(void* args) {
 					&& cantRequestsEjecutadas == cantRequestsProceso) {
 
 				if (cantRequestsEjecutadasPorQuantum == quantum) {
+//					usleep(retardoEjecucion * 1000);
 					log_info(log_master->logInfo,
 							"Llega a fin de quantum.\nDesalojando");
-					usleep(retardoEjecucion * 1000);
 					cantRequestsEjecutadasPorQuantum = 0;
 				}
 
@@ -240,7 +247,6 @@ void* iniciarMultiprocesamiento(void* args) {
 
 				log_info(log_master->logInfo,
 						"Llega a fin de quantum.\nDesalojando");
-				printf(">\n");
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
 				usleep(retardoEjecucion * 1000);
@@ -250,9 +256,9 @@ void* iniciarMultiprocesamiento(void* args) {
 				log_error(log_master->logError,
 						"Error: Una request no se pudo cumplir");
 				destruirProceso(proceso);
+				printf(">\n");
 			}
 
-//		}
 		}
 
 		estado = OK;
@@ -295,7 +301,10 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
 	if (consistenciaDeTabla == ERROR_CONSISTENCIA)
-		return NULL;
+	{
+		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe o error en la consistencia");
+	}
+//		return NULL;
 
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
 }

@@ -119,30 +119,121 @@ void destruirArraySemaforos() {
 	free(arraySemaforos);
 }
 
-//void crearMetrica() {
-//	metricas.readLatency = 0;
-//	metricas.writeLatency = 0;
-//	metricas.reads = 0;
-//	metricas.writes = 0;
-//	metricas.memoryLoadInsert = list_create();
-//	metricas.memoryLoadSelect = list_create();
-//}
-//
-//void destruirMetrica() {
-//	list_destroy(metricas.memoryLoadInsert);
-//	list_destroy(metricas.memoryLoadSelect);
-//}
-//
-//void borrarInfoMetrics() {
-//	// Ahora reinicio los valores:
-//	metricas.reads = 0;
-//	metricas.writes = 0;
-//	metricas.readLatency = 0;
-//	metricas.writeLatency = 0;
-//	list_destroy(metricas.diferenciaDeTiempoReadLatency);
-//	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
-//	list_destroy(metricas.memoryLoadInsert);
-//	list_destroy(metricas.memoryLoadSelect);
-//	// Acordarse de borrar las metricas de las estructuras de las memorias -> Creo que no me interesa
-//	// Recordar que pueden seguir estando o no las memorias de los datos	-> MUY IMPORTANTE!!!!!
-//}
+int instruccionSeaMetrics(char* operacion) {
+	return strcmp(operacion, "METRICS") == 0;
+}
+
+void crearMetrica() {
+	metricas.readLatency = 0;
+	metricas.writeLatency = 0;
+	metricas.reads = 0;
+	metricas.writes = 0;
+	metricas.diferenciaDeTiempoReadLatency = list_create();
+	metricas.diferenciaDeTiempoWriteLatency = list_create();
+	metricas.memoryLoadMemorias = list_create();
+}
+
+void destruirMetrica() {
+	list_destroy(metricas.diferenciaDeTiempoReadLatency);
+	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
+	list_destroy(metricas.memoryLoadMemorias);
+}
+
+void reiniciarMetrics() {
+	// Ahora reinicio los valores:
+	metricas.reads = 0;
+	metricas.writes = 0;
+	metricas.readLatency = 0;
+	metricas.writeLatency = 0;
+	list_clean(metricas.diferenciaDeTiempoReadLatency);
+	list_clean(metricas.diferenciaDeTiempoWriteLatency);
+	list_clean(metricas.memoryLoadMemorias);
+	// Acordarse de borrar las metricas de las estructuras de las memorias -> Creo que no me interesa
+	// Recordar que pueden seguir estando o no las memorias de los datos	-> MUY IMPORTANTE!!!!!
+}
+
+void calcularMetrics() {
+
+	/*
+	* Reads y Writes ya esta calculados
+	*
+	* (Se sacan solo con los contadores)
+	*/
+
+	// Calcular Read Latency
+
+	t_list* listaFiltrada;
+	double sumatoria = 0;
+	int tamLista = list_size(metricas.diferenciaDeTiempoReadLatency);
+
+	if (tamLista != 0) {
+		for (int i = 0; i < tamLista; i++) {
+			double* elemento = (double*) list_get(
+					metricas.diferenciaDeTiempoReadLatency, i);
+			sumatoria += (*elemento);
+		}
+
+		metricas.readLatency = sumatoria / tamLista;
+	}
+
+	// Calcular Write Latency: Idem al anterior -> Podria hacerlos una sola funcion pero... despues
+
+	sumatoria = 0;
+	tamLista = list_size(metricas.diferenciaDeTiempoWriteLatency);
+
+	if (tamLista != 0) {
+		for (int i = 0; i < tamLista; i++) {
+			double* elemento = (double*) list_get(
+					metricas.diferenciaDeTiempoWriteLatency, i);
+			sumatoria += (*elemento);
+		}
+
+		metricas.writeLatency = sumatoria / tamLista;
+	}
+
+	// Calcular Memory Load
+
+	int cantSelectsEInsertsTotales = cantSelects + cantInserts;
+
+	void _calcularMemoryLoadUnaMemoria(infoMemoria* memoria) {
+		int cantSelectsEInsertsMemoria = memoria->cantSelectsEjecutados
+				+ memoria->cantInsertEjecutados;
+
+		int* memoryLoadMemoria = malloc(sizeof(int));
+		*memoryLoadMemoria = cantSelectsEInsertsMemoria
+				/ cantSelectsEInsertsTotales;
+
+		list_add(metricas.memoryLoadMemorias, memoryLoadMemoria);
+	}
+
+	if (cantSelectsEInsertsTotales != 0){
+		bool _hizoSelectOInsert(void* memoria){
+			return ((infoMemoria*)memoria)->cantInsertEjecutados !=0 || ((infoMemoria*)memoria)->cantSelectsEjecutados!=0;
+		}
+
+		listaFiltrada = list_filter(listaMemorias, _hizoSelectOInsert);
+		list_iterate(listaFiltrada, (void*) _calcularMemoryLoadUnaMemoria);
+	}
+
+	tamLista = list_size(metricas.memoryLoadMemorias);
+	for(int i=0; i < tamLista ;i++){
+		double* elemento = (double*) list_get(
+				metricas.memoryLoadMemorias, i);
+		double elemento2 = *elemento;
+		metricas.memoryLoad += elemento2;
+	}
+
+	list_destroy(listaFiltrada);
+
+}
+
+void imprimirMetrics() {
+
+	log_info(log_master->logInfo, "Las metricas son: ");
+	log_info(log_master->logInfo, "Read latency: %f", metricas.readLatency);
+	log_info(log_master->logInfo, "Write latency: %f", metricas.writeLatency);
+	log_info(log_master->logInfo, "Reads: %f", metricas.reads);
+	log_info(log_master->logInfo, "Writes: %f", metricas.writes);
+	log_info(log_master->logInfo, "Memory load: %f\n", metricas.memoryLoad);
+
+}

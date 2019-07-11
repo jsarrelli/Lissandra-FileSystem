@@ -23,6 +23,11 @@
 #include <commons/collections/queue.h>
 #include <commons/config.h>
 
+// Incorporo la libraries
+#include <Libraries.h>
+#include <Sockets/Conexiones.h>
+#include <Sockets/Serializacion.h>
+
 #define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
 #define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
 #define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
@@ -93,11 +98,11 @@ typedef enum{
 typedef struct{
 	double readLatency;
 	double writeLatency;
-	int reads;
-	int writes;
-	t_list* memoryLoadInsert;
-	t_list* memoryLoadSelect;
+	double reads;
+	double writes;
+	double memoryLoad;
 	// Para calculo auxiliar
+	t_list* memoryLoadMemorias;
 	t_list* diferenciaDeTiempoReadLatency;
 	t_list* diferenciaDeTiempoWriteLatency;
 }t_metrics;
@@ -149,7 +154,7 @@ t_config_kernel *cargarConfig(char *ruta);
 infoMemoria* obtenerMemoriaAlAzar();
 void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
-int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();

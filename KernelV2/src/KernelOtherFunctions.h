@@ -24,8 +24,11 @@ bool instruccionSeaSalir(char* operacion);
 void hardcodearListaMetadataTabla();
 int contarLineasArchivo(FILE* fichero, char* path);
 void destruirArraySemaforos();
-//void crearMetrica();
-//void destruirMetrica();
-//void borrarInfoMetrics();
+int instruccionSeaMetrics(char* operacion);
+void crearMetrica();
+void destruirMetrica();
+void reiniciarMetrics();
+void calcularMetrics();
+void imprimirMetrics();
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */
