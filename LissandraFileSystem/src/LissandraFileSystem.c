@@ -76,6 +76,7 @@ int main(void) {
 //	pthread_detach(dumpThread);
 
 	consolaLFS();
+	procesoDump();
 	freeConfig();
 	//free(bitmap->bitarray);
 	bitarray_destroy(bitmap);
