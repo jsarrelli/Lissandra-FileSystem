@@ -1,12 +1,37 @@
-[INFO] 01:26:08:412 LFS Logs/(7114:7114): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 01:00:37:927 LFS Logs/(6508:6508): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 01:26:09:865 LFS Logs/(7114:7114): Levantando archivo de configuracion del proceso LFS 
+[INFO] 01:00:37:937 LFS Logs/(6508:6508): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 01:26:09:874 LFS Logs/(7114:7114): Archivo de configuracion del proceso LFS levantado 
+[INFO] 01:00:37:957 LFS Logs/(6508:6508): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 01:26:11:482 LFS Logs/(7114:7114): El tamanio del bitmap es de 3000 bits
-[INFO] 01:26:12:799 LFS Logs/(7114:7114): Levantando tablas ya existentes..
-[INFO] 01:26:36:150 LFS Logs/(7114:7114): Se creo la tabla: TABLA en LFS
+[INFO] 01:00:38:598 LFS Logs/(6508:6508): El tamanio del bitmap es de 3000 bits
+[INFO] 01:00:38:603 LFS Logs/(6508:6508): Levantando tablas ya existentes..
+[INFO] 01:00:43:798 LFS Logs/(6508:6508): Se creo la tabla: TABLA en LFS
 
-[INFO] 01:26:36:162 LFS Logs/(7114:7114): Metadata de TABLA creada
+[INFO] 01:00:43:809 LFS Logs/(6508:6508): Metadata de TABLA creada
 
+[INFO] 01:00:51:60 LFS Logs/(6508:6508): Insert de 1;QQQQ en TABLA realizado en memtable
+[INFO] 01:01:09:183 LFS Logs/(6508:6508): Insert de 2;III en TABLA realizado en memtable
+[INFO] 01:01:18:670 LFS Logs/(6508:6508): Insert de 1;AAAAAAAA en TABLA realizado en memtable
+[INFO] 01:01:26:767 LFS Logs/(6508:6508): Insert de 2;BBBBBBB en TABLA realizado en memtable
+[INFO] 01:01:33:196 LFS Logs/(6508:6508): Modificando tmp a tmpc..
+[INFO] 01:01:33:201 LFS Logs/(6508:6508): Obteniendo directorios de archivos binarios..
+[INFO] 01:01:33:211 LFS Logs/(6508:6508): Se cambio la extension de los temporales
+[INFO] 01:01:33:212 LFS Logs/(6508:6508): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 01:01:33:214 LFS Logs/(6508:6508): Lectura de registros de los tmpc finalizada
+[INFO] 01:01:33:219 LFS Logs/(6508:6508): Filtrando registros..
+[INFO] 01:01:33:220 LFS Logs/(6508:6508): Filtrado completo
+[INFO] 01:01:33:220 LFS Logs/(6508:6508): Mergeando registros viejos con nuevos
+[INFO] 01:01:33:221 LFS Logs/(6508:6508): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 01:01:33:229 LFS Logs/(6508:6508): Filtrando registros..
+[INFO] 01:01:33:229 LFS Logs/(6508:6508): Filtrado completo
+[INFO] 01:01:33:233 LFS Logs/(6508:6508): Bloque 0 liberado
+[INFO] 01:01:33:246 LFS Logs/(6508:6508): Bloque 1 liberado
+[INFO] 01:01:33:247 LFS Logs/(6508:6508): Bloque 2 liberado
+[INFO] 01:01:33:254 LFS Logs/(6508:6508): Compactacion de <TABLA> exitosa
+[INFO] 01:06:53:609 LFS Logs/(6508:6508): Insert de 1;WWWW en TABLA realizado en memtable
+[INFO] 01:07:01:678 LFS Logs/(6508:6508): Insert de 2;QQQQQ en TABLA realizado en memtable
+[INFO] 01:07:44:307 LFS Logs/(6508:6508): Insert de 1;DDDDDDDD en TABLA realizado en memtable
+[INFO] 01:07:54:738 LFS Logs/(6508:6508): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 01:07:54:742 LFS Logs/(6508:6508): Filtrando registros..
+[INFO] 01:07:54:743 LFS Logs/(6508:6508): Filtrado completo
