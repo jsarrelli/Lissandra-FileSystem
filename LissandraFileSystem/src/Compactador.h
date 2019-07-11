@@ -13,6 +13,7 @@
 #include "ApiLFS.h"
 #include "AdministradorConsultasLFS.h"
 #include <BubbleSort.h>
+#include <stdio.h>
 
 void compactarTabla(char*nombreTabla);
 

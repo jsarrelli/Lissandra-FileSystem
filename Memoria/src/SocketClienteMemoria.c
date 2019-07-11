@@ -150,6 +150,7 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 }
 
 t_registro* selectFileSystem(Segmento* segmento, int key) {
+	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
 

@@ -52,7 +52,11 @@ int procesarInputKernel(char* linea) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
 		if (consolaRun(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
-	} else if (strcmp(operacion, "SALIR") == 0) {
+	}  else if (strcmp(operacion, "RUN") == 0) {
+		log_trace(log_master->logTrace, "Se ha escrito el comando JOURNAL");
+		if (consolaJournal() == SUPER_ERROR)
+			return SUPER_ERROR;
+	}else if (strcmp(operacion, "SALIR") == 0) {
 		consolaSALIR(argumentos);
 
 	} else {
@@ -237,6 +241,14 @@ int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 void enviarJournalMemoria(int socketMemoria) {
 	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+}
+
+void consolaJournal(){
+//
+//	void journalMemoria(infoMemoria* memoria){
+//		int socketMemoria= ConectarAServidor(memoria., ip)
+//	}
+//	list_iterate(listaMemorias, journalMemoria);
 }
 
 int consolaCreate(char*argumentos) {

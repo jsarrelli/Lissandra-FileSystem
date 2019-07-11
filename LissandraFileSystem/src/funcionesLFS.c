@@ -498,9 +498,9 @@ FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode) {
 
 	FILE* archivoBloque;
 	if (appendMode) {
-		archivoBloque = fopen(rutaBloque, "ab");
+		archivoBloque = fopen(rutaBloque, "a");
 	} else {
-		archivoBloque = fopen(rutaBloque, "wb");
+		archivoBloque = fopen(rutaBloque, "w");
 	}
 	if (archivoBloque == NULL) {
 		log_error(loggerError, "No se pudo abrir el archivo de bloque: %s ", rutaBloque);

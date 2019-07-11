@@ -9,6 +9,7 @@
 
 void compactarTabla(char*nombreTabla) {
 
+	log_info(logger, "Compactando tabla: %s", nombreTabla);
 	log_info(logger, "Modificando tmp a tmpc..");
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
@@ -26,7 +27,7 @@ void compactarTabla(char*nombreTabla) {
 
 	t_list* registrosNuevos = list_create();
 	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
-	log_info(logger, "Lectura de registros de los tmpc finalizada");
+	log_info(logger, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(archivosTmpc));
 	filtrarRegistros(registrosNuevos);
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
@@ -88,7 +89,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 char* registroToChar(t_registro* registro) {
 	char* registroChar = string_new();
-	string_append_with_format(&registroChar, "%f;%d;%s\n", registro->timestamp, registro->key, registro->value);
+	string_append_with_format(&registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
 	return registroChar;
 }
 
@@ -313,44 +314,17 @@ t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
 t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque) {
 
 	t_list* listaRegistros = list_create();
-	FILE* archivoBloque = fopen(rutaArchivoBloque, "rb");
-//	int tamanioArchBloque = tamanioArchivo(archivoBloque);
-//	int fileDescriptor = fileno(archivoBloque);
-//
-//	//mapeamos el archivo a memoria
-//	char * archivoMapeado;
-//	if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
-//		log_error(loggerError, "Error al hacer mmap al levantar archivo de bloque");
-//		return NULL;
-//	}
-
-//cargo la lista con los registros obtenidos
-	char registro[400];
-	while (fgets(registro, sizeof registro, archivoBloque) != NULL) {
-		char* registroActual = string_duplicate(registro);
-		char** valores = string_split(registroActual, ";");
+	FILE* archivoBloque = fopen(rutaArchivoBloque, "r");
+	char registroChar[config->TAMANIO_VALUE];
+	while (fgets(registroChar, config->TAMANIO_VALUE, archivoBloque) != NULL) {
+		char* registroAux = string_duplicate(registroChar);
+		char** valores = string_split(registroChar, ";");
 		t_registro* registro = registro_new(valores);
 		list_add(listaRegistros, registro);
-		free(registroActual);
+		free(registroAux);
 	}
+
 	fclose(archivoBloque);
-
-//	char ** registros = string_split(archivoMapeado, "\n");
-//	int j = 0;
-//	while (registros[j] != NULL) {
-//		char* registroActual = string_duplicate(registros[j]);
-//		char** valores = string_split(registroActual, ";");
-//		t_registro* registro = registro_new(valores);
-//		list_add(listaRegistros, registro);
-//		j++;
-//		free(registroActual);
-//	}
-
-//fijate que este free no se este ya liberando con el free de valores
-//	freePunteroAPunteros(registros);
-//	munmap(archivoMapeado, tamanioArchBloque);
-	//fclose(archivoBloque);
-//	close(fileDescriptor);
 	return listaRegistros;
 }
 
