@@ -1,37 +1,45 @@
-[INFO] 01:00:37:927 LFS Logs/(6508:6508): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 19:19:08:486 LFS Logs/(16685:16685): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 01:00:37:937 LFS Logs/(6508:6508): Levantando archivo de configuracion del proceso LFS 
+[INFO] 19:19:08:487 LFS Logs/(16685:16685): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 01:00:37:957 LFS Logs/(6508:6508): Archivo de configuracion del proceso LFS levantado 
+[INFO] 19:19:08:488 LFS Logs/(16685:16685): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 01:00:38:598 LFS Logs/(6508:6508): El tamanio del bitmap es de 3000 bits
-[INFO] 01:00:38:603 LFS Logs/(6508:6508): Levantando tablas ya existentes..
-[INFO] 01:00:43:798 LFS Logs/(6508:6508): Se creo la tabla: TABLA en LFS
-
-[INFO] 01:00:43:809 LFS Logs/(6508:6508): Metadata de TABLA creada
-
-[INFO] 01:00:51:60 LFS Logs/(6508:6508): Insert de 1;QQQQ en TABLA realizado en memtable
-[INFO] 01:01:09:183 LFS Logs/(6508:6508): Insert de 2;III en TABLA realizado en memtable
-[INFO] 01:01:18:670 LFS Logs/(6508:6508): Insert de 1;AAAAAAAA en TABLA realizado en memtable
-[INFO] 01:01:26:767 LFS Logs/(6508:6508): Insert de 2;BBBBBBB en TABLA realizado en memtable
-[INFO] 01:01:33:196 LFS Logs/(6508:6508): Modificando tmp a tmpc..
-[INFO] 01:01:33:201 LFS Logs/(6508:6508): Obteniendo directorios de archivos binarios..
-[INFO] 01:01:33:211 LFS Logs/(6508:6508): Se cambio la extension de los temporales
-[INFO] 01:01:33:212 LFS Logs/(6508:6508): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 01:01:33:214 LFS Logs/(6508:6508): Lectura de registros de los tmpc finalizada
-[INFO] 01:01:33:219 LFS Logs/(6508:6508): Filtrando registros..
-[INFO] 01:01:33:220 LFS Logs/(6508:6508): Filtrado completo
-[INFO] 01:01:33:220 LFS Logs/(6508:6508): Mergeando registros viejos con nuevos
-[INFO] 01:01:33:221 LFS Logs/(6508:6508): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 01:01:33:229 LFS Logs/(6508:6508): Filtrando registros..
-[INFO] 01:01:33:229 LFS Logs/(6508:6508): Filtrado completo
-[INFO] 01:01:33:233 LFS Logs/(6508:6508): Bloque 0 liberado
-[INFO] 01:01:33:246 LFS Logs/(6508:6508): Bloque 1 liberado
-[INFO] 01:01:33:247 LFS Logs/(6508:6508): Bloque 2 liberado
-[INFO] 01:01:33:254 LFS Logs/(6508:6508): Compactacion de <TABLA> exitosa
-[INFO] 01:06:53:609 LFS Logs/(6508:6508): Insert de 1;WWWW en TABLA realizado en memtable
-[INFO] 01:07:01:678 LFS Logs/(6508:6508): Insert de 2;QQQQQ en TABLA realizado en memtable
-[INFO] 01:07:44:307 LFS Logs/(6508:6508): Insert de 1;DDDDDDDD en TABLA realizado en memtable
-[INFO] 01:07:54:738 LFS Logs/(6508:6508): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 01:07:54:742 LFS Logs/(6508:6508): Filtrando registros..
-[INFO] 01:07:54:743 LFS Logs/(6508:6508): Filtrado completo
+[INFO] 19:19:08:525 LFS Logs/(16685:16685): El tamanio del bitmap es de 3000 bits
+[INFO] 19:19:08:526 LFS Logs/(16685:16685): Levantando tablas ya existentes..
+[INFO] 19:19:18:29 LFS Logs/(16685:16685): Insert de 4;FSDFSD en TABLA realizado en memtable
+[INFO] 19:19:21:711 LFS Logs/(16685:16685): Compactando tabla: TABLA
+[INFO] 19:19:21:713 LFS Logs/(16685:16685): Modificando tmp a tmpc..
+[INFO] 19:19:21:713 LFS Logs/(16685:16685): Obteniendo directorios de archivos binarios..
+[INFO] 19:19:21:713 LFS Logs/(16685:16685): Se cambio la extension de los temporales
+[INFO] 19:19:21:714 LFS Logs/(16685:16685): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 19:19:22:169 LFS Logs/(16685:16685): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
+[INFO] 19:19:22:169 LFS Logs/(16685:16685): Filtrando registros..
+[INFO] 19:19:22:169 LFS Logs/(16685:16685): Filtrado completo
+[INFO] 19:19:22:169 LFS Logs/(16685:16685): Mergeando registros viejos con nuevos
+[INFO] 19:19:22:170 LFS Logs/(16685:16685): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 19:19:39:478 LFS Logs/(16685:16685): Filtrando registros..
+[INFO] 19:19:39:479 LFS Logs/(16685:16685): Filtrado completo
+[INFO] 19:19:39:480 LFS Logs/(16685:16685): Bloque 0 liberado
+[INFO] 19:19:40:461 LFS Logs/(16685:16685): Bloque 3 liberado
+[INFO] 19:19:40:463 LFS Logs/(16685:16685): Compactacion de <TABLA> exitosa
+[INFO] 19:20:12:401 LFS Logs/(16685:16685): Insert de 33;PRUEBA en TABLA realizado en memtable
+[INFO] 19:20:19:72 LFS Logs/(16685:16685): Insert de 44;pRUEBADS en TABLA realizado en memtable
+[INFO] 19:20:22:579 LFS Logs/(16685:16685): Compactando tabla: TABLA
+[INFO] 19:20:22:579 LFS Logs/(16685:16685): Modificando tmp a tmpc..
+[INFO] 19:20:22:580 LFS Logs/(16685:16685): Obteniendo directorios de archivos binarios..
+[INFO] 19:20:22:580 LFS Logs/(16685:16685): Se cambio la extension de los temporales
+[INFO] 19:20:22:580 LFS Logs/(16685:16685): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 19:20:22:789 LFS Logs/(16685:16685): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
+[INFO] 19:20:22:789 LFS Logs/(16685:16685): Filtrando registros..
+[INFO] 19:20:22:789 LFS Logs/(16685:16685): Filtrado completo
+[INFO] 19:20:22:789 LFS Logs/(16685:16685): Mergeando registros viejos con nuevos
+[INFO] 19:20:22:789 LFS Logs/(16685:16685): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 19:20:22:946 LFS Logs/(16685:16685): Filtrando registros..
+[INFO] 19:20:22:946 LFS Logs/(16685:16685): Filtrado completo
+[INFO] 19:20:22:946 LFS Logs/(16685:16685): Bloque 0 liberado
+[INFO] 19:20:23:474 LFS Logs/(16685:16685): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
+[INFO] 19:20:24:343 LFS Logs/(16685:16685): Filtrando registros..
+[INFO] 19:20:24:343 LFS Logs/(16685:16685): Filtrado completo
+[INFO] 19:20:24:343 LFS Logs/(16685:16685): Bloque 1 liberado
+[INFO] 19:20:24:613 LFS Logs/(16685:16685): Bloque 3 liberado
+[INFO] 19:20:24:615 LFS Logs/(16685:16685): Compactacion de <TABLA> exitosa
