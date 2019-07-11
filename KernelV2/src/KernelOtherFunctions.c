@@ -118,3 +118,31 @@ void destruirArraySemaforos() {
 
 	free(arraySemaforos);
 }
+
+//void crearMetrica() {
+//	metricas.readLatency = 0;
+//	metricas.writeLatency = 0;
+//	metricas.reads = 0;
+//	metricas.writes = 0;
+//	metricas.memoryLoadInsert = list_create();
+//	metricas.memoryLoadSelect = list_create();
+//}
+//
+//void destruirMetrica() {
+//	list_destroy(metricas.memoryLoadInsert);
+//	list_destroy(metricas.memoryLoadSelect);
+//}
+//
+//void borrarInfoMetrics() {
+//	// Ahora reinicio los valores:
+//	metricas.reads = 0;
+//	metricas.writes = 0;
+//	metricas.readLatency = 0;
+//	metricas.writeLatency = 0;
+//	list_destroy(metricas.diferenciaDeTiempoReadLatency);
+//	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
+//	list_destroy(metricas.memoryLoadInsert);
+//	list_destroy(metricas.memoryLoadSelect);
+//	// Acordarse de borrar las metricas de las estructuras de las memorias -> Creo que no me interesa
+//	// Recordar que pueden seguir estando o no las memorias de los datos	-> MUY IMPORTANTE!!!!!
+//}

@@ -9,10 +9,13 @@
  */
 
 #include "Kernel.h"
+#include "APIKernel.h"
 
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
+
+//	crearMetrica();
 
 	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReadyPOP, 0, 1);
@@ -45,23 +48,45 @@ void iniciarVariablesKernel() {
 	multiprocesamientoUsado = 0;
 	retardoEjecucion = config->SLEEP_EJECUCION;
 
+	cantSelects = 0;
+	cantInserts = 0;
+	timestampSelectAlIniciar = 0;
+	timestampSelectAlFinalizar = 0;
+	timestampInsertAlIniciar = 0;
+	timestampInsertAlFinalizar = 0;
+
 	hilosActivos = 0;
-	idHilo=0;
+	idHilo = 0;
 
 	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
 	// 		de requests que haya en la cola de ready
 
-	if(multiprocesamiento !=0){
+//	crearMetrica();
+
+	if (multiprocesamiento != 0) {
 		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
 
-		for(int i=0; i < multiprocesamiento;i++){
+		for (int i = 0; i < multiprocesamiento; i++) {
 			sem_init(&arraySemaforos[i], 0, 0);
 		}
 	}
 
-
-
 }
+
+//void hiloMetrics() {
+//
+//	while (puedeHaberRequests) {
+//
+//		usleep(30 * 1000); // algo asi...
+//
+//		consolaMetrics();
+//
+//		// Ahora reinicio los valores:
+//
+//		borrarInfoMetrics();
+//
+//	}
+//}
 
 /*
  * Estado del Kernel:
@@ -78,11 +103,11 @@ void iniciarVariablesKernel() {
  * PD: Acuerdense de usar la funcion de obtenerMemoria y obtenerMemoriaAlAzar para las sockets (ya implementadas y comentadas)
  */
 
-void iniciarConsolaKernel(){
+void iniciarConsolaKernel() {
 	char* operacion;
 	operacion = readline(">");
 
-	while(1){
+	while (1) { // Agregar condicion de si es metrics -> el comando metrics no se mete en la cola de Ready
 		crearProcesoYMandarloAReady(operacion);
 //		desbloquearHilos();
 		sem_post(&bin_main);
@@ -108,44 +133,48 @@ void inicioKernelUnProcesador() {
 
 int main(void) {
 	pthread_t hiloConsola;
-	pthread_t* arrayDeHilos=NULL;
-	pthread_t* arrayDeHilosPuntero=NULL;
+//	pthread_t hiloMetrics;
+	pthread_t* arrayDeHilos = NULL;
+	pthread_t* arrayDeHilosPuntero = NULL;
 
-	arrayDeHilos = malloc(sizeof(pthread_t)* multiprocesamiento);
+	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
 	iniciarVariablesKernel();
 //	inicioKernelUnProcesador();
 
 	// Hilo de consola
 
-	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
+	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-
-	// Este semaforo es muy importante
+	// Este semaforo es muy importlante
 	sem_wait(&bin_main);
 
 	// Hilo de multiprocesamiento
 
-	for(int i =0; i < multiprocesamiento;i++){
+	for (int i = 0; i < multiprocesamiento; i++) {
 		arrayDeHilosPuntero = arrayDeHilos;
-		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*)iniciarMultiprocesamiento, NULL);
+		pthread_create(&arrayDeHilosPuntero[i], NULL,
+				(void*) iniciarMultiprocesamiento, NULL);
 	}
 
-	for(int i =0; i< multiprocesamiento;i++){
+	for (int i = 0; i < multiprocesamiento; i++) {
 		pthread_detach(arrayDeHilosPuntero[i]);
 	}
 
+	// Hilo de metrics
+//	pthread_create(&hiloMetrics, NULL, (void*) hiloMetrics, NULL);
+//	pthread_detach(hiloMetrics);
 
 	sem_wait(&fin);
-
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
-
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
 	free(arrayDeHilos);
+
+//	destruirMetrica();
 
 	return EXIT_SUCCESS;
 }

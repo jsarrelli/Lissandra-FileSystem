@@ -24,5 +24,8 @@ bool instruccionSeaSalir(char* operacion);
 void hardcodearListaMetadataTabla();
 int contarLineasArchivo(FILE* fichero, char* path);
 void destruirArraySemaforos();
+//void crearMetrica();
+//void destruirMetrica();
+//void borrarInfoMetrics();
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */

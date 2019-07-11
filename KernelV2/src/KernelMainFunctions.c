@@ -125,7 +125,6 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla) {
 }
 
 void agregarRequestAlProceso(procExec* proceso, char* operacion) {
-
 	list_add(proceso->script, operacion);
 }
 
@@ -218,7 +217,6 @@ void* iniciarMultiprocesamiento(void* args) {
 						list_get(proceso->script, cantRequestsEjecutadas));
 				printf(">\n");
 				cantRequestsEjecutadasPorQuantum++;
-
 			}
 
 			// Evaluo condiciones
@@ -377,6 +375,9 @@ infoMemoria* newInfoMemoria() {
 		(memoria->criterios)[i] = false;
 	}
 	memoria->ip = NULL;
+	memoria->cantInsertEjecutados = 0;
+	memoria->cantSelectsEjecutados = 0;
+	memoria->puerto = 0;
 	return memoria;
 }
 

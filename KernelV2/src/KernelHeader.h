@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <unistd.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <semaphore.h>
@@ -47,14 +48,19 @@ typedef enum{
 	SC,
 	SHC,
 	EC,
-	ERROR_CONSISTENCIA
+	ERROR_CONSISTENCIA // Para manejo de errores
 }consistencia;
 
 typedef struct{
 	int id;
 	char*ip;
-//	consistencia ccia;
-	bool criterios[4];
+	int puerto;
+	// Ignorando el comando Metrics y obviamente Select e Insert:
+//	int cantOperacionesEjecutadas[5];
+	int cantSelectsEjecutados;
+	int cantInsertEjecutados;
+	bool criterios[4];	// Considero un caso de error para que se muestre por pantalla
+	// La memoria en si no conoce que criterio tiene, solo el Kernel lo sabe para saber a donde mandar la informacion
 }infoMemoria;
 
 typedef struct{
@@ -84,6 +90,18 @@ typedef enum{
 }estadoProceso;
 
 
+typedef struct{
+	double readLatency;
+	double writeLatency;
+	int reads;
+	int writes;
+	t_list* memoryLoadInsert;
+	t_list* memoryLoadSelect;
+	// Para calculo auxiliar
+	t_list* diferenciaDeTiempoReadLatency;
+	t_list* diferenciaDeTiempoWriteLatency;
+}t_metrics;
+
 // Variables globales
 
 t_queue* colaReady;
@@ -93,6 +111,18 @@ t_list* listaMemorias;
 t_config_kernel *config;
 int quantum;
 int cantRequestsEjecutadas;		// Borrar
+int idMemoria;
+int idHilo;
+int multiprocesamiento;
+int multiprocesamientoUsado;
+int hilosActivos;
+int retardoEjecucion;
+int cantSelects;
+int cantInserts;
+double timestampSelectAlIniciar;
+double timestampSelectAlFinalizar;
+double timestampInsertAlIniciar;
+double timestampInsertAlFinalizar;
 sem_t ejecutarHilos;
 sem_t mutex_colaReadyPOP;
 sem_t mutex_colaReadyPUSH;
@@ -100,16 +130,11 @@ sem_t mutex_id_proceso;
 sem_t bin_main;
 sem_t fin;
 sem_t cantProcesosColaReady;
+sem_t* arraySemaforos; // Borrar
 logStruct* log_master;
-int idMemoria;
 bool haySC;
 bool puedeHaberRequests;
-int idHilo;
-int multiprocesamiento;
-int multiprocesamientoUsado;
-sem_t* arraySemaforos;
-int hilosActivos;
-int retardoEjecucion;
+t_metrics metricas;
 
 
 
@@ -118,10 +143,10 @@ int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
 int cantidadParametros(char ** palabras);
 t_config_kernel *cargarConfig(char *ruta);
-infoMemoria* obtenerMemoriaAlAzar();
 
 
 // Funciones importantes
+infoMemoria* obtenerMemoriaAlAzar();
 void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
 int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla);

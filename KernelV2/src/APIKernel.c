@@ -113,6 +113,11 @@ int consolaAdd(char*argumento) {
 int consolaInsert(char*argumentos) {
 	//	INSERT
 	//[NOMBRE_TABLA] [KEY] “[VALUE]” TIMESTAMP
+
+	metricas.writes++;
+
+	timestampInsertAlIniciar = getCurrentTime();
+
 	char** valores = string_split(argumentos, "\"");
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
@@ -144,10 +149,19 @@ int consolaInsert(char*argumentos) {
 	free(valores[0]);
 	free(valores);
 
+	timestampInsertAlFinalizar = getCurrentTime();
+
+//	double diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
+//
+//	list_add(metricas.diferenciaDeTiempoWriteLatency,
+//			diferencia);
+
 	return TODO_OK;
 }
 
 int consolaSelect(char*argumentos) {
+	metricas.reads++;
+	timestampSelectAlIniciar = getCurrentTime();
 	char** valores = string_split(argumentos, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
@@ -166,6 +180,13 @@ int consolaSelect(char*argumentos) {
 	free(valores[1]);
 	free(nombreTabla);
 	free(valores);
+
+	timestampSelectAlFinalizar = getCurrentTime();
+
+//	double diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
+//
+//	list_add(metricas.diferenciaDeTiempoReadLatency,
+//			diferencia);
 
 	return TODO_OK;
 }
@@ -239,6 +260,23 @@ int consolaCreate(char*argumentos) {
 	free(valores);
 
 	return TODO_OK;
+
+}
+
+void consolaMetrics() {
+
+//	void _imprimirMemoryLoad(int memoryLoad) {
+//		// Imprimir los valores
+//	}
+//
+//	puts("Las metricas son: ");
+//	printf("Read latency: %f\n", metricas.readLatency);
+//	printf("Write latency: %f\n", metricas.writeLatency);
+//	printf("Reads: %d\n", metricas.reads);
+//	printf("Writes: %d\n", metricas.writes);
+//	printf("Memory load de Insert: \n");
+//	list_iterate(metricas.memoryLoadInsert, (void*) _imprimirMemoryLoad);
+//	list_iterate(metricas.memoryLoadSelect, (void*) _imprimirMemoryLoad);
 
 }
 
