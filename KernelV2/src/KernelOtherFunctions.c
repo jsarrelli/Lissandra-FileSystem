@@ -164,7 +164,7 @@ void calcularMetrics() {
 
 	t_list* listaFiltrada;
 	double sumatoria = 0;
-	int tamLista = list_size(metricas.diferenciaDeTiempoReadLatency);
+	double tamLista = list_size(metricas.diferenciaDeTiempoReadLatency);
 
 	if (tamLista != 0) {
 		for (int i = 0; i < tamLista; i++) {
@@ -193,13 +193,13 @@ void calcularMetrics() {
 
 	// Calcular Memory Load
 
-	int cantSelectsEInsertsTotales = cantSelects + cantInserts;
+	double cantSelectsEInsertsTotales = cantSelects + cantInserts;
 
 	void _calcularMemoryLoadUnaMemoria(infoMemoria* memoria) {
-		int cantSelectsEInsertsMemoria = memoria->cantSelectsEjecutados
+		double cantSelectsEInsertsMemoria = memoria->cantSelectsEjecutados
 				+ memoria->cantInsertEjecutados;
 
-		int* memoryLoadMemoria = malloc(sizeof(int));
+		double* memoryLoadMemoria = malloc(sizeof(double));
 		*memoryLoadMemoria = cantSelectsEInsertsMemoria
 				/ cantSelectsEInsertsTotales;
 
