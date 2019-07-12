@@ -126,6 +126,13 @@ void iniciarConsolaKernel() {
 	}
 }
 
+void iniciarHiloDescribe(){
+	while(true){
+		usleep(config->METADATA_REFRESH*1000);
+		consolaDescribe(NULL);
+	}
+}
+
 void inicioKernelUnProcesador() {
 	char* operacion;
 	operacion = readline(">");
@@ -145,6 +152,7 @@ void inicioKernelUnProcesador() {
 int main(void) {
 	pthread_t hiloConsola;
 	pthread_t hiloMetrics;
+	pthread_t hiloDescribe;
 	pthread_t* arrayDeHilos = NULL;
 	pthread_t* arrayDeHilosPuntero = NULL;
 
@@ -157,13 +165,16 @@ int main(void) {
 //	inicioKernelUnProcesador();
 
 	// Hilo de metrics
-	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
-	pthread_detach(hiloMetrics);
+//	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
+//	pthread_detach(hiloMetrics);
 
 	// Hilo de consola
 
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
+
+	pthread_create(&hiloDescribe, NULL, (void*) iniciarHiloDescribe, NULL);
+	pthread_detach(&hiloDescribe);
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
