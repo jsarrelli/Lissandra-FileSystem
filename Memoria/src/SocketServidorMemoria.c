@@ -65,6 +65,7 @@ void procesarAccion(int socketEntrante) {
 				free(datos);
 			}
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
+			log_info(logger, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
 		} else {
 			log_info(logger, "No es ningun proceso valido para Memoria");

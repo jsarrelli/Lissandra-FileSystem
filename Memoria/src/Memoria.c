@@ -35,10 +35,8 @@ int main() {
 //	pthread_detach(intTemporalJournal);
 
 //HILO DE GOSSIPING
-//	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
-//	pthread_detach(intTemporalGossiping);
-
-	gossiping();
+	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
+	pthread_detach(intTemporalGossiping);
 
 	//CONSOLA
 	leerConsola();
@@ -118,6 +116,7 @@ void procesoTemporalJournal() {
 void procesoTemporalGossiping() {
 	while (1) {
 		usleep(configuracion->TIEMPO_GOSSIPING * 1000);
+		log_info(logger, "Descubriendo memorias..");
 		gossiping();
 	}
 
