@@ -14,7 +14,7 @@
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
-	config = cargarConfigKernel((char*) RUTA_CONFIG_KERNEL);
+	cargarConfigKernel();
 
 	crearMetrica();
 

@@ -65,11 +65,22 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 	return NULL;
 }
 
-t_config_kernel *cargarConfigKernel(char *ruta) {
+void freeConfigKernel(){
+	if(config->IP_MEMORIA!=NULL){
+		free(config->IP_MEMORIA);
+	}
+
+	free(config);
+}
+
+void cargarConfigKernel() {
 	log_info(log_master->logInfo, "Levantando archivo de configuracion del proceso Kernel ");
 
-	t_config_kernel* config = malloc(sizeof(t_config_kernel));
-	t_config *kernelConfig = config_create(ruta);
+	if(config!=NULL){
+		freeConfigKernel();
+	}
+	config = malloc(sizeof(t_config_kernel));
+	t_config *kernelConfig = config_create(RUTA_CONFIG_KERNEL);
 
 	if (kernelConfig == NULL) {
 		perror("Error ");
@@ -77,7 +88,7 @@ t_config_kernel *cargarConfigKernel(char *ruta) {
 		log_error(log_master->logError, "Problema al abrir el archivo");
 	}
 
-	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
+	config->IP_MEMORIA = string_duplicate(get_campo_config_string(kernelConfig, "IP_MEMORIA"));
 	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig, "PUERTO_MEMORIA");
 	config->QUANTUM = get_campo_config_int(kernelConfig, "QUANTUM");
 	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig, "MULTIPROCESAMIENTO");
@@ -86,10 +97,9 @@ t_config_kernel *cargarConfigKernel(char *ruta) {
 
 	log_info(log_master->logInfo, "Archivo de configuracion del proceso Kernel levantado ");
 
+	config_destroy(kernelConfig);
 	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
-	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
-
-	return config;
+	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/config/", cargarConfigKernel);
 }
 
 int cantidadParametros(char ** palabras) {

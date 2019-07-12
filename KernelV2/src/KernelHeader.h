@@ -149,7 +149,7 @@ t_metrics metricas;
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
 int cantidadParametros(char ** palabras);
-t_config_kernel *cargarConfigKernel(char *ruta);
+void cargarConfigKernel();
 
 
 // Funciones importantes
@@ -178,5 +178,6 @@ consistencia obtenerConsistenciaDe(char* nombreTabla);
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key);
 void destruirListaMemorias();
 
+void freeConfigKernel();
 
 #endif /* KERNELHEADER_H_ */
