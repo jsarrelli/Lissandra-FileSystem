@@ -1,20 +1,51 @@
-[INFO] 00:59:34:922 LFS Logs/(9073:9073): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 01:52:53:511 LFS Logs/(10239:10239): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 00:59:34:925 LFS Logs/(9073:9073): Levantando archivo de configuracion del proceso LFS 
+[INFO] 01:52:53:523 LFS Logs/(10239:10239): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 00:59:34:930 LFS Logs/(9073:9073): Archivo de configuracion del proceso LFS levantado 
+[INFO] 01:52:53:543 LFS Logs/(10239:10239): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 00:59:35:45 LFS Logs/(9073:9073): El tamanio del bitmap es de 3000 bits
-[INFO] 00:59:35:46 LFS Logs/(9073:9073): Levantando tablas ya existentes..
-[INFO] 00:59:46:179 LFS Logs/(9073:9073): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
-[INFO] 00:59:46:180 LFS Logs/(9073:9073): Filtrando registros..
-[INFO] 00:59:46:189 LFS Logs/(9073:9073): Filtrado completo
-[INFO] 00:59:46:192 LFS Logs/(9073:9073): Filtrando registros..
-[INFO] 00:59:46:193 LFS Logs/(9073:9073): Filtrado completo
-[INFO] 00:59:46:193 LFS Logs/(9073:9073): Select a key 761
-[INFO] 01:00:02:560 LFS Logs/(9073:9073): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
-[INFO] 01:00:02:561 LFS Logs/(9073:9073): Filtrando registros..
-[INFO] 01:00:02:562 LFS Logs/(9073:9073): Filtrado completo
-[INFO] 01:00:02:562 LFS Logs/(9073:9073): Filtrando registros..
-[INFO] 01:00:02:563 LFS Logs/(9073:9073): Filtrado completo
-[INFO] 01:00:02:564 LFS Logs/(9073:9073): Select a key 1
+[INFO] 01:52:54:191 LFS Logs/(10239:10239): El tamanio del bitmap es de 3000 bits
+[INFO] 01:52:54:194 LFS Logs/(10239:10239): Levantando tablas ya existentes..
+[INFO] 01:53:00:562 LFS Logs/(10239:10239): Se creo la tabla: TABLA en LFS
+
+[INFO] 01:53:00:720 LFS Logs/(10239:10239): Metadata de TABLA creada
+
+[INFO] 01:53:06:84 LFS Logs/(10239:10239): Insert de 1;WWW en TABLA realizado en memtable
+[INFO] 01:53:12:575 LFS Logs/(10239:10239): Insert de 666;HHHHH en TABLA realizado en memtable
+[INFO] 01:53:19:216 LFS Logs/(10239:10239): Insert de 332;DDDD en TABLA realizado en memtable
+[INFO] 01:53:25:841 LFS Logs/(10239:10239): Insert de 888;FFF en TABLA realizado en memtable
+[INFO] 01:53:28:66 LFS Logs/(10239:10239): Compactando tabla: TABLA
+[INFO] 01:53:28:73 LFS Logs/(10239:10239): Modificando tmp a tmpc..
+[INFO] 01:53:28:75 LFS Logs/(10239:10239): Obteniendo directorios de archivos binarios..
+[INFO] 01:53:28:82 LFS Logs/(10239:10239): Se cambio la extension de los temporales
+[INFO] 01:53:28:89 LFS Logs/(10239:10239): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 01:53:28:95 LFS Logs/(10239:10239): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
+[INFO] 01:53:28:101 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:53:28:102 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:53:28:107 LFS Logs/(10239:10239): Mergeando registros viejos con nuevos
+[INFO] 01:53:28:113 LFS Logs/(10239:10239): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 01:53:28:113 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:53:28:114 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:53:28:114 LFS Logs/(10239:10239): Bloque 0 liberado
+[INFO] 01:53:28:220 LFS Logs/(10239:10239): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
+[INFO] 01:53:28:221 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:53:28:221 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:53:28:222 LFS Logs/(10239:10239): Bloque 1 liberado
+[INFO] 01:53:28:263 LFS Logs/(10239:10239): Bloque 2 liberado
+[INFO] 01:53:28:263 LFS Logs/(10239:10239): Bloque 3 liberado
+[INFO] 01:53:28:268 LFS Logs/(10239:10239): Compactacion de <TABLA> exitosa
+[INFO] 01:54:34:255 LFS Logs/(10239:10239): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
+[INFO] 01:54:34:259 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:54:34:259 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:54:34:260 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:54:34:260 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:54:34:262 LFS Logs/(10239:10239): Select a key 1
+[INFO] 01:54:54:126 LFS Logs/(10239:10239): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 01:54:54:130 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:54:54:131 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:54:54:132 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:54:54:133 LFS Logs/(10239:10239): Filtrado completo
+[INFO] 01:54:54:135 LFS Logs/(10239:10239): Select a key 888
+[INFO] 01:55:07:540 LFS Logs/(10239:10239): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
+[INFO] 01:55:07:543 LFS Logs/(10239:10239): Filtrando registros..
+[INFO] 01:55:07:544 LFS Logs/(10239:10239): Filtrado completo

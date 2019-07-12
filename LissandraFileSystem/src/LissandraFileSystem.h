@@ -13,13 +13,14 @@
 #include <Sockets/Serializacion.h>
 #include <Sockets/Conexiones.h>
 #include <commons/config.h>
-
+#include <semaphore.h>
 #include "EstructurasFileSystem.h"
 #include "FileSystem.h"
 #include "funcionesLFS.h"
 #include "ApiLFS.h"
 #include "AdministradorConsultasLFS.h"
 #include "Inotify.h"
+
 
 pthread_t dumpThread;
 pthread_t serverThread;
@@ -31,5 +32,8 @@ bool finProceso;
 void cargarConfig();
 void freeConfig();
 void iniciarSocketServidor();
+
+sem_t mutexCompactacion;
+sem_t mutexEscrituraBloques;
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

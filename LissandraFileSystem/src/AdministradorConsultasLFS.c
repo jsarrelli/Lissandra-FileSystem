@@ -31,7 +31,10 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
 	crearYEscribirArchivosTemporales(rutas.Tablas);
+
+	//sem_wait(&mutexCompactacion);
 	compactarTabla("TABLA");
+	//sem_post(&mutexCompactacion);
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
