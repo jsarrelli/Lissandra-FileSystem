@@ -9,6 +9,7 @@
 
 void compactarTabla(char*nombreTabla) {
 
+	pthread_mutex_lock(&mutexCompactacion);
 	log_info(logger, "Compactando tabla: %s", nombreTabla);
 	log_info(logger, "Modificando tmp a tmpc..");
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
@@ -41,6 +42,7 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
 	log_info(logger, "Compactacion de <%s> exitosa", nombreTabla);
+	pthread_mutex_unlock(&mutexCompactacion);
 }
 
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {

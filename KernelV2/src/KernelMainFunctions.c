@@ -65,10 +65,27 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 	return NULL;
 }
 
-void cargarConfigKernel() {
-	log_info(log_master->logInfo,
-			"Levantando archivo de configuracion del proceso Kernel ");
+//<<<<<<< HEAD
+//void cargarConfigKernel() {
+//	log_info(log_master->logInfo,
+//			"Levantando archivo de configuracion del proceso Kernel ");
+//
+//=======
+void freeConfigKernel(){
+	if(config->IP_MEMORIA!=NULL){
+		free(config->IP_MEMORIA);
+	}
 
+	free(config);
+}
+
+void cargarConfigKernel() {
+	log_info(log_master->logInfo, "Levantando archivo de configuracion del proceso Kernel ");
+
+	if(config!=NULL){
+		freeConfigKernel();
+	}
+//>>>>>>> d47fbace383f93ecea3aa5815e4b57dce5ca6366
 	config = malloc(sizeof(t_config_kernel));
 	t_config *kernelConfig = config_create(RUTA_CONFIG_KERNEL);
 
@@ -77,7 +94,7 @@ void cargarConfigKernel() {
 		log_error(log_master->logError, "Problema al abrir el archivo");
 	}
 
-	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
+	config->IP_MEMORIA = string_duplicate(get_campo_config_string(kernelConfig, "IP_MEMORIA"));
 	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig, "PUERTO_MEMORIA");
 	config->QUANTUM = get_campo_config_int(kernelConfig, "QUANTUM");
 	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig, "MULTIPROCESAMIENTO");
@@ -86,8 +103,14 @@ void cargarConfigKernel() {
 
 	log_info(log_master->logInfo, "Archivo de configuracion del proceso Kernel levantado ");
 
-	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
-	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
+//<<<<<<< HEAD
+//	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
+//	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
+//=======
+	config_destroy(kernelConfig);
+	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
+	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/config/", cargarConfigKernel);
+//>>>>>>> d47fbace383f93ecea3aa5815e4b57dce5ca6366
 }
 
 int cantidadParametros(char ** palabras) {

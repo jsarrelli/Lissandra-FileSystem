@@ -27,6 +27,8 @@ void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int
 
 	segmentos = list_create();
 	inicializarEstadoMemoria();
+	//recemosle a Dios y a la virgen
+	pthread_mutex_init(&lock, NULL);
 }
 
 Segmento* newSegmento(char* nombreSegmento) {

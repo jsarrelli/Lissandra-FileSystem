@@ -172,6 +172,7 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
 	if (paquete.header.tipoMensaje == NOTFOUND) {
+		free(paquete.mensaje);
 		return NULL;
 	}
 	char*registroAux = string_duplicate(paquete.mensaje);

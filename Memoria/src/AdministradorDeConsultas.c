@@ -10,6 +10,7 @@
 t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 
 	//si aca el segmento no existe en ningun lado, lo tengo que crear?
+	usleep(configuracion->RETARDO_MEMORIA*1000);
 	Segmento* tabla = buscarSegmento(nombreTabla);
 	if (tabla != NULL) {
 		Pagina* pagina = buscarPagina(tabla, key);
@@ -22,6 +23,7 @@ t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 
 t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeStamp) {
 	validarValueMaximo(value);
+	usleep(configuracion->RETARDO_MEMORIA*1000);
 	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
 	if (tabla == NULL) {
 		tabla = insertarSegmentoEnMemoria(nombreTabla);
@@ -36,6 +38,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 }
 
 int DROP_MEMORIA(char* nombreTabla) {
+	usleep(configuracion->RETARDO_MEMORIA*1000);
 	Segmento* segmentoEnMemoria = buscarSegmentoEnMemoria(nombreTabla);
 	if (segmentoEnMemoria != NULL) {
 		eliminarSegmentoDeMemoria(segmentoEnMemoria);
@@ -59,6 +62,7 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 	int succes = enviarCreateAFileSystem(metaData, nombreTabla);
 	free(metaData);
 	if (succes == 0) {
+		usleep(configuracion->RETARDO_MEMORIA*1000);
 		insertarSegmentoEnMemoria(nombreTabla);
 		printf("Se ha creado la tabla %s \n \n", nombreTabla);
 
@@ -107,5 +111,7 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 }
 
 void JOURNAL_MEMORIA(){
+	pthread_mutex_lock(&lock);
 	journalMemoria();
+	pthread_mutex_unlock(&lock);
 }

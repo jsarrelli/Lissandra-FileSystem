@@ -178,5 +178,6 @@ consistencia obtenerConsistenciaDe(char* nombreTabla);
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key);
 void destruirListaMemorias();
 
+void freeConfigKernel();
 
 #endif /* KERNELHEADER_H_ */

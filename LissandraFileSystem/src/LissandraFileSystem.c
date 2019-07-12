@@ -68,16 +68,19 @@ int main(void) {
 
 	//INICIALIZAMOS LOS SEMAFOROS
 
-	sem_init(&mutexEscrituraBloques, 0, 1);
-	sem_init(&mutexCompactacion, 0,1);
+	pthread_mutex_init(&mutexCompactacion, NULL);
+	pthread_mutex_init(&mutexDump, NULL);
+	pthread_mutex_init(&mutexEscrituraBloque, NULL);
+//	sem_init(&mutexDump, 0, 1);
+//	sem_init(&mutexCompactacion, 0,1);
 
 	//HILO ESCUCHA SERVIDOR
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, NULL);
 	pthread_detach(serverThread);
 
 	//HILO DUMP
-//	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
-//	pthread_detach(dumpThread);
+	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
+	pthread_detach(dumpThread);
 
 	consolaLFS();
 	pthread_kill(serverThread,SIGUSR1);
@@ -85,6 +88,9 @@ int main(void) {
 	vaciarMemtable();
 	freeConfig();
 	bitarray_destroy(bitmap);
+	pthread_mutex_destroy(&mutexCompactacion);
+	pthread_mutex_destroy(&mutexDump);
+	pthread_mutex_destroy(&mutexEscrituraBloque);
 	return EXIT_SUCCESS;
 }
 

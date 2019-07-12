@@ -77,8 +77,10 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 void procesoDump() {
 	pthread_t threadDump;
 	while (1) {
+		pthread_mutex_lock(&mutexDump);
 		usleep(config->TIEMPO_DUMP * 1000);
 		pthread_create(&threadDump, NULL, (void*) crearYEscribirArchivosTemporales, rutas.Tablas);
 		pthread_detach(threadDump);
+		pthread_mutex_unlock(&mutexDump);
 	}
 }
