@@ -66,7 +66,7 @@ char* get_campo_config_string(t_config* archivo_configuracion,
 	return NULL;
 }
 
-t_config_kernel *cargarConfig(char *ruta) {
+t_config_kernel *cargarConfigKernel(char *ruta) {
 	log_info(log_master->logInfo,
 			"Levantando archivo de configuracion del proceso Kernel ");
 
@@ -94,6 +94,7 @@ t_config_kernel *cargarConfig(char *ruta) {
 			"Archivo de configuracion del proceso Kernel levantado ");
 
 	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
+	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
 
 	return config;
 }
@@ -106,10 +107,10 @@ int cantidadParametros(char ** palabras) {
 	return i - 1;
 }
 
-int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo) {
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
-	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
 	if (memoriaAEnviar != NULL) {
 
@@ -170,12 +171,12 @@ void otorgarId(bool* tieneID) {
 
 }
 
-void desbloquearHilos() {
-	int tamCola = queue_size(colaReady);
-	if (tamCola <= multiprocesamiento)
-		for (int i = 0; i < tamCola; i++)
-			sem_post(&arraySemaforos[i]);
-}
+//void desbloquearHilos() {
+//	int tamCola = queue_size(colaReady);
+//	if (tamCola <= multiprocesamiento)
+//		for (int i = 0; i < tamCola; i++)
+//			sem_post(&arraySemaforos[i]);
+//}
 
 bool interrupcionPorEstado(estadoProceso estado) {
 	return estado == ERROR;

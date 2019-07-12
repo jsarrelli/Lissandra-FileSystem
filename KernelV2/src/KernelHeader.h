@@ -17,6 +17,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <semaphore.h>
+#include <Inotify.h>
 #include <commons/string.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
@@ -31,7 +32,7 @@
 #define INFO_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/infoKernel.log"
 #define ERRORES_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/erroresKernel.log"
 #define TRACE_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/tracesKernel.log"
-#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/configKernel.cfg"
+#define RUTA_CONFIG_KERNEL "/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/config/configKernel.cfg"
 
 // Para el manejo de errores
 
@@ -135,7 +136,7 @@ sem_t mutex_id_proceso;
 sem_t bin_main;
 sem_t fin;
 sem_t cantProcesosColaReady;
-sem_t* arraySemaforos; // Borrar
+//sem_t* arraySemaforos; // Borrar
 logStruct* log_master;
 bool haySC;
 bool puedeHaberRequests;
@@ -147,14 +148,14 @@ t_metrics metricas;
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
 int cantidadParametros(char ** palabras);
-t_config_kernel *cargarConfig(char *ruta);
+t_config_kernel *cargarConfigKernel(char *ruta);
 
 
 // Funciones importantes
 infoMemoria* obtenerMemoriaAlAzar();
 void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
-int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo);
+int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();

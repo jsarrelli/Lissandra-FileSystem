@@ -14,6 +14,7 @@
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
+	config = cargarConfigKernel((char*) RUTA_CONFIG_KERNEL);
 
 	crearMetrica();
 
@@ -31,8 +32,6 @@ void iniciarVariablesKernel() {
 	idMemoria = 1;
 
 	srand(time(NULL));
-
-	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
 
 	colaReady = queue_create();
 	listaHilos = list_create();
@@ -63,13 +62,13 @@ void iniciarVariablesKernel() {
 
 //	crearMetrica();
 
-	if (multiprocesamiento != 0) {
-		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
-
-		for (int i = 0; i < multiprocesamiento; i++) {
-			sem_init(&arraySemaforos[i], 0, 0);
-		}
-	}
+//	if (multiprocesamiento != 0) {
+//		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
+//
+//		for (int i = 0; i < multiprocesamiento; i++) {
+//			sem_init(&arraySemaforos[i], 0, 0);
+//		}
+//	}
 
 }
 

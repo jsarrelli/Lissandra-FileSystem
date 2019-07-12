@@ -112,12 +112,12 @@ int contarLineasArchivo(FILE* fichero, char* path) {
 	return num_lineas + 1;
 }
 
-void destruirArraySemaforos() {
-	for (int i = 0; i < multiprocesamiento; i++)
-		sem_destroy(&arraySemaforos[i]);
-
-	free(arraySemaforos);
-}
+//void destruirArraySemaforos() {
+//	for (int i = 0; i < multiprocesamiento; i++)
+//		sem_destroy(&arraySemaforos[i]);
+//
+//	free(arraySemaforos);
+//}
 
 int instruccionSeaMetrics(char* operacion) {
 	return strcmp(operacion, "METRICS") == 0;

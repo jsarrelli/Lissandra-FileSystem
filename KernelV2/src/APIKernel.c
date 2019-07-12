@@ -137,7 +137,11 @@ int consolaInsert(char*argumentos) {
 			"El nombre de la tabla es: %s, su key es %s, y su value es: %s",
 			nombreTabla, key, value);
 
-	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT);
+	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT, memoriaAEnviar);
+
+
+
 
 	// Esto es para las metrics
 	timestampInsertAlFinalizar = getCurrentTime();
@@ -148,6 +152,10 @@ int consolaInsert(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
 
 	cantInserts++;
+
+
+
+
 
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
@@ -180,10 +188,12 @@ int consolaSelect(char*argumentos) {
 	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
 	// es un value
 
-	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT) == SUPER_ERROR)
+	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR)
 		return SUPER_ERROR;
 
-//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+	printf("Aca falta colocar las sockets\n");
 
 	free(valores[1]);
 	free(nombreTabla);
@@ -226,8 +236,9 @@ int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) 
 	return ERROR;
 }
 
+
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
-		char* consistenciaChar) {
+		char* consistenciaChar, infoMemoria* memoria) {
 
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
@@ -239,18 +250,22 @@ int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 	return TODO_OK;
 }
 
+
 void enviarJournalMemoria(int socketMemoria) {
 	log_trace(log_master->logTrace, "Comando JOURNAL enviado a Memoria");
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
 }
 
-void consolaJournal() {
+
+int consolaJournal() {
+	return SUPER_ERROR;
 //
 //	void journalMemoria(infoMemoria* memoria){
 //		int socketMemoria= ConectarAServidor(memoria., ip)
 //	}
 //	list_iterate(listaMemorias, journalMemoria);
 }
+
 
 int consolaCreate(char*argumentos) {
 	char** valores = string_split(argumentos, " ");
@@ -265,11 +280,11 @@ int consolaCreate(char*argumentos) {
 
 	// En el caso del CREATE, como el de muchas otras funciones, se le manda la info a una memoria al azar y no recibe respuesta
 
-//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
-	obtenerMemoriaAlAzarParaFunciones();
+	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
+//	obtenerMemoriaAlAzarParaFunciones();
 
 	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla,
-			consistenciaChar) == SUPER_ERROR)
+			consistenciaChar, memoriaAlAzar) == SUPER_ERROR)
 		return SUPER_ERROR;
 
 	free(valores[3]);
@@ -281,6 +296,7 @@ int consolaCreate(char*argumentos) {
 	return TODO_OK;
 
 }
+
 
 void deserealizarYMostrarMetadata(Paquete* paquete) {
 	char* mensaje = malloc(paquete->header.tamanioMensaje + 1);
@@ -301,6 +317,7 @@ void deserealizarYMostrarMetadata(Paquete* paquete) {
 	free(nombreTabla);
 }
 
+
 int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
 	int estadoRecibir = 0;
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
@@ -318,6 +335,7 @@ int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
 	return TODO_OK;
 }
 
+
 int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 	log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
 	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1,
@@ -334,8 +352,9 @@ int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 	return TODO_OK;
 }
 
+
 int consolaDescribe(char*nombreTabla) {
-	obtenerMemoriaAlAzarParaFunciones();
+	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
 	Paquete paquete;
@@ -353,6 +372,7 @@ int consolaDescribe(char*nombreTabla) {
 	return TODO_OK;
 }
 
+
 void mostrarMetadata(char* nombreTabla, t_metadata_tabla* metadata) {
 
 	log_info(log_master->logInfo, "Segmento: %s", nombreTabla);
@@ -361,6 +381,7 @@ void mostrarMetadata(char* nombreTabla, t_metadata_tabla* metadata) {
 			getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
 }
+
 
 t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 	char* mensaje = malloc(paquete->header.tamanioMensaje + 1);
@@ -380,6 +401,7 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 	return metadata;
 }
 
+
 int consolaDrop(char*nombreTabla) {
 	if (nombreTabla != NULL)
 		log_trace(log_master->logTrace, "Se desea elminar la tabla %s",
@@ -390,8 +412,8 @@ int consolaDrop(char*nombreTabla) {
 		return SUPER_ERROR;
 	}
 
-//	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
-	obtenerMemoriaAlAzarParaFunciones();
+	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
+//	obtenerMemoriaAlAzarParaFunciones();
 
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
@@ -402,6 +424,7 @@ int consolaDrop(char*nombreTabla) {
 
 	return TODO_OK;
 }
+
 
 int consolaRun(char*path) {
 	FILE* fd = NULL;
@@ -435,6 +458,7 @@ int consolaRun(char*path) {
 	}
 	return TODO_OK;
 }
+
 
 void consolaSALIR(char*nada) {
 	log_trace(log_master->logTrace, "Finalizando consola");
