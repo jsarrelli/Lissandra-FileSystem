@@ -71,15 +71,11 @@ int procesarInputKernel(char* linea) {
 }
 
 int procesarAdd(int id, consistencia cons) {
-	bool condicionAdd(int id, infoMemoria* memoria) {
+	bool findById(infoMemoria* memoria) {
 		return id == memoria->id;
 	}
-	bool _esCondicionAdd(void* memoria) {
-		return condicionAdd(id, memoria);
-	}
-
-	infoMemoria* memoriaEncontrada = NULL;
-	if ((memoriaEncontrada = list_find(listaMemorias, _esCondicionAdd)) != NULL) {
+	infoMemoria* memoriaEncontrada = list_find(listaMemorias, (void*)findById);
+	if (memoriaEncontrada != NULL) {
 		asignarCriterioMemoria(memoriaEncontrada, cons);
 
 		if (!(memoriaEncontrada->criterios)[3])
@@ -95,7 +91,7 @@ int procesarAdd(int id, consistencia cons) {
 }
 
 int consolaAdd(char*argumento) {
-	char* argumentoAux= string_duplicate(argumento);
+	char* argumentoAux = string_duplicate(argumento);
 	char** valores = string_split(argumento, " ");
 	consistencia cons = procesarConsistencia(valores[1]);
 
