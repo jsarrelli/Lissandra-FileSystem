@@ -116,6 +116,7 @@ void procesoTemporalJournal() {
 void procesoTemporalGossiping() {
 	while (1) {
 		usleep(configuracion->TIEMPO_GOSSIPING * 1000);
+		log_info(logger, "Descubriendo memorias..");
 		gossiping();
 	}
 
