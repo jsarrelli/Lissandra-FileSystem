@@ -26,7 +26,7 @@ int contarLineasArchivo(FILE* fichero, char* path);
 void destruirArraySemaforos();
 int instruccionSeaMetrics(char* operacion);
 void crearMetrica();
-void destruirMetrica();
+void destruirMetrics();
 void reiniciarMetrics();
 void calcularMetrics();
 void imprimirMetrics();

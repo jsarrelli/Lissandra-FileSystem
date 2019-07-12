@@ -134,10 +134,10 @@ void crearMetrica() {
 	hayMetricas = true;
 }
 
-void destruirMetrica() {
-	list_destroy(metricas.diferenciaDeTiempoReadLatency);
-	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
-	list_destroy(metricas.memoryLoadMemorias);
+void destruirMetrics() {
+	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoReadLatency, free);
+	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoWriteLatency, free);
+	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
 void reiniciarMetrics() {
@@ -215,13 +215,13 @@ void calcularMetrics() {
 		listaFiltrada = list_filter(listaMemorias, _hizoSelectOInsert);
 		list_iterate(listaFiltrada, (void*) _calcularMemoryLoadUnaMemoria);
 
-		tamLista = list_size(metricas.memoryLoadMemorias);
-		for (int i = 0; i < tamLista; i++) {
-			double* elemento = (double*) list_get(metricas.memoryLoadMemorias,
-					i);
-			double elemento2 = *elemento;
-			metricas.memoryLoad += elemento2;
-		}
+//		tamLista = list_size(metricas.memoryLoadMemorias);
+//		for (int i = 0; i < tamLista; i++) {
+//			double* elemento = (double*) list_get(metricas.memoryLoadMemorias,
+//					i);
+//			double elemento2 = *elemento;
+//			metricas.memoryLoad += elemento2;
+//		}
 
 		list_destroy(listaFiltrada);
 
@@ -236,6 +236,6 @@ void imprimirMetrics() {
 	log_info(log_master->logInfo, "Write latency: %f", metricas.writeLatency);
 	log_info(log_master->logInfo, "Reads: %f", metricas.reads);
 	log_info(log_master->logInfo, "Writes: %f", metricas.writes);
-	log_info(log_master->logInfo, "Memory load: %f\n", metricas.memoryLoad);
+//	log_info(log_master->logInfo, "Memory load: %f\n", metricas.memoryLoad);
 
 }
