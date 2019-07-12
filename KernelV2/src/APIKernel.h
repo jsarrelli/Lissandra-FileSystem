@@ -26,6 +26,7 @@ int consolaCreate(char*argumentos);
 int consolaDescribe(char*nombreTabla);
 int consolaDrop(char*nombreTabla);
 int consolaRun(char*path);
+int consolaJournal();
 void consolaSALIR(char*nada);
 
 

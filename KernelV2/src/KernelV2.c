@@ -151,6 +151,9 @@ int main(void) {
 	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
 	iniciarVariablesKernel();
+	if(conocerMemorias()==-1){
+		return EXIT_FAILURE;
+	}
 //	inicioKernelUnProcesador();
 
 	// Hilo de metrics

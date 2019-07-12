@@ -55,8 +55,7 @@ int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo) {
 	return (int) NULL;
 }
 
-char* get_campo_config_string(t_config* archivo_configuracion,
-		char* nombre_campo) {
+char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo) {
 	char* valor;
 	if (config_has_property(archivo_configuracion, nombre_campo)) {
 		valor = config_get_string_value(archivo_configuracion, nombre_campo);
@@ -67,8 +66,7 @@ char* get_campo_config_string(t_config* archivo_configuracion,
 }
 
 t_config_kernel *cargarConfigKernel(char *ruta) {
-	log_info(log_master->logInfo,
-			"Levantando archivo de configuracion del proceso Kernel ");
+	log_info(log_master->logInfo, "Levantando archivo de configuracion del proceso Kernel ");
 
 	t_config_kernel* config = malloc(sizeof(t_config_kernel));
 	t_config *kernelConfig = config_create(ruta);
@@ -80,18 +78,13 @@ t_config_kernel *cargarConfigKernel(char *ruta) {
 	}
 
 	config->IP_MEMORIA = get_campo_config_string(kernelConfig, "IP_MEMORIA");
-	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig,
-			"PUERTO_MEMORIA");
+	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig, "PUERTO_MEMORIA");
 	config->QUANTUM = get_campo_config_int(kernelConfig, "QUANTUM");
-	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig,
-			"MULTIPROCESAMIENTO");
-	config->METADATA_REFRESH = get_campo_config_int(kernelConfig,
-			"METADATA_REFRESH");
-	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig,
-			"SLEEP_EJECUCION");
+	config->MULTIPROCESAMIENTO = get_campo_config_int(kernelConfig, "MULTIPROCESAMIENTO");
+	config->METADATA_REFRESH = get_campo_config_int(kernelConfig, "METADATA_REFRESH");
+	config->SLEEP_EJECUCION = get_campo_config_int(kernelConfig, "SLEEP_EJECUCION");
 
-	log_info(log_master->logInfo,
-			"Archivo de configuracion del proceso Kernel levantado ");
+	log_info(log_master->logInfo, "Archivo de configuracion del proceso Kernel levantado ");
 
 	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
@@ -123,11 +116,9 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 
 		log_trace(log_master->logTrace, "Los datos obtenidos son:");
 		imprimirCriterio(memoriaAEnviar->criterios);
-		log_trace(log_master->logTrace, "Id de la memoria: %d",
-				memoriaAEnviar->id);
+		log_trace(log_master->logTrace, "Id de la memoria: %d", memoriaAEnviar->id);
 	} else {
-		log_error(log_master->logError,
-				"Error: no existe memoria con ese criterio o todavia no hay memorias con el criterio de la tabla");
+		log_error(log_master->logError, "Error: no existe memoria con ese criterio o todavia no hay memorias con el criterio de la tabla");
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
@@ -217,44 +208,37 @@ void* iniciarMultiprocesamiento(void* args) {
 			// Lo hago por un for y list_get en vez de list_itearate porque necesito varias condiciones
 
 			for (cantRequestsEjecutadas = proceso->contadorRequests;
-					estado == OK && cantRequestsEjecutadas < cantRequestsProceso
-							&& cantRequestsEjecutadasPorQuantum < quantum;
+					estado == OK && cantRequestsEjecutadas < cantRequestsProceso && cantRequestsEjecutadasPorQuantum < quantum;
 					cantRequestsEjecutadas++) {
 
 				usleep(retardoEjecucion * 1000);
-				estado = procesarInputKernel(
-						list_get(proceso->script, cantRequestsEjecutadas));
+				estado = procesarInputKernel(list_get(proceso->script, cantRequestsEjecutadas));
 				cantRequestsEjecutadasPorQuantum++;
 			}
 
 			// Evaluo condiciones
 
-			if (!interrupcionPorEstado(estado)
-					&& cantRequestsEjecutadas == cantRequestsProceso) {
+			if (!interrupcionPorEstado(estado) && cantRequestsEjecutadas == cantRequestsProceso) {
 
 				if (cantRequestsEjecutadasPorQuantum == quantum) {
 //					usleep(retardoEjecucion * 1000);
-					log_info(log_master->logInfo,
-							"Llega a fin de quantum.\nDesalojando");
+					log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
 				}
 				cantRequestsEjecutadasPorQuantum = 0;
 				destruirProceso(proceso);
 
 			}
-			if (!interrupcionPorEstado(estado)
-					&& cantRequestsEjecutadasPorQuantum == quantum
+			if (!interrupcionPorEstado(estado) && cantRequestsEjecutadasPorQuantum == quantum
 					&& cantRequestsEjecutadas < cantRequestsProceso) {
 
-				log_info(log_master->logInfo,
-						"Llega a fin de quantum.\nDesalojando");
+				log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
 				usleep(retardoEjecucion * 1000);
 				deNewAReady(proceso);
 			}
 			if (interrupcionPorEstado(estado)) {
-				log_error(log_master->logError,
-						"Error: Una request no se pudo cumplir");
+				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
 				destruirProceso(proceso);
 				printf(">\n");
 			}
@@ -273,12 +257,9 @@ void ejecutarProcesos() {
 }
 
 void inicializarLogStruct() {
-	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
-			LOG_LEVEL_INFO);
-	log_master->logError = log_create((char*) ERRORES_KERNEL,
-			"Kernel Error Logs", 1, LOG_LEVEL_ERROR);
-	log_master->logTrace = log_create((char*) TRACE_KERNEL, "Kernel Trace Logs",
-			1, LOG_LEVEL_TRACE);
+	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
+	log_master->logError = log_create((char*) ERRORES_KERNEL, "Kernel Error Logs", 1, LOG_LEVEL_ERROR);
+	log_master->logTrace = log_create((char*) TRACE_KERNEL, "Kernel Trace Logs", 1, LOG_LEVEL_TRACE);
 }
 
 infoMemoria* obtenerMemoriaAlAzar() {
@@ -291,8 +272,7 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 	infoMemoria* memoriaAlAzar = NULL;
 
 	memoriaAlAzar = obtenerMemoriaAlAzar();
-	log_trace(log_master->logTrace, "El id de la memoria obtenida es: %d",
-			memoriaAlAzar->id);
+	log_trace(log_master->logTrace, "El id de la memoria obtenida es: %d", memoriaAlAzar->id);
 
 	return memoriaAlAzar;
 }
@@ -300,8 +280,7 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
 
-	if (consistenciaDeTabla == ERROR_CONSISTENCIA)
-	{
+	if (consistenciaDeTabla == ERROR_CONSISTENCIA) {
 		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe o error en la consistencia");
 	}
 //		return NULL;
@@ -317,8 +296,7 @@ consistencia obtenerConsistenciaDe(char* nombreTabla) {
 		return _condicion(metadata, nombreTabla);
 	}
 	metadataTablas* metadata = NULL;
-	metadata = list_find((t_list*) listaMetadataTabla,
-			condicionObtenerConsistencia);
+	metadata = list_find((t_list*) listaMetadataTabla, condicionObtenerConsistencia);
 
 	if (metadata == NULL)
 		return ERROR_CONSISTENCIA;
@@ -326,8 +304,7 @@ consistencia obtenerConsistenciaDe(char* nombreTabla) {
 	return metadata->consistencia;
 }
 
-infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla,
-		int key) {
+infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key) {
 	t_list* memoriasEncontradas = NULL;
 	infoMemoria* memoriaPosta = NULL;
 
@@ -337,8 +314,7 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla,
 	bool condicionParaEncontrarMemorias(void* memoria) {
 		return _condicion(memoria, consistenciaDeTabla);
 	}
-	memoriasEncontradas = list_filter(listaMemorias,
-			condicionParaEncontrarMemorias);
+	memoriasEncontradas = list_filter(listaMemorias, condicionParaEncontrarMemorias);
 
 	switch (consistenciaDeTabla) {
 	case SC:
@@ -351,8 +327,7 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla,
 		memoriaPosta = resolverAlAzar(memoriasEncontradas);
 		break;
 	default:
-		log_error(log_master->logError,
-				"Error: en obtenerMemoriaSegunConsistencia");
+		log_error(log_master->logError, "Error: en obtenerMemoriaSegunConsistencia");
 	}
 	list_destroy(memoriasEncontradas);
 	return memoriaPosta;
@@ -410,5 +385,29 @@ void crearProcesoYMandarloAReady(char* operacion) {
 	procExec* proceso = newProceso();
 	agregarRequestAlProceso(proceso, operacion);
 	deNewAReady(proceso);
+}
+
+int conocerMemorias() {
+	log_info(log_master->logInfo, "Descubriendo memorias..");
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	if (socketMemoria == -1) {
+		log_error(log_master->logError, "Nuestra memoria seed no esta conectada");
+		return -1;
+	}
+	listaMemorias = list_create();
+
+	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, TABLA_GOSSIPING);
+	Paquete paquete;
+	while (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
+
+		char** response = string_split(paquete.mensaje, " ");
+		infoMemoria* memoriaConocida = malloc(sizeof(infoMemoria));
+		memoriaConocida->ip = string_duplicate(response[0]);
+		memoriaConocida->puerto = atoi(response[1]);
+		list_add(listaMemorias, memoriaConocida);
+		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d",memoriaConocida->ip,memoriaConocida->puerto);
+		free(paquete.mensaje);
+	}
+	return 0;
 }
 

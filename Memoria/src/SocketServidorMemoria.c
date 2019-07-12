@@ -60,10 +60,6 @@ void procesarAccion(int socketEntrante) {
 				JOURNAL_MEMORIA();
 				break;
 			}
-
-			if(datos!=NULL){
-				free(datos);
-			}
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(logger, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
@@ -83,8 +79,8 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 	t_registro* registro = procesarSELECT(request);
 
 	if (registro != NULL) {
-		char response[100];
-		sprintf(response, "%d %s %f", registro->key, registro->value, registro->timestamp);
+		char* response = string_new();
+		string_append_with_format(&response, "%d \"%s\" %f", registro->key, registro->value, registro->timestamp);
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, SELECT);
 	} else {
 		enviarSuccess(1, SELECT, socketKernel);
@@ -149,7 +145,7 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 	Paquete paquete;
 	while (true) {
 		RecibirPaqueteServidor(socketMemoria, MEMORIA, &paquete);
-		if(strcmp(paquete.mensaje,"fin")==0){
+		if (strcmp(paquete.mensaje, "fin") == 0) {
 			free(paquete.mensaje);
 			break;
 		}
@@ -163,10 +159,12 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 }
 
 void procesarRequestTABLA_GOSSIPING(int socketKernel) {
+	log_info(logger, "Request tabla gossiping recibida de Kernel");
 	void enviarMemoria(t_memoria* memoria) {
-		char response[20];
-		scanf(response, "%s %s", memoria->ip, memoria->puerto);
+		char* response = string_new();
+		string_append_with_format(&response, "%s %s", memoria->ip, memoria->puerto);
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, TABLA_GOSSIPING);
+		free(response);
 	}
 
 	list_iterate(tablaGossiping, (void*) enviarMemoria);

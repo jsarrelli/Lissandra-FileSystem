@@ -10,5 +10,6 @@
 
 #include "KernelHeader.h" // Guarda las funciones principales
 #include "KernelOtherFunctions.h" // Guarda las funciones secundarias
+int conocerMemorias();
 
 #endif /* KERNEL_H_ */
