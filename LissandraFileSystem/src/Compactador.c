@@ -75,7 +75,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
 
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
-		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
+		escribirRegistrosEnBloquesByPathCompact(registrosChar, rutaArchivoBinarioActual);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);

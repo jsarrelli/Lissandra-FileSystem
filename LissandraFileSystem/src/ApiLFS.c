@@ -102,9 +102,7 @@ void consolaSelect(char*argumentos){
 
 	t_registro* registro=funcionSELECT(nombreTabla, keyActual);
 	if(registro!=NULL){
-		char*reg=string_new();
-		string_append_with_format(&reg, "%f;%d;%s", registro->timestamp, registro->key, registro->value);
-		free(reg);
+
 		freeRegistro(registro);
 	}
 	freePunteroAPunteros(valores);
