@@ -534,7 +534,8 @@ int agregarNuevoBloque(t_archivo* archivo) {
 
 /*le pasas el path de un archivo, se fija cuales son sus bloques
  y te escribe los registros en esos bloques*/
-int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
+
+int escribirRegistrosEnBloquesByPathCompact(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
 
 	t_archivo *archivoTmp = malloc(sizeof(t_archivo));
 	int res = leerArchivoDeTabla(pathArchivoAEscribir, archivoTmp);
@@ -550,6 +551,47 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		//preguntamos si el registro entra en el bloque
 		if (tamanioArchivo(archivoBloque) + (strlen(registro)) <= metadata.BLOCK_SIZE) {
 			fprintf(archivoBloque, "%s", registro);
+			tamanioTotalBloquesEscritos += strlen(registro);
+			reservarBloque(bloqueActual);
+			fclose(archivoBloque);
+		} else {
+
+			if ((bloqueActual = agregarNuevoBloque(archivoTmp)) == -1) {
+				//no hay mas bloques libres
+				return;
+			}
+			fclose(archivoBloque);
+			escribirRegistroEnBloque(registro);
+			//el problema si en si un registro del ciclo entra en algun bloque pasado... nos chupa un huevo
+
+		}
+
+	}
+
+	list_iterate(registrosAEscribir, (void*) escribirRegistroEnBloque);
+	tamanioTotalBloquesEscritos += 1 * list_size(archivoTmp->BLOQUES); //se ve que siempre el tamanio de bloque es la cantiadad de caracteres +1; VEMO
+	escribirBitmap();
+	archivoTmp->TAMANIO = tamanioTotalBloquesEscritos;
+	escribirArchivo(pathArchivoAEscribir, archivoTmp);
+	freeArchivo(archivoTmp);
+	return 1;
+}
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
+
+	t_archivo *archivoTmp = malloc(sizeof(t_archivo));
+	int res = leerArchivoDeTabla(pathArchivoAEscribir, archivoTmp);
+	if (res < 0) {
+		return -1;
+	}
+
+	int tamanioTotalBloquesEscritos = 0;
+	int bloqueActual = (int) list_get(archivoTmp->BLOQUES, 0);
+	void escribirRegistroEnBloque(char* registro) {
+
+		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual, true);
+		//preguntamos si el registro entra en el bloque
+		if (tamanioArchivo(archivoBloque) + (strlen(registro)) <= metadata.BLOCK_SIZE) {
+			fprintf(archivoBloque, "%s\n", registro);
 			tamanioTotalBloquesEscritos += strlen(registro);
 			reservarBloque(bloqueActual);
 			fclose(archivoBloque);

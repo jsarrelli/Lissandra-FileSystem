@@ -55,7 +55,10 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
 
 		if (registro != NULL) {
-			log_info(logger, "Registro: %d;%s;%f",registro->key,registro->value,registro->timestamp);
+			printf("\nRegistro con mayor timestamp: %f;%d;%s\n",registro->timestamp,registro->key,registro->value);
+
+			log_info(logger, "Select a key %d",registro->key);
+
 			return registro;
 
 		} else {

@@ -72,7 +72,7 @@ void eliminarArchivo(char* rutaArchivo);
 void insertarTablaEnMemtable(char* nombreTabla);
 t_tabla_memtable* newTablaMemtable(char* nombreTabla);
 FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode);
-
+int escribirRegistrosEnBloquesByPathCompact(t_list* registrosAEscribir, char*pathArchivoAEscribir);
 void borrarContenidoArchivoBloque(int bloque);
 void freeArchivo(t_archivo *archivo);
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
