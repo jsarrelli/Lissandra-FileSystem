@@ -22,7 +22,6 @@ int main() {
 		liberarVariables();
 		return EXIT_SUCCESS;
 	}
-//
 //	//INICIALIZACION DE MEMORIA PRINCIPAL
 	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA, socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
