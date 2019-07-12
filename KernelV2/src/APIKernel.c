@@ -142,7 +142,7 @@ int consolaInsert(char*argumentos) {
 
 	cantInserts++;
 
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
 	if (enviarInfoMemoria(socketMemoria, argumentos, INSERT) == SUPER_ERROR)
 		return SUPER_ERROR;
@@ -240,7 +240,7 @@ int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) 
 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
 
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
 	char request[100];
 	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
 	if (enviarInfoMemoria(socketMemoria, request, CREATE) == SUPER_ERROR)
