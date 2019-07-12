@@ -134,5 +134,6 @@ void liberarVariables() {
 	liberarDatosConfiguracion();
 	list_destroy_and_destroy_elements(seeds,(void*)freeMemoria);
 	list_destroy_and_destroy_elements(tablaGossiping,(void*)freeMemoria);
+	pthread_mutex_destroy(&lock);
 }
 

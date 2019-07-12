@@ -6,3 +6,17 @@
 
 [INFO] 13:21:11:342 LFS Logs/(11019:11019): El tamanio del bitmap es de 3000 bits
 [INFO] 13:21:11:347 LFS Logs/(11019:11019): Levantando tablas ya existentes..
+[INFO] 15:58:07:225 LFS Logs/(11019:11021): Insert de 4;FSDFDS en TABLA realizado en memtable
+[INFO] 15:58:12:98 LFS Logs/(11019:11021): SELECT recibido Tabla: TABLA Key: 4
+[INFO] 15:58:12:101 LFS Logs/(11019:11021): Filtrando registros..
+[INFO] 15:58:12:104 LFS Logs/(11019:11021): Filtrado completo
+[INFO] 15:58:12:134 LFS Logs/(11019:11021): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 15:58:12:145 LFS Logs/(11019:11021): Filtrando registros..
+[INFO] 15:58:12:149 LFS Logs/(11019:11021): Filtrado completo
+[INFO] 15:58:12:151 LFS Logs/(11019:11021): Filtrando registros..
+[INFO] 15:58:12:155 LFS Logs/(11019:11021): Filtrado completo
+[INFO] 15:58:12:183 LFS Logs/(11019:11021): Select a key 4
+[INFO] 15:58:24:638 LFS Logs/(11019:11021): TABLA eliminada de memtable
+[INFO] 15:58:24:644 LFS Logs/(11019:11021): Bloque 0 liberado
+[INFO] 15:58:24:655 LFS Logs/(11019:11021): Bloque 1 liberado
+[INFO] 15:58:27:570 LFS Logs/(11019:11021): SELECT recibido Tabla: TABLA Key: 3
