@@ -47,7 +47,7 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento)+1, DROP);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento) + 1, DROP);
 	Paquete paquete;
 	int succes = 0;
 	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
@@ -119,6 +119,12 @@ int HandshakeInicial() {
 
 void gossiping() {
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
+
+	log_info(logger, "Las memorias conocidas son");
+	void mostrarTablaConocida(t_memoria* memoria) {
+		log_info(logger, "Puerto:%s IP:%s", memoria->ip, memoria->puerto);
+	}
+	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
 
 void enviarTablaGossiping(int socketMemoriaDestino) {
@@ -129,19 +135,24 @@ void enviarTablaGossiping(int socketMemoriaDestino) {
 		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
 	}
 	list_iterate(tablaGossiping, (void*) enviarMemoriaConocida);
+	EnviarDatosTipo(socketMemoriaDestino, MEMORIA, "fin", 4, GOSSIPING);
 }
 
 void intercambiarTablasGossiping(t_memoria* memoria) {
 	int socketMemoria = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
 
-	if (socketMemoria != -1) {
+	if (socketMemoria == -1) {
 		return;
 	}
 	enviarTablaGossiping(socketMemoria);
 
 	Paquete paquete;
-	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-
+	while (true) {
+		RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
+		if (strcmp(paquete.mensaje, "fin") == 0) {
+			free(paquete.mensaje);
+			break;
+		}
 		t_memoria* memoriaRecibida = deserealizarMemoria(paquete.mensaje);
 		agregarMemoriaNueva(memoriaRecibida);
 		free(paquete.mensaje);
@@ -163,10 +174,16 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	if (paquete.header.tipoMensaje == NOTFOUND) {
 		return NULL;
 	}
+	char*registroAux = string_duplicate(paquete.mensaje);
 	char** valores = string_split(paquete.mensaje, ";");
-	t_registro* registro = registro_new(valores);
+
+	t_registro* registro = malloc(sizeof(t_registro));
+	registro->key = atoi(valores[0]);
+	registro->value = string_duplicate(valores[1]);
+	registro->timestamp = atof(valores[2]);
 
 	freePunteroAPunteros(valores);
+	free(registroAux);
 	free(paquete.mensaje);
 
 	return registro;

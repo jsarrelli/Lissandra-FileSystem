@@ -31,11 +31,13 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
 	crearYEscribirArchivosTemporales(rutas.Tablas);
+
+	//sem_wait(&mutexCompactacion);
 	compactarTabla("TABLA");
+	//sem_post(&mutexCompactacion);
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
-
 
 	if (config->TAMANIO_VALUE < strlen(value)) {
 		log_error(loggerError, "Tamanio maximo de value excedido");
@@ -43,7 +45,7 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_info(logger, "Insert de %s;%s en %s realizado en memtable",key,value,nombreTabla);
+		log_info(logger, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
 		printf("La %s no existe", nombreTabla);
@@ -53,18 +55,19 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 
 t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
-		t_list* listaRegistros = getRegistrosByKeyFromNombreTabla(nombreTabla, keyActual);
-		t_registro* registroFinal = buscarRegistroByKeyFromListaRegistros(listaRegistros, keyActual);
+		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
 
-		if (registroFinal != NULL) {
-			return registroFinal;
+		if (registro != NULL) {
+			printf("\nRegistro con mayor timestamp: %f;%d;%s\n",registro->timestamp,registro->key,registro->value);
+
+			log_info(logger, "Select a key %d",registro->key);
+
+			return registro;
 
 		} else {
 			puts("No hay registros para mostrar");
 			return NULL;
 		}
-		list_destroy_and_destroy_elements(listaRegistros, free);
-
 	} else {
 		puts("La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
 		return NULL;

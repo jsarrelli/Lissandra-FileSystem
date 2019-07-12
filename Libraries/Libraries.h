@@ -80,6 +80,7 @@ void list_iterate2(t_list* self, void (*closure)(void*,void*), void* segundoPara
 char * obtenerUltimoElementoDeUnSplit(char ** palabras);
 void freePunteroAPunteros(char** palabras);
 t_registro* registro_new(char** valores);
+t_registro* registro_duplicate(t_registro* registro);
 void freeRegistro(t_registro* registro);
 
 t_log* logger;

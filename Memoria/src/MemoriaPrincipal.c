@@ -87,11 +87,14 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 		paginaNueva->registro = registroEnMemoria;
 
 		list_add(segmento->paginas, paginaNueva);
-	} else {
-		log_info(logger, "Esta key ya se encuentra en el sistema, se actualizara");
+	} else if(paginaNueva->registro->timestamp < timeStamp) {
+		log_info(logger, "Esta key ya se encuentra en el sistema con un timeStamp menor, se actualizara");
+		free(paginaNueva->registro->value);
+		paginaNueva->registro->value = string_duplicate(value);
 		paginaNueva->registro->timestamp = timeStamp;
-		strcpy(paginaNueva->registro->value, value);
 		paginaNueva->modificado = MODIFICADO;
+	}else{
+		log_info(logger, "Ya se encuentra en sistema un registro mas actualizado");
 	}
 
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);

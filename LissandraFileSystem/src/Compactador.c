@@ -75,7 +75,10 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
 
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
-		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
+
+		//sem_wait(&mutexEscrituraBloques);
+		escribirRegistrosEnBloquesByPathCompact(registrosChar, rutaArchivoBinarioActual);
+		//sem_post(&mutexEscrituraBloques);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
@@ -89,7 +92,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 char* registroToChar(t_registro* registro) {
 	char* registroChar = string_new();
-	string_append_with_format(&registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
+	string_append_with_format(&registroChar, "%f;%d;%s", registro->timestamp, registro->key, registro->value);
 	return registroChar;
 }
 

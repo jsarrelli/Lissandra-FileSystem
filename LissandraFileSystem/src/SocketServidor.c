@@ -40,7 +40,7 @@ void procesarAccion(int socketMemoria) {
 				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 				break;
 			case (SELECT):
-				procesarSELECT(paquete.mensaje,socketMemoria);
+				procesarSELECT(paquete.mensaje, socketMemoria);
 				break;
 			case (INSERT):
 				procesarINSERT(paquete.mensaje, socketMemoria);
@@ -96,6 +96,8 @@ void procesarINSERT(char* request, int socketMemoria) {
 	int resultado = funcionINSERT(timeStamp, nombreTabla, key, value);
 
 	enviarSuccess(resultado, INSERT, socketMemoria);
+	freePunteroAPunteros(valoresAux);
+	freePunteroAPunteros(valores);
 
 }
 
@@ -107,7 +109,9 @@ void procesarCREATE(char* request, int socketMemoria) {
 	char* tiempoCompactacion = valores[3];
 
 	int resultado = funcionCREATE(nombreTabla, cantParticiones, consistenciaChar, tiempoCompactacion);
+
 	enviarSuccess(resultado, CREATE, socketMemoria);
+	freePunteroAPunteros(valores);
 }
 
 void procesarDROP(char* nombreTabla, int socketMemoria) {
@@ -122,8 +126,13 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
 	char* obtenerNombreTablaByRuta(char* rutaTabla) {
+		char* rutaTablaAux = string_duplicate(rutaTabla);
 		char** directorios = string_split(rutaTabla, "/");
-		return (char*) obtenerUltimoElementoDeUnSplit(directorios);
+		char* nombreTabla = obtenerUltimoElementoDeUnSplit(directorios);
+		freePunteroAPunteros(directorios);
+		free(rutaTablaAux);
+		return nombreTabla;
+
 	}
 
 	void describeDirectorio(char* directorio) {
@@ -134,7 +143,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 
 	list_iterate(listaDirectorios, (void*) describeDirectorio);
 	EnviarDatosTipo(socketMemoria, FILESYSTEM, "fin", 4, DESCRIBE_ALL);
-	list_destroy(listaDirectorios);
+	list_destroy_and_destroy_elements(listaDirectorios, free);
 
 }
 
@@ -152,17 +161,18 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 
 }
 
-void procesarSELECT(char* request, int socketMemoria){
+void procesarSELECT(char* request, int socketMemoria) {
 	char** valores = string_split(request, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
+	log_info(logger, "SELECT recibido Tabla: %s Key: %d", nombreTabla, key);
 	t_registro* registro = funcionSELECT(nombreTabla, key);
-	if(registro==NULL){
+	if (registro == NULL) {
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, NULL, 0, NOTFOUND);
-	}else{
+	} else {
 		char* response = string_new();
-		string_append_with_format(response, "%d;%s;%d",registro->key,registro->value,registro->timestamp);
-		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response)+1, SELECT);
+		string_append_with_format(&response, "%d;%s;%f", registro->key, registro->value, registro->timestamp);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response) + 1, SELECT);
 		free(response);
 	}
 	freeRegistro(registro);

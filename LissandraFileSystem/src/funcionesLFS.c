@@ -29,6 +29,7 @@ char * obtenerExtensionDeUnArchivo(char * nombreArchivoConExtension) {
 	char ** palabras = string_split(nombreArchivoConExtensionAux, ".");
 	char * extension = string_duplicate(palabras[1]);
 	freePunteroAPunteros(palabras);
+	free(nombreArchivoConExtensionAux);
 	return extension;
 
 }
@@ -162,7 +163,6 @@ t_list* buscarArchivos(char* nombreTabla) {
 	t_list* archivos = list_create();
 
 	if (directorioActual == NULL) {
-		puts("No se pudo abrir el directorio.");
 		log_error(loggerError, "No se pudo abrir el directorio.");
 
 	} else {
@@ -215,8 +215,8 @@ void eliminarArchivo(char* rutaArchivo) {
 
 void removerArchivosDeTabla(char * nombreTabla) {
 	t_list* archivos = buscarArchivos(nombreTabla);
-
-	list_destroy_and_destroy_elements(archivos, (void*) eliminarArchivo);
+	list_iterate(archivos, (void*) eliminarArchivo);
+	list_destroy_and_destroy_elements(archivos, free);
 
 }
 
@@ -225,9 +225,11 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	int result = leerArchivoDeTabla(rutaArchivo, archivo);
 	if (result < 0) {
+		free(archivo);
 		return -1;
 	}
 	if (list_is_empty(archivo->BLOQUES)) {
+		freeArchivo(archivo);
 		return -1;
 	}
 	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
@@ -244,10 +246,10 @@ void borrarContenidoArchivoBloque(int bloque) {
 }
 
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
-
 	t_config* config = config_create(rutaArchivo);
 
 	if (config == NULL) {
+		config_destroy(config);
 		return -1;
 		puts("El archivo no existe");
 	}
@@ -255,6 +257,7 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 	if (config_has_property(config, "TAMANIO")) {
 		archivo->TAMANIO = config_get_int_value(config, "TAMANIO");
 	} else {
+		config_destroy(config);
 		return -2; //Archivo corrupto
 	}
 	if (config_has_property(config, "BLOQUES")) {
@@ -279,24 +282,30 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 }
 
 void removerTabla(char* nombreTabla) {
-	int tamanio = list_size(memtable);
-	int i = 0;
 
-	while (tamanio != i) {
-		t_tabla_memtable * tabla = list_get(memtable, i);
-		if (string_equals_ignore_case(tabla->tabla, nombreTabla)) {
-			list_remove(memtable, i);
-			printf("%s eliminada de memtable\n", nombreTabla);
-			break;
-
-		}
-		i++;
+	bool isTablaBuscada(t_tabla_memtable* tablaActual) {
+		return strcmp(tablaActual->tabla, nombreTabla) == 0;
 	}
+
+	list_remove_and_destroy_by_condition(memtable, (void*) isTablaBuscada, (void*) freeTabla);
+	log_info(logger, "%s eliminada de memtable", nombreTabla);
 
 	removerArchivosDeTabla(nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
 	rmdir(rutaTabla);
 	free(rutaTabla);
+}
+
+void freeTabla(t_tabla_memtable* tabla) {
+	if (tabla->registros != NULL) {
+		list_destroy_and_destroy_elements(tabla->registros, (void*) freeRegistro);
+	}
+	free(tabla->tabla);
+	free(tabla);
+}
+
+void vaciarMemtable() {
+	list_destroy_and_destroy_elements(memtable, (void*) freeTabla);
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
@@ -308,7 +317,6 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 	directorioActual = opendir(ruta);
 
 	if (directorioActual == NULL) {
-		puts("No pudo abrir el directorio");
 		log_error(loggerError, "No se pudo abrir el directorio.");
 	} else {
 		// Leo uno por uno los directorios que estan adentro del directorio actual
@@ -401,7 +409,11 @@ void crearYEscribirTemporal(char* rutaTabla) {
 		printf("Archivo temporal creado en %s\n\n", nombTabla);
 
 		t_list* registros = list_map(tabla->registros, (void*) registroToChar);
+
+		//sem_wait(&mutexEscrituraBloques);
 		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal);
+		//sem_post(&mutexEscrituraBloques);
+
 		list_destroy_and_destroy_elements(registros, free);
 		limpiarRegistrosDeTabla(nombTabla);
 	}
@@ -526,7 +538,8 @@ int agregarNuevoBloque(t_archivo* archivo) {
 
 /*le pasas el path de un archivo, se fija cuales son sus bloques
  y te escribe los registros en esos bloques*/
-int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
+
+int escribirRegistrosEnBloquesByPathCompact(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
 
 	t_archivo *archivoTmp = malloc(sizeof(t_archivo));
 	int res = leerArchivoDeTabla(pathArchivoAEscribir, archivoTmp);
@@ -542,6 +555,47 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		//preguntamos si el registro entra en el bloque
 		if (tamanioArchivo(archivoBloque) + (strlen(registro)) <= metadata.BLOCK_SIZE) {
 			fprintf(archivoBloque, "%s", registro);
+			tamanioTotalBloquesEscritos += strlen(registro);
+			reservarBloque(bloqueActual);
+			fclose(archivoBloque);
+		} else {
+
+			if ((bloqueActual = agregarNuevoBloque(archivoTmp)) == -1) {
+				//no hay mas bloques libres
+				return;
+			}
+			fclose(archivoBloque);
+			escribirRegistroEnBloque(registro);
+			//el problema si en si un registro del ciclo entra en algun bloque pasado... nos chupa un huevo
+
+		}
+
+	}
+
+	list_iterate(registrosAEscribir, (void*) escribirRegistroEnBloque);
+	tamanioTotalBloquesEscritos += 1 * list_size(archivoTmp->BLOQUES); //se ve que siempre el tamanio de bloque es la cantiadad de caracteres +1; VEMO
+	escribirBitmap();
+	archivoTmp->TAMANIO = tamanioTotalBloquesEscritos;
+	escribirArchivo(pathArchivoAEscribir, archivoTmp);
+	freeArchivo(archivoTmp);
+	return 1;
+}
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
+
+	t_archivo *archivoTmp = malloc(sizeof(t_archivo));
+	int res = leerArchivoDeTabla(pathArchivoAEscribir, archivoTmp);
+	if (res < 0) {
+		return -1;
+	}
+
+	int tamanioTotalBloquesEscritos = 0;
+	int bloqueActual = (int) list_get(archivoTmp->BLOQUES, 0);
+	void escribirRegistroEnBloque(char* registro) {
+
+		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual, true);
+		//preguntamos si el registro entra en el bloque
+		if (tamanioArchivo(archivoBloque) + (strlen(registro)) <= metadata.BLOCK_SIZE) {
+			fprintf(archivoBloque, "%s\n", registro);
 			tamanioTotalBloquesEscritos += strlen(registro);
 			reservarBloque(bloqueActual);
 			fclose(archivoBloque);
@@ -595,8 +649,8 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
 	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
-	if(tablaMemtable!=NULL){
-	list_add_all(listaRegistros, tablaMemtable->registros);
+	if (tablaMemtable != NULL) {
+		list_add_all(listaRegistros, tablaMemtable->registros);
 	}
 
 }
@@ -608,6 +662,7 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 	//t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
 	list_add_all(listaRegistros, registros);
 	list_destroy(registros);
+	list_destroy_and_destroy_elements(temporales, free);
 }
 
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key) {
@@ -617,7 +672,11 @@ t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int ke
 		return registroActual->key == key;
 	}
 
-	return (t_registro*) list_find(listaRegistros, (void*) BuscarPorKey);
+	t_registro* registro = list_find(listaRegistros, (void*) BuscarPorKey);
+	if (registro != NULL) {
+		return registro_duplicate(registro);
+	}
+	return NULL;
 }
 
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*listaRegistros) {
@@ -629,16 +688,71 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	agregarRegistrosFromBloqueByPath(pathArchivo, listaRegistrosBin);
 	//t_list* registrosBinToChar = list_map(listaRegistrosBin, (void*) registroToChar);
 	list_add_all(listaRegistros, listaRegistrosBin);
-	list_destroy(archivosBinarios);
+	list_destroy_and_destroy_elements(archivosBinarios, free);
 	list_destroy(listaRegistrosBin);
 }
 
-t_list* getRegistrosByKeyFromNombreTabla(char*nombreTabla, int keyActual) {
-	t_list* listaRegistros = list_create();
-	getRegistrosFromBinByNombreTabla(nombreTabla, keyActual, listaRegistros);
-	getRegistrosFromMemtableByNombreTabla(nombreTabla, listaRegistros);
-	getRegistrosFromTempByNombreTabla(nombreTabla, listaRegistros);
-	filtrarRegistros(listaRegistros);
-	return listaRegistros;
+t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
+	t_list* registros = list_create();
+
+	t_registro* registroMemtable = getRegistroFromMemtableByKey(nombreTabla, keyActual);
+	if (registroMemtable != NULL) {
+		list_add(registros,registroMemtable);
+
+	}
+	t_registro* registroTmp = getRegistroFromTmpByKey(nombreTabla, keyActual);
+	if (registroTmp != NULL) {
+		list_add(registros, registroTmp);
+	}
+
+	t_registro* registroBin = getRegistroFromBinByKey(nombreTabla, keyActual);
+	if (registroBin != NULL) {
+		list_add(registros, registroBin);
+	}
+
+	if(list_is_empty(registros)){
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroFinal =list_get(registros,0);
+	list_destroy(registros);
+	return registroFinal;
+}
+
+t_registro* getRegistroFromBinByKey(char* nombreTabla, int key) {
+	t_list* registros = list_create();
+	getRegistrosFromBinByNombreTabla(nombreTabla, key, registros);
+	if (list_is_empty(registros)) {
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroEncontrado = buscarRegistroByKeyFromListaRegistros(registros, key);
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+	return registroEncontrado;
+
+}
+
+t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) {
+	t_list* registros = list_create();
+	getRegistrosFromTempByNombreTabla(nombreTabla, registros);
+	if (list_is_empty(registros)) {
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroEncontrado = buscarRegistroByKeyFromListaRegistros(registros, key);
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+	return registroEncontrado;
+}
+
+t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key) {
+	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
+	if (tablaMemtable != NULL && !list_is_empty(tablaMemtable->registros)) {
+		filtrarRegistros(tablaMemtable->registros);
+		return buscarRegistroByKeyFromListaRegistros(tablaMemtable->registros, key);
+	}
+	return NULL;
 }
 

@@ -22,7 +22,6 @@ int main() {
 		liberarVariables();
 		return EXIT_SUCCESS;
 	}
-//
 //	//INICIALIZACION DE MEMORIA PRINCIPAL
 	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA, socketFileSystem);
 	log_info(logger, "--Memoria inicializada--");
@@ -117,6 +116,7 @@ void procesoTemporalJournal() {
 void procesoTemporalGossiping() {
 	while (1) {
 		usleep(configuracion->TIEMPO_GOSSIPING * 1000);
+		log_info(logger, "Descubriendo memorias..");
 		gossiping();
 	}
 
@@ -130,9 +130,9 @@ void liberarDatosConfiguracion() {
 }
 
 void liberarVariables() {
-
 	log_destroy(logger);
 	liberarDatosConfiguracion();
-	list_destroy(tablaGossiping);
-	list_destroy(seeds);
+	list_destroy_and_destroy_elements(seeds,(void*)freeMemoria);
+	list_destroy_and_destroy_elements(tablaGossiping,(void*)freeMemoria);
 }
+
