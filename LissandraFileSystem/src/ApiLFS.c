@@ -104,7 +104,6 @@ void consolaSelect(char*argumentos){
 	if(registro!=NULL){
 		char*reg=string_new();
 		string_append_with_format(&reg, "%f;%d;%s", registro->timestamp, registro->key, registro->value);
-		printf("Registro: %s\n\n",reg );
 		free(reg);
 		freeRegistro(registro);
 	}

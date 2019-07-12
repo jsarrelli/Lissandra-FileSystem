@@ -55,6 +55,7 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
 
 		if (registro != NULL) {
+			log_info(logger, "Registro: %d;%s;%f",registro->key,registro->value,registro->timestamp);
 			return registro;
 
 		} else {

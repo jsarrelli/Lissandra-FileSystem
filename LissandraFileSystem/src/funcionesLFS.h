@@ -77,4 +77,7 @@ void borrarContenidoArchivoBloque(int bloque);
 void freeArchivo(t_archivo *archivo);
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 
+void vaciarMemtable();
+void freeTabla(t_tabla_memtable* tabla);
+
 #endif /* FUNCIONESLFS_H_ */
