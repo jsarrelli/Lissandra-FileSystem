@@ -95,18 +95,16 @@ int procesarAdd(int id, consistencia cons) {
 }
 
 int consolaAdd(char*argumento) {
+	char* argumentoAux= string_duplicate(argumento);
 	char** valores = string_split(argumento, " ");
-	consistencia cons = procesarConsistencia(valores[3]);
+	consistencia cons = procesarConsistencia(valores[1]);
 
-	int id = atoi(valores[1]);
+	int id = atoi(valores[0]);
 	if (procesarAdd(id, cons) == SUPER_ERROR)
 		return SUPER_ERROR;
 
-	free(valores[0]);
-	free(valores[1]);
-	free(valores[2]);
-	free(valores[3]);
-	free(valores);
+	freePunteroAPunteros(valores);
+	free(argumentoAux);
 
 	return TODO_OK;
 }
