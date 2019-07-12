@@ -29,11 +29,14 @@ int consolaRun(char*path);
 int consolaJournal();
 void consolaSALIR(char*nada);
 
-
 void imprimirMetrics();
 void enviarJournalMemoria(int socketMemoria);
-void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata);
+void mostrarMetadata(metadataTabla* metadataTabla);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);
+metadataTabla* deserealizarMetadata(char* metadataSerializada);
+metadataTabla* newMetadata(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion);
+void agregarTabla(metadataTabla* tabla);
 
+int procesarDescribe(int socketMemoria, char* nombreTabla);
 
 #endif /* APIKERNEL_H_ */

@@ -79,25 +79,25 @@ bool instruccionSeaSalir(char* operacion) {
 	return strcmp(operacion, "SALIR") == 0;
 }
 
-void hardcodearListaMetadataTabla() {
-	metadataTablas* metadata1 = malloc(sizeof(metadataTablas));
-	metadata1->consistencia = SC;
-	metadata1->nParticiones = 2;
-	metadata1->nombreTabla = "TABLA1";
-	list_add(listaMetadataTabla, metadata1);
-
-	metadataTablas* metadata2 = malloc(sizeof(metadataTablas));
-	metadata2->consistencia = SHC;
-	metadata2->nParticiones = 3;
-	metadata2->nombreTabla = "TABLA2";
-	list_add(listaMetadataTabla, metadata2);
-
-	metadataTablas* metadata3 = malloc(sizeof(metadataTablas));
-	metadata3->consistencia = EC;
-	metadata3->nParticiones = 4;
-	metadata3->nombreTabla = "TABLA3";
-	list_add(listaMetadataTabla, metadata3);
-}
+//void hardcodearListaMetadataTabla() {
+//	metadataTabla* metadata1 = malloc(sizeof(metadataTabla));
+//	metadata1->consistencia = SC;
+//	metadata1->nParticiones = 2;
+//	metadata1->nombreTabla = "TABLA1";
+//	list_add(listaMetadataTabla, metadata1);
+//
+//	metadataTabla* metadata2 = malloc(sizeof(metadataTabla));
+//	metadata2->consistencia = SHC;
+//	metadata2->nParticiones = 3;
+//	metadata2->nombreTabla = "TABLA2";
+//	list_add(listaMetadataTabla, metadata2);
+//
+//	metadataTabla* metadata3 = malloc(sizeof(metadataTabla));
+//	metadata3->consistencia = EC;
+//	metadata3->nParticiones = 4;
+//	metadata3->nombreTabla = "TABLA3";
+//	list_add(listaMetadataTabla, metadata3);
+//}
 
 int contarLineasArchivo(FILE* fichero, char* path) {
 	fichero = fopen(path, "rt");

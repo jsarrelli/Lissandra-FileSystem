@@ -312,19 +312,19 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 }
 
 consistencia obtenerConsistenciaDe(char* nombreTabla) {
-	bool _condicion(metadataTablas* metadata, char*nombreTabla) {
+	bool _condicion(metadataTabla* metadata, char*nombreTabla) {
 		return strcmp(nombreTabla, metadata->nombreTabla) == 0;
 	}
 	bool condicionObtenerConsistencia(void* metadata) {
 		return _condicion(metadata, nombreTabla);
 	}
-	metadataTablas* metadata = NULL;
+	metadataTabla* metadata = NULL;
 	metadata = list_find((t_list*) listaMetadataTabla, condicionObtenerConsistencia);
 
 	if (metadata == NULL)
 		return ERROR_CONSISTENCIA;
 
-	return metadata->consistencia;
+	return metadata->metadata->CONSISTENCIA;
 }
 
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key) {

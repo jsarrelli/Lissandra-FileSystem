@@ -42,7 +42,7 @@ void iniciarVariablesKernel() {
 //	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
 //			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
-	hardcodearListaMetadataTabla();
+	//hardcodearListaMetadataTabla();
 
 	quantum = config->QUANTUM;
 	multiprocesamiento = config->MULTIPROCESAMIENTO;

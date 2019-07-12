@@ -256,11 +256,11 @@ void enviarJournalMemoria(int socketMemoria) {
 int consolaJournal() {
 
 	void journalMemoria(infoMemoria* memoria) {
-		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d",memoria->id);
+		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d", memoria->id);
 		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
 		EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
 	}
-	list_iterate(listaMemorias, (void*)journalMemoria);
+	list_iterate(listaMemorias, (void*) journalMemoria);
 	return 0;
 }
 
@@ -293,33 +293,47 @@ int consolaCreate(char*argumentos) {
 
 }
 
-void deserealizarYMostrarMetadata(Paquete* paquete) {
-	char* mensaje = malloc(paquete->header.tamanioMensaje + 1);
-	mensaje = strcpy(mensaje, (char*) paquete->mensaje);
+metadataTabla* deserealizarMetadata(char* metadataSerializada) {
+	char* mensaje = string_duplicate(metadataSerializada);
 	char** datos = string_split(mensaje, " ");
-	char* nombreTabla = malloc(strlen(datos[0]) + 1);
-	strcpy(nombreTabla, datos[0]);
+	char* nombreTabla = string_duplicate(datos[0]);
+
 	t_consistencia consistencia = getConsistenciaByChar(datos[1]);
 	int cantParticiones = atoi(datos[2]);
 	int tiempoCompactacion = atoi(datos[3]);
-	//creo la metadata
+	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
+
+	mostrarMetadata(metadata);
+	freePunteroAPunteros(datos);
+	free(nombreTabla);
+	free(mensaje);
+	return metadata;
+
+}
+
+metadataTabla* newMetadata(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
 	t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
 	metadata->CONSISTENCIA = consistencia;
 	metadata->CANT_PARTICIONES = cantParticiones;
 	metadata->T_COMPACTACION = tiempoCompactacion;
-	free(datos);
-	mostrarMetadata(nombreTabla, metadata);
-	free(nombreTabla);
+
+	metadataTabla* tabla = malloc(sizeof(metadataTabla));
+	tabla->metadata = metadata;
+	tabla->nombreTabla = string_duplicate(nombreTabla);
+
+	return tabla;
 }
 
-int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
+int procesarDescribeAll(int socketMemoria) {
 	int estadoRecibir = 0;
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
-	if (EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL) == SUPER_ERROR)
-		return SUPER_ERROR;
+	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
 
-	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete)) > 0) {
-		deserealizarYMostrarMetadata(&*paquete);
+	Paquete paquete;
+	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &paquete)) > 0) {
+		metadataTabla* metadata = deserealizarMetadata(paquete.mensaje);
+		agregarTabla(metadata);
+		free(paquete.mensaje);
 	}
 
 	if (estadoRecibir < 0)
@@ -327,30 +341,32 @@ int procesarDescribeAll(int socketMemoria, Paquete* paquete) {
 	return TODO_OK;
 }
 
-int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
+int procesarDescribe(int socketMemoria, char* nombreTabla) {
 	log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
 	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1, DESCRIBE);
-	if (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &*paquete) < 0)
+
+	Paquete paquete;
+	if (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &paquete) < 0) {
 		return SUPER_ERROR;
-	if (atoi(paquete->mensaje) == 1) {
+	} else if (atoi(paquete.mensaje) == 1) {
 		puts("La tabla no existe");
+
+	} else {
+		metadataTabla* metadataRecibida = deserealizarMetadata(paquete.mensaje);
+		agregarTabla(metadataRecibida);
 	}
-	t_metadata_tabla* metadataRecibida = deserealizarTabla(&*paquete);
-	mostrarMetadata(nombreTabla, metadataRecibida);
-	//falta free metadata
-	free(paquete->mensaje);
+	free(paquete.mensaje);
 	return TODO_OK;
 }
 
 int consolaDescribe(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
-	Paquete paquete;
 	if (nombreTabla == NULL) {
-		if (procesarDescribeAll(socketMemoria, &paquete) == SUPER_ERROR)
+		if (procesarDescribeAll(socketMemoria) == SUPER_ERROR)
 			return SUPER_ERROR;
 	} else {
-		if (procesarDescribe(socketMemoria, &paquete, nombreTabla) == SUPER_ERROR)
+		if (procesarDescribe(socketMemoria, nombreTabla) == SUPER_ERROR)
 			return SUPER_ERROR;
 	}
 
@@ -360,29 +376,23 @@ int consolaDescribe(char*nombreTabla) {
 	return TODO_OK;
 }
 
-void mostrarMetadata(char* nombreTabla, t_metadata_tabla* metadata) {
+void agregarTabla(metadataTabla* tabla) {
+	bool findByNombre(metadataTabla* tablaActual) {
+		return strcmp(tabla->nombreTabla, tablaActual->nombreTabla) == 0;
+	}
 
-	log_info(log_master->logInfo, "Segmento: %s", nombreTabla);
-	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d",
-			getConsistenciaCharByEnum(metadata->CONSISTENCIA), metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
+	if (!list_any_satisfy(listaMetadataTabla, (void*) findByNombre)) {
+		list_add(listaMetadataTabla, tabla);
+	}
+
 }
 
-t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
-	char* mensaje = malloc(paquete->header.tamanioMensaje + 1);
-	mensaje = strcpy(mensaje, (char*) paquete->mensaje);
-	char** datos = string_split(mensaje, " ");
+void mostrarMetadata(metadataTabla* metadataTabla) {
 
-	t_consistencia consistencia = getConsistenciaByChar(datos[1]);
-	int cantParticiones = atoi(datos[2]);
-	int tiempoCompactacion = atoi(datos[3]);
-	//creo la metadata
-	t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
-	metadata->CONSISTENCIA = consistencia;
-	metadata->CANT_PARTICIONES = cantParticiones;
-	metadata->T_COMPACTACION = tiempoCompactacion;
-
-	free(datos);
-	return metadata;
+	log_info(log_master->logInfo, "Segmento: %s", metadataTabla->nombreTabla);
+	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d",
+			getConsistenciaCharByEnum(metadataTabla->metadata->CONSISTENCIA), metadataTabla->metadata->CANT_PARTICIONES,
+			metadataTabla->metadata->T_COMPACTACION);
 }
 
 int consolaDrop(char*nombreTabla) {

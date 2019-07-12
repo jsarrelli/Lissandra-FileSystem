@@ -71,9 +71,8 @@ typedef struct{
 
 typedef struct{
 	char*nombreTabla;
-	consistencia consistencia;
-	int nParticiones;
-}metadataTablas;
+	t_metadata_tabla* metadata;
+}metadataTabla;
 
 typedef struct {
 	char* IP_MEMORIA;
