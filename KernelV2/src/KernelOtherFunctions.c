@@ -33,30 +33,30 @@ bool verificarCriterio(bool* criterio, consistencia ccia) {
 	return false;
 }
 
-void hardcodearInfoMemorias() {
-
-	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria1);
-
-	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria2);
-
-	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria3);
-
-	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria4);
-
-	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria5);
-
-	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria6);
-
-	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615);
-	list_add(listaMemorias, memoria7);
-
-}
+//void hardcodearInfoMemorias() {
+//
+//	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria1);
+//
+//	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria2);
+//
+//	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria3);
+//
+//	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria4);
+//
+//	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria5);
+//
+//	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria6);
+//
+//	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615);
+//	list_add(listaMemorias, memoria7);
+//
+//}
 
 void imprimirCriterio(bool* criterio) {
 	if (criterio[0]) {

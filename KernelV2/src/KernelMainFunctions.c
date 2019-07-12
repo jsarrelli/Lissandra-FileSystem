@@ -385,7 +385,7 @@ infoMemoria* newInfoMemoria(char* ip, int puert, int id) {
 	memoria->cantInsertEjecutados = 0;
 	memoria->cantSelectsEjecutados = 0;
 	memoria->puerto = 0;
-	memoria->id;
+	memoria->id = id;
 	return memoria;
 }
 
@@ -425,7 +425,7 @@ int conocerMemorias() {
 	while (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
 
 		char** response = string_split(paquete.mensaje, " ");
-		infoMemoria* memoriaConocida = newInfoMemoria(response[0], response[1], response[2]);
+		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
 		list_add(listaMemorias, memoriaConocida);
 		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
 				memoriaConocida->id);

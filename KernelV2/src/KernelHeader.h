@@ -159,7 +159,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();
-infoMemoria* newInfoMemoria(char* ip, int puerto);
+infoMemoria* newInfoMemoria(char* ip, int puert, int id);
 void destruirProceso(procExec* proceso);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
