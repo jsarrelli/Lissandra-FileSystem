@@ -148,7 +148,7 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 	Paquete paquete;
 	while (true) {
 		RecibirPaqueteServidor(socketMemoria, MEMORIA, &paquete);
-		if(strcmp(paquete.mensaje,"fin")){
+		if(strcmp(paquete.mensaje,"fin")==0){
 			free(paquete.mensaje);
 			break;
 		}
