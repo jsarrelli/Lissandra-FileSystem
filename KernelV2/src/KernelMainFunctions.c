@@ -404,8 +404,10 @@ int conocerMemorias() {
 		infoMemoria* memoriaConocida = malloc(sizeof(infoMemoria));
 		memoriaConocida->ip = string_duplicate(response[0]);
 		memoriaConocida->puerto = atoi(response[1]);
+		memoriaConocida->id = atoi(response[2]);
 		list_add(listaMemorias, memoriaConocida);
-		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d",memoriaConocida->ip,memoriaConocida->puerto);
+		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
+				memoriaConocida->id);
 		free(paquete.mensaje);
 	}
 	return 0;

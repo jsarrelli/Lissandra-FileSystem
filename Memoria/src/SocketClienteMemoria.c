@@ -122,7 +122,7 @@ void gossiping() {
 
 	log_info(logger, "Las memorias conocidas son");
 	void mostrarTablaConocida(t_memoria* memoria) {
-		log_info(logger, "Puerto:%s IP:%s", memoria->ip, memoria->puerto);
+		log_info(logger, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto,memoria->memoryNumber);
 	}
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
@@ -131,7 +131,7 @@ void enviarTablaGossiping(int socketMemoriaDestino) {
 
 	void enviarMemoriaConocida(t_memoria* memoriaConocida) {
 		char request[100];
-		sprintf(request, "%s %s", memoriaConocida->ip, memoriaConocida->puerto);
+		sprintf(request, "%s %s %d", memoriaConocida->ip, memoriaConocida->puerto,memoriaConocida->memoryNumber);
 		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
 	}
 	list_iterate(tablaGossiping, (void*) enviarMemoriaConocida);

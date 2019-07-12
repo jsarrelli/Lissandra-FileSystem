@@ -162,7 +162,7 @@ void procesarRequestTABLA_GOSSIPING(int socketKernel) {
 	log_info(logger, "Request tabla gossiping recibida de Kernel");
 	void enviarMemoria(t_memoria* memoria) {
 		char* response = string_new();
-		string_append_with_format(&response, "%s %s", memoria->ip, memoria->puerto);
+		string_append_with_format(&response, "%s %s %d", memoria->ip, memoria->puerto,memoria->memoryNumber);
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, TABLA_GOSSIPING);
 		free(response);
 	}

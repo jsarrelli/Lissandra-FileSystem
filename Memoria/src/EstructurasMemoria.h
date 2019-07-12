@@ -30,6 +30,7 @@ typedef struct EstadoFrame {
 typedef struct t_memoria{
 	char* ip;
 	char* puerto;
+	int memoryNumber;
 }t_memoria;
 
 #endif /* EstructurasMmemoria_H_*/

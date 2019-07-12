@@ -20,6 +20,7 @@ void cargarEstructurasGossiping() {
 	t_memoria* memoria = malloc(sizeof(t_memoria));
 	memoria->ip = string_duplicate(configuracion->IP_ESCUCHA);
 	memoria->puerto = string_duplicate(configuracion->PUERTO_ESCUCHA);
+	memoria->memoryNumber = configuracion->MEMORY_NUMBER;
 
 	list_add(tablaGossiping, memoria);
 }
@@ -48,6 +49,7 @@ t_memoria* deserealizarMemoria(char* mensaje) {
 	t_memoria* memoriaRecibida = malloc(sizeof(t_memoria));
 	memoriaRecibida->ip = string_duplicate(datos[0]);
 	memoriaRecibida->puerto = string_duplicate(datos[1]);
+	memoriaRecibida->memoryNumber = datos[2];
 	freePunteroAPunteros(datos);
 	free(memoriaChar);
 	return memoriaRecibida;
