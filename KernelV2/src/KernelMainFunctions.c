@@ -71,8 +71,8 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 //			"Levantando archivo de configuracion del proceso Kernel ");
 //
 //=======
-void freeConfigKernel(){
-	if(config->IP_MEMORIA!=NULL){
+void freeConfigKernel() {
+	if (config->IP_MEMORIA != NULL) {
 		free(config->IP_MEMORIA);
 	}
 
@@ -82,7 +82,7 @@ void freeConfigKernel(){
 void cargarConfigKernel() {
 	log_info(log_master->logInfo, "Levantando archivo de configuracion del proceso Kernel ");
 
-	if(config!=NULL){
+	if (config != NULL) {
 		freeConfigKernel();
 	}
 //>>>>>>> d47fbace383f93ecea3aa5815e4b57dce5ca6366
@@ -374,17 +374,18 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas) {
 	return list_get(memoriasEncontradas, randomNumber);
 }
 
-infoMemoria* newInfoMemoria(char* ip, int puerto) {
+infoMemoria* newInfoMemoria(char* ip, int puert, int id) {
 	infoMemoria* memoria = malloc(sizeof(infoMemoria));
 	memoria->id = idMemoria;
 	idMemoria++;
 	for (int i = 0; i < 4; i++) {
 		(memoria->criterios)[i] = false;
 	}
-	memoria->ip = ip;
-	memoria->cantInsertEjecutados = puerto;
+	memoria->ip = string_duplicate(ip);
+	memoria->cantInsertEjecutados = 0;
 	memoria->cantSelectsEjecutados = 0;
 	memoria->puerto = 0;
+	memoria->id;
 	return memoria;
 }
 
@@ -424,14 +425,12 @@ int conocerMemorias() {
 	while (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
 
 		char** response = string_split(paquete.mensaje, " ");
-		infoMemoria* memoriaConocida = malloc(sizeof(infoMemoria));
-		memoriaConocida->ip = string_duplicate(response[0]);
-		memoriaConocida->puerto = atoi(response[1]);
-		memoriaConocida->id = atoi(response[2]);
+		infoMemoria* memoriaConocida = newInfoMemoria(response[0], response[1], response[2]);
 		list_add(listaMemorias, memoriaConocida);
 		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
 				memoriaConocida->id);
 		free(paquete.mensaje);
+		freePunteroAPunteros(response);
 	}
 	return 0;
 }
