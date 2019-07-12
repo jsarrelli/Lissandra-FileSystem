@@ -329,8 +329,7 @@ void list_iterate2(t_list* self, void (*closure)(void*, void*), void* segundoPar
 t_registro* registro_new(char** valores) {
 	t_registro* registro = malloc(sizeof(t_registro));
 	registro->key = atoi(valores[1]);
-	registro->value = string_new();
-	string_append(&registro->value, valores[2]);
+	registro->value = string_duplicate(valores[2]);
 	registro->timestamp = atof(valores[0]);
 	freePunteroAPunteros(valores);
 	return registro;

@@ -77,7 +77,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		//sem_wait(&mutexEscrituraBloques);
-		escribirRegistrosEnBloquesByPathCompact(registrosChar, rutaArchivoBinarioActual);
+		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 		//sem_post(&mutexEscrituraBloques);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
@@ -176,6 +176,10 @@ void filtrarRegistros(t_list* registros) {
 	log_info(logger, "Filtrando registros..");
 	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
 
+		if (registro == NULL) {
+			//hermoso parche, no preguntar ni cuestionar
+			return;
+		}
 		int index = 0;
 		bool isDuplicadoConTimeStampMenor(t_registro* registroActual) {
 
@@ -321,7 +325,7 @@ t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque) {
 	char registroChar[config->TAMANIO_VALUE];
 	while (fgets(registroChar, config->TAMANIO_VALUE, archivoBloque) != NULL) {
 		char* registroAux = string_duplicate(registroChar);
-		char** valores = string_split(registroChar, ";");
+		char** valores = string_split(registroAux, ";");
 		t_registro* registro = registro_new(valores);
 		list_add(listaRegistros, registro);
 		free(registroAux);

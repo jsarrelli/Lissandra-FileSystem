@@ -595,7 +595,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual, true);
 		//preguntamos si el registro entra en el bloque
 		if (tamanioArchivo(archivoBloque) + (strlen(registro)) <= metadata.BLOCK_SIZE) {
-			fprintf(archivoBloque, "%s\n", registro);
+			fprintf(archivoBloque, "%s;\n", registro);
 			tamanioTotalBloquesEscritos += strlen(registro);
 			reservarBloque(bloqueActual);
 			fclose(archivoBloque);
