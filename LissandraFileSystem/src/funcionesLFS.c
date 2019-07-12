@@ -163,7 +163,6 @@ t_list* buscarArchivos(char* nombreTabla) {
 	t_list* archivos = list_create();
 
 	if (directorioActual == NULL) {
-		puts("No se pudo abrir el directorio.");
 		log_error(loggerError, "No se pudo abrir el directorio.");
 
 	} else {
@@ -288,9 +287,7 @@ void removerTabla(char* nombreTabla) {
 		return strcmp(tablaActual->tabla, nombreTabla) == 0;
 	}
 
-
-
-	list_remove_and_destroy_by_condition(memtable, (void*)isTablaBuscada, (void*) freeTabla);
+	list_remove_and_destroy_by_condition(memtable, (void*) isTablaBuscada, (void*) freeTabla);
 	log_info(logger, "%s eliminada de memtable", nombreTabla);
 
 	removerArchivosDeTabla(nombreTabla);
@@ -307,8 +304,8 @@ void freeTabla(t_tabla_memtable* tabla) {
 	free(tabla);
 }
 
-void vaciarMemtable(){
-	list_destroy_and_destroy_elements(memtable,(void*)freeTabla);
+void vaciarMemtable() {
+	list_destroy_and_destroy_elements(memtable, (void*) freeTabla);
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
@@ -320,7 +317,6 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 	directorioActual = opendir(ruta);
 
 	if (directorioActual == NULL) {
-		puts("No pudo abrir el directorio");
 		log_error(loggerError, "No se pudo abrir el directorio.");
 	} else {
 		// Leo uno por uno los directorios que estan adentro del directorio actual
@@ -651,19 +647,31 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 }
 
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
-	t_registro* registro = NULL;
+	t_list* registros = list_create();
 
-	//primero lo busco en memtable
-	registro = getRegistroFromMemtableByKey(nombreTabla, keyActual);
-	if (registro == NULL) {
-		//si no esta en memtable lo busco en los .tmp
-		registro = getRegistroFromTmpByKey(nombreTabla, keyActual);
+	t_registro* registroMemtable = getRegistroFromMemtableByKey(nombreTabla, keyActual);
+	if (registroMemtable != NULL) {
+		list_add(registros,registroMemtable);
+
 	}
-	//si tampoco esta en lo tmp lo busco en los .bin
-	if (registro == NULL) {
-		registro = getRegistroFromBinByKey(nombreTabla, keyActual);
+	t_registro* registroTmp = getRegistroFromTmpByKey(nombreTabla, keyActual);
+	if (registroTmp != NULL) {
+		list_add(registros, registroTmp);
 	}
-	return registro;
+
+	t_registro* registroBin = getRegistroFromBinByKey(nombreTabla, keyActual);
+	if (registroBin != NULL) {
+		list_add(registros, registroBin);
+	}
+
+	if(list_is_empty(registros)){
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroFinal =list_get(registros,0);
+	list_destroy(registros);
+	return registroFinal;
 }
 
 t_registro* getRegistroFromBinByKey(char* nombreTabla, int key) {
