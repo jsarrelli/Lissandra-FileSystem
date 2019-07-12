@@ -131,9 +131,9 @@ void liberarDatosConfiguracion() {
 }
 
 void liberarVariables() {
-
 	log_destroy(logger);
 	liberarDatosConfiguracion();
-	list_destroy(tablaGossiping);
-	list_destroy(seeds);
+	list_destroy_and_destroy_elements(seeds,(void*)freeMemoria);
+	list_destroy_and_destroy_elements(tablaGossiping,(void*)freeMemoria);
 }
+

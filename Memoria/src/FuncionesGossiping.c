@@ -27,8 +27,6 @@ void cargarEstructurasGossiping() {
 bool isMemoriaYaConocida(t_memoria* memoriaRecibida) {
 	bool equalsMemoria(t_memoria* memoriaConocida) {
 		if (strcmp(memoriaRecibida->ip, memoriaConocida->ip) == 0 && strcmp(memoriaRecibida->puerto, memoriaConocida->puerto) == 0) {
-			free(memoriaRecibida->ip);
-			free(memoriaRecibida->puerto);
 			return true;
 		}
 		return false;
@@ -40,7 +38,7 @@ void agregarMemoriaNueva(t_memoria* memoriaRecibida) {
 	if (!isMemoriaYaConocida(memoriaRecibida)) {
 		list_add(tablaGossiping, memoriaRecibida);
 	} else {
-		free(memoriaRecibida);
+		freeMemoria(memoriaRecibida);
 	}
 }
 
@@ -53,4 +51,10 @@ t_memoria* deserealizarMemoria(char* mensaje) {
 	freePunteroAPunteros(datos);
 	free(memoriaChar);
 	return memoriaRecibida;
+}
+
+void freeMemoria(t_memoria* memoria) {
+	free(memoria->ip);
+	free(memoria->puerto);
+	free(memoria);
 }
