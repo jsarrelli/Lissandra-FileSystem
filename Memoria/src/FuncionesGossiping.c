@@ -1,8 +1,6 @@
 #include "FuncionesGossiping.h"
 
-
-void cargarListaSeeds()
-{
+void cargarListaSeeds() {
 	int i = 0;
 	while (configuracion->PUERTOS_SEEDS[i] != NULL) {
 		t_memoria* seedMemoria = malloc(sizeof(t_memoria));
@@ -13,7 +11,7 @@ void cargarListaSeeds()
 	}
 }
 
-void cargarEstructurasGossiping(){
+void cargarEstructurasGossiping() {
 	seeds = list_create();
 	cargarListaSeeds();
 
@@ -23,22 +21,22 @@ void cargarEstructurasGossiping(){
 	memoria->ip = string_duplicate(configuracion->IP_ESCUCHA);
 	memoria->puerto = string_duplicate(configuracion->PUERTO_ESCUCHA);
 
-	list_add(tablaGossiping,memoria);
+	list_add(tablaGossiping, memoria);
 }
 
-bool isMemoriaYaConocida(t_memoria* memoriaRecibida){
-	bool equalsMemoria(t_memoria memoriaConocida){
-		if(strcmp(memoriaRecibida->ip,memoriaConocida.ip)==0 && strcmp(memoriaRecibida->puerto,memoriaConocida.puerto)==0 ){
+bool isMemoriaYaConocida(t_memoria* memoriaRecibida) {
+	bool equalsMemoria(t_memoria* memoriaConocida) {
+		if (strcmp(memoriaRecibida->ip, memoriaConocida->ip) == 0 && strcmp(memoriaRecibida->puerto, memoriaConocida->puerto) == 0) {
+			free(memoriaRecibida->ip);
+			free(memoriaRecibida->puerto);
 			return true;
 		}
 		return false;
 	}
-	return list_any_satisfy(tablaGossiping, (void*)equalsMemoria);
+	return list_any_satisfy(tablaGossiping, (void*) equalsMemoria);
 }
 
-
-void agregarMemoriaNueva(t_memoria* memoriaRecibida)
-{
+void agregarMemoriaNueva(t_memoria* memoriaRecibida) {
 	if (!isMemoriaYaConocida(memoriaRecibida)) {
 		list_add(tablaGossiping, memoriaRecibida);
 	} else {
@@ -46,14 +44,13 @@ void agregarMemoriaNueva(t_memoria* memoriaRecibida)
 	}
 }
 
-
 t_memoria* deserealizarMemoria(char* mensaje) {
+	char* memoriaChar = string_duplicate(mensaje);
 	char** datos = string_split(mensaje, " ");
 	t_memoria* memoriaRecibida = malloc(sizeof(t_memoria));
-	memoriaRecibida->ip = malloc(strlen(datos[0] + 1));
-	memoriaRecibida->puerto = malloc(strlen(datos[1]) + 1);
-	strcpy(memoriaRecibida->ip, datos[0]);
-	strcpy(memoriaRecibida->puerto, datos[1]);
+	memoriaRecibida->ip = string_duplicate(datos[0]);
+	memoriaRecibida->puerto = string_duplicate(datos[1]);
 	freePunteroAPunteros(datos);
+	free(memoriaChar);
 	return memoriaRecibida;
 }
