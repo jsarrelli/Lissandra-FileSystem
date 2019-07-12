@@ -28,6 +28,7 @@ void iniciarVariablesKernel() {
 
 	cantRequestsEjecutadas = 0;
 	haySC = false;
+	hayMetricas = false;
 	puedeHaberRequests = true;
 	idMemoria = 1;
 
@@ -76,7 +77,7 @@ void* iniciarhiloMetrics(void* args) {
 
 	while (puedeHaberRequests) {
 
-		usleep(10000 * 1000); // algo asi...
+		usleep(30000 * 1000); // algo asi...
 
 		calcularMetrics();
 
@@ -143,7 +144,7 @@ void inicioKernelUnProcesador() {
 
 int main(void) {
 	pthread_t hiloConsola;
-//	pthread_t hiloMetrics;
+	pthread_t hiloMetrics;
 	pthread_t* arrayDeHilos = NULL;
 	pthread_t* arrayDeHilosPuntero = NULL;
 
@@ -153,8 +154,8 @@ int main(void) {
 //	inicioKernelUnProcesador();
 
 	// Hilo de metrics
-//	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
-//	pthread_detach(hiloMetrics);
+	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
+	pthread_detach(hiloMetrics);
 
 	// Hilo de consola
 

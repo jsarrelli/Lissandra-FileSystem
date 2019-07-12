@@ -131,6 +131,7 @@ void crearMetrica() {
 	metricas.diferenciaDeTiempoReadLatency = list_create();
 	metricas.diferenciaDeTiempoWriteLatency = list_create();
 	metricas.memoryLoadMemorias = list_create();
+	hayMetricas = true;
 }
 
 void destruirMetrica() {
@@ -213,17 +214,18 @@ void calcularMetrics() {
 
 		listaFiltrada = list_filter(listaMemorias, _hizoSelectOInsert);
 		list_iterate(listaFiltrada, (void*) _calcularMemoryLoadUnaMemoria);
-	}
 
-	tamLista = list_size(metricas.memoryLoadMemorias);
-	for(int i=0; i < tamLista ;i++){
-		double* elemento = (double*) list_get(
-				metricas.memoryLoadMemorias, i);
-		double elemento2 = *elemento;
-		metricas.memoryLoad += elemento2;
-	}
+		tamLista = list_size(metricas.memoryLoadMemorias);
+		for (int i = 0; i < tamLista; i++) {
+			double* elemento = (double*) list_get(metricas.memoryLoadMemorias,
+					i);
+			double elemento2 = *elemento;
+			metricas.memoryLoad += elemento2;
+		}
 
-	list_destroy(listaFiltrada);
+		list_destroy(listaFiltrada);
+
+	}
 
 }
 

@@ -140,6 +140,7 @@ sem_t cantProcesosColaReady;
 logStruct* log_master;
 bool haySC;
 bool puedeHaberRequests;
+bool hayMetricas;
 t_metrics metricas;
 
 
