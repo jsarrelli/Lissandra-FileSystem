@@ -1,24 +1,11 @@
-[INFO] 16:59:43:279 LFS Logs/(21148:21148): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 18:50:21:303 LFS Logs/(6265:6265): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 16:59:43:279 LFS Logs/(21148:21148): Levantando archivo de configuracion del proceso LFS 
+[INFO] 18:50:21:303 LFS Logs/(6265:6265): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 16:59:43:279 LFS Logs/(21148:21148): Archivo de configuracion del proceso LFS levantado 
+[INFO] 18:50:21:303 LFS Logs/(6265:6265): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 16:59:43:309 LFS Logs/(21148:21148): El tamanio del bitmap es de 3000 bits
-[INFO] 16:59:43:309 LFS Logs/(21148:21148): Levantando tablas ya existentes..
-[INFO] 16:59:52:849 LFS Logs/(21148:21148): Insert de 10;JULI en TABLA realizado en memtable
-[INFO] 17:00:01:355 LFS Logs/(21148:21148): Compactando tabla: TABLA
-[INFO] 17:00:01:355 LFS Logs/(21148:21148): Modificando tmp a tmpc..
-[INFO] 17:00:01:355 LFS Logs/(21148:21148): Obteniendo directorios de archivos binarios..
-[INFO] 17:00:01:355 LFS Logs/(21148:21148): Se cambio la extension de los temporales
-[INFO] 17:00:01:355 LFS Logs/(21148:21148): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 17:00:02:749 LFS Logs/(21148:21148): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 17:00:02:749 LFS Logs/(21148:21148): Filtrando registros..
-[INFO] 17:00:04:277 LFS Logs/(21148:21148): Filtrado completo
-[INFO] 17:00:04:277 LFS Logs/(21148:21148): Mergeando registros viejos con nuevos
-[INFO] 17:00:04:961 LFS Logs/(21148:21148): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 17:00:05:536 LFS Logs/(21148:21148): Filtrando registros..
-[INFO] 17:00:07:151 LFS Logs/(21148:21148): Filtrado completo
-[INFO] 17:00:07:404 LFS Logs/(21148:21148): Bloque 0 liberado
-[INFO] 17:00:07:826 LFS Logs/(21148:21148): Bloque 2 liberado
-[INFO] 17:00:07:828 LFS Logs/(21148:21148): Compactacion de <TABLA> exitosa
+[INFO] 18:50:21:343 LFS Logs/(6265:6265): El tamanio del bitmap es de 3000 bits
+[INFO] 18:50:21:344 LFS Logs/(6265:6265): Levantando tablas ya existentes..
+[INFO] 18:57:19:31 LFS Logs/(5924:5924): Insert de 8;JAJA en TABLA realizado en memtable
+[INFO] 18:57:25:204 LFS Logs/(5924:5924): Insert de 43;JEJE en TABLA realizado en memtable
+[INFO] 18:59:18:750 LFS Logs/(5924:5926): Insert de 28;MAIT en TABLA realizado en memtable

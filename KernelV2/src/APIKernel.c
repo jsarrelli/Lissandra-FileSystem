@@ -78,7 +78,7 @@ int procesarAdd(int id, consistencia cons) {
 		return condicionAdd(id, memoria);
 	}
 	infoMemoria* memoriaEncontrada = NULL;
-	if ((memoriaEncontrada = list_find(listaMemorias, (void*)_esCondicionAdd)) != NULL) {
+	if ((memoriaEncontrada = list_find(listaMemorias, (void*) _esCondicionAdd)) != NULL) {
 		asignarCriterioMemoria(memoriaEncontrada, cons);
 
 		if (!(memoriaEncontrada->criterios)[3])
@@ -177,8 +177,7 @@ int consolaSelect(char*argumentos) {
 	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR)
 		return SUPER_ERROR;
 
-	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
-			memoriaAEnviar->ip);
+	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
 	// Esto es para las metrics
 	timestampSelectAlFinalizar = getCurrentTime();
@@ -195,8 +194,7 @@ int consolaSelect(char*argumentos) {
 	if (socketMemoria >= 0) {
 		char* request = string_new();
 		string_append_with_format(&request, "%s %d", nombreTabla, key);
-		EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1,
-				SELECT);
+		EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, SELECT);
 		free(request);
 
 		Paquete paquete;
@@ -205,15 +203,13 @@ int consolaSelect(char*argumentos) {
 		if (atoi(paquete.mensaje) == 1) {
 			log_info(logger, "El registro no se encuentra");
 		} else {
-			log_info(logger, "Registro de tabla %s: %s", nombreTabla,
-					paquete.mensaje);
+			log_info(logger, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 		}
 
 		free(paquete.mensaje);
 		freePunteroAPunteros(valores);
 		free(argumentosAux);
-	}
-	else
+	} else
 		return SUPER_ERROR;
 
 	return TODO_OK;
@@ -259,11 +255,12 @@ void enviarJournalMemoria(int socketMemoria) {
 
 int consolaJournal() {
 
-//
-//	void journalMemoria(infoMemoria* memoria){
-//		int socketMemoria= ConectarAServidor(memoria., ip)
-//	}
-//	list_iterate(listaMemorias, journalMemoria);
+	void journalMemoria(infoMemoria* memoria) {
+		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d",memoria->id);
+		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
+		EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+	}
+	list_iterate(listaMemorias, (void*)journalMemoria);
 	return 0;
 }
 
