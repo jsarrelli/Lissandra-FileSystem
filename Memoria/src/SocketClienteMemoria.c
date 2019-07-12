@@ -150,6 +150,7 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 	while (true) {
 		if(strcmp(paquete.mensaje,"fin")){
+			free(paquete.mensaje);
 			break;
 		}
 		t_memoria* memoriaRecibida = deserealizarMemoria(paquete.mensaje);
