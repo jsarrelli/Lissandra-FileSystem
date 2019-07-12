@@ -49,7 +49,7 @@ t_memoria* deserealizarMemoria(char* mensaje) {
 	t_memoria* memoriaRecibida = malloc(sizeof(t_memoria));
 	memoriaRecibida->ip = string_duplicate(datos[0]);
 	memoriaRecibida->puerto = string_duplicate(datos[1]);
-	memoriaRecibida->memoryNumber = datos[2];
+	memoriaRecibida->memoryNumber = atoi(datos[2]);
 	freePunteroAPunteros(datos);
 	free(memoriaChar);
 	return memoriaRecibida;
