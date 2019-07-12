@@ -163,10 +163,16 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	if (paquete.header.tipoMensaje == NOTFOUND) {
 		return NULL;
 	}
+	char*registroAux = string_duplicate(paquete.mensaje);
 	char** valores = string_split(paquete.mensaje, ";");
-	t_registro* registro = registro_new(valores);
+
+	t_registro* registro = malloc(sizeof (t_registro));
+	registro->key = atoi(valores[0]);
+	registro->value = string_duplicate(valores[1]);
+	registro->timestamp = atof(valores[2]);
 
 	freePunteroAPunteros(valores);
+	free(registroAux);
 	free(paquete.mensaje);
 
 	return registro;
