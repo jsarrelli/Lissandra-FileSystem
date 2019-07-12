@@ -66,6 +66,11 @@ int main(void) {
 
 	cargarMemtable();
 
+	//INICIALIZAMOS LOS SEMAFOROS
+
+	sem_init(&mutexEscrituraBloques, 0, 1);
+	sem_init(&mutexCompactacion, 0,1);
+
 	//HILO ESCUCHA SERVIDOR
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, NULL);
 	pthread_detach(serverThread);

@@ -409,7 +409,11 @@ void crearYEscribirTemporal(char* rutaTabla) {
 		printf("Archivo temporal creado en %s\n\n", nombTabla);
 
 		t_list* registros = list_map(tabla->registros, (void*) registroToChar);
+
+		//sem_wait(&mutexEscrituraBloques);
 		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal);
+		//sem_post(&mutexEscrituraBloques);
+
 		list_destroy_and_destroy_elements(registros, free);
 		limpiarRegistrosDeTabla(nombTabla);
 	}
