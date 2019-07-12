@@ -98,7 +98,7 @@ void* iniciarhiloMetrics(void* args) {
  * El Kernel anda, en general, bastante bien
  *
  * TODO: (Cosas boludas)
- *		- Funcion METRICS
+ *		- Funcion METRICS (Faltan semaforos)
  *		- Agregar funcion JOURNAL (que ya estaba implementada)
  *		- Hilo de modificar archivo
  *		- Algunos leaks

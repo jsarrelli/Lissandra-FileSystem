@@ -52,11 +52,11 @@ int procesarInputKernel(char* linea) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
 		if (consolaRun(argumentos) == SUPER_ERROR)
 			return SUPER_ERROR;
-	}  else if (strcmp(operacion, "RUN") == 0) {
+	} else if (strcmp(operacion, "JOURNAL") == 0) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando JOURNAL");
 		if (consolaJournal() == SUPER_ERROR)
 			return SUPER_ERROR;
-	}else if (strcmp(operacion, "SALIR") == 0) {
+	} else if (strcmp(operacion, "SALIR") == 0) {
 		consolaSALIR(argumentos);
 
 	} else {
@@ -139,6 +139,7 @@ int consolaInsert(char*argumentos) {
 
 	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT);
 
+	// Esto es para las metrics
 	timestampInsertAlFinalizar = getCurrentTime();
 
 	double* diferencia = malloc(sizeof(double));
@@ -147,7 +148,6 @@ int consolaInsert(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
 
 	cantInserts++;
-
 
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA,
 			config->IP_MEMORIA);
@@ -189,6 +189,7 @@ int consolaSelect(char*argumentos) {
 	free(nombreTabla);
 	free(valores);
 
+	// Esto es para las metrics
 	timestampSelectAlFinalizar = getCurrentTime();
 
 	double* diferencia = malloc(sizeof(double));
@@ -243,7 +244,7 @@ void enviarJournalMemoria(int socketMemoria) {
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
 }
 
-void consolaJournal(){
+void consolaJournal() {
 //
 //	void journalMemoria(infoMemoria* memoria){
 //		int socketMemoria= ConectarAServidor(memoria., ip)

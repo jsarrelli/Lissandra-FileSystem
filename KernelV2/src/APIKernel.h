@@ -27,6 +27,8 @@ int consolaDescribe(char*nombreTabla);
 int consolaDrop(char*nombreTabla);
 int consolaRun(char*path);
 void consolaSALIR(char*nada);
+
+
 void imprimirMetrics();
 void enviarJournalMemoria(int socketMemoria);
 void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata);

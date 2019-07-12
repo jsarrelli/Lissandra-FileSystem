@@ -235,9 +235,8 @@ void* iniciarMultiprocesamiento(void* args) {
 //					usleep(retardoEjecucion * 1000);
 					log_info(log_master->logInfo,
 							"Llega a fin de quantum.\nDesalojando");
-					cantRequestsEjecutadasPorQuantum = 0;
 				}
-
+				cantRequestsEjecutadasPorQuantum = 0;
 				destruirProceso(proceso);
 
 			}
