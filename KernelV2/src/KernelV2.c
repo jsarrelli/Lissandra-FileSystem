@@ -14,7 +14,7 @@
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
-	config = cargarConfigKernel((char*) RUTA_CONFIG_KERNEL);
+	cargarConfigKernel();
 
 	crearMetrica();
 
@@ -61,7 +61,7 @@ void iniciarVariablesKernel() {
 	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
 	// 		de requests que haya en la cola de ready
 
-//	crearMetrica();
+	crearMetrica();
 
 //	if (multiprocesamiento != 0) {
 //		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
@@ -98,7 +98,6 @@ void* iniciarhiloMetrics(void* args) {
  * El Kernel anda, en general, bastante bien
  *
  * TODO: (Cosas boludas)
- *		- Funcion METRICS (Faltan semaforos)
  *		- Agregar funcion JOURNAL (que ya estaba implementada)
  *		- Hilo de modificar archivo
  *		- Algunos leaks
@@ -151,9 +150,9 @@ int main(void) {
 	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
 	iniciarVariablesKernel();
-	if(conocerMemorias()==-1){
-		return EXIT_FAILURE;
-	}
+//	if(conocerMemorias()==-1){
+//		return EXIT_FAILURE;
+//	}
 //	inicioKernelUnProcesador();
 
 	// Hilo de metrics
@@ -165,7 +164,7 @@ int main(void) {
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-	// Este semaforo es muy importlante
+	// Este semaforo es muy importante
 	sem_wait(&bin_main);
 
 	// Hilo de multiprocesamiento
@@ -188,8 +187,8 @@ int main(void) {
 	destruirLogStruct(log_master);
 	free(arrayDeHilos);
 
-	destruirMetrica();
-
+	destruirMetrics();
+	free(config);
 	return EXIT_SUCCESS;
 }
 

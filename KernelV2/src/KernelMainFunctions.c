@@ -65,15 +65,15 @@ char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_camp
 	return NULL;
 }
 
-t_config_kernel *cargarConfigKernel(char *ruta) {
-	log_info(log_master->logInfo, "Levantando archivo de configuracion del proceso Kernel ");
+void cargarConfigKernel() {
+	log_info(log_master->logInfo,
+			"Levantando archivo de configuracion del proceso Kernel ");
 
-	t_config_kernel* config = malloc(sizeof(t_config_kernel));
-	t_config *kernelConfig = config_create(ruta);
+	config = malloc(sizeof(t_config_kernel));
+	t_config *kernelConfig = config_create(RUTA_CONFIG_KERNEL);
 
 	if (kernelConfig == NULL) {
 		perror("Error ");
-
 		log_error(log_master->logError, "Problema al abrir el archivo");
 	}
 
@@ -86,10 +86,8 @@ t_config_kernel *cargarConfigKernel(char *ruta) {
 
 	log_info(log_master->logInfo, "Archivo de configuracion del proceso Kernel levantado ");
 
-	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
+	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
-
-	return config;
 }
 
 int cantidadParametros(char ** palabras) {
