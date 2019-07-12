@@ -128,9 +128,10 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 	char* obtenerNombreTablaByRuta(char* rutaTabla) {
 		char* rutaTablaAux = string_duplicate(rutaTabla);
 		char** directorios = string_split(rutaTabla, "/");
+		char* nombreTabla = obtenerUltimoElementoDeUnSplit(directorios);
 		freePunteroAPunteros(directorios);
 		free(rutaTablaAux);
-		return (char*) obtenerUltimoElementoDeUnSplit(directorios);
+		return nombreTabla;
 
 	}
 

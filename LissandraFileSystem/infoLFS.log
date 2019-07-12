@@ -1,14 +1,8 @@
-[INFO] 23:39:56:247 LFS Logs/(11016:11016): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 23:45:41:837 LFS Logs/(11448:11448): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 23:39:56:275 LFS Logs/(11016:11016): Levantando archivo de configuracion del proceso LFS 
+[INFO] 23:45:41:838 LFS Logs/(11448:11448): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 23:39:56:311 LFS Logs/(11016:11016): Archivo de configuracion del proceso LFS levantado 
+[INFO] 23:45:41:839 LFS Logs/(11448:11448): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 23:39:56:568 LFS Logs/(11016:11016): El tamanio del bitmap es de 3000 bits
-[INFO] 23:39:56:572 LFS Logs/(11016:11016): Levantando tablas ya existentes..
-[INFO] 23:40:13:440 LFS Logs/(11016:11021): Se creo la tabla: MATI en LFS
-
-[INFO] 23:40:13:461 LFS Logs/(11016:11021): Metadata de MATI creada
-
-[INFO] 23:40:30:457 LFS Logs/(11016:11021): Insert de 0;ASDSD en MATI realizado en memtable
-[INFO] 23:40:55:729 LFS Logs/(11016:11016): Fin de leectura por consola
+[INFO] 23:45:41:902 LFS Logs/(11448:11448): El tamanio del bitmap es de 3000 bits
+[INFO] 23:45:41:902 LFS Logs/(11448:11448): Levantando tablas ya existentes..
