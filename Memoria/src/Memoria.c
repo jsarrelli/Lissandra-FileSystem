@@ -35,8 +35,10 @@ int main() {
 //	pthread_detach(intTemporalJournal);
 
 //HILO DE GOSSIPING
-	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
-	pthread_detach(intTemporalGossiping);
+//	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
+//	pthread_detach(intTemporalGossiping);
+
+	gossiping();
 
 	//CONSOLA
 	leerConsola();

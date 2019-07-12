@@ -6,10 +6,8 @@ void cargarListaSeeds()
 	int i = 0;
 	while (configuracion->PUERTOS_SEEDS[i] != NULL) {
 		t_memoria* seedMemoria = malloc(sizeof(t_memoria));
-		seedMemoria->ip = malloc(strlen(configuracion->IP_SEEDS[i])+1);
-		seedMemoria->puerto = malloc(strlen(configuracion->PUERTOS_SEEDS[i])+1);
-		strcpy(seedMemoria->ip,configuracion->IP_SEEDS[i]);
-		strcpy(seedMemoria->puerto,configuracion->PUERTOS_SEEDS[i]);
+		seedMemoria->ip = string_duplicate(configuracion->IP_SEEDS[i]);
+		seedMemoria->puerto = string_duplicate(configuracion->PUERTOS_SEEDS[i]);
 		list_add(seeds, seedMemoria);
 		i++;
 	}
@@ -22,10 +20,8 @@ void cargarEstructurasGossiping(){
 	//La memoria en una primera instancia se conoce a si misma
 	tablaGossiping = list_create();
 	t_memoria* memoria = malloc(sizeof(t_memoria));
-	memoria->ip = malloc (strlen(configuracion->IP_ESCUCHA)+1);
-	memoria->puerto = malloc(strlen(configuracion->PUERTO_ESCUCHA)+1);
-	strcpy(memoria->ip,configuracion->IP_ESCUCHA);
-	strcpy(memoria->puerto,configuracion->PUERTO_ESCUCHA);
+	memoria->ip = string_duplicate(configuracion->IP_ESCUCHA);
+	memoria->puerto = string_duplicate(configuracion->PUERTO_ESCUCHA);
 
 	list_add(tablaGossiping,memoria);
 }
