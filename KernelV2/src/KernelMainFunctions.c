@@ -232,12 +232,14 @@ void* iniciarMultiprocesamiento(void* args) {
 				log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
-				usleep(retardoEjecucion * 1000);
+//				usleep(retardoEjecucion * 1000);
 				deNewAReady(proceso);
 			}
 			if (interrupcionPorEstado(estado)) {
 				log_error(log_master->logError, "Error: Una request no se pudo cumplir");
+				log_error(log_master->logError, "Destruyendo proceso");
 				destruirProceso(proceso);
+				log_error(log_master->logError, "Proceso destruido");
 				printf(">\n");
 			}
 
@@ -349,15 +351,15 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas) {
 	return list_get(memoriasEncontradas, randomNumber);
 }
 
-infoMemoria* newInfoMemoria() {
+infoMemoria* newInfoMemoria(char* ip, int puerto) {
 	infoMemoria* memoria = malloc(sizeof(infoMemoria));
 	memoria->id = idMemoria;
 	idMemoria++;
 	for (int i = 0; i < 4; i++) {
 		(memoria->criterios)[i] = false;
 	}
-	memoria->ip = NULL;
-	memoria->cantInsertEjecutados = 0;
+	memoria->ip = ip;
+	memoria->cantInsertEjecutados = puerto;
 	memoria->cantSelectsEjecutados = 0;
 	memoria->puerto = 0;
 	return memoria;

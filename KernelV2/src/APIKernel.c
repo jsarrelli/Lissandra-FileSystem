@@ -71,11 +71,14 @@ int procesarInputKernel(char* linea) {
 }
 
 int procesarAdd(int id, consistencia cons) {
-	bool findById(infoMemoria* memoria) {
+	bool condicionAdd(int id, infoMemoria* memoria) {
 		return id == memoria->id;
 	}
-	infoMemoria* memoriaEncontrada = list_find(listaMemorias, (void*)findById);
-	if (memoriaEncontrada != NULL) {
+	bool _esCondicionAdd(void* memoria) {
+		return condicionAdd(id, memoria);
+	}
+	infoMemoria* memoriaEncontrada = NULL;
+	if ((memoriaEncontrada = list_find(listaMemorias, (void*)_esCondicionAdd)) != NULL) {
 		asignarCriterioMemoria(memoriaEncontrada, cons);
 
 		if (!(memoriaEncontrada->criterios)[3])
@@ -91,16 +94,15 @@ int procesarAdd(int id, consistencia cons) {
 }
 
 int consolaAdd(char*argumento) {
-	char* argumentoAux = string_duplicate(argumento);
 	char** valores = string_split(argumento, " ");
-	consistencia cons = procesarConsistencia(valores[1]);
+	consistencia cons = procesarConsistencia(valores[3]);
 
-	int id = atoi(valores[0]);
+	int id = atoi(valores[1]);
 	if (procesarAdd(id, cons) == SUPER_ERROR)
 		return SUPER_ERROR;
 
 	freePunteroAPunteros(valores);
-	free(argumentoAux);
+//	free(argumentoAux);
 
 	return TODO_OK;
 }
@@ -175,25 +177,8 @@ int consolaSelect(char*argumentos) {
 	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR)
 		return SUPER_ERROR;
 
-	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
-
-	char* request = string_new();
-	string_append_with_format(&request, "%s %d", nombreTabla, key);
-	EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, SELECT);
-	free(request);
-
-	Paquete paquete;
-	RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
-
-	if (atoi(paquete.mensaje) == 1) {
-		log_info(logger, "El registro no se encuentra");
-	} else {
-		log_info(logger, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
-	}
-
-	free(paquete.mensaje);
-	freePunteroAPunteros(valores);
-	free(argumentosAux);
+	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
+			memoriaAEnviar->ip);
 
 	// Esto es para las metrics
 	timestampSelectAlFinalizar = getCurrentTime();
@@ -204,6 +189,32 @@ int consolaSelect(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
 
 	cantSelects++;
+
+	// Volvemos con las sockets
+
+	if (socketMemoria >= 0) {
+		char* request = string_new();
+		string_append_with_format(&request, "%s %d", nombreTabla, key);
+		EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1,
+				SELECT);
+		free(request);
+
+		Paquete paquete;
+		RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
+
+		if (atoi(paquete.mensaje) == 1) {
+			log_info(logger, "El registro no se encuentra");
+		} else {
+			log_info(logger, "Registro de tabla %s: %s", nombreTabla,
+					paquete.mensaje);
+		}
+
+		free(paquete.mensaje);
+		freePunteroAPunteros(valores);
+		free(argumentosAux);
+	}
+	else
+		return SUPER_ERROR;
 
 	return TODO_OK;
 }
@@ -336,7 +347,7 @@ int procesarDescribe(int socketMemoria, Paquete* paquete, char* nombreTabla) {
 
 int consolaDescribe(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	Paquete paquete;
 	if (nombreTabla == NULL) {
 		if (procesarDescribeAll(socketMemoria, &paquete) == SUPER_ERROR)
@@ -389,7 +400,7 @@ int consolaDrop(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 //	obtenerMemoriaAlAzarParaFunciones();
 
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	char request[100];
 	sprintf(request, "%s", nombreTabla);
 	if (enviarInfoMemoria(socketMemoria, request, DROP) == SUPER_ERROR)
