@@ -248,6 +248,7 @@ void reemplazarPagina(Pagina* pagina, Segmento* segmento) {
 }
 
 void clearFrameDePagina(Pagina* paginaAEliminar) {
+	log_info(logger, "Liberando frame");
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaAEliminar);
 	estadoFrame->estado = LIBRE;
 }
@@ -257,7 +258,9 @@ void freePagina(Pagina* pagina) {
 	//	freeRegistro(pagina->registro);
 		log_info(logger, "Haciendo free de registro");
 	}
+
 	free(pagina);
+	log_info(logger, "Pagina liberada");
 }
 
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar) {
@@ -270,10 +273,12 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar) {
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
 	list_destroy_and_destroy_elements(segmentoAEliminar->paginas, (void*) eliminarPaginaDeMemoria);
-	freeSegmento(segmentoAEliminar);
+	log_info(logger, "Paginas de %s eliminadas",segmentoAEliminar->nombreTabla);
+	//freeSegmento(segmentoAEliminar);
 }
 
 void freeSegmento(Segmento* segmentoAEliminar) {
+	log_info(logger, "haciendo free Segmento");
 	if (segmentoAEliminar->nombreTabla != NULL) {
 		free(segmentoAEliminar->nombreTabla);
 	}

@@ -74,6 +74,7 @@ void procesarAccion(int socketEntrante) {
 }
 
 void procesarRequestSELECT(char* request, int socketKernel) {
+	log_info(logger, "Procesando SELECT");
 	t_registro* registro = procesarSELECT(request);
 
 	if (registro != NULL) {
@@ -87,7 +88,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 }
 
 void procesarRequestINSERT(char* request, int socketKernel) {
-	log_info(logger, "Procesando SELECT");
+	log_info(logger, "Procesando INSERT");
 	t_registro* registro = procesarINSERT(request);
 	if (registro != NULL) {
 		enviarSuccess(0, INSERT, socketKernel);
@@ -97,6 +98,8 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 }
 
 void procesarRequestCREATE(char* request, int socketKernel) {
+
+	log_info(logger, "Procesando CREATE");
 	int success = procesarCREATE(request);
 	enviarSuccess(success, INSERT, socketKernel);
 }
