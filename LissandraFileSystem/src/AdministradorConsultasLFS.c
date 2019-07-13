@@ -7,7 +7,9 @@ int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaCh
 	}
 	crearTablaYParticiones(nombreTabla, cantParticiones);
 	crearMetadataTabla(nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
-	//iniciarThreadCompactacion(nombreTabla);
+	pthread_t threadCompactacion;
+	pthread_create(&threadCompactacion, NULL, (void*) iniciarThreadCompactacion, nombreTabla);
+	pthread_detach(threadCompactacion);
 	return 0;
 }
 
@@ -30,10 +32,10 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
-	crearYEscribirArchivosTemporales(rutas.Tablas);
+	//crearYEscribirArchivosTemporales(rutas.Tablas);
 
 	//sem_wait(&mutexCompactacion);
-	compactarTabla("TABLA");
+	//compactarTabla("TABLA");
 	//sem_post(&mutexCompactacion);
 }
 
@@ -58,9 +60,9 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
 
 		if (registro != NULL) {
-			printf("\nRegistro con mayor timestamp: %f;%d;%s\n",registro->timestamp,registro->key,registro->value);
+			printf("\nRegistro con mayor timestamp: %f;%d;%s\n", registro->timestamp, registro->key, registro->value);
 
-			log_info(logger, "Select a key %d",registro->key);
+			log_info(logger, "Select a key %d", registro->key);
 
 			return registro;
 

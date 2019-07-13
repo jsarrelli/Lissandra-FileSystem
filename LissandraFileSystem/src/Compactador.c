@@ -10,12 +10,14 @@
 void compactarTabla(char*nombreTabla) {
 
 	pthread_mutex_lock(&mutexCompactacion);
+
 	log_info(logger, "Compactando tabla: %s", nombreTabla);
 	log_info(logger, "Modificando tmp a tmpc..");
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
 		log_info(logger, "No hay nada para compactar");
+		pthread_mutex_unlock(&mutexCompactacion);
 		return;
 	}
 
@@ -42,6 +44,7 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
 	log_info(logger, "Compactacion de <%s> exitosa", nombreTabla);
+
 	pthread_mutex_unlock(&mutexCompactacion);
 }
 
@@ -387,15 +390,17 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 }
 
 void iniciarThreadCompactacion(char* nombreTabla) {
-	pthread_t threadCompactacion;
-	t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
-	while (0) {
+
+	while (true) {
 		if (!existeTabla(nombreTabla)) {
 			return;
 		}
+
+		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
-		pthread_create(&threadCompactacion, NULL, (void*) crearYEscribirArchivosTemporales, rutas.Tablas);
-		pthread_detach(threadCompactacion);
+		compactarTabla(nombreTabla);
+
+
 	}
 
 }
