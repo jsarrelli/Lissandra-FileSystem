@@ -57,7 +57,7 @@ bool validarValueMaximo(char* value) {
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
 Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento) {
-
+log_info(logger, "Insertando pagina en memoria..");
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 		log_info(logger, "Insertando registro en memoria..");
@@ -117,6 +117,7 @@ void* darMarcoVacio() {
 }
 
 Pagina* buscarPaginaEnMemoria(Segmento* segmento, int keyBuscada) {
+	log_info(logger, "Buscando pagina en memoria..");
 	bool isPaginaBuscada(Pagina* pagina) {
 		if (pagina->registro->key == keyBuscada) {
 			EstadoFrame* estadoFrame = getEstadoFrame(pagina);
