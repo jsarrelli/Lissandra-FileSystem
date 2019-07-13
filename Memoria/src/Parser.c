@@ -43,7 +43,7 @@ void* procesarSELECT(char* argumentos) {
 }
 
 void* procesarINSERT(char* consulta) {
-	log_info(logger, "INSERT..");
+	log_info(logger, "INSERT : %s",consulta);
 	char** valores = string_split(consulta, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];

@@ -27,6 +27,7 @@ t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeS
 	usleep(configuracion->RETARDO_MEMORIA*1000);
 	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
 	if (tabla == NULL) {
+		log_info(logger, "La tabla se cargara en la lista de segmentos");
 		tabla = insertarSegmentoEnMemoria(nombreTabla);
 	}
 
