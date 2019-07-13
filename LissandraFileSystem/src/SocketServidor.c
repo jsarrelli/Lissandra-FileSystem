@@ -23,6 +23,8 @@ void escuchar(int listenningSocket) {
 //			pthread_detach(threadId);
 			procesarAccion(socketMemoria);
 
+		}else{
+			log_info(logger, "Fallo la conexion con Memoria");
 		}
 
 	}
@@ -70,6 +72,8 @@ void procesarAccion(int socketMemoria) {
 	if (paquete.mensaje != NULL) {
 		free(paquete.mensaje);
 	}
+
+	close(socketMemoria);
 
 }
 
