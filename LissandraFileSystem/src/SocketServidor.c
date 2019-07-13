@@ -36,6 +36,7 @@ void procesarAccion(int socketMemoria) {
 		if (paquete.header.quienEnvia == MEMORIA) {
 			usleep(config->RETARDO * 1000);
 			switch ((int) paquete.header.tipoMensaje) {
+			log_info(logger, "Request en fileSystem %s",(char*)paquete.mensaje);
 			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
 				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 				break;
@@ -81,7 +82,8 @@ void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 }
 
 void procesarINSERT(char* request, int socketMemoria) {
-	char** valores = string_split(request, "\""); //34 son las " en ASCII
+	char* requestAux = string_duplicate(request);
+	char** valores = string_split(requestAux, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
@@ -98,11 +100,13 @@ void procesarINSERT(char* request, int socketMemoria) {
 	enviarSuccess(resultado, INSERT, socketMemoria);
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
+	free(requestAux);
 
 }
 
 void procesarCREATE(char* request, int socketMemoria) {
-	char** valores = string_split(request, " ");
+	char* requestAux = string_duplicate(request);
+	char** valores = string_split(requestAux, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];
 	char* cantParticiones = valores[2];
@@ -112,6 +116,7 @@ void procesarCREATE(char* request, int socketMemoria) {
 
 	enviarSuccess(resultado, CREATE, socketMemoria);
 	freePunteroAPunteros(valores);
+	free(requestAux);
 }
 
 void procesarDROP(char* nombreTabla, int socketMemoria) {
@@ -175,8 +180,9 @@ void procesarSELECT(char* request, int socketMemoria) {
 		string_append_with_format(&response, "%d;%s;%f", registro->key, registro->value, registro->timestamp);
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response) + 1, SELECT);
 		free(response);
+		free(registro);
 	}
-	freeRegistro(registro);
+
 	freePunteroAPunteros(valores);
 }
 
