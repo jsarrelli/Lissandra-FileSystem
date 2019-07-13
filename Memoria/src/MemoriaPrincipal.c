@@ -130,6 +130,7 @@ Pagina* buscarPaginaEnMemoria(Segmento* segmento, int keyBuscada) {
 }
 
 Pagina* buscarPagina(Segmento* segmento, int key) {
+	log_info(logger, "Buscando pagina");
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
@@ -173,6 +174,7 @@ EstadoFrame* getEstadoFrame(Pagina* pagina) {
  y si el fileSystem no lo tiene, lo creamos (no la crea aca)
  */
 Segmento* buscarSegmento(char* nombreSegmento) {
+	log_info(logger, "Buscando segmento..");
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
 
 	if (segmento == NULL) {

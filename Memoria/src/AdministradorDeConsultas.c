@@ -8,7 +8,7 @@
 #include "AdministradorDeConsultas.h"
 
 t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
-
+	log_info(logger, "SELECT en memoria..");
 	//si aca el segmento no existe en ningun lado, lo tengo que crear?
 	usleep(configuracion->RETARDO_MEMORIA*1000);
 	Segmento* tabla = buscarSegmento(nombreTabla);

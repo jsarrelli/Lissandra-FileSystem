@@ -25,6 +25,7 @@ void procesarConsulta(char* consulta) {
 }
 
 void* procesarSELECT(char* argumentos) {
+
 	char** valores = string_split(argumentos, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
