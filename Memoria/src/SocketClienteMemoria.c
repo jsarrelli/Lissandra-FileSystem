@@ -164,12 +164,13 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(logger, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	while (socketFileSystem != -1) {
+	while (socketFileSystem == -1) {
 		socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 		usleep(100);
 	}
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
+	log_info(logger, "Select enviado a fileSystem: %s",consulta);
 
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
 	free(consulta);
