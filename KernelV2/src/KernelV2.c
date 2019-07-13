@@ -109,26 +109,30 @@ void* iniciarhiloMetrics(void* args) {
 
 void iniciarConsolaKernel() {
 	char* operacion;
-	operacion = readline(">");
 
 	while (puedeHaberRequests) {
+		operacion = readline(">");
 		if (!instruccionSeaMetrics(operacion)) {
-			if (*operacion != '\0') {
+			if (strlen(operacion) != 0) {
 				crearProcesoYMandarloAReady(operacion);
 //				desbloquearHilos();
+				free(operacion);
+			} else {
 				sem_post(&bin_main);
+				free(operacion);
+				return;
 			}
 		} else {
 			calcularMetrics();
 			imprimirMetrics();
+			free(operacion);
 		}
-		operacion = readline(">");
 	}
 }
 
-void iniciarHiloDescribe(){
-	while(true){
-		usleep(config->METADATA_REFRESH*1000);
+void iniciarHiloDescribe() {
+	while (true) {
+		usleep(config->METADATA_REFRESH * 1000);
 		consolaDescribe(NULL);
 	}
 }
@@ -169,13 +173,14 @@ int main(void) {
 //	pthread_detach(hiloMetrics);
 
 	// Hilo de consola
-
-	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
-	pthread_detach(hiloConsola);
+//
+//	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
+//	pthread_detach(hiloConsola);
 
 	pthread_create(&hiloDescribe, NULL, (void*) iniciarHiloDescribe, NULL);
 	pthread_detach(hiloDescribe);
 
+	iniciarConsolaKernel();
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
 
@@ -183,8 +188,7 @@ int main(void) {
 
 	for (int i = 0; i < multiprocesamiento; i++) {
 		arrayDeHilosPuntero = arrayDeHilos;
-		pthread_create(&arrayDeHilosPuntero[i], NULL,
-				(void*) iniciarMultiprocesamiento, NULL);
+		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*) iniciarMultiprocesamiento, NULL);
 	}
 
 	for (int i = 0; i < multiprocesamiento; i++) {
