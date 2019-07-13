@@ -164,6 +164,7 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(logger, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	log_info(logger, "Socket FileSsytem: %d",socketFileSystem);
 //	while (socketFileSystem == -1) {
 //		socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 //		usleep(100);
@@ -179,10 +180,11 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(logger, "Select enviado a fileSystem: %s",consulta);
 
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
-	free(consulta);
+
 
 	Paquete paquete;
-	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+	RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete);
+	free(consulta);
 
 	if (paquete.header.tipoMensaje == NOTFOUND) {
 		return NULL;
