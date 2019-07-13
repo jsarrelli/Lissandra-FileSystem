@@ -88,8 +88,9 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 }
 
 void procesarRequestINSERT(char* request, int socketKernel) {
+	char* consulta = string_duplicate(request);
 	log_info(logger, "Procesando INSERT");
-	t_registro* registro = procesarINSERT(request);
+	t_registro* registro = procesarINSERT(consulta);
 	if (registro != NULL) {
 		enviarSuccess(0, INSERT, socketKernel);
 	} else {
