@@ -74,6 +74,11 @@ log_info(logger, "Insertando pagina en memoria..");
 				marcoVacio = (void*) liberarUltimoUsado();
 			} else {
 				journalMemoria();
+				//fijate aca
+				if(list_is_empty(segmentos)){
+					log_info(logger, "Tenes vacia la lista de segmentos pancho");
+					list_add(segmentos,segmento);
+				}
 			}
 		}
 
@@ -310,7 +315,7 @@ t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 }
 
 void journalMemoria() {
-	//algun semaforo
+	pthread_mutex_lock(&lock);
 	log_info(logger, "Realizando Journal..");
 
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
@@ -334,6 +339,7 @@ void journalMemoria() {
 
 	vaciarMemoria();
 	log_info(logger, "Journal finalizado con exito");
+	pthread_mutex_unlock(&lock);
 }
 
 bool existeSegmentoFS(char* nombreSegmento) {
