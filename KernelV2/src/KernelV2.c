@@ -116,10 +116,11 @@ void iniciarConsolaKernel() {
 			if (strlen(operacion) != 0) {
 				crearProcesoYMandarloAReady(operacion);
 //				desbloquearHilos();
-				free(operacion);
-			} else {
 				sem_post(&bin_main);
+				//free(operacion);
+			} else {
 				free(operacion);
+				cerrarKernel();
 				return;
 			}
 		} else {
@@ -153,12 +154,24 @@ void inicioKernelUnProcesador() {
 	destruirLogStruct(log_master);
 }
 
+void cerrarKernel() {
+
+	//terminarHilos();
+	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
+	destruirElementosMain(listaHilos, colaReady);
+	destruirListaMemorias();
+	log_info(log_master->logInfo, "Consola terminada");
+	destruirLogStruct(log_master);
+	free(arrayDeHilos);
+	destruirMetrics();
+	free(config);
+}
+
+void terminarHilos() {
+	pthread_kill(hiloConsola, SIGUSR1);
+}
+
 int main(void) {
-	pthread_t hiloConsola;
-	pthread_t hiloMetrics;
-	pthread_t hiloDescribe;
-	pthread_t* arrayDeHilos = NULL;
-	pthread_t* arrayDeHilosPuntero = NULL;
 
 	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
@@ -173,14 +186,14 @@ int main(void) {
 //	pthread_detach(hiloMetrics);
 
 	// Hilo de consola
-//
-//	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
-//	pthread_detach(hiloConsola);
+
+	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
+	pthread_detach(hiloConsola);
 
 	pthread_create(&hiloDescribe, NULL, (void*) iniciarHiloDescribe, NULL);
 	pthread_detach(hiloDescribe);
 
-	iniciarConsolaKernel();
+	//iniciarConsolaKernel();
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
 
@@ -197,14 +210,7 @@ int main(void) {
 
 	sem_wait(&fin);
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
-	destruirElementosMain(listaHilos, colaReady);
-	destruirListaMemorias();
-	log_info(log_master->logInfo, "Consola terminada");
-	destruirLogStruct(log_master);
-	free(arrayDeHilos);
-
-	destruirMetrics();
-	free(config);
+	//cerrarKernel();
 	return EXIT_SUCCESS;
 }
 

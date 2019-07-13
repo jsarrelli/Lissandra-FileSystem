@@ -66,7 +66,8 @@ typedef struct {
 
 typedef struct {
 	char*nombreTabla;
-	t_metadata_tabla* metadata;
+	consistencia consistencia;
+	int nParticiones;
 } metadataTabla;
 
 typedef struct {

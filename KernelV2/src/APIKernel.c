@@ -117,7 +117,7 @@ int consolaInsert(char*argumentos) {
 
 	char** valores = string_split(argumentos, "\"");
 	char** valoresAux = string_split(valores[0], " ");
-	char* nombreTabla = valoresAux[0];
+	char* nombreTabla = string_duplicate(valoresAux[0]);
 	char* key = valoresAux[1];
 	char* value = valores[1];
 	double timeStamp = 0;
@@ -126,10 +126,16 @@ int consolaInsert(char*argumentos) {
 	} else {
 		timeStamp = atof(valores[2]);
 	}
+
 	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, , su value es: %s y su timeStamp: %f", nombreTabla, key,
 			value, timeStamp);
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, atoi(key));
+	if (memoriaAEnviar == NULL) {
+		freePunteroAPunteros(valoresAux);
+		freePunteroAPunteros(valores);
+		return SUPER_ERROR;
+	}
 	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT, memoriaAEnviar);
 
 	// Esto es para las metrics
@@ -149,12 +155,8 @@ int consolaInsert(char*argumentos) {
 
 //	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
-	free(valoresAux[1]);
-	free(valoresAux[0]);
-	free(valoresAux);
-	free(valores[1]);
-	free(valores[0]);
-	free(valores);
+	freePunteroAPunteros(valoresAux);
+	freePunteroAPunteros(valores);
 
 	return TODO_OK;
 }
@@ -174,8 +176,11 @@ int consolaSelect(char*argumentos) {
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
-	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR)
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR) {
+		freePunteroAPunteros(valores);
+		free(argumentosAux);
 		return SUPER_ERROR;
+	}
 
 	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
@@ -185,7 +190,7 @@ int consolaSelect(char*argumentos) {
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
 
-	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
+	list_add(metricas.diferenciaDeTiempoReadLatency,diferencia);
 
 	cantSelects++;
 
@@ -215,7 +220,7 @@ int consolaSelect(char*argumentos) {
 	return TODO_OK;
 }
 
-int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) {
+int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo) {
 	Paquete paquete;
 	int success;
 
@@ -233,9 +238,11 @@ int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo) 
 		log_trace(log_master->logTrace, "Paquete recibido correctamente");
 	} else {
 		log_error(log_master->logError, "Error al recibir el paquete");
-		return SUPER_ERROR;
+		success = SUPER_ERROR;
 	}
-	return ERROR;
+
+	free(paquete.mensaje);
+	return success;
 }
 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
@@ -265,7 +272,8 @@ int consolaJournal() {
 }
 
 int consolaCreate(char*argumentos) {
-	char** valores = string_split(argumentos, " ");
+	char* argumentoAux = string_duplicate(argumentos);
+	char** valores = string_split(argumentoAux, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];
 	int cantParticiones = atoi(valores[2]);
@@ -282,12 +290,8 @@ int consolaCreate(char*argumentos) {
 
 	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla, consistenciaChar, memoriaAlAzar) == SUPER_ERROR)
 		return SUPER_ERROR;
-
-	free(valores[3]);
-	free(valores[2]);
-	free(valores[1]);
-	free(valores[0]);
-	free(valores);
+	freePunteroAPunteros(valores);
+	free(argumentoAux);
 
 	return TODO_OK;
 
@@ -298,12 +302,13 @@ metadataTabla* deserealizarMetadata(char* metadataSerializada) {
 	char** datos = string_split(mensaje, " ");
 	char* nombreTabla = string_duplicate(datos[0]);
 
-	t_consistencia consistencia = getConsistenciaByChar(datos[1]);
+	consistencia consistencia = getConsitenciaFromChar(datos[1]);
 	int cantParticiones = atoi(datos[2]);
 	int tiempoCompactacion = atoi(datos[3]);
 	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 
 	mostrarMetadata(metadata);
+
 	freePunteroAPunteros(datos);
 	free(nombreTabla);
 	free(mensaje);
@@ -311,14 +316,21 @@ metadataTabla* deserealizarMetadata(char* metadataSerializada) {
 
 }
 
-metadataTabla* newMetadata(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
-	t_metadata_tabla* metadata = malloc(sizeof(t_metadata_tabla));
-	metadata->CONSISTENCIA = consistencia;
-	metadata->CANT_PARTICIONES = cantParticiones;
-	metadata->T_COMPACTACION = tiempoCompactacion;
+consistencia getConsitenciaFromChar(char* consistenciaChar) {
+	if (strcmp(consistenciaChar, "SC") == 0) {
+		return SC;
+	} else if (strcmp(consistenciaChar, "SHC") == 0) {
+		return SHC;
+	} else {
+		return EC;
+	}
+}
+
+metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
 
 	metadataTabla* tabla = malloc(sizeof(metadataTabla));
-	tabla->metadata = metadata;
+	tabla->consistencia = consistencia;
+	tabla->nParticiones = cantParticiones;
 	tabla->nombreTabla = string_duplicate(nombreTabla);
 
 	return tabla;
@@ -390,9 +402,18 @@ void agregarTabla(metadataTabla* tabla) {
 void mostrarMetadata(metadataTabla* metadataTabla) {
 
 	log_info(log_master->logInfo, "Segmento: %s", metadataTabla->nombreTabla);
-	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d / tiempoCompactacion: %d",
-			getConsistenciaCharByEnum(metadataTabla->metadata->CONSISTENCIA), metadataTabla->metadata->CANT_PARTICIONES,
-			metadataTabla->metadata->T_COMPACTACION);
+	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d ", consistenciaToChar(metadataTabla->consistencia),
+			metadataTabla->nParticiones);
+}
+
+char* consistenciaToChar(consistencia consistencia) {
+	if (consistencia == SC) {
+		return "SC";
+	} else if (consistencia == SHC) {
+		return "SHC";
+	} else {
+		return "EC";
+	}
 }
 
 int consolaDrop(char*nombreTabla) {

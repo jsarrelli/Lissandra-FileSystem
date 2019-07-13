@@ -305,8 +305,8 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 
 	if (consistenciaDeTabla == ERROR_CONSISTENCIA) {
 		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe o error en la consistencia");
+		return NULL;
 	}
-//		return NULL;
 
 	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
 }
@@ -321,7 +321,7 @@ consistencia obtenerConsistenciaDe(char* nombreTabla) {
 	if (tabla == NULL)
 		return ERROR_CONSISTENCIA;
 
-	return tabla->metadata->CONSISTENCIA;
+	return tabla->consistencia;
 }
 
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key) {

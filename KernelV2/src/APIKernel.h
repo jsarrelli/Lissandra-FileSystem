@@ -34,9 +34,12 @@ void enviarJournalMemoria(int socketMemoria);
 void mostrarMetadata(metadataTabla* metadataTabla);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);
 metadataTabla* deserealizarMetadata(char* metadataSerializada);
-metadataTabla* newMetadata(char* nombreTabla, t_consistencia consistencia, int cantParticiones, int tiempoCompactacion);
+metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int cantParticiones, int tiempoCompactacion);
+consistencia getConsitenciaFromChar(char* consistenciaChar);
 void agregarTabla(metadataTabla* tabla);
 
 int procesarDescribe(int socketMemoria, char* nombreTabla);
+consistencia getConsitenciaFromChar(char* consistenciaChar);
+char* consistenciaToChar(consistencia consistencia);
 
 #endif /* APIKERNEL_H_ */
