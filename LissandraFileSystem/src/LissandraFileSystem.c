@@ -84,7 +84,7 @@ int main(void) {
 
 	consolaLFS();
 	pthread_kill(serverThread,SIGUSR1);
-	procesoDump();
+	//procesoDump();
 	vaciarMemtable();
 	freeConfig();
 	bitarray_destroy(bitmap);

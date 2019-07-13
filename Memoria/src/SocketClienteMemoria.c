@@ -168,6 +168,12 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 //		socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 //		usleep(100);
 //	}
+
+	if(socketFileSystem==-1){
+		log_info(logger, "No se pudo conectar con el fileSystem");
+		return NULL;
+	}
+
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
 	log_info(logger, "Select enviado a fileSystem: %s",consulta);
