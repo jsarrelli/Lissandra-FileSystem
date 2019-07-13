@@ -23,7 +23,6 @@ t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
 
 t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeStamp) {
 	log_info(logger, "Insertando en memoria");
-	validarValueMaximo(value);
 	usleep(configuracion->RETARDO_MEMORIA*1000);
 	Segmento *tabla = buscarSegmentoEnMemoria(nombreTabla);
 	if (tabla == NULL) {
@@ -113,7 +112,7 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 }
 
 void JOURNAL_MEMORIA(){
-	pthread_mutex_lock(&lock);
+
 	journalMemoria();
-	pthread_mutex_unlock(&lock);
+
 }

@@ -77,6 +77,7 @@ log_info(logger, "Insertando pagina en memoria..");
 				//fijate aca
 				if(list_is_empty(segmentos)){
 					log_info(logger, "Tenes vacia la lista de segmentos pancho");
+					log_info(logger, "%s",segmento->nombreTabla);
 					list_add(segmentos,segmento);
 				}
 			}
@@ -154,7 +155,7 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 }
 
 Segmento* buscarSegmentoEnMemoria(char* nombreSegmentoBuscado) {
-
+log_info(logger, "Buscando segmento: %s en memoria",nombreSegmentoBuscado);
 	bool isSegmentoBuscado(Segmento* segmentoActual) {
 		if (strcmp(segmentoActual->nombreTabla, nombreSegmentoBuscado) == 0) {
 			return true;
@@ -281,7 +282,7 @@ void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
 	list_destroy_and_destroy_elements(segmentoAEliminar->paginas, (void*) eliminarPaginaDeMemoria);
 	log_info(logger, "Paginas de %s eliminadas",segmentoAEliminar->nombreTabla);
-	//freeSegmento(segmentoAEliminar);
+	freeSegmento(segmentoAEliminar);
 }
 
 void freeSegmento(Segmento* segmentoAEliminar) {
