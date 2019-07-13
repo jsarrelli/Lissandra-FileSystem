@@ -278,7 +278,7 @@ void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 }
 
 void freeSegmento(Segmento* segmentoAEliminar) {
-	log_info(logger, "haciendo free Segmento");
+	log_info(logger, "Haciendo free Segmento");
 	if (segmentoAEliminar->nombreTabla != NULL) {
 		free(segmentoAEliminar->nombreTabla);
 	}
@@ -288,11 +288,12 @@ void freeSegmento(Segmento* segmentoAEliminar) {
 void vaciarMemoria() {
 	log_info(logger, "Vaciando memoria..");
 	list_clean_and_destroy_elements(segmentos, (void*) eliminarSegmentoDeMemoria);
+	log_info(logger, "Memoria Vacia");
 }
 
 void finalizarMemoria() {
 	vaciarMemoria();
-	list_destroy(segmentos);
+	//list_destroy(segmentos);
 }
 
 bool isModificada(Pagina* pagina) {

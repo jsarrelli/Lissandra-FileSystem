@@ -105,6 +105,7 @@ void procesarRequestCREATE(char* request, int socketKernel) {
 }
 
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
+	log_info(logger, "Procesando DESCRIBE");
 	t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
 	if (metaData != NULL) {
 		char response[100];
