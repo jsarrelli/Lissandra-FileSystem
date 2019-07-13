@@ -82,7 +82,7 @@ void procesoDump() {
 		pthread_mutex_lock(&mutexDump);
 
 		usleep(config->TIEMPO_DUMP * 1000);
-		log_info(logger, "Iniciando proceso Dump);
+		log_info(logger, "Iniciando proceso Dump");
 		crearYEscribirArchivosTemporales(rutas.Tablas);
 
 		pthread_mutex_unlock(&mutexDump);
