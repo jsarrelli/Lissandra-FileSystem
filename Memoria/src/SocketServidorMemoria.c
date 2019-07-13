@@ -10,11 +10,11 @@ void escuchar(int listenningSocket) {
 		int socketKernel = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketKernel != -1) {
 			//no  me convence esto del multihilo
-			pthread_t threadId;
-			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketKernel);
-			pthread_detach(threadId);
-			//probamos sin multihilo
-			//procesarAccion(socketKernel);
+//			pthread_t threadId;
+//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketKernel);
+//			pthread_detach(threadId);
+//			//probamos sin multihilo
+			procesarAccion(socketKernel);
 			printf("Escuchando.. \n");
 		}
 
