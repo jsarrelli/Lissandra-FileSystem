@@ -42,19 +42,35 @@ char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal) {
 }
 
 int existeTabla(char* nombreTabla) {
-	char* rutaTabla = armarRutaTabla(nombreTabla);
-	DIR* tablaActual;
 
-	tablaActual = opendir(rutaTabla);
+//	char* rutaTabla = armarRutaTabla(nombreTabla);
+//	DIR* tablaActual;
+//
+//	tablaActual = opendir(rutaTabla);
+//
+//	if (tablaActual != NULL) {
+//		closedir(tablaActual);
+//		free(rutaTabla);
+//		return 1;
+//	}
+//	closedir(tablaActual);
+//	free(rutaTabla);
+//	return 0;
 
-	if (tablaActual != NULL) {
-		closedir(tablaActual);
-		free(rutaTabla);
-		return 1;
+	t_list* directorios = list_create();
+	buscarDirectorios(rutas.Tablas, directorios);
+
+	bool isTablaBuscada(char* rutaTablaActual){
+
+		char* nombreTablaActual = obtenerNombreTablaByRuta(rutaTablaActual);
+		bool result = strcmp(nombreTabla,nombreTablaActual);
+		free(nombreTablaActual);
+		return result;
 	}
-	closedir(tablaActual);
-	free(rutaTabla);
-	return 0;
+
+	bool resultado =list_any_satisfy(directorios, (void*)isTablaBuscada);
+	list_destroy_and_destroy_elements(directorios,free);
+	return resultado;
 }
 
 void insertarTablaEnMemtable(char* nombreTabla) {
@@ -163,7 +179,7 @@ t_list* buscarArchivos(char* nombreTabla) {
 	t_list* archivos = list_create();
 
 	if (directorioActual == NULL) {
-		log_error(loggerError, "No se pudo abrir el directorio.");
+		log_error(loggerError, "No se pudo abrir el directorio.: %s",rutaTabla);
 
 	} else {
 		// Leo uno por uno los archivos que estan adentro del directorio actual
@@ -317,7 +333,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 	directorioActual = opendir(ruta);
 
 	if (directorioActual == NULL) {
-		log_error(loggerError, "No se pudo abrir el directorio.");
+		log_error(loggerError, "No se pudo abrir el directorio.:%s",ruta);
 	} else {
 		// Leo uno por uno los directorios que estan adentro del directorio actual
 		while ((directorio = readdir(directorioActual)) != NULL) {

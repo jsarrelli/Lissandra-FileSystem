@@ -50,7 +50,7 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 		log_info(logger, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
-		printf("La %s no existe", nombreTabla);
+		log_error(loggerError, "La tabla %s no existe",nombreTabla);
 		return 1;
 	}
 }
