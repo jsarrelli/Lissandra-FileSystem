@@ -147,6 +147,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 
 }
 
+
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 
 	if (existeTabla(nombreTabla)) {
