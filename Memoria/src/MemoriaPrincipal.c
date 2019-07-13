@@ -57,7 +57,7 @@ bool validarValueMaximo(char* value) {
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
 Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento) {
-log_info(logger, "Insertando pagina en memoria..");
+	log_info(logger, "Insertando pagina en memoria..");
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
 		log_info(logger, "Insertando registro en memoria..");
@@ -75,16 +75,21 @@ log_info(logger, "Insertando pagina en memoria..");
 			} else {
 				journalMemoria();
 				//fijate aca
-				if(list_is_empty(segmentos)){
+				if (list_is_empty(segmentos)) {
 					log_info(logger, "Tenes vacia la lista de segmentos pancho");
-					log_info(logger, "%s",segmento->nombreTabla);
-					list_add(segmentos,segmento);
+					log_info(logger, "%s", segmento->nombreTabla);
+					list_add(segmentos, segmento);
 				}
 			}
 		}
 
 		if (marcoVacio == NULL) {
 			marcoVacio = darMarcoVacio();
+		}
+		if (marcoVacio == NULL) {
+			log_info(logger, "esta verga sigue vacia");
+		} else {
+			log_info(logger, "te da un frame");
 		}
 
 		t_registro* registroEnMemoria = memcpy(marcoVacio, &registro, tamanioRegistro);
@@ -94,13 +99,13 @@ log_info(logger, "Insertando pagina en memoria..");
 		paginaNueva->registro = registroEnMemoria;
 
 		list_add(segmento->paginas, paginaNueva);
-	} else if(paginaNueva->registro->timestamp < timeStamp) {
+	} else if (paginaNueva->registro->timestamp < timeStamp) {
 		log_info(logger, "Esta key ya se encuentra en el sistema con un timeStamp menor, se actualizara");
 		free(paginaNueva->registro->value);
 		paginaNueva->registro->value = string_duplicate(value);
 		paginaNueva->registro->timestamp = timeStamp;
 		paginaNueva->modificado = MODIFICADO;
-	}else{
+	} else {
 		log_info(logger, "Ya se encuentra en sistema un registro mas actualizado");
 	}
 
@@ -155,7 +160,7 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 }
 
 Segmento* buscarSegmentoEnMemoria(char* nombreSegmentoBuscado) {
-log_info(logger, "Buscando segmento: %s en memoria",nombreSegmentoBuscado);
+	log_info(logger, "Buscando segmento: %s en memoria", nombreSegmentoBuscado);
 	bool isSegmentoBuscado(Segmento* segmentoActual) {
 		if (strcmp(segmentoActual->nombreTabla, nombreSegmentoBuscado) == 0) {
 			return true;
@@ -263,7 +268,7 @@ void clearFrameDePagina(Pagina* paginaAEliminar) {
 
 void freePagina(Pagina* pagina) {
 	if (pagina->registro != NULL) {
-	//	freeRegistro(pagina->registro);
+		//	freeRegistro(pagina->registro);
 		log_info(logger, "Haciendo free de registro");
 	}
 
@@ -281,7 +286,7 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar) {
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
 
 	list_destroy_and_destroy_elements(segmentoAEliminar->paginas, (void*) eliminarPaginaDeMemoria);
-	log_info(logger, "Paginas de %s eliminadas",segmentoAEliminar->nombreTabla);
+	log_info(logger, "Paginas de %s eliminadas", segmentoAEliminar->nombreTabla);
 	freeSegmento(segmentoAEliminar);
 }
 
@@ -320,6 +325,7 @@ void journalMemoria() {
 	log_info(logger, "Realizando Journal..");
 
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
+		clearFrameDePagina(pagina);
 		if (isModificada(pagina)) {
 			enviarRegistroAFileSystem(pagina, segmento->nombreTabla);
 			log_info(logger, "Enviando registro a FileSystem");
@@ -333,9 +339,8 @@ void journalMemoria() {
 			log_info(logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
 		}
 
-		list_clean_and_destroy_elements(segmento->paginas, freePagina);
+		list_clean_and_destroy_elements(segmento->paginas, (void*) freePagina);
 	}
-
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
