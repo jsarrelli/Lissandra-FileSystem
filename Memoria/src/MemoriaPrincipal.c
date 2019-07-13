@@ -19,8 +19,7 @@ void inicializarEstadoMemoria() {
 void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystemRecibido) {
 	tamanioRegistro = sizeof(int) + sizeof(double) + valueMaximoRecibido;
 	tamanioMemoria = tamanioMemoriaRecibido;
-	//cantFrames = tamanioMemoria / tamanioRegistro;
-	cantFrames = 3;
+	cantFrames = tamanioMemoria / tamanioRegistro;
 	memoria = malloc(tamanioMemoria);
 	valueMaximo = valueMaximoRecibido;
 	socketFileSystem = socketFileSystemRecibido;
