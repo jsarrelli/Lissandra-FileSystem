@@ -60,10 +60,11 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 
 int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	char* consulta = malloc(strlen(nombreTabla) + 2 + sizeof(int) + sizeof(int) + 3);
-	sprintf(consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA), metadata->CANT_PARTICIONES,
-			metadata->T_COMPACTACION);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), CREATE);
+	char* consulta = string_new();
+	string_append_with_format(consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
+			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
+	log_info(logger, "Enviando CREATE a fileSystem", consulta);
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, CREATE);
 	free(consulta);
 
 	Paquete paquete;
@@ -163,7 +164,7 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(logger, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	while(socketFileSystem!=-1){
+	while (socketFileSystem != -1) {
 		socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 		usleep(100);
 	}
