@@ -22,6 +22,7 @@ void escuchar(int listenningSocket) {
 //			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
 //			pthread_detach(threadId);
 			procesarAccion(socketMemoria);
+			close(socketMemoria);
 
 		} else {
 			log_info(logger, "Fallo la conexion con Memoria");
