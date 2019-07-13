@@ -17,7 +17,7 @@ void escuchar(int listenningSocket) {
 		printf("Escuchando.. \n");
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
-			printf("Request de memoria recibida.. \n");
+			log_info(logger,"Request de memoria recibida.. \n");
 //			pthread_t threadId;
 //			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
 //			pthread_detach(threadId);
@@ -82,6 +82,7 @@ void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 }
 
 void procesarINSERT(char* request, int socketMemoria) {
+	log_info(logger, "Procesando INSERT:  %s",request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
@@ -105,6 +106,7 @@ void procesarINSERT(char* request, int socketMemoria) {
 }
 
 void procesarCREATE(char* request, int socketMemoria) {
+	log_info(logger, "Procesando CREATE:  %s",request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, " ");
 	char* nombreTabla = valores[0];
@@ -126,7 +128,7 @@ void procesarDROP(char* nombreTabla, int socketMemoria) {
 
 //esta funcion podria ser mucho mas linda, pero el obtenerNombreTablas no me sale
 void procesarDESCRIBE_ALL(int socketMemoria) {
-
+	log_info(logger, "Procesando DESCRIBE ALL");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
@@ -154,7 +156,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 
 
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
-
+	log_info(logger, "Procesando DROP:  %s",nombreTabla);
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
@@ -168,6 +170,7 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 }
 
 void procesarSELECT(char* request, int socketMemoria) {
+	log_info(logger, "Procesando SELECT:  %s",request);
 	char** valores = string_split(request, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);

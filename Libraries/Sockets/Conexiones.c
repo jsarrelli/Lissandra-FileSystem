@@ -15,7 +15,7 @@ int ConectarAServidor(int puerto, char* ip) {
 	if (conexion == -1) {
 		return conexion;
 	}
-
+	puts("Conexion establecida");
 	return socketFD;
 
 }

@@ -161,6 +161,7 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 }
 
 t_registro* selectFileSystem(Segmento* segmento, int key) {
+	log_info(logger, "Enviando consulta SELECT al fileSystem");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
@@ -172,7 +173,6 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
 
 	if (paquete.header.tipoMensaje == NOTFOUND) {
-		free(paquete.mensaje);
 		return NULL;
 	}
 	char*registroAux = string_duplicate(paquete.mensaje);
