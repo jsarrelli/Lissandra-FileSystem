@@ -66,6 +66,7 @@ void* procesarINSERT(char* consulta) {
 }
 
 int procesarCREATE(char* consulta) {
+	log_info(logger, "Parseando CREATE %s",consulta);
 	char** valores = string_split(consulta, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];

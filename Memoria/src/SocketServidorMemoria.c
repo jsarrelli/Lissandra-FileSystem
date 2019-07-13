@@ -99,7 +99,7 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 
 void procesarRequestCREATE(char* request, int socketKernel) {
 
-	log_info(logger, "Procesando CREATE");
+	log_info(logger, "Procesando CREATE. Request %s",request);
 	int success = procesarCREATE(request);
 	enviarSuccess(success, INSERT, socketKernel);
 }
