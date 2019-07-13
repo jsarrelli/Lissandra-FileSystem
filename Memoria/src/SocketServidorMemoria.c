@@ -60,6 +60,8 @@ void procesarAccion(int socketEntrante) {
 				JOURNAL_MEMORIA();
 				break;
 			}
+
+			free(datos);
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(logger, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
@@ -72,6 +74,10 @@ void procesarAccion(int socketEntrante) {
 	if (paquete.mensaje != NULL) {
 		free(paquete.mensaje);
 	}
+	if(datos!=NULL){
+		free(datos);
+	}
+
 	close(socketEntrante);
 }
 
@@ -82,6 +88,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 		char* response = string_new();
 		string_append_with_format(&response, "%d \"%s\" %f", registro->key, registro->value, registro->timestamp);
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, SELECT);
+		free(response);
 	} else {
 		enviarSuccess(1, SELECT, socketKernel);
 	}
