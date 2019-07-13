@@ -99,7 +99,7 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 
 void procesarRequestCREATE(char* request, int socketKernel) {
 
-	log_info(logger, "Procesando CREATE. Request %s",request);
+	log_info(logger, "Procesando CREATE. Request %s", request);
 	int success = procesarCREATE(request);
 	enviarSuccess(success, CREATE, socketKernel);
 }
@@ -136,9 +136,10 @@ void procesarRequestDROP(char* nombreTabla, int socketKernel) {
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {
-	char success[2];
-	sprintf(success, "%d", resultado);
-	EnviarDatosTipo(socketKernel, MEMORIA, success, 2, protocolo);
+	char* succes = string_new();
+	string_append_with_format(&succes, "%d", resultado);
+	EnviarDatosTipo(socketKernel, MEMORIA, succes, strlen(succes) + 1, protocolo);
+	malloc(succes);
 }
 
 void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
