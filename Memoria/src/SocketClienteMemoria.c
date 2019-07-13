@@ -122,7 +122,7 @@ void gossiping() {
 
 	log_info(logger, "Las memorias conocidas son");
 	void mostrarTablaConocida(t_memoria* memoria) {
-		log_info(logger, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto,memoria->memoryNumber);
+		log_info(logger, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto, memoria->memoryNumber);
 	}
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
@@ -131,7 +131,7 @@ void enviarTablaGossiping(int socketMemoriaDestino) {
 
 	void enviarMemoriaConocida(t_memoria* memoriaConocida) {
 		char request[100];
-		sprintf(request, "%s %s %d", memoriaConocida->ip, memoriaConocida->puerto,memoriaConocida->memoryNumber);
+		sprintf(request, "%s %s %d", memoriaConocida->ip, memoriaConocida->puerto, memoriaConocida->memoryNumber);
 		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
 	}
 	list_iterate(tablaGossiping, (void*) enviarMemoriaConocida);
@@ -161,8 +161,12 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 }
 
 t_registro* selectFileSystem(Segmento* segmento, int key) {
-	log_info(logger, "Enviando consulta SELECT al fileSystem");
+	log_info(logger, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	while(socketFileSystem!=-1){
+		socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+		usleep(100);
+	}
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
 
@@ -186,6 +190,6 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	freePunteroAPunteros(valores);
 	free(registroAux);
 	free(paquete.mensaje);
-
+	log_info(logger, "Registro obtenido de fileSystem");
 	return registro;
 }
