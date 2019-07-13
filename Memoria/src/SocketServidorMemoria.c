@@ -139,7 +139,7 @@ void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {
 	char* succes = string_new();
 	string_append_with_format(&succes, "%d", resultado);
 	EnviarDatosTipo(socketKernel, MEMORIA, succes, strlen(succes) + 1, protocolo);
-	malloc(succes);
+	free(succes);
 }
 
 void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
