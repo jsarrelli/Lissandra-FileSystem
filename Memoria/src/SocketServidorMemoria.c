@@ -91,6 +91,7 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 	char* consulta = string_duplicate(request);
 	log_info(logger, "Procesando INSERT");
 	t_registro* registro = procesarINSERT(consulta);
+	log_info(logger, "Regitro ya insertado, enviado respuesta a Kernel");
 	if (registro != NULL) {
 		enviarSuccess(0, INSERT, socketKernel);
 	} else {

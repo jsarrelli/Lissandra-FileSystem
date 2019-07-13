@@ -109,7 +109,7 @@ void iniciarSocketServidor() {
 void procesoTemporalJournal() {
 	while (1) {
 		usleep(configuracion->TIEMPO_JOURNAL * 1000);
-		log_info(logger, "Ejecutando proceso temporal Journal");
+		prinft("Realizando proceso temporal Journal");
 		journalMemoria();
 	}
 }
