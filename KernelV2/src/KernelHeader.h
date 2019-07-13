@@ -39,25 +39,20 @@
 #define TODO_OK 0
 #define SUPER_ERROR 1
 
-
-
 // Estructuras de datos
 
-typedef struct{
+typedef struct {
 	int contadorRequests;
 	t_list* script;
 //	pthread_t* hilo; // Esto se va a hacer al principio, por eso no es necesario ahora
 //	bool estaEjecutandose; // Esto tampoco
-}procExec;
+} procExec;
 
-typedef enum{
-	SC,
-	SHC,
-	EC,
-	ERROR_CONSISTENCIA // Para manejo de errores
-}consistencia;
+typedef enum {
+	SC, SHC, EC, ERROR_CONSISTENCIA // Para manejo de errores
+} consistencia;
 
-typedef struct{
+typedef struct {
 	int id;
 	char*ip;
 	int puerto;
@@ -66,13 +61,13 @@ typedef struct{
 	int cantSelectsEjecutados;
 	int cantInsertEjecutados;
 	bool criterios[4];	// Considero un caso de error para que se muestre por pantalla
-	// La memoria en si no conoce que criterio tiene, solo el Kernel lo sabe para saber a donde mandar la informacion
-}infoMemoria;
+// La memoria en si no conoce que criterio tiene, solo el Kernel lo sabe para saber a donde mandar la informacion
+} infoMemoria;
 
-typedef struct{
+typedef struct {
 	char*nombreTabla;
 	t_metadata_tabla* metadata;
-}metadataTabla;
+} metadataTabla;
 
 typedef struct {
 	char* IP_MEMORIA;
@@ -83,19 +78,17 @@ typedef struct {
 	int SLEEP_EJECUCION;
 } t_config_kernel;
 
-typedef struct{
+typedef struct {
 	t_log* logInfo;
 	t_log* logError;
 	t_log* logTrace;
-}logStruct;
+} logStruct;
 
-typedef enum{
-	OK,
-	ERROR
-}estadoProceso;
+typedef enum {
+	OK, ERROR
+} estadoProceso;
 
-
-typedef struct{
+typedef struct {
 	double readLatency;
 	double writeLatency;
 	double reads;
@@ -105,7 +98,7 @@ typedef struct{
 	t_list* memoryLoadMemorias;
 	t_list* diferenciaDeTiempoReadLatency;
 	t_list* diferenciaDeTiempoWriteLatency;
-}t_metrics;
+} t_metrics;
 
 // Variables globales
 
@@ -142,14 +135,11 @@ bool puedeHaberRequests;
 bool hayMetricas;
 t_metrics metricas;
 
-
-
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);
 char* get_campo_config_string(t_config* archivo_configuracion, char* nombre_campo);
 int cantidadParametros(char ** palabras);
 void cargarConfigKernel();
-
 
 // Funciones importantes
 infoMemoria* obtenerMemoriaAlAzar();
@@ -178,5 +168,6 @@ infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, i
 void destruirListaMemorias();
 
 void freeConfigKernel();
+void agregarMemoriaConocida(infoMemoria* memoria);
 
 #endif /* KERNELHEADER_H_ */

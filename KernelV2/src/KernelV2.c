@@ -174,7 +174,7 @@ int main(void) {
 	pthread_detach(hiloConsola);
 
 	pthread_create(&hiloDescribe, NULL, (void*) iniciarHiloDescribe, NULL);
-	pthread_detach(&hiloDescribe);
+	pthread_detach(hiloDescribe);
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);

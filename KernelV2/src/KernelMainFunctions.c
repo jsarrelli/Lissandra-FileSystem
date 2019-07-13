@@ -312,19 +312,16 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 }
 
 consistencia obtenerConsistenciaDe(char* nombreTabla) {
-	bool _condicion(metadataTabla* metadata, char*nombreTabla) {
-		return strcmp(nombreTabla, metadata->nombreTabla) == 0;
+	bool findByName(metadataTabla* tabla) {
+		return strcmp(tabla->nombreTabla, nombreTabla) == 0;
 	}
-	bool condicionObtenerConsistencia(void* metadata) {
-		return _condicion(metadata, nombreTabla);
-	}
-	metadataTabla* metadata = NULL;
-	metadata = list_find((t_list*) listaMetadataTabla, condicionObtenerConsistencia);
 
-	if (metadata == NULL)
+	metadataTabla* tabla = list_find(listaMetadataTabla, (void*) findByName);
+
+	if (tabla == NULL)
 		return ERROR_CONSISTENCIA;
 
-	return metadata->metadata->CONSISTENCIA;
+	return tabla->metadata->CONSISTENCIA;
 }
 
 infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key) {
@@ -374,7 +371,7 @@ infoMemoria* resolverAlAzar(t_list* memoriasEncontradas) {
 	return list_get(memoriasEncontradas, randomNumber);
 }
 
-infoMemoria* newInfoMemoria(char* ip, int puert, int id) {
+infoMemoria* newInfoMemoria(char* ip, int puerto, int id) {
 	infoMemoria* memoria = malloc(sizeof(infoMemoria));
 	memoria->id = idMemoria;
 	idMemoria++;
@@ -384,7 +381,7 @@ infoMemoria* newInfoMemoria(char* ip, int puert, int id) {
 	memoria->ip = string_duplicate(ip);
 	memoria->cantInsertEjecutados = 0;
 	memoria->cantSelectsEjecutados = 0;
-	memoria->puerto = 0;
+	memoria->puerto = puerto;
 	memoria->id = id;
 	return memoria;
 }
@@ -426,12 +423,21 @@ int conocerMemorias() {
 
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
-		list_add(listaMemorias, memoriaConocida);
+		agregarMemoriaConocida(memoriaConocida);
 		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
 				memoriaConocida->id);
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
 	return 0;
+}
+
+void agregarMemoriaConocida(infoMemoria* memoria) {
+	bool findByNumber(infoMemoria* memoriaActual) {
+		return memoria->id == memoriaActual->id;
+	}
+	if (!list_any_satisfy(listaMemorias, (void*)findByNumber)) {
+		list_add(listaMemorias, memoria);
+	}
 }
 

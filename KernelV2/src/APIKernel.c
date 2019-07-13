@@ -330,7 +330,7 @@ int procesarDescribeAll(int socketMemoria) {
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
 
 	Paquete paquete;
-	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &paquete)) > 0) {
+	while ((estadoRecibir = RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete)) > 0) {
 		metadataTabla* metadata = deserealizarMetadata(paquete.mensaje);
 		agregarTabla(metadata);
 		free(paquete.mensaje);
@@ -346,7 +346,7 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1, DESCRIBE);
 
 	Paquete paquete;
-	if (RecibirPaqueteCliente(socketMemoria, FILESYSTEM, &paquete) < 0) {
+	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) < 0) {
 		return SUPER_ERROR;
 	} else if (atoi(paquete.mensaje) == 1) {
 		puts("La tabla no existe");
