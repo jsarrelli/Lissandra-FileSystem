@@ -261,8 +261,8 @@ void freePagina(Pagina* pagina) {
 		log_info(logger, "Haciendo free de registro");
 	}
 
-	free(pagina);
-	log_info(logger, "Pagina liberada");
+	//free(pagina);
+	log_info(logger, "Pagina liberada, ponele..");
 }
 
 void eliminarPaginaDeMemoria(Pagina* paginaAEliminar) {
