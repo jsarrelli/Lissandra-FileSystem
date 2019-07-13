@@ -28,7 +28,6 @@ void procesarAccion(int socketEntrante) {
 	if (RecibirPaqueteServidor(socketEntrante, MEMORIA, &paquete) > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
-			datos = malloc(paquete.header.tamanioMensaje);
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
@@ -69,13 +68,6 @@ void procesarAccion(int socketEntrante) {
 			log_info(logger, "No es ningun proceso valido para Memoria");
 		}
 
-	}
-
-	if (paquete.mensaje != NULL) {
-		free(paquete.mensaje);
-	}
-	if(datos!=NULL){
-		free(datos);
 	}
 
 	close(socketEntrante);
