@@ -253,7 +253,8 @@ void clearFrameDePagina(Pagina* paginaAEliminar) {
 
 void freePagina(Pagina* pagina) {
 	if (pagina->registro != NULL) {
-		freeRegistro(pagina->registro);
+	//	freeRegistro(pagina->registro);
+		log_info(logger, "Haciendo free de registro");
 	}
 	free(pagina);
 }
@@ -279,6 +280,7 @@ void freeSegmento(Segmento* segmentoAEliminar) {
 }
 
 void vaciarMemoria() {
+	log_info(logger, "Vaciando memoria..");
 	list_clean_and_destroy_elements(segmentos, (void*) eliminarSegmentoDeMemoria);
 }
 
@@ -305,6 +307,7 @@ void journalMemoria() {
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
 		if (isModificada(pagina)) {
 			enviarRegistroAFileSystem(pagina, segmento->nombreTabla);
+			log_info(logger, "Enviando registro a FileSystem");
 		}
 	}
 
@@ -316,6 +319,7 @@ void journalMemoria() {
 		}
 
 	}
+
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
