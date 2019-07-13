@@ -73,7 +73,7 @@ void procesarAccion(int socketMemoria) {
 		free(paquete.mensaje);
 	}
 
-	close(socketMemoria);
+	//close(socketMemoria);
 
 }
 
