@@ -122,6 +122,7 @@ void procesarCREATE(char* request, int socketMemoria) {
 }
 
 void procesarDROP(char* nombreTabla, int socketMemoria) {
+	log_info(logger, "Procesando DROP:  %s",nombreTabla);
 	int resultado = funcionDROP(nombreTabla);
 	enviarSuccess(resultado, DROP, socketMemoria);
 }
@@ -156,7 +157,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 
 
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
-	log_info(logger, "Procesando DROP:  %s",nombreTabla);
+	log_info(logger, "Procesando DESCRIBE:  %s",nombreTabla);
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];

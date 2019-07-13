@@ -325,11 +325,12 @@ void journalMemoria() {
 	log_info(logger, "Realizando Journal..");
 
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
-		clearFrameDePagina(pagina);
+
 		if (isModificada(pagina)) {
 			enviarRegistroAFileSystem(pagina, segmento->nombreTabla);
 			log_info(logger, "Enviando registro a FileSystem");
 		}
+		clearFrameDePagina(pagina);
 	}
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
