@@ -333,12 +333,13 @@ void journalMemoria() {
 			log_info(logger, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
 		}
 
+		list_clean_and_destroy_elements(segmento->paginas, freePagina);
 	}
 
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
-	vaciarMemoria();
+	//vaciarMemoria();
 	log_info(logger, "Journal finalizado con exito");
 	pthread_mutex_unlock(&lock);
 }
