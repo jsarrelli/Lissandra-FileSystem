@@ -61,7 +61,7 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	char* consulta = string_new();
-	string_append_with_format(consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
+	string_append_with_format(&consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
 	log_info(logger, "Enviando CREATE a fileSystem", consulta);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, CREATE);

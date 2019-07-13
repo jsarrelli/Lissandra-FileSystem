@@ -101,7 +101,7 @@ void procesarRequestCREATE(char* request, int socketKernel) {
 
 	log_info(logger, "Procesando CREATE. Request %s",request);
 	int success = procesarCREATE(request);
-	enviarSuccess(success, INSERT, socketKernel);
+	enviarSuccess(success, CREATE, socketKernel);
 }
 
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
