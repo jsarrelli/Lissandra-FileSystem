@@ -415,7 +415,6 @@ int conocerMemorias() {
 		log_error(log_master->logError, "Nuestra memoria seed no esta conectada");
 		return -1;
 	}
-	listaMemorias = list_create();
 
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, TABLA_GOSSIPING);
 	Paquete paquete;
@@ -424,8 +423,8 @@ int conocerMemorias() {
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
 		agregarMemoriaConocida(memoriaConocida);
-		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
-				memoriaConocida->id);
+		//log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
+		//		memoriaConocida->id);
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}

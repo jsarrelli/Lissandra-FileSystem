@@ -12,7 +12,7 @@
 
 pthread_t hiloConsola;
 pthread_t hiloMetrics;
-pthread_t hiloDescribe;
+pthread_t hiloMetadataRefresh;
 pthread_t* arrayDeHilos;
 pthread_t* arrayDeHilosPuntero;
 

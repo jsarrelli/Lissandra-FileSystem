@@ -42,4 +42,7 @@ int procesarDescribe(int socketMemoria, char* nombreTabla);
 consistencia getConsitenciaFromChar(char* consistenciaChar);
 char* consistenciaToChar(consistencia consistencia);
 
+
+void freeMetadata(metadataTabla* tabla);
+
 #endif /* APIKERNEL_H_ */

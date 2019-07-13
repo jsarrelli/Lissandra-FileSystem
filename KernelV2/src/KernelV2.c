@@ -131,10 +131,11 @@ void iniciarConsolaKernel() {
 	}
 }
 
-void iniciarHiloDescribe() {
+void iniciarHiloMetadataRefresh() {
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
 		consolaDescribe(NULL);
+		conocerMemorias();
 	}
 }
 
@@ -190,8 +191,8 @@ int main(void) {
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-	pthread_create(&hiloDescribe, NULL, (void*) iniciarHiloDescribe, NULL);
-	pthread_detach(hiloDescribe);
+	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+	pthread_detach(hiloMetadataRefresh);
 
 	//iniciarConsolaKernel();
 	// Este semaforo es muy importante

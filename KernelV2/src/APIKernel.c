@@ -190,7 +190,7 @@ int consolaSelect(char*argumentos) {
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
 
-	list_add(metricas.diferenciaDeTiempoReadLatency,diferencia);
+	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
 
 	cantSelects++;
 
@@ -206,9 +206,9 @@ int consolaSelect(char*argumentos) {
 		RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
 
 		if (atoi(paquete.mensaje) == 1) {
-			log_info(logger, "El registro no se encuentra");
+			log_info(log_master->logInfo, "El registro no se encuentra");
 		} else {
-			log_info(logger, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
+			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 		}
 
 		free(paquete.mensaje);
@@ -230,10 +230,13 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo) {
 		log_error(log_master->logError, "Error al enviar paquete");
 		return SUPER_ERROR;
 	}
-
-	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
-		success = atoi(paquete.mensaje);
-	}
+	RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
+	success =atoi(paquete.mensaje);
+	printf("AAAAAAAAAAAAAA %d",success);
+//	while ( < 0) {
+//		success =
+//		x
+//	}
 	if (success == 0) {
 		log_trace(log_master->logTrace, "Paquete recibido correctamente");
 	} else {
@@ -288,8 +291,13 @@ int consolaCreate(char*argumentos) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones(); // Esto se tiene que usar como dato para las sockets, lo comento para que no me tire warning
 //	obtenerMemoriaAlAzarParaFunciones();
 
-	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla, consistenciaChar, memoriaAlAzar) == SUPER_ERROR)
+	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla, consistenciaChar, memoriaAlAzar) == SUPER_ERROR) {
 		return SUPER_ERROR;
+	} else {
+		metadataTabla* metaData = deserealizarMetadata(argumentos);
+		agregarTabla(metaData);
+	}
+
 	freePunteroAPunteros(valores);
 	free(argumentoAux);
 
@@ -307,7 +315,7 @@ metadataTabla* deserealizarMetadata(char* metadataSerializada) {
 	int tiempoCompactacion = atoi(datos[3]);
 	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 
-	mostrarMetadata(metadata);
+	//mostrarMetadata(metadata);
 
 	freePunteroAPunteros(datos);
 	free(nombreTabla);
@@ -431,12 +439,26 @@ int consolaDrop(char*nombreTabla) {
 	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	char request[100];
 	sprintf(request, "%s", nombreTabla);
-	if (enviarInfoMemoria(socketMemoria, request, DROP) == SUPER_ERROR)
+	if (enviarInfoMemoria(socketMemoria, request, DROP) == SUPER_ERROR) {
 		return SUPER_ERROR;
+	} else {
+
+		bool findByNombre(metadataTabla* tablaActual) {
+			return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
+		}
+		list_remove_and_destroy_by_condition(listaMetadataTabla, (void*) findByNombre, (void*) freeMetadata);
+	}
 
 	return TODO_OK;
 }
 
+void freeMetadata(metadataTabla* tabla) {
+	if (tabla != NULL) {
+		free(tabla->nombreTabla);
+		free(tabla);
+	}
+
+}
 int consolaRun(char*path) {
 	FILE* fd = NULL;
 	int num_lineas = contarLineasArchivo(fd, path);
