@@ -11,19 +11,19 @@
 void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
 
-	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
-	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 	while (true) {
+		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 		printf("Escuchando.. \n");
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
-			log_info(logger,"Request de memoria recibida.. \n");
+			log_info(logger, "Request de memoria recibida.. \n");
 //			pthread_t threadId;
 //			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
 //			pthread_detach(threadId);
 			procesarAccion(socketMemoria);
 
-		}else{
+		} else {
 			log_info(logger, "Fallo la conexion con Memoria");
 		}
 
@@ -38,29 +38,29 @@ void procesarAccion(int socketMemoria) {
 		if (paquete.header.quienEnvia == MEMORIA) {
 			usleep(config->RETARDO * 1000);
 			switch ((int) paquete.header.tipoMensaje) {
-			log_info(logger, "Request en fileSystem %s",(char*)paquete.mensaje);
-			case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
-				configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
-				break;
-			case (SELECT):
-				procesarSELECT(paquete.mensaje, socketMemoria);
-				break;
-			case (INSERT):
-				procesarINSERT(paquete.mensaje, socketMemoria);
-				break;
-			case (DROP):
-				procesarDROP(paquete.mensaje, socketMemoria);
-				break;
+			log_info(logger, "Request en fileSystem %s", (char*) paquete.mensaje);
+		case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
+			configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
+			break;
+		case (SELECT):
+			procesarSELECT(paquete.mensaje, socketMemoria);
+			break;
+		case (INSERT):
+			procesarINSERT(paquete.mensaje, socketMemoria);
+			break;
+		case (DROP):
+			procesarDROP(paquete.mensaje, socketMemoria);
+			break;
 
-			case (CREATE):
-				procesarCREATE(paquete.mensaje, socketMemoria);
-				break;
-			case (DESCRIBE):
-				procesarDESCRIBE(paquete.mensaje, socketMemoria);
-				break;
-			case DESCRIBE_ALL:
-				procesarDESCRIBE_ALL(socketMemoria);
-				break;
+		case (CREATE):
+			procesarCREATE(paquete.mensaje, socketMemoria);
+			break;
+		case (DESCRIBE):
+			procesarDESCRIBE(paquete.mensaje, socketMemoria);
+			break;
+		case DESCRIBE_ALL:
+			procesarDESCRIBE_ALL(socketMemoria);
+			break;
 			}
 
 		} else {
@@ -86,7 +86,7 @@ void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 }
 
 void procesarINSERT(char* request, int socketMemoria) {
-	log_info(logger, "Procesando INSERT:  %s",request);
+	log_info(logger, "Procesando INSERT:  %s", request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
@@ -110,7 +110,7 @@ void procesarINSERT(char* request, int socketMemoria) {
 }
 
 void procesarCREATE(char* request, int socketMemoria) {
-	log_info(logger, "Procesando CREATE:  %s",request);
+	log_info(logger, "Procesando CREATE:  %s", request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, " ");
 	char* nombreTabla = valores[0];
@@ -126,7 +126,7 @@ void procesarCREATE(char* request, int socketMemoria) {
 }
 
 void procesarDROP(char* nombreTabla, int socketMemoria) {
-	log_info(logger, "Procesando DROP:  %s",nombreTabla);
+	log_info(logger, "Procesando DROP:  %s", nombreTabla);
 	int resultado = funcionDROP(nombreTabla);
 	enviarSuccess(resultado, DROP, socketMemoria);
 }
@@ -159,9 +159,8 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 
 }
 
-
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
-	log_info(logger, "Procesando DESCRIBE:  %s",nombreTabla);
+	log_info(logger, "Procesando DESCRIBE:  %s", nombreTabla);
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
@@ -175,7 +174,7 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 }
 
 void procesarSELECT(char* request, int socketMemoria) {
-	log_info(logger, "Procesando SELECT:  %s",request);
+	log_info(logger, "Procesando SELECT:  %s", request);
 	char** valores = string_split(request, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
