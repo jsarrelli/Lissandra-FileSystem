@@ -68,7 +68,7 @@ int main(void) {
 
 	//INICIALIZAMOS LOS SEMAFOROS
 
-	pthread_mutex_init(&mutexCompactacion, NULL);
+	pthread_mutex_init(&mutexFS, NULL);
 	pthread_mutex_init(&mutexDump, NULL);
 	pthread_mutex_init(&mutexEscrituraBloque, NULL);
 //	sem_init(&mutexDump, 0, 1);
@@ -88,7 +88,7 @@ int main(void) {
 	vaciarMemtable();
 	freeConfig();
 	bitarray_destroy(bitmap);
-	pthread_mutex_destroy(&mutexCompactacion);
+	pthread_mutex_destroy(&mutexFS);
 	pthread_mutex_destroy(&mutexDump);
 	pthread_mutex_destroy(&mutexEscrituraBloque);
 	return EXIT_SUCCESS;

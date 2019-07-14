@@ -33,7 +33,7 @@ void cargarConfig();
 void freeConfig();
 void iniciarSocketServidor();
 
-pthread_mutex_t mutexCompactacion;
+pthread_mutex_t mutexFS;
 pthread_mutex_t mutexDump;
 pthread_mutex_t mutexEscrituraBloque;
 
