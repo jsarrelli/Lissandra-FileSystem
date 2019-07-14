@@ -96,3 +96,14 @@ int RecibirPaqueteCliente(int socketFD, proceso quienEnvia, Paquete* paquete) {
 	}
 	return resul;
 }
+
+
+int RecibirPaquete(int socketFD,Paquete* paquete) {
+	paquete->mensaje = NULL;
+	int resul = RecibirDatos(&(paquete->header), socketFD, sizeof(Header));
+	if (resul > 0 && paquete->header.tamanioMensaje > 0) {
+		paquete->mensaje = malloc(paquete->header.tamanioMensaje);
+		resul = RecibirDatos(paquete->mensaje, socketFD, paquete->header.tamanioMensaje);
+	}
+	return resul;
+}

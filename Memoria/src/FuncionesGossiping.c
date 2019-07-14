@@ -11,6 +11,17 @@ void cargarListaSeeds() {
 	}
 }
 
+
+void gossiping() {
+	list_iterate(seeds, (void*) intercambiarTablasGossiping);
+
+	log_info(loggerInfo, "Las memorias conocidas son");
+	void mostrarTablaConocida(t_memoria* memoria) {
+		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto, memoria->memoryNumber);
+	}
+	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
+}
+
 void cargarEstructurasGossiping() {
 	seeds = list_create();
 	cargarListaSeeds();
@@ -54,6 +65,8 @@ t_memoria* deserealizarMemoria(char* mensaje) {
 	free(memoriaChar);
 	return memoriaRecibida;
 }
+
+
 
 void freeMemoria(t_memoria* memoria) {
 	free(memoria->ip);

@@ -74,5 +74,7 @@ int RecibirPaqueteServidor(int socketFD, proceso quienEnvia, Paquete* paquete); 
 
 int RecibirPaqueteCliente(int socketFD, proceso quienEnvia, Paquete* paquete); //No responde los Handshakes
 
+int RecibirPaquete(int socketFD,Paquete* paquete);//Generico
+
 
 #endif /* SERIALIZACION_H_ */

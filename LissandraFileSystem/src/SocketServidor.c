@@ -34,7 +34,7 @@ void escuchar(int listenningSocket) {
 void procesarAccion(int socketMemoria) {
 	Paquete paquete;
 
-	if (RecibirPaqueteServidor(socketMemoria, FILESYSTEM, &paquete) > 0) {
+	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
 		usleep(config->RETARDO * 1000);
 		if (paquete.header.quienEnvia == MEMORIA) {
 			usleep(config->RETARDO * 1000);
@@ -67,14 +67,10 @@ void procesarAccion(int socketMemoria) {
 		} else {
 			log_info(loggerInfo, "No es ningun proceso de Memoria");
 		}
-
+		if (paquete.mensaje != NULL) {
+			free(paquete.mensaje);
+		}
 	}
-
-	if (paquete.mensaje != NULL) {
-		free(paquete.mensaje);
-	}
-
-	//close(socketMemoria);
 
 }
 

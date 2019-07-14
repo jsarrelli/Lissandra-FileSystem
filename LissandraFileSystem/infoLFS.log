@@ -1,8 +1,18 @@
-[INFO] 11:42:09:377 LFS Logs/(7883:7883): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 12:42:26:781 LFS Logs/(10598:10598): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 11:42:09:378 LFS Logs/(7883:7883): Levantando archivo de configuracion del proceso LFS 
+[INFO] 12:42:26:782 LFS Logs/(10598:10598): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 11:42:09:379 LFS Logs/(7883:7883): Archivo de configuracion del proceso LFS levantado 
+[INFO] 12:42:26:782 LFS Logs/(10598:10598): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 11:42:09:571 LFS Logs/(7883:7883): El tamanio del bitmap es de 3000 bits
-[INFO] 11:42:09:571 LFS Logs/(7883:7883): Levantando tablas ya existentes..
+[INFO] 12:42:26:817 LFS Logs/(10598:10598): El tamanio del bitmap es de 3000 bits
+[INFO] 12:42:26:817 LFS Logs/(10598:10598): Levantando tablas ya existentes..
+[INFO] 12:42:40:16 LFS Logs/(10598:10608): Request de memoria recibida.. 
+
+[INFO] 12:44:48:591 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:47:02:198 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:48:42:199 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:50:22:201 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:52:02:203 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:53:42:204 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:55:22:204 LFS Logs/(10598:10609): Iniciando proceso Dump
+[INFO] 12:57:02:205 LFS Logs/(10598:10609): Iniciando proceso Dump

@@ -22,9 +22,13 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 
+	if (socketFileSystem == -1) {
+		log_error(loggerError, "Fallo la conexion con FileSystem");
+		return NULL;
+	}
 	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento) + 1, DESCRIBE);
 	Paquete paquete;
-	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+	RecibirPaquete(socketFileSystem, &paquete);
 
 	if (atoi(paquete.mensaje) == 1) {
 		free(paquete.mensaje);
@@ -40,7 +44,8 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
-		log_info(loggerInfo, "Fallo la conexion con FileSystem");
+		log_error(loggerError, "Fallo la conexion con FileSystem");
+		return;
 	}
 	t_registro* registro = pagina->registro;
 	char * consulta = string_new();
@@ -51,10 +56,14 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	if (socketFileSystem == -1) {
+		log_error(loggerError, "Fallo la conexion con FileSystem");
+		return 1;
+	}
 	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento) + 1, DROP);
 	Paquete paquete;
 	int succes = 0;
-	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
@@ -64,6 +73,10 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 
 int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	if (socketFileSystem == -1) {
+		log_error(loggerError, "Fallo la conexion con FileSystem");
+		return 1;
+	}
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
@@ -73,7 +86,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 
 	Paquete paquete;
 	int succes = 0;
-	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
@@ -83,12 +96,16 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 
 t_list* describeAllFileSystem() {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+	if (socketFileSystem == -1) {
+		log_error(loggerError, "Fallo la conexion con FileSystem");
+		return NULL;
+	}
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, DESCRIBE_ALL);
 
 	t_list* segmentosRecibidos = list_create();
 	Paquete paquete;
 
-	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+	while (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		if (strcmp(paquete.mensaje, "fin") == 0) {
 			free(paquete.mensaje);
 			break;
@@ -113,23 +130,13 @@ int HandshakeInicial() {
 	log_info(loggerInfo, "Memoria conectada a File System");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
-	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		valueMaximoPaginas = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
 
 	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
 	return socketFileSystem;
-}
-
-void gossiping() {
-	list_iterate(seeds, (void*) intercambiarTablasGossiping);
-
-	log_info(loggerInfo, "Las memorias conocidas son");
-	void mostrarTablaConocida(t_memoria* memoria) {
-		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto, memoria->memoryNumber);
-	}
-	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
 
 void enviarTablaGossiping(int socketMemoriaDestino) {
@@ -153,7 +160,7 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 
 	Paquete paquete;
 	while (true) {
-		RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
+		RecibirPaquete(socketMemoria, &paquete);
 		if (strcmp(paquete.mensaje, "fin") == 0) {
 			free(paquete.mensaje);
 			break;
@@ -182,7 +189,7 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
 
 	Paquete paquete;
-	RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete);
+	RecibirPaquete(socketFileSystem, &paquete);
 	free(consulta);
 
 	if (paquete.header.tipoMensaje == NOTFOUND) {

@@ -21,7 +21,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata,char* nombreTabla);
 t_list* describeAllFileSystem();
 int HandshakeInicial();
 void intercambiarTablasGossiping(t_memoria* memoria);
-void gossiping();
+
 void enviarTablaGossiping(int socketMemoriaDestino);
 void procesarRequestTABLA_GOSSIPING(int socketKernel);
 t_registro* selectFileSystem(Segmento* segmento, int key);
