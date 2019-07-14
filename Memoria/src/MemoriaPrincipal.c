@@ -128,7 +128,7 @@ Pagina* buscarPaginaEnMemoria(Segmento* segmento, int keyBuscada) {
 }
 
 Pagina* buscarPagina(Segmento* segmento, int key) {
-	log_info(loggerInfo, "Buscando pagina");
+	log_info(loggerInfo, "Buscando pagina..");
 	Pagina* pagina = buscarPaginaEnMemoria(segmento, key);
 	if (pagina == NULL) {
 
@@ -139,10 +139,6 @@ Pagina* buscarPagina(Segmento* segmento, int key) {
 		pagina = insertarPaginaEnMemoria(registro->key, registro->value, registro->timestamp, segmento);
 		freeRegistro(registro);
 	}
-
-	EstadoFrame* estadoFrame = getEstadoFrame(pagina);
-	estadoFrame->fechaObtencion = getCurrentTime();
-
 	return pagina;
 }
 
@@ -168,22 +164,14 @@ EstadoFrame* getEstadoFrame(Pagina* pagina) {
 }
 
 /*cuando busca un segmento primero buscamos en memoria y si no lo tenemos
- lo vamos a buscar al fileSystem
- y si el fileSystem no lo tiene, lo creamos (no la crea aca)
+ lo creamos
  */
 Segmento* buscarSegmento(char* nombreSegmento) {
 	log_info(loggerInfo, "Buscando segmento..");
 	Segmento* segmento = buscarSegmentoEnMemoria(nombreSegmento);
 
 	if (segmento == NULL) {
-
-		t_metadata_tabla* metaData = describeSegmento(nombreSegmento);
-		if (metaData != NULL) {
-			segmento = insertarSegmentoEnMemoria(nombreSegmento);
-			list_add(segmentos, segmento);
-			free(metaData);
-		}
-
+		segmento = insertarSegmentoEnMemoria(nombreSegmento);
 	}
 	return segmento;
 }
@@ -270,7 +258,8 @@ void eliminarPaginaDeMemoria(Pagina* paginaAEliminar) {
 }
 
 void eliminarSegmentoDeMemoria(Segmento* segmentoAEliminar) {
-	log_info(loggerInfo, "Eliminando segmento: %s de memoria..",segmentoAEliminar->nombreTabla);
+	log_info(loggerInfo, "Eliminando segmento: %s de memoria..", segmentoAEliminar->nombreTabla);
+
 	list_destroy_and_destroy_elements(segmentoAEliminar->paginas, (void*) eliminarPaginaDeMemoria);
 	log_info(loggerInfo, "Paginas de %s eliminadas", segmentoAEliminar->nombreTabla);
 
@@ -290,7 +279,7 @@ void freeSegmento(Segmento* segmentoAEliminar) {
 }
 
 /*te deja la memoria con una lista de segmentos vacia
-y todos los frames en estado disponible*/
+ y todos los frames en estado disponible*/
 void vaciarMemoria() {
 	log_info(loggerInfo, "Vaciando memoria..");
 	list_clean_and_destroy_elements(segmentos, (void*) eliminarSegmentoDeMemoria);
