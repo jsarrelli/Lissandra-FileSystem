@@ -63,7 +63,7 @@ int existeTabla(char* nombreTabla) {
 	bool isTablaBuscada(char* rutaTablaActual){
 
 		char* nombreTablaActual = obtenerNombreTablaByRuta(rutaTablaActual);
-		bool result = strcmp(nombreTabla,nombreTablaActual);
+		bool result = strcmp(nombreTabla,nombreTablaActual) == 0;
 		free(nombreTablaActual);
 		return result;
 	}

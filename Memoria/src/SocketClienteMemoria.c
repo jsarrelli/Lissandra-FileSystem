@@ -185,9 +185,10 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
 	log_info(loggerInfo, "Select enviado a fileSystem: %s", consulta);
-	free(consulta);
+
 
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
+	free(consulta);
 
 	Paquete paquete;
 	if(RecibirPaquete(socketFileSystem, &paquete)<0){
