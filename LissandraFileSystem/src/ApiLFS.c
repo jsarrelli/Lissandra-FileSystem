@@ -25,7 +25,7 @@ void* consolaLFS() {
 		}
 
 	}
-	log_info(logger, "Fin de leectura por consola");
+	log_info(loggerInfo, "Fin de leectura por consola");
 	return NULL;
 }
 

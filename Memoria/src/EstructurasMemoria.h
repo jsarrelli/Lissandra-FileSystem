@@ -1,7 +1,9 @@
 #ifndef EstructurasMemoria_H_
 #define EstructurasMemoria_H_
 
-t_log* logger;
+t_log* loggerInfo;
+t_log* loggerError;
+t_log* loggerTrace;
 typedef struct Segmento {
 	char* nombreTabla;
 	t_list* paginas;

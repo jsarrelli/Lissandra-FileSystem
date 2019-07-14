@@ -14,7 +14,7 @@
 
 void cargarConfig() {
 	char* configPath = "/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Config/fsConfig.cfg";
-	log_info(logger, "Levantando archivo de configuracion del proceso LFS \n");
+	log_info(loggerInfo, "Levantando archivo de configuracion del proceso LFS \n");
 	if (config != NULL) {
 		freeConfig();
 	}
@@ -26,7 +26,7 @@ void cargarConfig() {
 	config->RETARDO = get_campo_config_int(fsConfig, "RETARDO");
 	config->TAMANIO_VALUE = get_campo_config_int(fsConfig, "TAMANIO_VALUE");
 	config->TIEMPO_DUMP = get_campo_config_int(fsConfig, "TIEMPO_DUMP");
-	log_info(logger, "Archivo de configuracion del proceso LFS levantado \n");
+	log_info(loggerInfo, "Archivo de configuracion del proceso LFS levantado \n");
 
 	config_destroy(fsConfig);
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/Config", cargarConfig);
@@ -50,14 +50,14 @@ void freeConfig() {
 void inicializarLoggers() {
 	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log");
 	inicializarArchivoDeLogs("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log");
-	logger = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);
+	loggerInfo = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);
 	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1,
 			LOG_LEVEL_ERROR);
 }
 
 int main(void) {
 	inicializarLoggers();
-	log_info(logger, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
+	log_info(loggerInfo, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
 
 	cargarConfig();
 

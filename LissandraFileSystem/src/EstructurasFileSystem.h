@@ -24,7 +24,7 @@ typedef struct {
 } t_archivo;
 
 t_list* memtable;
-t_log* logger;
+t_log* loggerInfo;
 t_log* loggerError;
 
 

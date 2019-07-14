@@ -11,26 +11,26 @@ void compactarTabla(char*nombreTabla) {
 
 	pthread_mutex_lock(&mutexCompactacion);
 
-	log_info(logger, "Compactando tabla: %s", nombreTabla);
-	log_info(logger, "Modificando tmp a tmpc..");
+	log_info(loggerInfo, "Compactando tabla: %s", nombreTabla);
+	log_info(loggerInfo, "Modificando tmp a tmpc..");
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
-		log_info(logger, "No hay nada para compactar");
+		log_info(loggerInfo, "No hay nada para compactar");
 		pthread_mutex_unlock(&mutexCompactacion);
 		return;
 	}
 
-	log_info(logger, "Obteniendo directorios de archivos binarios..");
+	log_info(loggerInfo, "Obteniendo directorios de archivos binarios..");
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
 	int cantParticiones = list_size(archivosBinarios);
 
 	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
-	log_info(logger, "Se cambio la extension de los temporales");
+	log_info(loggerInfo, "Se cambio la extension de los temporales");
 
 	t_list* registrosNuevos = list_create();
 	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
-	log_info(logger, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(archivosTmpc));
+	log_info(loggerInfo, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(archivosTmpc));
 	filtrarRegistros(registrosNuevos);
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
@@ -43,7 +43,7 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosTemporales, free);
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
-	log_info(logger, "Compactacion de <%s> exitosa", nombreTabla);
+	log_info(loggerInfo, "Compactacion de <%s> exitosa", nombreTabla);
 
 	pthread_mutex_unlock(&mutexCompactacion);
 }
@@ -51,7 +51,7 @@ void compactarTabla(char*nombreTabla) {
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
 	int numeroParticionActual = 0;
 
-	log_info(logger, "Mergeando registros viejos con nuevos");
+	log_info(loggerInfo, "Mergeando registros viejos con nuevos");
 
 	void mergearParticion(t_list* registrosNuevos) {
 
@@ -114,7 +114,7 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 		int numeroParticionCorrespondiente = registroNuevo->key % cantParticiones;
 		if (numeroParticionCorrespondiente > list_size(particionesDeRegistrosNuevos)) {
 			freeRegistro(registroNuevo);
-			log_error(logger, "Hermano me metiste un registro de una particion que esta tabla no tiene, no te hagas el loco");
+			log_error(loggerInfo, "Hermano me metiste un registro de una particion que esta tabla no tiene, no te hagas el loco");
 			return;
 		}
 		t_list* particionCorrespondiente = list_get(particionesDeRegistrosNuevos, numeroParticionCorrespondiente);
@@ -178,7 +178,7 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 //hay una funcion mucho mas linda, pero son las 5 am tengo suenio y la vida es una mierda
 void filtrarRegistros(t_list* registros) {
-	log_info(logger, "Filtrando registros..");
+	log_info(loggerInfo, "Filtrando registros..");
 	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
 
 		if (registro == NULL) {
@@ -212,7 +212,7 @@ void filtrarRegistros(t_list* registros) {
 
 	list_sort(registros, (void*) sortByKey);
 
-	log_info(logger, "Filtrado completo");
+	log_info(loggerInfo, "Filtrado completo");
 
 }
 //void filtrarRegistros(t_list* registros) {
@@ -281,7 +281,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	}
 
 	int i = 0;
-	log_info(logger, "Leyendo registros de %s... ", pathArchivo);
+	log_info(loggerInfo, "Leyendo registros de %s... ", pathArchivo);
 
 	void cargarRegistrosDeBloque(int bloque) {
 

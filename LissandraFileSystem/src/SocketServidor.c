@@ -17,16 +17,14 @@ void escuchar(int listenningSocket) {
 		printf("Escuchando.. \n");
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
-			log_info(logger, "Request de memoria recibida.. \n");
-//			pthread_t threadId;
-//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketMemoria);
-//			pthread_detach(threadId);
+			log_info(loggerInfo, "Request de memoria recibida.. \n");
 			procesarAccion(socketMemoria);
-			close(socketMemoria);
 
 		} else {
-			log_info(logger, "Fallo la conexion con Memoria");
+			log_info(loggerInfo, "Fallo la conexion con Memoria");
+
 		}
+		close(socketMemoria);
 
 	}
 }
@@ -39,7 +37,7 @@ void procesarAccion(int socketMemoria) {
 		if (paquete.header.quienEnvia == MEMORIA) {
 			usleep(config->RETARDO * 1000);
 			switch ((int) paquete.header.tipoMensaje) {
-			log_info(logger, "Request en fileSystem %s", (char*) paquete.mensaje);
+			log_info(loggerInfo, "Request en fileSystem %s", (char*) paquete.mensaje);
 		case (CONEXION_INICIAL_FILESYSTEM_MEMORIA):
 			configuracionNuevaMemoria(socketMemoria, config->TAMANIO_VALUE);
 			break;
@@ -65,7 +63,7 @@ void procesarAccion(int socketMemoria) {
 			}
 
 		} else {
-			log_info(logger, "No es ningun proceso de Memoria");
+			log_info(loggerInfo, "No es ningun proceso de Memoria");
 		}
 
 	}
@@ -87,7 +85,7 @@ void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
 }
 
 void procesarINSERT(char* request, int socketMemoria) {
-	log_info(logger, "Procesando INSERT:  %s", request);
+	log_info(loggerInfo, "Procesando INSERT:  %s", request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
@@ -111,7 +109,7 @@ void procesarINSERT(char* request, int socketMemoria) {
 }
 
 void procesarCREATE(char* request, int socketMemoria) {
-	log_info(logger, "Procesando CREATE:  %s", request);
+	log_info(loggerInfo, "Procesando CREATE:  %s", request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, " ");
 	char* nombreTabla = valores[0];
@@ -127,14 +125,14 @@ void procesarCREATE(char* request, int socketMemoria) {
 }
 
 void procesarDROP(char* nombreTabla, int socketMemoria) {
-	log_info(logger, "Procesando DROP:  %s", nombreTabla);
+	log_info(loggerInfo, "Procesando DROP:  %s", nombreTabla);
 	int resultado = funcionDROP(nombreTabla);
 	enviarSuccess(resultado, DROP, socketMemoria);
 }
 
 //esta funcion podria ser mucho mas linda, pero el obtenerNombreTablas no me sale
 void procesarDESCRIBE_ALL(int socketMemoria) {
-	log_info(logger, "Procesando DESCRIBE ALL");
+	log_info(loggerInfo, "Procesando DESCRIBE ALL");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
@@ -161,7 +159,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 }
 
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
-	log_info(logger, "Procesando DESCRIBE:  %s", nombreTabla);
+	log_info(loggerInfo, "Procesando DESCRIBE:  %s", nombreTabla);
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
 		char respuesta[100];
@@ -175,11 +173,11 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 }
 
 void procesarSELECT(char* request, int socketMemoria) {
-	log_info(logger, "Procesando SELECT:  %s", request);
+	log_info(loggerInfo, "Procesando SELECT:  %s", request);
 	char** valores = string_split(request, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
-	log_info(logger, "SELECT recibido Tabla: %s Key: %d", nombreTabla, key);
+	log_info(loggerInfo, "SELECT recibido Tabla: %s Key: %d", nombreTabla, key);
 	t_registro* registro = funcionSELECT(nombreTabla, key);
 	if (registro == NULL) {
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, NULL, 0, NOTFOUND);

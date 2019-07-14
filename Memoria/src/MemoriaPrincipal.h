@@ -15,18 +15,15 @@
 #include "SocketClienteMemoria.h"
 #include "EstructurasMemoria.h"
 
-
-
 int valueMaximo;
 void* memoria;
 
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
 int socketFileSystem;
 int tamanioRegistro;
-pthread_mutex_t lock;
+pthread_mutex_t lockMemoria;
 
-
-void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystem);
+void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido);
 
 Segmento* buscarSegmento(char* nombreSegmento);
 Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);

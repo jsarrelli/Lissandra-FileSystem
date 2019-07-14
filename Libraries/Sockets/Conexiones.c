@@ -14,6 +14,7 @@ int ConectarAServidor(int puerto, char* ip) {
 	conexion = connect(socketFD, (struct sockaddr *) &direccion, sizeof(struct sockaddr));
 	if (conexion == -1) {
 		printf("Fallo conexion \n");
+		close(conexion);
 		return conexion;
 	}
 	printf("Conexion establecida \n");

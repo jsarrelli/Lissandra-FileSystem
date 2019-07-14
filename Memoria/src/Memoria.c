@@ -10,21 +10,24 @@
 #include "Memoria.h"
 
 int main() {
-	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
-	log_info(logger, "--Inicializando proceso MEMORIA--");
+	loggerInfo = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
+	loggerTrace = log_create("MEM_results.txt", "MEMORIA Logs", true, LOG_LEVEL_TRACE);
+	loggerError = log_create("MEM_resuslts.txt", "MEMORIA Logs", true, LOG_LEVEL_ERROR);
+
+	log_info(loggerInfo, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
 	cargarEstructurasGossiping();
 
 //	//HANDSHAKE INICIAL CON FILESYSTEM
 	int socketFileSystem = HandshakeInicial();
 	if (socketFileSystem == -1) {
-		log_info(logger, "--Memoria finalizada--");
+		log_info(loggerInfo, "--Memoria finalizada--");
 		liberarVariables();
 		return EXIT_SUCCESS;
 	}
 //	//INICIALIZACION DE MEMORIA PRINCIPAL
-	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA, socketFileSystem);
-	log_info(logger, "--Memoria inicializada--");
+	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA);
+	log_info(loggerInfo, "--Memoria inicializada--");
 
 //INICIAR SERVIDOR
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, NULL);
@@ -60,7 +63,7 @@ void* leerConsola() {
 			add_history(consulta);
 		} else {
 			free(consulta);
-			log_info(logger, "Fin de leectura por consola");
+			log_info(loggerInfo, "Fin de leectura por consola");
 			return NULL;
 		}
 
@@ -70,7 +73,7 @@ void* leerConsola() {
 
 void cargarConfiguracion() {
 	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM.cfg";
-	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
+	log_info(loggerInfo, "Levantando archivo de configuracion del proceso MEMORIA");
 	if (configuracion != NULL) {
 		liberarDatosConfiguracion();
 	}
@@ -91,14 +94,14 @@ void cargarConfiguracion() {
 	configuracion->TIEMPO_GOSSIPING = get_campo_config_int(archivo_configuracion, "TIEMPO_GOSSIPING");
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
 	configuracion->IP_ESCUCHA = get_campo_config_string(archivo_configuracion, "IP_ESCUCHA");
-	log_info(logger, "Archivo de configuracion levantado");
+	log_info(loggerInfo, "Archivo de configuracion levantado");
 
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config", cargarConfiguracion);
 
 }
 
 void iniciarSocketServidor() {
-	log_info(logger, "Configurando Listening Socket...");
+	log_info(loggerInfo, "Configurando Listening Socket...");
 	listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != 0) {
 		escuchar(listenningSocket);
@@ -117,7 +120,7 @@ void procesoTemporalJournal() {
 void procesoTemporalGossiping() {
 	while (1) {
 		usleep(configuracion->TIEMPO_GOSSIPING * 1000);
-		log_info(logger, "Descubriendo memorias..");
+		log_info(loggerInfo, "Descubriendo memorias..");
 		gossiping();
 	}
 
@@ -131,10 +134,10 @@ void liberarDatosConfiguracion() {
 }
 
 void liberarVariables() {
-	log_destroy(logger);
+	log_destroy(loggerInfo);
 	liberarDatosConfiguracion();
 	list_destroy_and_destroy_elements(seeds,(void*)freeMemoria);
 	list_destroy_and_destroy_elements(tablaGossiping,(void*)freeMemoria);
-	pthread_mutex_destroy(&lock);
+	pthread_mutex_destroy(&lockMemoria);
 }
 

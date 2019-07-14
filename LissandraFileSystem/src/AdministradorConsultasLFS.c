@@ -47,7 +47,7 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_info(logger, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
+		log_info(loggerInfo, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
 		log_error(loggerError, "La tabla %s no existe",nombreTabla);
@@ -62,7 +62,7 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 		if (registro != NULL) {
 			printf("\nRegistro con mayor timestamp: %f;%d;%s\n", registro->timestamp, registro->key, registro->value);
 
-			log_info(logger, "Select a key %d", registro->key);
+			log_info(loggerInfo, "Select a key %d", registro->key);
 
 			return registro;
 
@@ -82,7 +82,7 @@ void procesoDump() {
 		pthread_mutex_lock(&mutexDump);
 
 		usleep(config->TIEMPO_DUMP * 1000);
-		log_info(logger, "Iniciando proceso Dump");
+		log_info(loggerInfo, "Iniciando proceso Dump");
 		crearYEscribirArchivosTemporales(rutas.Tablas);
 
 		pthread_mutex_unlock(&mutexDump);

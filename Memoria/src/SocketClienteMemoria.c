@@ -40,12 +40,12 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
-		log_info(logger, "Fallo la conexion con FileSystem");
+		log_info(loggerInfo, "Fallo la conexion con FileSystem");
 	}
 	t_registro* registro = pagina->registro;
 	char * consulta = string_new();
 	string_append_with_format(&consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
-	log_info(logger, "Enviando registro a FileSystem");
+	log_info(loggerInfo, "Enviando registro a FileSystem");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, INSERT);
 }
 
@@ -67,7 +67,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
-	log_info(logger, "Enviando CREATE a fileSystem", consulta);
+	log_info(loggerInfo, "Enviando CREATE a fileSystem", consulta);
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, CREATE);
 	free(consulta);
 
@@ -104,13 +104,13 @@ t_list* describeAllFileSystem() {
 }
 
 int HandshakeInicial() {
-	log_info(logger, "Intentandose conectar a File System..");
+	log_info(loggerInfo, "Intentandose conectar a File System..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
-		log_info(logger, "Fallo la conexion a File System");
+		log_info(loggerInfo, "Fallo la conexion a File System");
 		return socketFileSystem;
 	}
-	log_info(logger, "Memoria conectada a File System");
+	log_info(loggerInfo, "Memoria conectada a File System");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
 	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
@@ -118,16 +118,16 @@ int HandshakeInicial() {
 		free(paquete.mensaje);
 	}
 
-	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
+	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
 	return socketFileSystem;
 }
 
 void gossiping() {
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
 
-	log_info(logger, "Las memorias conocidas son");
+	log_info(loggerInfo, "Las memorias conocidas son");
 	void mostrarTablaConocida(t_memoria* memoria) {
-		log_info(logger, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto, memoria->memoryNumber);
+		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto, memoria->memoryNumber);
 	}
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
@@ -166,22 +166,18 @@ void intercambiarTablasGossiping(t_memoria* memoria) {
 }
 
 t_registro* selectFileSystem(Segmento* segmento, int key) {
-	log_info(logger, "Enviando consulta SELECT al fileSystem..");
+	log_info(loggerInfo, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	log_info(logger, "Socket FileSsytem: %d", socketFileSystem);
-//	while (socketFileSystem == -1) {
-//		socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-//		usleep(100);
-//	}
+	log_info(loggerInfo, "Socket FileSsytem: %d", socketFileSystem);
 
 	if (socketFileSystem == -1) {
-		log_info(logger, "No se pudo conectar con el fileSystem");
+		log_error(loggerError, "No se pudo conectar con el fileSystem");
 		return NULL;
 	}
 
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
-	log_info(logger, "Select enviado a fileSystem: %s", consulta);
+	log_info(loggerInfo, "Select enviado a fileSystem: %s", consulta);
 
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
 
@@ -203,6 +199,6 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	freePunteroAPunteros(valores);
 	free(registroAux);
 	free(paquete.mensaje);
-	log_info(logger, "Registro obtenido de fileSystem");
+	log_info(loggerInfo, "Registro obtenido de fileSystem");
 	return registro;
 }

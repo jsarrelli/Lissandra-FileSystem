@@ -2,21 +2,25 @@
 
 void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
-	printf("Escuchando...\n");
-
-	struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
-	socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
+	log_info(loggerInfo,"Servidor memoria escuchando..");
 	while (true) {
-		int socketKernel = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
-		if (socketKernel != -1) {
+		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
+		int socketCliente = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
+		if (socketCliente != -1) {
 			//no  me convence esto del multihilo
 //			pthread_t threadId;
 //			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketKernel);
 //			pthread_detach(threadId);
-//			//probamos sin multihilo
-			procesarAccion(socketKernel);
+
+			//O hace un journal o procesa una accion, boludeces no
+			pthread_mutex_lock(&lockMemoria);
+			procesarAccion(socketCliente);
+			pthread_mutex_lock(&lockMemoria);
+
 			printf("Escuchando.. \n");
 		}
+		close(socketCliente);
 
 	}
 
@@ -60,21 +64,19 @@ void procesarAccion(int socketEntrante) {
 				break;
 			}
 
-			free(datos);
+
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
-			log_info(logger, "Request de tabla gossiping recibido");
+			log_info(loggerInfo, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
 		} else {
-			log_info(logger, "No es ningun proceso valido para Memoria");
+			log_info(loggerInfo, "No es ningun proceso valido para Memoria");
 		}
-
+		free(paquete.mensaje);
 	}
-
-	close(socketEntrante);
 }
 
 void procesarRequestSELECT(char* request, int socketKernel) {
-	log_info(logger, "Procesando SELECT");
+	log_info(loggerInfo, "Procesando SELECT");
 	t_registro* registro = procesarSELECT(request);
 
 	if (registro != NULL) {
@@ -89,9 +91,9 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 
 void procesarRequestINSERT(char* request, int socketKernel) {
 	char* consulta = string_duplicate(request);
-	log_info(logger, "Procesando INSERT");
+	log_info(loggerInfo, "Procesando INSERT");
 	t_registro* registro = procesarINSERT(consulta);
-	log_info(logger, "Regitro ya insertado, enviado respuesta a Kernel");
+	log_info(loggerInfo, "Regitro ya insertado, enviado respuesta a Kernel");
 	if (registro != NULL) {
 		enviarSuccess(0, INSERT, socketKernel);
 	} else {
@@ -101,13 +103,13 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 
 void procesarRequestCREATE(char* request, int socketKernel) {
 
-	log_info(logger, "Procesando CREATE. Request %s", request);
+	log_info(loggerInfo, "Procesando CREATE. Request %s", request);
 	int success = procesarCREATE(request);
 	enviarSuccess(success, CREATE, socketKernel);
 }
 
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
-	log_info(logger, "Procesando DESCRIBE");
+	log_info(loggerInfo, "Procesando DESCRIBE");
 	t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
 	if (metaData != NULL) {
 		char response[100];
@@ -166,7 +168,7 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 }
 
 void procesarRequestTABLA_GOSSIPING(int socketKernel) {
-	log_info(logger, "Request tabla gossiping recibida de Kernel");
+	log_info(loggerInfo, "Request tabla gossiping recibida de Kernel");
 	void enviarMemoria(t_memoria* memoria) {
 		char* response = string_new();
 		string_append_with_format(&response, "%s %s %d", memoria->ip, memoria->puerto, memoria->memoryNumber);

@@ -43,7 +43,7 @@ void* procesarSELECT(char* argumentos) {
 }
 
 void* procesarINSERT(char* consulta) {
-	log_info(logger, "INSERT : %s",consulta);
+	log_info(loggerInfo, "INSERT : %s",consulta);
 	char** valores = string_split(consulta, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
@@ -66,7 +66,7 @@ void* procesarINSERT(char* consulta) {
 }
 
 int procesarCREATE(char* consulta) {
-	log_info(logger, "Parseando CREATE %s",consulta);
+	log_info(loggerInfo, "Parseando CREATE %s",consulta);
 	char** valores = string_split(consulta, " ");
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];

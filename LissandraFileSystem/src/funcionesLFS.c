@@ -83,7 +83,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones) {
 
 	char* rutaTabla = armarRutaTabla(nombreTabla);
 	mkdir(rutaTabla, 0777);
-	log_info(logger, "Se creo la tabla: %s en LFS\n", nombreTabla);
+	log_info(loggerInfo, "Se creo la tabla: %s en LFS\n", nombreTabla);
 
 	int cantPart = atoi(cantidadParticiones);
 	for (int i = 0; i < cantPart; i++) {
@@ -117,7 +117,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 
 	fclose(arch);
 	free(rutaTabla);
-	log_info(logger, "Metadata de %s creada\n", nombreTabla);
+	log_info(loggerInfo, "Metadata de %s creada\n", nombreTabla);
 
 }
 
@@ -304,7 +304,7 @@ void removerTabla(char* nombreTabla) {
 	}
 
 	list_remove_and_destroy_by_condition(memtable, (void*) isTablaBuscada, (void*) freeTabla);
-	log_info(logger, "%s eliminada de memtable", nombreTabla);
+	log_info(loggerInfo, "%s eliminada de memtable", nombreTabla);
 
 	removerArchivosDeTabla(nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);

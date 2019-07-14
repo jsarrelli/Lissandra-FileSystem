@@ -45,7 +45,7 @@ t_list* buscarBloquesLibres(int cant) {
 
 void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
-	log_info(logger, "Bloque %d liberado", index);
+	log_info(loggerInfo, "Bloque %d liberado", index);
 }
 
 void reservarBloque(int index) {
@@ -76,7 +76,7 @@ void leerBitmap() {
 
 	msync(bitarray, cantidadBloques, MS_SYNC);
 
-	log_info(logger, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
+	log_info(loggerInfo, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
 
 	close(fd);
 
@@ -93,7 +93,7 @@ void destruirBitmap(t_bitarray *bitmap) {
 
 void cargarMemtable() {
 	memtable = list_create();
-	log_info(logger, "Levantando tablas ya existentes..");
+	log_info(loggerInfo, "Levantando tablas ya existentes..");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 

@@ -83,7 +83,7 @@ t_registro* registro_new(char** valores);
 t_registro* registro_duplicate(t_registro* registro);
 void freeRegistro(t_registro* registro);
 
-t_log* logger;
+t_log* loggerInfo;
 t_log* loggerError;
 
 #endif /* LIBRARIES_H_*/
