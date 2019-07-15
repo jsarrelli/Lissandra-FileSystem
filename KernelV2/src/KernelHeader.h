@@ -39,6 +39,14 @@
 #define TODO_OK 0
 #define SUPER_ERROR 1
 
+/*
+ * ACLARACIONES DE USO:
+ *
+ * 		- Al salir del Kernel se tiene que ingresar el comando SALIR pero se tiene que hacer una vez que los procesadores terminen de procesar
+ * 				Esto tiene sentido ya que el salir se encarga de guiar a los procesadores a cerrarse definitivamente
+ */
+
+
 // Estructuras de datos
 
 typedef struct {

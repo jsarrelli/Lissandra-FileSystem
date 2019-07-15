@@ -241,6 +241,7 @@ void* iniciarMultiprocesamiento(void* args) {
 
 			if (!interrupcionPorEstado(estado) && cantRequestsEjecutadas == cantRequestsProceso) {
 
+				log_info(log_master->logInfo, "El script termino de ejecutarse correctamente");
 				if (cantRequestsEjecutadasPorQuantum == quantum) {
 //					usleep(retardoEjecucion * 1000);
 					log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
