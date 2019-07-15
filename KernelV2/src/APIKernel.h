@@ -17,7 +17,7 @@
  */
 
 int procesarInputKernel(char* linea);
-int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete paquete);
+int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete);
 int procesarAdd(int id, consistencia cons);
 int consolaAdd(char*argumento);
 int consolaInsert(char*request);

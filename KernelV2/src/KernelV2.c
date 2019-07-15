@@ -17,7 +17,7 @@
  * El Kernel anda, en general, bastante bien
  *
  * TODO: (Cosas boludas)
- * 		- Mejorar la estructura del Kernel (mas expresivo y delcarativo)
+ * 		- Mejorar la estructura del Kernel (mas expresivo y declarativo)
  * 		- Mejorar el manejo de errores (que no genere memory leaks)
  *		- Los problemas de conexion que tambien los tienen el resto de los modulos
  *		- Agregar funcion JOURNAL (que ya estaba implementada) -> Arrastra el problema de conexion
@@ -41,7 +41,6 @@ void iniciarVariablesKernel() {
 	sem_init(&fin, 0, 0);
 	sem_init(&cantProcesosColaReady, 0, 0);
 
-	cantRequestsEjecutadas = 0;
 	haySC = false;
 	hayMetricas = false;
 	puedeHaberRequests = true;
@@ -127,8 +126,10 @@ void iniciarConsolaKernel() {
 void iniciarHiloMetadataRefresh() {
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
-		consolaDescribe(NULL);
-		conocerMemorias();
+		if(consolaDescribe(NULL)==SUPER_ERROR)
+			log_error(log_master->logError, "Fallo el describe global automatico");
+		if(conocerMemorias() == SUPER_ERROR)
+			log_error(log_master->logError, "Fallo conocer memorias");
 	}
 }
 
@@ -161,9 +162,9 @@ void cerrarKernel() {
 	free(config);
 }
 
-void terminarHilos() {
-	pthread_kill(hiloConsola, SIGUSR1);
-}
+//void terminarHilos() {
+//	pthread_kill(hiloConsola, SIGUSR1);
+//}
 
 int main(void) {
 

@@ -148,13 +148,12 @@ int consolaInsert(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
 	cantInserts++;
 
+	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
-//	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
-//
-//	if (enviarInfoMemoria(socketMemoria, argumentos, INSERT) == SUPER_ERROR)
-//		return SUPER_ERROR;
-
-//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+	Paquete paquete;
+	if(socketMemoria >=0)
+		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, &paquete) == SUPER_ERROR)
+			return SUPER_ERROR;
 
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
@@ -185,16 +184,14 @@ int consolaSelect(char*argumentos) {
 
 	// Seguimos con las metrics y luego mandamos el mensaje
 	timestampSelectAlFinalizar = getCurrentTime();
-
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
-
 	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
-
 	cantSelects++;
 
 	// Ahora mandamos el mensaje
 	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
+	// El mennsaje de error se imprime por pantalla en esta funcion
 
 	if (socketMemoria >= 0) {
 		Paquete paquete;
@@ -211,7 +208,7 @@ int consolaSelect(char*argumentos) {
 //			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 //		}
 
-		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, paquete) == SUPER_ERROR)
+		if (enviarInfoMemoria(socketMemoria, request, INSERT, &paquete) == SUPER_ERROR)
 			return SUPER_ERROR;
 		else{
 			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
@@ -226,7 +223,7 @@ int consolaSelect(char*argumentos) {
 	return TODO_OK;
 }
 
-int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete paquete) {
+int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete) {
 //	Paquete paquete;
 	int success;
 
@@ -236,8 +233,8 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		log_error(log_master->logError, "Error al enviar paquete");
 		return SUPER_ERROR;
 	}
-	RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete);
-	success =atoi(paquete.mensaje);
+	RecibirPaqueteCliente(socketMemoria, MEMORIA, paquete);
+	success =atoi(paquete->mensaje);
 	printf("Fue un exito? 0 = si, 1 = no: %d\n",success); // Creo que esto lo puedo sacar porque los logs ya hacen el trabajo
 	if (success == 0) {
 		log_trace(log_master->logTrace, "Paquete recibido correctamente");
@@ -246,7 +243,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		success = SUPER_ERROR;
 	}
 
-	free(paquete.mensaje);
+	free(paquete->mensaje);
 	return success;
 }
 
@@ -256,7 +253,7 @@ int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 	char request[100];
 	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
 	Paquete paquete;
-	if (enviarInfoMemoria(socketMemoria, request, CREATE, paquete) == SUPER_ERROR)
+	if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR)
 		return SUPER_ERROR;
 	return TODO_OK;
 }

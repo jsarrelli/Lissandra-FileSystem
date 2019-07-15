@@ -52,8 +52,6 @@
 typedef struct {
 	int contadorRequests;
 	t_list* script;
-//	pthread_t* hilo; // Esto se va a hacer al principio, por eso no es necesario ahora
-//	bool estaEjecutandose; // Esto tampoco
 } procExec;
 
 typedef enum {
@@ -65,7 +63,6 @@ typedef struct {
 	char*ip;
 	int puerto;
 	// Ignorando el comando Metrics y obviamente Select e Insert:
-//	int cantOperacionesEjecutadas[5];
 	int cantSelectsEjecutados;
 	int cantInsertEjecutados;
 	bool criterios[4];	// Considero un caso de error para que se muestre por pantalla
@@ -117,7 +114,6 @@ t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
 int quantum;
-int cantRequestsEjecutadas;		// Borrar
 int idMemoria;
 int idHilo;
 int multiprocesamiento;

@@ -122,10 +122,6 @@ int cantidadParametros(char ** palabras) {
 }
 
 int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar) {
-	// Parecido al INSERT, es decir, mando info a la memoria que cumple con la condicion, pero, a diferencia de la otra recibo una respuesta, que
-	// es un value
-//	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
-
 	if (memoriaAEnviar != NULL) {
 
 		if (protocolo == SELECT) {
@@ -414,7 +410,7 @@ int conocerMemorias() {
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
 	if (socketMemoria == -1) {
 		log_error(log_master->logError, "Nuestra memoria seed no esta conectada");
-		return -1;
+		return SUPER_ERROR;
 	}
 
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, TABLA_GOSSIPING);
@@ -429,7 +425,7 @@ int conocerMemorias() {
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
-	return 0;
+	return TODO_OK;
 }
 
 void agregarMemoriaConocida(infoMemoria* memoria) {
