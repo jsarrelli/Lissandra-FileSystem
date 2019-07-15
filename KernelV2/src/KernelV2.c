@@ -191,8 +191,8 @@ int main(void) {
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
-	pthread_detach(hiloMetadataRefresh);
+//	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+//	pthread_detach(hiloMetadataRefresh);
 
 	//iniciarConsolaKernel();
 	// Este semaforo es muy importante
