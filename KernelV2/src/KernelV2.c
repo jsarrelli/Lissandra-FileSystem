@@ -11,6 +11,21 @@
 #include "Kernel.h"
 #include "APIKernel.h"
 
+/*
+ * Estado del Kernel:
+ *
+ * El Kernel anda, en general, bastante bien
+ *
+ * TODO: (Cosas boludas)
+ * 		- Mejorar la estructura del Kernel (mas expresivo y delcarativo)
+ * 		- Mejorar el manejo de errores (que no genere memory leaks)
+ *		- Los problemas de conexion que tambien los tienen el resto de los modulos
+ *		- Agregar funcion JOURNAL (que ya estaba implementada) -> Arrastra el problema de conexion
+ *		- Hilo de modificar archivo (falta cambiar lo de las variables quentum y los tiempos de retardo)
+ *		- Algunos leaks -> Muy importante
+ * 		- Mejorar algunas cositas que deje marcadas y buscar mas errores
+ */
+
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
@@ -37,12 +52,12 @@ void iniciarVariablesKernel() {
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
-	//hardcodearInfoMemorias();
+	hardcodearInfoMemorias();
 	conocerMemorias();
 //	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
 //			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
-	//hardcodearListaMetadataTabla();
+	hardcodearListaMetadataTabla();
 
 	quantum = config->QUANTUM;
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
@@ -75,37 +90,16 @@ void iniciarVariablesKernel() {
 }
 
 void* iniciarhiloMetrics(void* args) {
-
+	// TODO: Mejorar esto
 	while (puedeHaberRequests) {
-
 		usleep(30000 * 1000); // algo asi...
-
 		calcularMetrics();
-
 		imprimirMetrics();
-
 		// Ahora reinicio los valores:
-
 		reiniciarMetrics();
-
 	}
-
 	return NULL;
 }
-
-/*
- * Estado del Kernel:
- *
- * El Kernel anda, en general, bastante bien
- *
- * TODO: (Cosas boludas)
- *		- Agregar funcion JOURNAL (que ya estaba implementada)
- *		- Hilo de modificar archivo
- *		- Algunos leaks
- *		- Conexion con memoria del SELECT
- *
- * PD: Acuerdense de usar la funcion de obtenerMemoria y obtenerMemoriaAlAzar para las sockets (ya implementadas y comentadas)
- */
 
 void iniciarConsolaKernel() {
 	char* operacion;
@@ -139,21 +133,21 @@ void iniciarHiloMetadataRefresh() {
 	}
 }
 
-void inicioKernelUnProcesador() {
-	char* operacion;
-	operacion = readline(">");
-	while (!instruccionSeaSalir(operacion)) {
-		crearProcesoYMandarloAReady(operacion);
-		iniciarMultiprocesamiento(NULL);
-		operacion = readline(">");
-	}
-	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
-	free(operacion);
-	destruirElementosMain(listaHilos, colaReady);
-	destruirListaMemorias();
-	log_info(log_master->logInfo, "Consola terminada");
-	destruirLogStruct(log_master);
-}
+//void inicioKernelUnProcesador() {
+//	char* operacion;
+//	operacion = readline(">");
+//	while (!instruccionSeaSalir(operacion)) {
+//		crearProcesoYMandarloAReady(operacion);
+//		iniciarMultiprocesamiento(NULL);
+//		operacion = readline(">");
+//	}
+//	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
+//	free(operacion);
+//	destruirElementosMain(listaHilos, colaReady);
+//	destruirListaMemorias();
+//	log_info(log_master->logInfo, "Consola terminada");
+//	destruirLogStruct(log_master);
+//}
 
 void cerrarKernel() {
 
@@ -195,6 +189,7 @@ int main(void) {
 //	pthread_detach(hiloMetadataRefresh);
 
 	//iniciarConsolaKernel();
+
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
 
@@ -210,8 +205,10 @@ int main(void) {
 	}
 
 	sem_wait(&fin);
+
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	//cerrarKernel();
+
 	return EXIT_SUCCESS;
 }
 

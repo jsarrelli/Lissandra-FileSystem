@@ -33,30 +33,30 @@ bool verificarCriterio(bool* criterio, consistencia ccia) {
 	return false;
 }
 
-//void hardcodearInfoMemorias() {
-//
-//	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria1);
-//
-//	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria2);
-//
-//	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria3);
-//
-//	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria4);
-//
-//	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria5);
-//
-//	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria6);
-//
-//	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria7);
-//
-//}
+void hardcodearInfoMemorias() {
+
+	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615, 1);
+	list_add(listaMemorias, memoria1);
+
+	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615, 2);
+	list_add(listaMemorias, memoria2);
+
+	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615, 3);
+	list_add(listaMemorias, memoria3);
+
+	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615, 4);
+	list_add(listaMemorias, memoria4);
+
+	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615, 5);
+	list_add(listaMemorias, memoria5);
+
+	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615, 6);
+	list_add(listaMemorias, memoria6);
+
+	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615, 7);
+	list_add(listaMemorias, memoria7);
+
+}
 
 void imprimirCriterio(bool* criterio) {
 	if (criterio[0]) {
@@ -79,25 +79,25 @@ bool instruccionSeaSalir(char* operacion) {
 	return strcmp(operacion, "SALIR") == 0;
 }
 
-//void hardcodearListaMetadataTabla() {
-//	metadataTabla* metadata1 = malloc(sizeof(metadataTabla));
-//	metadata1->consistencia = SC;
-//	metadata1->nParticiones = 2;
-//	metadata1->nombreTabla = "TABLA1";
-//	list_add(listaMetadataTabla, metadata1);
-//
-//	metadataTabla* metadata2 = malloc(sizeof(metadataTabla));
-//	metadata2->consistencia = SHC;
-//	metadata2->nParticiones = 3;
-//	metadata2->nombreTabla = "TABLA2";
-//	list_add(listaMetadataTabla, metadata2);
-//
-//	metadataTabla* metadata3 = malloc(sizeof(metadataTabla));
-//	metadata3->consistencia = EC;
-//	metadata3->nParticiones = 4;
-//	metadata3->nombreTabla = "TABLA3";
-//	list_add(listaMetadataTabla, metadata3);
-//}
+void hardcodearListaMetadataTabla() {
+	metadataTabla* metadata1 = malloc(sizeof(metadataTabla));
+	metadata1->consistencia = SC;
+	metadata1->nParticiones = 2;
+	metadata1->nombreTabla = "TABLA1";
+	list_add(listaMetadataTabla, metadata1);
+
+	metadataTabla* metadata2 = malloc(sizeof(metadataTabla));
+	metadata2->consistencia = SHC;
+	metadata2->nParticiones = 3;
+	metadata2->nombreTabla = "TABLA2";
+	list_add(listaMetadataTabla, metadata2);
+
+	metadataTabla* metadata3 = malloc(sizeof(metadataTabla));
+	metadata3->consistencia = EC;
+	metadata3->nParticiones = 4;
+	metadata3->nombreTabla = "TABLA3";
+	list_add(listaMetadataTabla, metadata3);
+}
 
 int contarLineasArchivo(FILE* fichero, char* path) {
 	fichero = fopen(path, "rt");

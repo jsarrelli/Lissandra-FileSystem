@@ -158,7 +158,7 @@ void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
 void* iniciarMultiprocesamiento(void*args);
-void* funcionThread(void* args);
+//void* funcionThread(void* args);
 void inicializarLogStruct();
 int funcionHash(t_list* memoriasEncontradas, int key);
 infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key);

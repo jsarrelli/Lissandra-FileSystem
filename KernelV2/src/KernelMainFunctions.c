@@ -149,25 +149,25 @@ void agregarRequestAlProceso(procExec* proceso, char* operacion) {
 	list_add(proceso->script, operacion);
 }
 
-void* funcionThread(void* args) {
-	sem_wait(&ejecutarHilos);
-
-	sem_wait(&mutex_colaReadyPOP);
-	procExec* proceso = NULL;
-	proceso = queue_pop(colaReady);
-	sem_post(&mutex_colaReadyPOP);
-
-	void _correrProceso(char*request) {
-		procesarInputKernel(request);
-		cantRequestsEjecutadas++;
-	}
-
-	list_iterate(proceso->script, (void*) _correrProceso);
-	destruirProceso(proceso);
-
-	// Creo que aca se liberan los recursos del proceso
-	return NULL;
-}
+//void* funcionThread(void* args) {
+//	sem_wait(&ejecutarHilos);
+//
+//	sem_wait(&mutex_colaReadyPOP);
+//	procExec* proceso = NULL;
+//	proceso = queue_pop(colaReady);
+//	sem_post(&mutex_colaReadyPOP);
+//
+//	void _correrProceso(char*request) {
+//		procesarInputKernel(request);
+//		cantRequestsEjecutadas++;
+//	}
+//
+//	list_iterate(proceso->script, (void*) _correrProceso);
+//	destruirProceso(proceso);
+//
+//	// Creo que aca se liberan los recursos del proceso
+//	return NULL;
+//}
 
 void otorgarId(bool* tieneID) {
 	if (!(*tieneID)) {
