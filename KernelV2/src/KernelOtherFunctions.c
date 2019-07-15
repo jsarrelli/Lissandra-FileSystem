@@ -130,16 +130,14 @@ void crearMetrica() {
 	metricas.writes = 0;
 	metricas.diferenciaDeTiempoReadLatency = list_create();
 	metricas.diferenciaDeTiempoWriteLatency = list_create();
-	metricas.memoryLoadMemorias = list_create();
+//	metricas.memoryLoadMemorias = list_create();
 	hayMetricas = true;
 }
 
 void destruirMetrics() {
-	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoReadLatency,
-			free);
-	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoWriteLatency,
-			free);
-	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
+	list_destroy(metricas.diferenciaDeTiempoReadLatency);
+	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
+//	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
 void reiniciarMetrics() {
@@ -150,7 +148,7 @@ void reiniciarMetrics() {
 	metricas.writeLatency = 0;
 	list_clean(metricas.diferenciaDeTiempoReadLatency);
 	list_clean(metricas.diferenciaDeTiempoWriteLatency);
-	list_clean(metricas.memoryLoadMemorias);
+//	list_clean(metricas.memoryLoadMemorias);
 	// TODO:
 	// Acordarse de borrar la info de todas las memorias
 	// Acordarse de borrar las metricas de las estructuras de las memorias -> Creo que no me interesa

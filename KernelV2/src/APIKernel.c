@@ -14,28 +14,30 @@ int procesarInputKernel(char* linea) {
 	if (strcmp(operacion, "INSERT") == 0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
-		if (consolaInsert(argumentos) == SUPER_ERROR)
+		if (consolaInsert(argumentos) == SUPER_ERROR){
 			return SUPER_ERROR;
+		}
 
 	} else if (strcmp(operacion, "SELECT") == 0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
 		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
-		if (consolaSelect(argumentos) == SUPER_ERROR)
+		if (consolaSelect(argumentos) == SUPER_ERROR){
+			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
-
+		}
 	} else if (strcmp(operacion, "CREATE") == 0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
-		if (consolaCreate(argumentos) == SUPER_ERROR)
+		if (consolaCreate(argumentos) == SUPER_ERROR){
 			return SUPER_ERROR;
-
+		}
 	} else if (strcmp(operacion, "DESCRIBE") == 0) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
 		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
-		if (consolaDescribe(argumentos) == SUPER_ERROR)
+		if (consolaDescribe(argumentos) == SUPER_ERROR){
 			return SUPER_ERROR;
-
+		}
 	} else if (strcmp(operacion, "DROP") == 0) {
 		//	DROP [NOMBRE_TABLA]
 		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
@@ -64,9 +66,10 @@ int procesarInputKernel(char* linea) {
 				"El comando no es el correcto. Por favor intente nuevamente");
 	}
 
-	free(argumentos);
-	free(operacion);
-	free(comandos);
+//	free(argumentos);
+//	free(operacion);
+//	free(comandos);
+	freePunteroAPunteros(comandos);
 
 	return TODO_OK;
 }
@@ -124,7 +127,7 @@ int consolaInsert(char*argumentos) {
 	// Ahora evaluamos el comando en si
 	char** valores = string_split(argumentos, "\"");
 	char** valoresAux = string_split(valores[0], " ");
-	char* nombreTabla = string_duplicate(valoresAux[0]);
+	char* nombreTabla = valoresAux[0];
 	char* key = valoresAux[1];
 	char* value = valores[1];
 	double timeStamp = 0;
@@ -177,7 +180,7 @@ int consolaSelect(char*argumentos) {
 	timestampSelectAlIniciar = getCurrentTime();
 
 	// Ahora evaluamos el comando en si
-	char* argumentosAux = string_duplicate(argumentos);
+	char* argumentosAux = argumentos;
 	char** valores = string_split(argumentosAux, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
@@ -187,19 +190,18 @@ int consolaSelect(char*argumentos) {
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
-	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT,
-			memoriaAEnviar) == SUPER_ERROR) {
-		freePunteroAPunteros(valores);
-		free(argumentosAux);
-		return SUPER_ERROR;
-	}
-
 	// Seguimos con las metrics y luego mandamos el mensaje
 	timestampSelectAlFinalizar = getCurrentTime();
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
 	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
 	cantSelects++;
+
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT,
+			memoriaAEnviar) == SUPER_ERROR) {
+		freePunteroAPunteros(valores);
+		return SUPER_ERROR;
+	}
 
 	// Ahora mandamos el mensaje
 	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
@@ -222,8 +224,10 @@ int consolaSelect(char*argumentos) {
 //		}
 
 		if (enviarInfoMemoria(socketMemoria, request, INSERT,
-				&paquete) == SUPER_ERROR)
+				&paquete) == SUPER_ERROR){
+			freePunteroAPunteros(valores);
 			return SUPER_ERROR;
+		}
 		else {
 			log_info(log_master->logInfo, "Registro de tabla %s: %s",
 					nombreTabla, paquete.mensaje);
@@ -231,9 +235,11 @@ int consolaSelect(char*argumentos) {
 
 		free(paquete.mensaje);
 		freePunteroAPunteros(valores);
-		free(argumentosAux);
-	} else
+
+	} else{
+		freePunteroAPunteros(valores);
 		return SUPER_ERROR;
+	}
 
 	return TODO_OK;
 }
@@ -533,6 +539,7 @@ void consolaSalir(char*nada) {
 	for (int i = 0; i < multiprocesamiento; i++)
 		sem_post(&cantProcesosColaReady);
 	usleep(5);
-	sem_post(&fin);
+	for(int i=0; i < multiprocesamiento;i++)
+		sem_post(&fin);
 }
 

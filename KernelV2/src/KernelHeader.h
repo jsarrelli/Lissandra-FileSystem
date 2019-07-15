@@ -101,7 +101,7 @@ typedef struct {
 	double reads;
 	double writes;
 	// Para calculo auxiliar
-	t_list* memoryLoadMemorias;
+//	t_list* memoryLoadMemorias;
 	t_list* diferenciaDeTiempoReadLatency;
 	t_list* diferenciaDeTiempoWriteLatency;
 } t_metrics;

@@ -96,8 +96,8 @@ void cargarConfigKernel() {
 		log_error(log_master->logError, "Problema al abrir el archivo");
 	}
 
-	config->IP_MEMORIA = string_duplicate(
-			get_campo_config_string(kernelConfig, "IP_MEMORIA"));
+	config->IP_MEMORIA =
+			get_campo_config_string(kernelConfig, "IP_MEMORIA");
 	config->PUERTO_MEMORIA = get_campo_config_int(kernelConfig,
 			"PUERTO_MEMORIA");
 	config->QUANTUM = get_campo_config_int(kernelConfig, "QUANTUM");
@@ -426,6 +426,11 @@ void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons) {
 		(memoria->criterios)[2] = true;
 	else if ((haySC && cons == SC) || cons == ERROR_CONSISTENCIA)
 		(memoria->criterios)[3] = true;
+}
+
+void destruirInfoMemoria(infoMemoria* memoria){
+	free(memoria->ip);
+	free(memoria);
 }
 
 void destruirListaMemorias() {

@@ -72,8 +72,6 @@ void iniciarVariablesKernel() {
 	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
 	// 		de requests que haya en la cola de ready
 
-	crearMetrica();
-
 //	if (multiprocesamiento != 0) {
 //		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
 //
@@ -101,11 +99,14 @@ void iniciarConsolaKernel() {
 
 	while (puedeHaberRequests) {
 		operacion = readline(">");
+		// Para salir, escriba SALIR -> esta operacion se acumula en la cola de Ready y se encarga de destruir los hilos, etc
 		if (!instruccionSeaMetrics(operacion)) {
-			crearProcesoYMandarloAReady(operacion);
-//			desbloquearHilos();
-			sem_post(&bin_main);
-			//free(operacion);
+			if(strlen(operacion)!=0){
+				crearProcesoYMandarloAReady(operacion);
+//				desbloquearHilos();
+				sem_post(&bin_main);
+				//free(operacion);
+			}
 		} else {
 			calcularMetrics();
 			imprimirMetrics();
@@ -149,7 +150,7 @@ void cerrarKernel() {
 	destruirListaMemorias();
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
-	free(arrayDeHilos);
+//	free(arrayDeHilos);
 	destruirMetrics();
 	free(config);
 }
@@ -199,9 +200,10 @@ int main(void) {
 	}
 
 	sem_wait(&fin);
-
+	free(arrayDeHilos);
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
-	//cerrarKernel();
+	usleep(5 * 1000);
+	cerrarKernel();
 
 	return EXIT_SUCCESS;
 }
