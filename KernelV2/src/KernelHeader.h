@@ -67,6 +67,7 @@ typedef struct {
 	int cantInsertEjecutados;
 	bool criterios[4];	// Considero un caso de error para que se muestre por pantalla
 // La memoria en si no conoce que criterio tiene, solo el Kernel lo sabe para saber a donde mandar la informacion
+	double memoryLoadUnaMemoria; // Para las metricas
 } infoMemoria;
 
 typedef struct {
@@ -99,7 +100,6 @@ typedef struct {
 	double writeLatency;
 	double reads;
 	double writes;
-	double memoryLoad;
 	// Para calculo auxiliar
 	t_list* memoryLoadMemorias;
 	t_list* diferenciaDeTiempoReadLatency;

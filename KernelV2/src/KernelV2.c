@@ -18,10 +18,7 @@
  *
  * TODO: (Cosas boludas)
  * 		- Mejorar la estructura del Kernel (mas expresivo y declarativo)
- * 		- Mejorar el manejo de errores (que no genere memory leaks)
- *		- Los problemas de conexion que tambien los tienen el resto de los modulos
- *		- Agregar funcion JOURNAL (que ya estaba implementada) -> Arrastra el problema de conexion
- *		- Hilo de modificar archivo (falta cambiar lo de las variables quentum y los tiempos de retardo)
+ * 		- Mejorar el manejo de errores (agregarle cosas)
  *		- Algunos leaks -> Muy importante
  * 		- Mejorar algunas cositas que deje marcadas y buscar mas errores
  */
@@ -105,16 +102,10 @@ void iniciarConsolaKernel() {
 	while (puedeHaberRequests) {
 		operacion = readline(">");
 		if (!instruccionSeaMetrics(operacion)) {
-			if (strlen(operacion) != 0) {
-				crearProcesoYMandarloAReady(operacion);
-//				desbloquearHilos();
-				sem_post(&bin_main);
-				//free(operacion);
-			} else {
-				free(operacion);
-				cerrarKernel();
-				return;
-			}
+			crearProcesoYMandarloAReady(operacion);
+//			desbloquearHilos();
+			sem_post(&bin_main);
+			//free(operacion);
 		} else {
 			calcularMetrics();
 			imprimirMetrics();
@@ -126,9 +117,10 @@ void iniciarConsolaKernel() {
 void iniciarHiloMetadataRefresh() {
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
-		if(consolaDescribe(NULL)==SUPER_ERROR)
-			log_error(log_master->logError, "Fallo el describe global automatico");
-		if(conocerMemorias() == SUPER_ERROR)
+		if (consolaDescribe(NULL) == SUPER_ERROR)
+			log_error(log_master->logError,
+					"Fallo el describe global automatico");
+		if (conocerMemorias() == SUPER_ERROR)
 			log_error(log_master->logError, "Fallo conocer memorias");
 	}
 }
@@ -198,7 +190,8 @@ int main(void) {
 
 	for (int i = 0; i < multiprocesamiento; i++) {
 		arrayDeHilosPuntero = arrayDeHilos;
-		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*) iniciarMultiprocesamiento, NULL);
+		pthread_create(&arrayDeHilosPuntero[i], NULL,
+				(void*) iniciarMultiprocesamiento, NULL);
 	}
 
 	for (int i = 0; i < multiprocesamiento; i++) {

@@ -60,7 +60,8 @@ int procesarInputKernel(char* linea) {
 		consolaSalir(argumentos);
 
 	} else {
-		log_error(log_master->logError, "El comando no es el correcto. Por favor intente nuevamente");
+		log_error(log_master->logError,
+				"El comando no es el correcto. Por favor intente nuevamente");
 	}
 
 	free(argumentos);
@@ -78,16 +79,20 @@ int procesarAdd(int id, consistencia cons) {
 		return condicionAdd(id, memoria);
 	}
 	infoMemoria* memoriaEncontrada = NULL;
-	if ((memoriaEncontrada = list_find(listaMemorias, (void*) _esCondicionAdd)) != NULL) {
+	if ((memoriaEncontrada = list_find(listaMemorias, (void*) _esCondicionAdd))
+			!= NULL) {
 		asignarCriterioMemoria(memoriaEncontrada, cons);
 
 		if (!(memoriaEncontrada->criterios)[3])
-			log_trace(log_master->logTrace, "Se ha asignado el criterio a la memoria correctammente");
+			log_trace(log_master->logTrace,
+					"Se ha asignado el criterio a la memoria correctammente");
 
 		imprimirCriterio(memoriaEncontrada->criterios);
-		log_trace(log_master->logTrace, "El id de esta memoria es: %d", memoriaEncontrada->id);
+		log_trace(log_master->logTrace, "El id de esta memoria es: %d",
+				memoriaEncontrada->id);
 	} else {
-		log_error(log_master->logError, "Problemas con el comando ADD: No se pudo encontrar la memoria");
+		log_error(log_master->logError,
+				"Problemas con el comando ADD: No se pudo encontrar la memoria");
 		log_error(log_master->logError, "Posible listaMemorias vacia");
 		return SUPER_ERROR;
 	}
@@ -129,17 +134,20 @@ int consolaInsert(char*argumentos) {
 		timeStamp = atof(valores[2]);
 	}
 
-	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, su key es %s, , su value es: %s y su timeStamp: %f", nombreTabla, key,
-			value, timeStamp);
+	log_trace(log_master->logTrace,
+			"El nombre de la tabla es: %s, su key es %s, , su value es: %s y su timeStamp: %f",
+			nombreTabla, key, value, timeStamp);
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, atoi(key));
 	if (memoriaAEnviar == NULL) {
-		log_error(log_master->logError, "Error: No se pudo obtener la memoria deseada");
+		log_error(log_master->logError,
+				"Error: No se pudo obtener la memoria deseada");
 		freePunteroAPunteros(valoresAux);
 		freePunteroAPunteros(valores);
 		return SUPER_ERROR;
 	}
-	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT, memoriaAEnviar);
+	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT,
+			memoriaAEnviar);
 
 	// Seguimos con las metrics
 	timestampInsertAlFinalizar = getCurrentTime();
@@ -148,11 +156,13 @@ int consolaInsert(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
 	cantInserts++;
 
-	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
+	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
+			memoriaAEnviar->ip);
 
 	Paquete paquete;
-	if(socketMemoria >=0)
-		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, &paquete) == SUPER_ERROR)
+	if (socketMemoria >= 0)
+		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT,
+				&paquete) == SUPER_ERROR)
 			return SUPER_ERROR;
 
 	freePunteroAPunteros(valoresAux);
@@ -172,11 +182,13 @@ int consolaSelect(char*argumentos) {
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
-	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
+	log_trace(log_master->logTrace,
+			"El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
-	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR) {
+	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT,
+			memoriaAEnviar) == SUPER_ERROR) {
 		freePunteroAPunteros(valores);
 		free(argumentosAux);
 		return SUPER_ERROR;
@@ -190,7 +202,8 @@ int consolaSelect(char*argumentos) {
 	cantSelects++;
 
 	// Ahora mandamos el mensaje
-	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
+	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
+			memoriaAEnviar->ip);
 	// El mennsaje de error se imprime por pantalla en esta funcion
 
 	if (socketMemoria >= 0) {
@@ -208,10 +221,12 @@ int consolaSelect(char*argumentos) {
 //			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 //		}
 
-		if (enviarInfoMemoria(socketMemoria, request, INSERT, &paquete) == SUPER_ERROR)
+		if (enviarInfoMemoria(socketMemoria, request, INSERT,
+				&paquete) == SUPER_ERROR)
 			return SUPER_ERROR;
-		else{
-			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
+		else {
+			log_info(log_master->logInfo, "Registro de tabla %s: %s",
+					nombreTabla, paquete.mensaje);
 		}
 
 		free(paquete.mensaje);
@@ -223,19 +238,21 @@ int consolaSelect(char*argumentos) {
 	return TODO_OK;
 }
 
-int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete) {
+int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo,
+		Paquete* paquete) {
 //	Paquete paquete;
 	int success;
 
-	if (EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, protocolo)) {
+	if (EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1,
+			protocolo)) {
 		log_trace(log_master->logTrace, "El paquete se envio exitosamente");
 	} else {
 		log_error(log_master->logError, "Error al enviar paquete");
 		return SUPER_ERROR;
 	}
 	RecibirPaqueteCliente(socketMemoria, MEMORIA, paquete);
-	success =atoi(paquete->mensaje);
-	printf("Fue un exito? 0 = si, 1 = no: %d\n",success); // Creo que esto lo puedo sacar porque los logs ya hacen el trabajo
+	success = atoi(paquete->mensaje);
+	printf("Fue un exito? 0 = si, 1 = no: %d\n", success); // Creo que esto lo puedo sacar porque los logs ya hacen el trabajo
 	if (success == 0) {
 		log_trace(log_master->logTrace, "Paquete recibido correctamente");
 	} else {
@@ -247,13 +264,16 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 	return success;
 }
 
-int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
+int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
+		char* consistenciaChar, infoMemoria* memoria) {
 
 	int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
 	char request[100];
-	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
+	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
+			cantParticiones, tiempoCompactacion);
 	Paquete paquete;
-	if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR)
+	if (enviarInfoMemoria(socketMemoria, request, CREATE,
+			&paquete) == SUPER_ERROR)
 		return SUPER_ERROR;
 	return TODO_OK;
 }
@@ -264,16 +284,26 @@ void enviarJournalMemoria(int socketMemoria) {
 }
 
 int consolaJournal() {
-
-	//TODO: Cambiarlo para que sean solo las memorias que tienen criterios
-	// En listaMemorias se guardan todas las memorias conocidas, pero no todas tienen criterio porque eso se lo asigna el usuario en tiempo de ejecucion
-
 	void journalMemoria(infoMemoria* memoria) {
-		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d", memoria->id);
-		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
-		EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d",
+				memoria->id);
+//		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
+//		EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
 	}
-	list_iterate(listaMemorias, (void*) journalMemoria);
+
+	bool _tieneCriterio(void* memoria) {
+		return memoriaTieneALgunCriterio(memoria);
+	}
+
+	t_list* listaMemoriasConCriterio = list_filter(listaMemorias,
+			_tieneCriterio);
+	if (listaMemoriasConCriterio != NULL)
+		list_iterate(listaMemoriasConCriterio, (void*) journalMemoria);
+	else {
+		log_error(log_master->logError,
+				"Error al realizar el journal: No hay memorias registradas en el Kernel o no tiene criterio aun");
+		log_error(log_master->logError, "Por favor, ingresar alguno");
+	}
 	return TODO_OK;
 }
 
@@ -286,8 +316,8 @@ int consolaCreate(char*argumentos) {
 	int tiempoCompactacion = atoi(valores[3]);
 
 	log_trace(log_master->logTrace,
-			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d", nombreTabla,
-			consistenciaChar, cantParticiones, tiempoCompactacion);
+			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d",
+			nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
 
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 
@@ -313,7 +343,8 @@ metadataTabla* deserealizarMetadata(char* metadataSerializada) {
 	consistencia consistencia = getConsitenciaFromChar(datos[1]);
 	int cantParticiones = atoi(datos[2]);
 	int tiempoCompactacion = atoi(datos[3]);
-	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
+	metadataTabla* metadata = newMetadata(nombreTabla, consistencia,
+			cantParticiones, tiempoCompactacion);
 
 	//mostrarMetadata(metadata);
 
@@ -334,7 +365,8 @@ consistencia getConsitenciaFromChar(char* consistenciaChar) {
 	}
 }
 
-metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
+metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia,
+		int cantParticiones, int tiempoCompactacion) {
 
 	metadataTabla* tabla = malloc(sizeof(metadataTabla));
 	tabla->consistencia = consistencia;
@@ -382,7 +414,8 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 
 int consolaDescribe(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
+	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto,
+			memoriaAlAzar->ip);
 	if (nombreTabla == NULL) {
 		if (procesarDescribeAll(socketMemoria) == SUPER_ERROR)
 			return SUPER_ERROR;
@@ -408,7 +441,8 @@ void agregarTabla(metadataTabla* tabla) {
 void mostrarMetadata(metadataTabla* metadataTabla) {
 
 	log_info(log_master->logInfo, "Segmento: %s", metadataTabla->nombreTabla);
-	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d ", consistenciaToChar(metadataTabla->consistencia),
+	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d ",
+			consistenciaToChar(metadataTabla->consistencia),
 			metadataTabla->nParticiones);
 }
 
@@ -424,9 +458,11 @@ char* consistenciaToChar(consistencia consistencia) {
 
 int consolaDrop(char*nombreTabla) {
 	if (nombreTabla != NULL)
-		log_trace(log_master->logTrace, "Se desea elminar la tabla %s", nombreTabla);
+		log_trace(log_master->logTrace, "Se desea elminar la tabla %s",
+				nombreTabla);
 	else {
-		log_error(log_master->logError, "Error: ingresar el nombre de la tabla a eliminar");
+		log_error(log_master->logError,
+				"Error: ingresar el nombre de la tabla a eliminar");
 		return SUPER_ERROR;
 	}
 
@@ -483,7 +519,8 @@ int consolaRun(char*path) {
 		deNewAReady(proceso);
 
 	} else {
-		log_error(log_master->logError, "El path no es correcto o el archivo esta dañado");
+		log_error(log_master->logError,
+				"El path no es correcto o el archivo esta dañado");
 		return SUPER_ERROR;
 	}
 	return TODO_OK;
