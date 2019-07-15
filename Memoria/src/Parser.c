@@ -30,12 +30,7 @@ void* procesarSELECT(char* argumentos) {
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
-	t_registro* registro = SELECT_MEMORIA(nombreTabla, key);
-	if (registro != NULL) {
-		printf(" %d : %s \n", registro->key, registro->value);
-	} else {
-		puts("Registro no encontrado");
-	}
+	t_registro_memoria* registro = SELECT_MEMORIA(nombreTabla, key);
 
 	freePunteroAPunteros(valores);
 	return registro;
@@ -57,7 +52,7 @@ void* procesarINSERT(char* consulta) {
 		timeStamp = atof(valores[2]);
 	}
 
-	t_registro* registro = INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
+	t_registro_memoria* registro = INSERT_MEMORIA(nombreTabla, key, value, timeStamp);
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
 	free(value);
@@ -81,11 +76,6 @@ int procesarCREATE(char* consulta) {
 
 int procesarDROP(char* nombreTabla) {
 	int success = DROP_MEMORIA(nombreTabla);
-	if (success == 0) {
-		printf("Se ha eliminado la tabla: %s \n \n", nombreTabla);
-	} else {
-		printf("No se ha podido eliminar la tabla: %s \n \n", nombreTabla);
-	}
 	return success;
 
 }

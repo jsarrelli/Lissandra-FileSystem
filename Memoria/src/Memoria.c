@@ -26,7 +26,7 @@ int main() {
 		return EXIT_SUCCESS;
 	}
 //	//INICIALIZACION DE MEMORIA PRINCIPAL
-	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA);
+	inicializarMemoria(configuracion->TAM_MEMORIA);
 	log_info(loggerInfo, "--Memoria inicializada--");
 
 //INICIAR SERVIDOR

@@ -7,27 +7,29 @@
 
 #include "AdministradorDeConsultas.h"
 
-t_registro* SELECT_MEMORIA(char* nombreTabla, int key) {
+t_registro_memoria* SELECT_MEMORIA(char* nombreTabla, int key) {
 	log_info(loggerInfo, "SELECT en memoria..");
 	usleep(configuracion->RETARDO_MEMORIA * 1000);
 	Segmento* tabla = buscarSegmento(nombreTabla);
 
 	Pagina* pagina = buscarPagina(tabla, key);
 	if (pagina != NULL) {
+		log_trace(loggerTrace, "Registro: %d / %s / %f", pagina->registro->key, pagina->registro->value, pagina->registro->timestamp);
 		return pagina->registro;
-
 	}
+
+	log_trace(loggerTrace, "Registro no encontrado");
 	return NULL;
 }
 
-t_registro* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeStamp) {
+t_registro_memoria* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeStamp) {
 	log_info(loggerInfo, "Insertando en memoria");
 	usleep(configuracion->RETARDO_MEMORIA * 1000);
 
 	Segmento *tabla = buscarSegmento(nombreTabla);
 
 	if (validarValueMaximo(value)) {
-		Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla);
+		Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla, true);
 		log_trace(loggerTrace, "Se ha insertado el siguiente registro: %d \"%s\" en la tabla %s \n", key, value, nombreTabla);
 		return pagina->registro;
 	}
@@ -70,8 +72,9 @@ int CREATE_MEMORIA(char* nombreTabla, t_consistencia consistencia, int cantParti
 		insertarSegmentoEnMemoria(nombreTabla);
 		log_trace(loggerTrace, "Se ha creado la tabla %s", nombreTabla);
 
+	} else {
+		log_error(loggerError, "Hubo un error al crear la tabla %s, la tabla ya existe", nombreTabla);
 	}
-	log_error(loggerError, "Hubo un error al crear la tabla %s, la tabla ya existe", nombreTabla);
 
 	return succes;
 }

@@ -1,0 +1,31 @@
+[TRACE] 21:28:28:985 MEMORIA Logs/(5850:5850): Se ha insertado el siguiente registro: 4 "JAJA" en la tabla TABLA 
+
+[TRACE] 21:43:01:3 MEMORIA Logs/(6895:6895): Segmento: TABLA 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 2 
+[TRACE] 21:43:04:405 MEMORIA Logs/(6895:6895): Se ha eliminado la tabla TABLA
+[TRACE] 21:43:10:15 MEMORIA Logs/(6895:6895): Se ha creado la tabla TABLA
+[TRACE] 21:43:51:108 MEMORIA Logs/(6895:6895): Se ha eliminado la tabla TABLA
+[TRACE] 21:48:03:261 MEMORIA Logs/(7125:7125): Se ha creado la tabla TABLA
+[TRACE] 21:50:07:510 MEMORIA Logs/(7125:7125): Se ha eliminado la tabla TABLA
+[TRACE] 21:53:10:635 MEMORIA Logs/(7125:7125): Se ha creado la tabla TABLA
+[TRACE] 21:54:01:614 MEMORIA Logs/(7125:7125): Registro no encontrado
+[TRACE] 21:55:31:377 MEMORIA Logs/(7125:7125): Registro no encontrado
+[TRACE] 21:56:03:325 MEMORIA Logs/(7125:7125): Registro no encontrado
+[TRACE] 21:59:10:916 MEMORIA Logs/(7785:7785): Se ha insertado el siguiente registro: 86 "JOJO" en la tabla TABLA 
+
+[TRACE] 23:57:48:478 MEMORIA Logs/(12219:12219): Segmento: TABLA 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 2 
+[TRACE] 00:10:21:750 MEMORIA Logs/(12852:12852): Se ha insertado el siguiente registro: 4 "JAJA" en la tabla TABLA 
+
+[TRACE] 00:13:29:448 MEMORIA Logs/(12852:12852): Se ha insertado el siguiente registro: 4 "JAJA" en la tabla TABLA 
+
+[TRACE] 00:31:10:527 MEMORIA Logs/(14073:14073): Se ha insertado el siguiente registro: 4 "JAJA" en la tabla TABLA 
+
+[TRACE] 00:33:49:563 MEMORIA Logs/(14274:14274): Se ha insertado el siguiente registro: 4 "JAJA" en la tabla TABLA 
+
+[TRACE] 00:33:57:219 MEMORIA Logs/(14274:14274): Registro: 4 / JAJA / 1563161626692.000000
+[TRACE] 00:37:17:251 MEMORIA Logs/(14274:14274): Registro no encontrado
+[TRACE] 00:38:41:385 MEMORIA Logs/(14456:14456): Registro: 4 / JAJA / 1563161626692.000000
+[TRACE] 00:39:10:665 MEMORIA Logs/(14456:14456): Se ha eliminado la tabla TABLA
+[TRACE] 00:39:22:113 MEMORIA Logs/(14456:14456): Registro no encontrado
+[TRACE] 00:39:30:544 MEMORIA Logs/(14456:14456): Se ha creado la tabla TABLA

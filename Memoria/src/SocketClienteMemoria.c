@@ -47,7 +47,7 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
 		return;
 	}
-	t_registro* registro = pagina->registro;
+	t_registro_memoria* registro = pagina->registro;
 	char * consulta = string_new();
 	string_append_with_format(&consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
 	log_info(loggerInfo, "Enviando registro a FileSystem");
@@ -62,7 +62,7 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	}
 	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento) + 1, DROP);
 	Paquete paquete;
-	int succes = 0;
+	int succes = 1;
 	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
@@ -131,11 +131,11 @@ int HandshakeInicial() {
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
 	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
-		valueMaximoPaginas = atoi(paquete.mensaje);
+		valueMaximo = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
 
-	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
+	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximo);
 	return socketFileSystem;
 }
 

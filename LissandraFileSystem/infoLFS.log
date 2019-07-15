@@ -1,72 +1,110 @@
-[INFO] 14:11:44:240 LFS Logs/(14496:14496): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 23:54:22:65 LFS Logs/(11927:11927): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 14:11:44:240 LFS Logs/(14496:14496): Levantando archivo de configuracion del proceso LFS 
+[INFO] 23:54:22:65 LFS Logs/(11927:11927): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 14:11:44:240 LFS Logs/(14496:14496): Archivo de configuracion del proceso LFS levantado 
+[INFO] 23:54:22:66 LFS Logs/(11927:11927): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 14:11:44:253 LFS Logs/(14496:14496): El tamanio del bitmap es de 3000 bits
-[INFO] 14:11:44:253 LFS Logs/(14496:14496): Levantando tablas ya existentes..
-[INFO] 14:11:50:455 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 23:54:22:81 LFS Logs/(11927:11927): El tamanio del bitmap es de 3000 bits
+[INFO] 23:54:22:81 LFS Logs/(11927:11927): Levantando tablas ya existentes..
+[INFO] 23:56:02:82 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 23:57:38:840 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:12:01:780 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 23:57:42:83 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 23:57:48:277 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:12:08:306 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 23:57:48:477 LFS Logs/(11927:11929): Procesando DESCRIBE ALL
+[INFO] 23:57:48:478 LFS Logs/(11927:11929): Procesando DESCRIBE:  TABLA
+[INFO] 23:59:22:83 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:01:02:85 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:02:42:85 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:03:27:26 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:12:08:507 LFS Logs/(14496:14498): Procesando SELECT:  TABLA 2
-[INFO] 14:12:08:508 LFS Logs/(14496:14498): SELECT recibido Tabla: TABLA Key: 2
-[INFO] 14:12:08:508 LFS Logs/(14496:14498): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 14:12:37:657 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:04:22:86 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:06:02:87 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:07:42:88 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:09:22:88 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:09:53:367 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:12:37:858 LFS Logs/(14496:14498): Procesando DESCRIBE:  TABLA
-[INFO] 14:12:37:860 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:10:50:151 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:12:38:61 LFS Logs/(14496:14498): Procesando INSERT:  TABLA 2 "JAJA" 1563124339368.000000
-[INFO] 14:12:38:62 LFS Logs/(14496:14498): Insert de 2;JAJA en TABLA realizado en memtable
-[INFO] 14:12:52:860 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:11:02:89 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:12:42:90 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:13:20:330 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:12:53:62 LFS Logs/(14496:14498): Procesando SELECT:  TABLA 2
-[INFO] 14:12:53:62 LFS Logs/(14496:14498): SELECT recibido Tabla: TABLA Key: 2
-[INFO] 14:12:53:62 LFS Logs/(14496:14498): Filtrando registros..
-[INFO] 14:12:53:62 LFS Logs/(14496:14498): Filtrado completo
-[INFO] 14:12:53:62 LFS Logs/(14496:14498): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 14:12:53:63 LFS Logs/(14496:14498): Filtrando registros..
-[INFO] 14:12:53:63 LFS Logs/(14496:14498): Filtrado completo
-[INFO] 14:12:53:63 LFS Logs/(14496:14498): Select a key 2
-[INFO] 14:13:01:168 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:14:22:93 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:14:26:647 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:05:193 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:16:02:93 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:17:42:95 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:19:22:95 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:21:02:96 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:22:42:97 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:24:22:98 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:25:53:623 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:05:393 LFS Logs/(14496:14498): Procesando SELECT:  TABLA 2
-[INFO] 14:13:05:393 LFS Logs/(14496:14498): SELECT recibido Tabla: TABLA Key: 2
-[INFO] 14:13:05:393 LFS Logs/(14496:14498): Filtrando registros..
-[INFO] 14:13:05:394 LFS Logs/(14496:14498): Filtrado completo
-[INFO] 14:13:05:394 LFS Logs/(14496:14498): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 14:13:05:394 LFS Logs/(14496:14498): Filtrando registros..
-[INFO] 14:13:05:394 LFS Logs/(14496:14498): Filtrado completo
-[INFO] 14:13:05:394 LFS Logs/(14496:14498): Select a key 2
-[INFO] 14:13:11:633 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:26:02:100 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:26:48:542 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:11:834 LFS Logs/(14496:14498): Procesando DESCRIBE:  TABLA
-[INFO] 14:13:11:835 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:27:42:101 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:29:22:102 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:30:43:618 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:12:37 LFS Logs/(14496:14498): Procesando INSERT:  TABLA 2 "JAJA" 1563124339368.000000
-[INFO] 14:13:12:37 LFS Logs/(14496:14498): Insert de 2;JAJA en TABLA realizado en memtable
-[INFO] 14:13:24:255 LFS Logs/(14496:14499): Iniciando proceso Dump
-[INFO] 14:13:36:871 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:31:02:102 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:32:42:107 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:33:20:879 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:37:74 LFS Logs/(14496:14498): Procesando SELECT:  TABLA 2
-[INFO] 14:13:37:74 LFS Logs/(14496:14498): SELECT recibido Tabla: TABLA Key: 2
-[INFO] 14:13:37:74 LFS Logs/(14496:14498): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmp... 
-[INFO] 14:13:37:74 LFS Logs/(14496:14498): Filtrando registros..
-[INFO] 14:13:37:74 LFS Logs/(14496:14498): Filtrado completo
-[INFO] 14:13:37:75 LFS Logs/(14496:14498): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 14:13:37:75 LFS Logs/(14496:14498): Filtrando registros..
-[INFO] 14:13:37:75 LFS Logs/(14496:14498): Filtrado completo
-[INFO] 14:13:37:75 LFS Logs/(14496:14498): Select a key 2
-[INFO] 14:13:46:454 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:33:38:782 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:46:654 LFS Logs/(14496:14498): Procesando DESCRIBE:  TABLA
-[INFO] 14:13:46:655 LFS Logs/(14496:14498): Request de memoria recibida.. 
+[INFO] 00:34:22:108 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:36:02:109 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:36:23:707 LFS Logs/(11927:11929): Request de memoria recibida.. 
 
-[INFO] 14:13:46:856 LFS Logs/(14496:14498): Procesando INSERT:  TABLA 2 "" 1563124339368.000000
-[INFO] 14:13:46:856 LFS Logs/(14496:14498): Insert de 2; 1563124339368.000000 en TABLA realizado en memtable
+[INFO] 00:36:23:913 LFS Logs/(11927:11929): Procesando DESCRIBE:  TABLA
+[INFO] 00:36:23:916 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:36:24:121 LFS Logs/(11927:11929): Procesando INSERT:  TABLA 4 "JAJA" 1563161626692.000000
+[INFO] 00:36:24:122 LFS Logs/(11927:11929): Insert de 4;JAJA en TABLA realizado en memtable
+[INFO] 00:37:16:170 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:37:16:373 LFS Logs/(11927:11929): Procesando SELECT:  ATABSELECT 0
+[INFO] 00:37:16:373 LFS Logs/(11927:11929): SELECT recibido Tabla: ATABSELECT Key: 0
+[INFO] 00:37:42:110 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:38:26:420 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:38:38:442 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Procesando SELECT:  TABLA 4
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): SELECT recibido Tabla: TABLA Key: 4
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp2.tmp... 
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmp... 
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp3.tmp... 
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp1.tmp... 
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Filtrando registros..
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Filtrado completo
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Filtrando registros..
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Filtrado completo
+[INFO] 00:38:38:644 LFS Logs/(11927:11929): Select a key 4
+[INFO] 00:39:10:443 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:39:10:647 LFS Logs/(11927:11929): Procesando DROP:  TABLA
+[INFO] 00:39:10:647 LFS Logs/(11927:11929): TABLA eliminada de memtable
+[INFO] 00:39:10:647 LFS Logs/(11927:11929): Bloque 0 liberado
+[INFO] 00:39:10:649 LFS Logs/(11927:11929): Bloque 4 liberado
+[INFO] 00:39:10:651 LFS Logs/(11927:11929): Bloque 1 liberado
+[INFO] 00:39:10:654 LFS Logs/(11927:11929): Bloque 2 liberado
+[INFO] 00:39:10:656 LFS Logs/(11927:11929): Bloque 5 liberado
+[INFO] 00:39:10:658 LFS Logs/(11927:11929): Bloque 3 liberado
+[INFO] 00:39:21:772 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:39:21:973 LFS Logs/(11927:11929): Procesando SELECT:  TABLA 4
+[INFO] 00:39:21:976 LFS Logs/(11927:11929): SELECT recibido Tabla: TABLA Key: 4
+[INFO] 00:39:22:115 LFS Logs/(11927:11930): Iniciando proceso Dump
+[INFO] 00:39:30:222 LFS Logs/(11927:11929): Request de memoria recibida.. 
+
+[INFO] 00:39:30:437 LFS Logs/(11927:11929): Procesando CREATE:  TABLA SC 2 2
+[INFO] 00:39:30:438 LFS Logs/(11927:11929): Se creo la tabla: TABLA en LFS
+
+[INFO] 00:39:30:444 LFS Logs/(11927:11929): Metadata de TABLA creada
+
+[INFO] 00:41:02:116 LFS Logs/(11927:11930): Iniciando proceso Dump
