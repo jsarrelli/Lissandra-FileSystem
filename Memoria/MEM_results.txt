@@ -29,3 +29,17 @@
 [TRACE] 00:39:10:665 MEMORIA Logs/(14456:14456): Se ha eliminado la tabla TABLA
 [TRACE] 00:39:22:113 MEMORIA Logs/(14456:14456): Registro no encontrado
 [TRACE] 00:39:30:544 MEMORIA Logs/(14456:14456): Se ha creado la tabla TABLA
+[TRACE] 15:53:06:596 MEMORIA Logs/(5925:5925): Registro no encontrado
+[TRACE] 15:54:34:970 MEMORIA Logs/(5925:5925): Se ha insertado el siguiente registro: 4 "JAJA" en la tabla TABLA 
+
+[TRACE] 15:54:56:419 MEMORIA Logs/(5925:5925): Registro: 4 / JAJA / 1563216870251.000000
+[TRACE] 15:55:04:28 MEMORIA Logs/(5925:5925): Se ha insertado el siguiente registro: 5 "JEJE" en la tabla TABLA 
+
+[TRACE] 15:55:10:17 MEMORIA Logs/(5925:5925): Se ha insertado el siguiente registro: 8 "JAJAJ" en la tabla TABLA 
+
+[TRACE] 15:55:17:990 MEMORIA Logs/(5925:5925): Registro no encontrado
+[TRACE] 15:55:21:287 MEMORIA Logs/(5925:5925): Registro: 8 / JAJAJ / 1563216909914.000000
+[TRACE] 15:55:45:689 MEMORIA Logs/(5925:5925): Registro: 5 / JEJE / 1563216903927.000000
+[TRACE] 15:56:10:765 MEMORIA Logs/(5925:5925): Registro: 8 / JAJAJ / 1563216909914.000000
+[TRACE] 15:56:14:437 MEMORIA Logs/(5925:5925): Se ha eliminado la tabla TABLA
+[TRACE] 15:56:18:176 MEMORIA Logs/(5925:5925): Registro no encontrado
