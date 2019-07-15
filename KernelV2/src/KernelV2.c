@@ -57,10 +57,10 @@ void iniciarVariablesKernel() {
 	listaMetadataTabla = list_create();
 	hardcodearListaMetadataTabla();
 
-	quantum = config->QUANTUM;
+//	quantum = config->QUANTUM;
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
 	multiprocesamientoUsado = 0;
-	retardoEjecucion = config->SLEEP_EJECUCION;
+//	retardoEjecucion = config->SLEEP_EJECUCION;
 
 	cantSelects = 0;
 	cantInserts = 0;

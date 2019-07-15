@@ -207,6 +207,8 @@ void* iniciarMultiprocesamiento(void* args) {
 	int cantRequestsEjecutadas = 0;
 	procExec* proceso = NULL;
 	int cantRequestsEjecutadasPorQuantum = 0;
+	int quantum = 1;
+	int retardoEjecucion = 0;
 
 	/*
 	 * Se que no se entiende mucho
@@ -215,6 +217,8 @@ void* iniciarMultiprocesamiento(void* args) {
 	 */
 
 	do {
+		quantum = config->QUANTUM;
+		retardoEjecucion = config->SLEEP_EJECUCION;
 		proceso = obtenerProcesoDeColaReady();
 
 		if (proceso != NULL) {
@@ -227,7 +231,6 @@ void* iniciarMultiprocesamiento(void* args) {
 			for (cantRequestsEjecutadas = proceso->contadorRequests;
 					estado == OK && cantRequestsEjecutadas < cantRequestsProceso && cantRequestsEjecutadasPorQuantum < quantum;
 					cantRequestsEjecutadas++) {
-
 				usleep(retardoEjecucion * 1000);
 				estado = procesarInputKernel(list_get(proceso->script, cantRequestsEjecutadas));
 				cantRequestsEjecutadasPorQuantum++;
