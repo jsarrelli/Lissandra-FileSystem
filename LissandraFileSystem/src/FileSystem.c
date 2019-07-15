@@ -45,7 +45,7 @@ t_list* buscarBloquesLibres(int cant) {
 
 void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
-	log_info(loggerInfo, "Bloque %d liberado", index);
+	log_trace(loggerInfo, "Bloque %d liberado", index);
 }
 
 void reservarBloque(int index) {
