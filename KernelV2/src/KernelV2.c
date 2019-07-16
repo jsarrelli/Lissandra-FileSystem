@@ -19,7 +19,7 @@
  * TODO: (Cosas boludas)
  * 		- Mejorar la estructura del Kernel (mas expresivo y declarativo)
  * 		- Mejorar el manejo de errores (agregarle cosas)
- *		- Algunos leaks -> Muy importante
+ *		- Algunos leaks (SOLO FALTAN LEAKS MENORES)
  * 		- Mejorar algunas cositas que deje marcadas y buscar mas errores
  */
 
@@ -28,7 +28,7 @@ void iniciarVariablesKernel() {
 	inicializarLogStruct();
 	cargarConfigKernel();
 
-	crearMetrica();
+	crearMetrics();
 
 //	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReadyPOP, 0, 1);
@@ -83,18 +83,19 @@ void iniciarVariablesKernel() {
 }
 
 void* iniciarhiloMetrics(void* args) {
-	// TODO: Mejorar esto
+
+	// TODO: Mejorar esto (Creo que ya esta)
 	while (puedeHaberRequests) {
 		usleep(30000 * 1000); // algo asi...
+		reiniciarMetrics();
 		calcularMetrics();
 		imprimirMetrics();
-		// Ahora reinicio los valores:
-		reiniciarMetrics();
 	}
 	return NULL;
 }
 
 void iniciarConsolaKernel() {
+
 	char* operacion;
 
 	while (puedeHaberRequests) {
@@ -108,7 +109,7 @@ void iniciarConsolaKernel() {
 				//free(operacion);
 			}
 		} else {
-			calcularMetrics();
+//			calcularMetrics();
 			imprimirMetrics();
 			free(operacion);
 		}
@@ -116,6 +117,7 @@ void iniciarConsolaKernel() {
 }
 
 void iniciarHiloMetadataRefresh() {
+
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
 		if (consolaDescribe(NULL) == SUPER_ERROR)

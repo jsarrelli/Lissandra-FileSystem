@@ -123,7 +123,7 @@ int instruccionSeaMetrics(char* operacion) {
 	return strcmp(operacion, "METRICS") == 0;
 }
 
-void crearMetrica() {
+void crearMetrics() {
 	metricas.readLatency = 0;
 	metricas.writeLatency = 0;
 	metricas.reads = 0;
@@ -131,7 +131,7 @@ void crearMetrica() {
 	metricas.diferenciaDeTiempoReadLatency = list_create();
 	metricas.diferenciaDeTiempoWriteLatency = list_create();
 //	metricas.memoryLoadMemorias = list_create();
-	hayMetricas = true;
+	hayMetricas = false;
 }
 
 void destruirMetrics() {
@@ -208,6 +208,7 @@ void calcularMetrics() {
 //		list_add(metricas.memoryLoadMemorias, memoryLoadMemoria); // Este es un problema. Que pasa si se me cae una memoria??
 		// Hay que guardar este dato en cada memoria, y si se me cae la memoria, pierdo el dato (esta ok), porque recalculo siempre
 		memoria->memoryLoadUnaMemoria = *memoryLoadMemoria;
+		free(memoryLoadMemoria);
 	}
 
 	if (cantSelectsEInsertsTotales != 0) {

@@ -427,7 +427,7 @@ void destruirInfoMemoria(infoMemoria* memoria){
 }
 
 void destruirListaMemorias() {
-	list_destroy_and_destroy_elements(listaMemorias, (void*) free);
+	list_destroy_and_destroy_elements(listaMemorias, (void*) destruirInfoMemoria);
 }
 
 void crearProcesoYMandarloAReady(char* operacion) {
