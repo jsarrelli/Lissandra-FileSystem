@@ -30,7 +30,7 @@ void iniciarVariablesKernel() {
 
 	crearMetrica();
 
-	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
+//	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReadyPOP, 0, 1);
 	sem_init(&mutex_colaReadyPUSH, 0, 1);
 	sem_init(&mutex_id_proceso, 0, 1);
@@ -156,7 +156,7 @@ void cerrarKernel() {
 	free(config);
 	config_destroy(kernelConfig);
 	free(arrayDeHilos);
-	printf("Llego al final ok");
+	printf("Llego al final ok\n");
 }
 
 //void terminarHilos() {
@@ -169,9 +169,9 @@ int main(void) {
 
 //	conocerMemorias();
 //	if(conocerMemorias()==-1){
+//		log_error(log_master->logError, "No se pudo conocer las memorias");
 //		return EXIT_FAILURE;
 //	}
-//	inicioKernelUnProcesador();
 
 	// Hilo de metrics
 	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);

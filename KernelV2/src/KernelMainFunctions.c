@@ -289,9 +289,9 @@ void* iniciarMultiprocesamiento(void* args) {
 	return NULL;
 }
 
-void ejecutarProcesos() {
-	sem_post(&ejecutarHilos);
-}
+//void ejecutarProcesos() {
+//	sem_post(&ejecutarHilos);
+//}
 
 void inicializarLogStruct() {
 	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
