@@ -30,5 +30,6 @@ void destruirMetrics();
 void reiniciarMetrics();
 void calcularMetrics();
 void imprimirMetrics();
+bool memoriaTieneALgunCriterio(infoMemoria* memoria);
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */

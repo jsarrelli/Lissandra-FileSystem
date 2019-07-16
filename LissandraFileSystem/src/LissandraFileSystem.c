@@ -53,6 +53,8 @@ void inicializarLoggers() {
 	loggerInfo = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/infoLFS.log", "LFS Logs", 1, LOG_LEVEL_INFO);
 	loggerError = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/erroresLFS.log", "LFS Error Logs", 1,
 			LOG_LEVEL_ERROR);
+	loggerTrace = log_create("/home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/resultados.log", "LFS Results Logs", 1,
+			LOG_LEVEL_TRACE);
 }
 
 int main(void) {

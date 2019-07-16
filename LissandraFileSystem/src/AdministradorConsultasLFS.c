@@ -2,7 +2,7 @@
 
 int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaChar, char* tiempoCompactacion) {
 	if (existeTabla(nombreTabla)) {
-		puts("Ya existe una tabla con ese nombre.");
+		printf("Ya existe una tabla con el nombre %s en el FileSystem\n", nombreTabla);
 		return 1;
 	}
 	crearTablaYParticiones(nombreTabla, cantParticiones);
@@ -16,7 +16,7 @@ int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaCh
 int funcionDROP(char* nombreTabla) {
 	if (existeTabla(nombreTabla)) {
 		removerTabla(nombreTabla);
-		printf("%s eliminada\n\n", nombreTabla);
+		log_info(loggerInfo,"%s eliminada", nombreTabla);
 		return 0;
 	} else {
 		puts("La tabla que se quiere eliminar no existe");
@@ -45,7 +45,7 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_info(loggerInfo, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
+		log_trace(loggerInfo, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
 		log_error(loggerError, "La tabla %s no existe",nombreTabla);
@@ -69,7 +69,7 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 			return NULL;
 		}
 	} else {
-		puts("La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
+		log_error(loggerError,"La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
 		return NULL;
 	}
 }
@@ -80,7 +80,7 @@ void procesoDump() {
 		pthread_mutex_lock(&mutexDump);
 
 		usleep(config->TIEMPO_DUMP * 1000);
-		log_info(loggerInfo, "Iniciando proceso Dump");
+		//log_info(loggerInfo, "Iniciando proceso Dump");
 		crearYEscribirArchivosTemporales(rutas.Tablas);
 
 		pthread_mutex_unlock(&mutexDump);

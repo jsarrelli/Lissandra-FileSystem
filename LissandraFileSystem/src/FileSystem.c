@@ -47,6 +47,7 @@ void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
 	log_info(loggerInfo, "Bloque %d liberado", index);
 	escribirBitmap();
+
 }
 
 void reservarBloque(int index) {

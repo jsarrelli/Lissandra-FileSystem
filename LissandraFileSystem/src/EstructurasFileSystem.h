@@ -26,6 +26,7 @@ typedef struct {
 t_list* memtable;
 t_log* loggerInfo;
 t_log* loggerError;
+t_log* loggerTrace;
 
 
 

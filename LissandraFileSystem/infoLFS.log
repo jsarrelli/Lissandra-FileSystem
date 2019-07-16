@@ -1,102 +1,10 @@
-[INFO] 12:17:59:934 LFS Logs/(12521:12521): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 12:23:33:425 LFS Logs/(12992:12992): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 12:17:59:934 LFS Logs/(12521:12521): Levantando archivo de configuracion del proceso LFS 
+[INFO] 12:23:33:429 LFS Logs/(12992:12992): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 12:17:59:934 LFS Logs/(12521:12521): Archivo de configuracion del proceso LFS levantado 
+[INFO] 12:23:33:429 LFS Logs/(12992:12992): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 12:18:00:21 LFS Logs/(12521:12521): El tamanio del bitmap es de 3000 bits
-[INFO] 12:18:00:21 LFS Logs/(12521:12521): Levantando tablas ya existentes..
-[INFO] 12:18:05:92 LFS Logs/(12521:12521): Se creo la tabla: TABLA en LFS
+[INFO] 12:23:33:450 LFS Logs/(12992:12992): El tamanio del bitmap es de 3000 bits
+[INFO] 12:23:33:450 LFS Logs/(12992:12992): Levantando tablas ya existentes..
+[TRACE] 12:23:33:450 LFS Logs/(12992:12992): TABLA insertada en memtable 
 
-[INFO] 12:18:05:93 LFS Logs/(12521:12521): Metadata de TABLA creada
-
-[INFO] 12:18:11:908 LFS Logs/(12521:12521): Insert de 2;FSDFDSFDSFSD en TABLA realizado en memtable
-[INFO] 12:18:18:28 LFS Logs/(12521:12521): Insert de 4;FSDFDSFD en TABLA realizado en memtable
-[INFO] 12:18:20:716 LFS Logs/(12521:12521): Bloque 0 reservado
-[INFO] 12:18:20:719 LFS Logs/(12521:12521): Bloque 1 reservado
-[INFO] 12:18:20:721 LFS Logs/(12521:12521): Bloque 2 reservado
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Compactando tabla: TABLA
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Modificando tmp a tmpc..
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Obteniendo directorios de archivos binarios..
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Se cambio la extension de los temporales
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Mergeando registros viejos con nuevos
-[INFO] 12:18:20:723 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:18:20:724 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:18:20:724 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:18:20:724 LFS Logs/(12521:12521): Bloque 3 reservado
-[INFO] 12:18:20:724 LFS Logs/(12521:12521): Bloque 4 reservado
-[INFO] 12:18:20:725 LFS Logs/(12521:12521): Bloque 5 reservado
-[INFO] 12:18:20:727 LFS Logs/(12521:12521): Bloque 0 liberado
-[INFO] 12:18:20:728 LFS Logs/(12521:12521): Bloque 1 liberado
-[INFO] 12:18:20:730 LFS Logs/(12521:12521): Bloque 2 liberado
-[INFO] 12:18:20:730 LFS Logs/(12521:12521): Bloque 0 reservado
-[INFO] 12:18:20:731 LFS Logs/(12521:12521): Compactacion de <TABLA> exitosa
-[INFO] 12:18:26:403 LFS Logs/(12521:12521): Insert de 8;FSDSDSD en TABLA realizado en memtable
-[INFO] 12:18:31:787 LFS Logs/(12521:12521): Insert de 10;SDFSDFDS en TABLA realizado en memtable
-[INFO] 12:18:33:553 LFS Logs/(12521:12521): Bloque 1 reservado
-[INFO] 12:18:33:555 LFS Logs/(12521:12521): Bloque 2 reservado
-[INFO] 12:18:33:556 LFS Logs/(12521:12521): Bloque 6 reservado
-[INFO] 12:18:33:557 LFS Logs/(12521:12521): Compactando tabla: TABLA
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Modificando tmp a tmpc..
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Obteniendo directorios de archivos binarios..
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Se cambio la extension de los temporales
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:18:33:558 LFS Logs/(12521:12521): Mergeando registros viejos con nuevos
-[INFO] 12:18:33:559 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:18:33:559 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:18:33:559 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:18:33:559 LFS Logs/(12521:12521): Bloque 3 liberado
-[INFO] 12:18:33:560 LFS Logs/(12521:12521): Bloque 4 liberado
-[INFO] 12:18:33:560 LFS Logs/(12521:12521): Bloque 5 liberado
-[INFO] 12:18:33:561 LFS Logs/(12521:12521): Bloque 3 reservado
-[INFO] 12:18:33:562 LFS Logs/(12521:12521): Bloque 4 reservado
-[INFO] 12:18:33:563 LFS Logs/(12521:12521): Bloque 5 reservado
-[INFO] 12:18:33:564 LFS Logs/(12521:12521): Bloque 7 reservado
-[INFO] 12:18:33:566 LFS Logs/(12521:12521): Bloque 8 reservado
-[INFO] 12:18:33:566 LFS Logs/(12521:12521): Bloque 9 reservado
-[INFO] 12:18:33:567 LFS Logs/(12521:12521): Bloque 1 liberado
-[INFO] 12:18:33:568 LFS Logs/(12521:12521): Bloque 2 liberado
-[INFO] 12:18:33:569 LFS Logs/(12521:12521): Bloque 6 liberado
-[INFO] 12:18:33:570 LFS Logs/(12521:12521): Bloque 1 reservado
-[INFO] 12:18:33:570 LFS Logs/(12521:12521): Compactacion de <TABLA> exitosa
-[INFO] 12:19:54:494 LFS Logs/(12521:12521): Insert de 2;JULI en TABLA realizado en memtable
-[INFO] 12:19:56:319 LFS Logs/(12521:12521): Bloque 2 reservado
-[INFO] 12:19:56:321 LFS Logs/(12521:12521): Compactando tabla: TABLA
-[INFO] 12:19:56:321 LFS Logs/(12521:12521): Modificando tmp a tmpc..
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Obteniendo directorios de archivos binarios..
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Se cambio la extension de los temporales
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Mergeando registros viejos con nuevos
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:19:56:322 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:19:56:323 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:19:56:323 LFS Logs/(12521:12521): Bloque 4 liberado
-[INFO] 12:19:56:324 LFS Logs/(12521:12521): Bloque 5 liberado
-[INFO] 12:19:56:325 LFS Logs/(12521:12521): Bloque 7 liberado
-[INFO] 12:19:56:326 LFS Logs/(12521:12521): Bloque 8 liberado
-[INFO] 12:19:56:327 LFS Logs/(12521:12521): Bloque 9 liberado
-[INFO] 12:19:56:328 LFS Logs/(12521:12521): Bloque 4 reservado
-[INFO] 12:19:56:329 LFS Logs/(12521:12521): Bloque 5 reservado
-[INFO] 12:19:56:331 LFS Logs/(12521:12521): Bloque 6 reservado
-[INFO] 12:19:56:332 LFS Logs/(12521:12521): Bloque 7 reservado
-[INFO] 12:19:56:332 LFS Logs/(12521:12521): Bloque 8 reservado
-[INFO] 12:19:56:333 LFS Logs/(12521:12521): Bloque 9 reservado
-[INFO] 12:19:56:334 LFS Logs/(12521:12521): Bloque 2 liberado
-[INFO] 12:19:56:336 LFS Logs/(12521:12521): Bloque 2 reservado
-[INFO] 12:19:56:337 LFS Logs/(12521:12521): Compactacion de <TABLA> exitosa
-[INFO] 12:20:42:105 LFS Logs/(12521:12521): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:20:42:105 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:20:42:106 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:20:42:106 LFS Logs/(12521:12521): Filtrando registros..
-[INFO] 12:20:42:106 LFS Logs/(12521:12521): Filtrado completo
-[INFO] 12:20:42:106 LFS Logs/(12521:12521): Select a key 2

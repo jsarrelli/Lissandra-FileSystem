@@ -39,13 +39,19 @@
 #define TODO_OK 0
 #define SUPER_ERROR 1
 
+/*
+ * ACLARACIONES DE USO:
+ *
+ * 		- Al salir del Kernel se tiene que ingresar el comando SALIR pero se tiene que hacer una vez que los procesadores terminen de procesar
+ * 				Esto tiene sentido ya que el salir se encarga de guiar a los procesadores a cerrarse definitivamente
+ */
+
+
 // Estructuras de datos
 
 typedef struct {
 	int contadorRequests;
 	t_list* script;
-//	pthread_t* hilo; // Esto se va a hacer al principio, por eso no es necesario ahora
-//	bool estaEjecutandose; // Esto tampoco
 } procExec;
 
 typedef enum {
@@ -57,11 +63,11 @@ typedef struct {
 	char*ip;
 	int puerto;
 	// Ignorando el comando Metrics y obviamente Select e Insert:
-//	int cantOperacionesEjecutadas[5];
 	int cantSelectsEjecutados;
 	int cantInsertEjecutados;
 	bool criterios[4];	// Considero un caso de error para que se muestre por pantalla
 // La memoria en si no conoce que criterio tiene, solo el Kernel lo sabe para saber a donde mandar la informacion
+	double memoryLoadUnaMemoria; // Para las metricas
 } infoMemoria;
 
 typedef struct {
@@ -94,9 +100,8 @@ typedef struct {
 	double writeLatency;
 	double reads;
 	double writes;
-	double memoryLoad;
 	// Para calculo auxiliar
-	t_list* memoryLoadMemorias;
+//	t_list* memoryLoadMemorias;
 	t_list* diferenciaDeTiempoReadLatency;
 	t_list* diferenciaDeTiempoWriteLatency;
 } t_metrics;
@@ -108,14 +113,13 @@ t_list* listaHilos;
 t_list* listaMetadataTabla;
 t_list* listaMemorias;
 t_config_kernel *config;
-int quantum;
-int cantRequestsEjecutadas;		// Borrar
+//int quantum;
 int idMemoria;
 int idHilo;
 int multiprocesamiento;
 int multiprocesamientoUsado;
 int hilosActivos;
-int retardoEjecucion;
+//int retardoEjecucion;
 int cantSelects;
 int cantInserts;
 double timestampSelectAlIniciar;
@@ -158,7 +162,7 @@ void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
 infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
 void* iniciarMultiprocesamiento(void*args);
-void* funcionThread(void* args);
+//void* funcionThread(void* args);
 void inicializarLogStruct();
 int funcionHash(t_list* memoriasEncontradas, int key);
 infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key);

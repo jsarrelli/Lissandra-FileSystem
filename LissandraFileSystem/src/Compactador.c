@@ -16,7 +16,7 @@ void compactarTabla(char*nombreTabla) {
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
-		log_info(loggerInfo, "No hay nada para compactar");
+		log_error(loggerError, "No hay nada para compactar");
 		pthread_mutex_unlock(&mutexFS);
 		return;
 	}
@@ -26,7 +26,7 @@ void compactarTabla(char*nombreTabla) {
 	int cantParticiones = list_size(archivosBinarios);
 
 	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
-	log_info(loggerInfo, "Se cambio la extension de los temporales");
+	log_trace(loggerInfo, "Se cambio la extension de los temporales");
 
 	t_list* registrosNuevos = list_create();
 	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
@@ -43,7 +43,7 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosTemporales, free);
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
-	log_info(loggerInfo, "Compactacion de <%s> exitosa", nombreTabla);
+	log_trace(loggerInfo, "Compactacion de <%s> exitosa", nombreTabla);
 
 	pthread_mutex_unlock(&mutexFS);
 }
@@ -82,7 +82,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		//sem_wait(&mutexEscrituraBloques);
-		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual,true);
+		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual, true);
 		//sem_post(&mutexEscrituraBloques);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
@@ -178,7 +178,7 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 //hay una funcion mucho mas linda, pero son las 5 am tengo suenio y la vida es una mierda
 void filtrarRegistros(t_list* registros) {
-	log_info(loggerInfo, "Filtrando registros..");
+	//log_info(loggerInfo, "Filtrando registros..");
 	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
 
 		if (registro == NULL) {
@@ -212,7 +212,7 @@ void filtrarRegistros(t_list* registros) {
 
 	list_sort(registros, (void*) sortByKey);
 
-	log_info(loggerInfo, "Filtrado completo");
+	log_trace(loggerInfo, "Filtrado completo");
 
 }
 //void filtrarRegistros(t_list* registros) {
@@ -285,7 +285,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	char* contenidoBloques = string_new();
 
 	void cargarRegistrosDeBloque(int bloque) {
-		if(archivo->TAMANIO==0){
+		if (archivo->TAMANIO == 0) {
 			return;
 		}
 

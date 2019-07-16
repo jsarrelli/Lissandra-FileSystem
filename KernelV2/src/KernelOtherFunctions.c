@@ -33,30 +33,30 @@ bool verificarCriterio(bool* criterio, consistencia ccia) {
 	return false;
 }
 
-//void hardcodearInfoMemorias() {
-//
-//	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria1);
-//
-//	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria2);
-//
-//	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria3);
-//
-//	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria4);
-//
-//	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria5);
-//
-//	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria6);
-//
-//	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615);
-//	list_add(listaMemorias, memoria7);
-//
-//}
+void hardcodearInfoMemorias() {
+
+	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615, 1);
+	list_add(listaMemorias, memoria1);
+
+	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615, 2);
+	list_add(listaMemorias, memoria2);
+
+	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615, 3);
+	list_add(listaMemorias, memoria3);
+
+	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615, 4);
+	list_add(listaMemorias, memoria4);
+
+	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615, 5);
+	list_add(listaMemorias, memoria5);
+
+	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615, 6);
+	list_add(listaMemorias, memoria6);
+
+	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615, 7);
+	list_add(listaMemorias, memoria7);
+
+}
 
 void imprimirCriterio(bool* criterio) {
 	if (criterio[0]) {
@@ -79,25 +79,25 @@ bool instruccionSeaSalir(char* operacion) {
 	return strcmp(operacion, "SALIR") == 0;
 }
 
-//void hardcodearListaMetadataTabla() {
-//	metadataTabla* metadata1 = malloc(sizeof(metadataTabla));
-//	metadata1->consistencia = SC;
-//	metadata1->nParticiones = 2;
-//	metadata1->nombreTabla = "TABLA1";
-//	list_add(listaMetadataTabla, metadata1);
-//
-//	metadataTabla* metadata2 = malloc(sizeof(metadataTabla));
-//	metadata2->consistencia = SHC;
-//	metadata2->nParticiones = 3;
-//	metadata2->nombreTabla = "TABLA2";
-//	list_add(listaMetadataTabla, metadata2);
-//
-//	metadataTabla* metadata3 = malloc(sizeof(metadataTabla));
-//	metadata3->consistencia = EC;
-//	metadata3->nParticiones = 4;
-//	metadata3->nombreTabla = "TABLA3";
-//	list_add(listaMetadataTabla, metadata3);
-//}
+void hardcodearListaMetadataTabla() {
+	metadataTabla* metadata1 = malloc(sizeof(metadataTabla));
+	metadata1->consistencia = SC;
+	metadata1->nParticiones = 2;
+	metadata1->nombreTabla = "TABLA1";
+	list_add(listaMetadataTabla, metadata1);
+
+	metadataTabla* metadata2 = malloc(sizeof(metadataTabla));
+	metadata2->consistencia = SHC;
+	metadata2->nParticiones = 3;
+	metadata2->nombreTabla = "TABLA2";
+	list_add(listaMetadataTabla, metadata2);
+
+	metadataTabla* metadata3 = malloc(sizeof(metadataTabla));
+	metadata3->consistencia = EC;
+	metadata3->nParticiones = 4;
+	metadata3->nombreTabla = "TABLA3";
+	list_add(listaMetadataTabla, metadata3);
+}
 
 int contarLineasArchivo(FILE* fichero, char* path) {
 	fichero = fopen(path, "rt");
@@ -130,14 +130,14 @@ void crearMetrica() {
 	metricas.writes = 0;
 	metricas.diferenciaDeTiempoReadLatency = list_create();
 	metricas.diferenciaDeTiempoWriteLatency = list_create();
-	metricas.memoryLoadMemorias = list_create();
+//	metricas.memoryLoadMemorias = list_create();
 	hayMetricas = true;
 }
 
 void destruirMetrics() {
-	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoReadLatency, free);
-	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoWriteLatency, free);
-	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
+	list_destroy(metricas.diferenciaDeTiempoReadLatency);
+	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
+//	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
 void reiniciarMetrics() {
@@ -148,7 +148,9 @@ void reiniciarMetrics() {
 	metricas.writeLatency = 0;
 	list_clean(metricas.diferenciaDeTiempoReadLatency);
 	list_clean(metricas.diferenciaDeTiempoWriteLatency);
-	list_clean(metricas.memoryLoadMemorias);
+//	list_clean(metricas.memoryLoadMemorias);
+	// TODO:
+	// Acordarse de borrar la info de todas las memorias
 	// Acordarse de borrar las metricas de las estructuras de las memorias -> Creo que no me interesa
 	// Recordar que pueden seguir estando o no las memorias de los datos	-> MUY IMPORTANTE!!!!!
 }
@@ -156,13 +158,12 @@ void reiniciarMetrics() {
 void calcularMetrics() {
 
 	/*
-	* Reads y Writes ya esta calculados
-	*
-	* (Se sacan solo con los contadores)
-	*/
+	 * Reads y Writes ya esta calculados
+	 *
+	 * (Se sacan solo con los contadores)
+	 */
 
 	// Calcular Read Latency
-
 	t_list* listaFiltrada;
 	double sumatoria = 0;
 	double tamLista = list_size(metricas.diferenciaDeTiempoReadLatency);
@@ -204,12 +205,15 @@ void calcularMetrics() {
 		*memoryLoadMemoria = cantSelectsEInsertsMemoria
 				/ cantSelectsEInsertsTotales;
 
-		list_add(metricas.memoryLoadMemorias, memoryLoadMemoria);
+//		list_add(metricas.memoryLoadMemorias, memoryLoadMemoria); // Este es un problema. Que pasa si se me cae una memoria??
+		// Hay que guardar este dato en cada memoria, y si se me cae la memoria, pierdo el dato (esta ok), porque recalculo siempre
+		memoria->memoryLoadUnaMemoria = *memoryLoadMemoria;
 	}
 
-	if (cantSelectsEInsertsTotales != 0){
-		bool _hizoSelectOInsert(void* memoria){
-			return ((infoMemoria*)memoria)->cantInsertEjecutados !=0 || ((infoMemoria*)memoria)->cantSelectsEjecutados!=0;
+	if (cantSelectsEInsertsTotales != 0) {
+		bool _hizoSelectOInsert(void* memoria) {
+			return ((infoMemoria*) memoria)->cantInsertEjecutados != 0
+					|| ((infoMemoria*) memoria)->cantSelectsEjecutados != 0;
 		}
 
 		listaFiltrada = list_filter(listaMemorias, _hizoSelectOInsert);
@@ -231,11 +235,24 @@ void calcularMetrics() {
 
 void imprimirMetrics() {
 
+	void _imprimirMemoryLoadsDeMemorias(void* memoria) {
+		if (((infoMemoria*) memoria)->memoryLoadUnaMemoria == 0)
+			log_info(log_master->logInfo, "El memory load de memoria %d es: %f",
+					((infoMemoria*) memoria)->id,
+					((infoMemoria*) memoria)->memoryLoadUnaMemoria);
+	}
+
 	log_info(log_master->logInfo, "Las metricas son: ");
 	log_info(log_master->logInfo, "Read latency: %f", metricas.readLatency);
 	log_info(log_master->logInfo, "Write latency: %f", metricas.writeLatency);
 	log_info(log_master->logInfo, "Reads: %f", metricas.reads);
 	log_info(log_master->logInfo, "Writes: %f", metricas.writes);
 //	log_info(log_master->logInfo, "Memory load: %f\n", metricas.memoryLoad);
+	list_iterate(listaMemorias, _imprimirMemoryLoadsDeMemorias);
 
+}
+
+bool memoriaTieneALgunCriterio(infoMemoria* memoria) {
+	return (memoria->criterios)[0] || (memoria->criterios)[1]
+			|| (memoria->criterios)[2];
 }

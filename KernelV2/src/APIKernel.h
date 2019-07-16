@@ -17,7 +17,7 @@
  */
 
 int procesarInputKernel(char* linea);
-int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo);
+int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete);
 int procesarAdd(int id, consistencia cons);
 int consolaAdd(char*argumento);
 int consolaInsert(char*request);
@@ -27,7 +27,7 @@ int consolaDescribe(char*nombreTabla);
 int consolaDrop(char*nombreTabla);
 int consolaRun(char*path);
 int consolaJournal();
-void consolaSALIR(char*nada);
+void consolaSalir(char*nada);
 
 void imprimirMetrics();
 void enviarJournalMemoria(int socketMemoria);
