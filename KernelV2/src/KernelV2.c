@@ -28,7 +28,8 @@ void iniciarVariablesKernel() {
 	inicializarLogStruct();
 	cargarConfigKernel();
 
-	crearMetrics();
+	crearMetrics(&metricas);
+	crearMetrics(&copiaMetricas);
 
 //	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReadyPOP, 0, 1);
@@ -37,6 +38,7 @@ void iniciarVariablesKernel() {
 	sem_init(&bin_main, 0, 0);
 	sem_init(&fin, 0, 0);
 	sem_init(&cantProcesosColaReady, 0, 0);
+	sem_init(&semMetricas, 0, 1);
 
 	haySC = false;
 	hayMetricas = false;
@@ -87,9 +89,20 @@ void* iniciarhiloMetrics(void* args) {
 	// TODO: Mejorar esto (Creo que ya esta)
 	while (puedeHaberRequests) {
 		usleep(30000 * 1000); // algo asi...
-		reiniciarMetrics();
-		calcularMetrics();
-		imprimirMetrics();
+		if (puedeHaberRequests) {
+			sem_wait(&semMetricas);
+			calcularMetrics();
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			copiarMetrics(copiaMetricas, metricas);
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			imprimirMetrics(copiaMetricas);
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			reiniciarMetrics(&metricas);
+			sem_post(&semMetricas);
+		}
 	}
 	return NULL;
 }
@@ -110,7 +123,7 @@ void iniciarConsolaKernel() {
 			}
 		} else {
 //			calcularMetrics();
-			imprimirMetrics();
+			imprimirMetrics(copiaMetricas);
 			free(operacion);
 		}
 	}
@@ -153,7 +166,14 @@ void cerrarKernel() {
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
 //	free(arrayDeHilos);
-	destruirMetrics();
+
+	sem_wait(&semMetricas);
+	destruirMetrics(&metricas);
+	sem_post(&semMetricas);
+	sem_wait(&semMetricas);
+	destruirMetrics(&copiaMetricas);
+	sem_post(&semMetricas);
+
 //	free(config->IP_MEMORIA);
 	free(config);
 	config_destroy(kernelConfig);

@@ -29,7 +29,6 @@ int consolaRun(char*path);
 int consolaJournal();
 void consolaSalir(char*nada);
 
-void imprimirMetrics();
 void enviarJournalMemoria(int socketMemoria);
 void mostrarMetadata(metadataTabla* metadataTabla);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);

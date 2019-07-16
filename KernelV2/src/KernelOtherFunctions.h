@@ -25,11 +25,12 @@ void hardcodearListaMetadataTabla();
 int contarLineasArchivo(FILE* fichero, char* path);
 void destruirArraySemaforos();
 int instruccionSeaMetrics(char* operacion);
-void crearMetrics();
-void destruirMetrics();
-void reiniciarMetrics();
+void crearMetrics(t_metrics* metrica);
+void destruirMetrics(t_metrics* metrica);
+void reiniciarMetrics(t_metrics* metrica);
 void calcularMetrics();
-void imprimirMetrics();
+void copiarMetrics(t_metrics otroMetrica, t_metrics metrica);
+void imprimirMetrics(t_metrics metrica);
 bool memoriaTieneALgunCriterio(infoMemoria* memoria);
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */
