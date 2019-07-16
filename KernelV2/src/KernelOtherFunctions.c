@@ -135,8 +135,8 @@ void crearMetrica() {
 }
 
 void destruirMetrics() {
-	list_destroy(metricas.diferenciaDeTiempoReadLatency);
-	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
+	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoReadLatency, free);
+	list_destroy_and_destroy_elements(metricas.diferenciaDeTiempoWriteLatency, free);
 //	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
@@ -146,8 +146,8 @@ void reiniciarMetrics() {
 	metricas.writes = 0;
 	metricas.readLatency = 0;
 	metricas.writeLatency = 0;
-	list_clean(metricas.diferenciaDeTiempoReadLatency);
-	list_clean(metricas.diferenciaDeTiempoWriteLatency);
+	list_clean_and_destroy_elements(metricas.diferenciaDeTiempoReadLatency, free);
+	list_clean_and_destroy_elements(metricas.diferenciaDeTiempoWriteLatency, free);
 //	list_clean(metricas.memoryLoadMemorias);
 	// TODO:
 	// Acordarse de borrar la info de todas las memorias
@@ -236,7 +236,7 @@ void calcularMetrics() {
 void imprimirMetrics() {
 
 	void _imprimirMemoryLoadsDeMemorias(void* memoria) {
-		if (((infoMemoria*) memoria)->memoryLoadUnaMemoria == 0)
+		if (((infoMemoria*) memoria)->memoryLoadUnaMemoria != 0)
 			log_info(log_master->logInfo, "El memory load de memoria %d es: %f",
 					((infoMemoria*) memoria)->id,
 					((infoMemoria*) memoria)->memoryLoadUnaMemoria);

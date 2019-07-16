@@ -152,7 +152,10 @@ void cerrarKernel() {
 	destruirLogStruct(log_master);
 //	free(arrayDeHilos);
 	destruirMetrics();
+//	free(config->IP_MEMORIA);
 	free(config);
+	config_destroy(kernelConfig);
+	free(arrayDeHilos);
 	printf("Llego al final ok");
 }
 
@@ -161,10 +164,9 @@ void cerrarKernel() {
 //}
 
 int main(void) {
-
+	iniciarVariablesKernel();
 	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
-	iniciarVariablesKernel();
 //	conocerMemorias();
 //	if(conocerMemorias()==-1){
 //		return EXIT_FAILURE;
@@ -172,18 +174,17 @@ int main(void) {
 //	inicioKernelUnProcesador();
 
 	// Hilo de metrics
-//	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
-//	pthread_detach(hiloMetrics);
+	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
+	pthread_detach(hiloMetrics);
 
 	// Hilo de consola
 
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-//	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
-//	pthread_detach(hiloMetadataRefresh);
-
-	//iniciarConsolaKernel();
+	// Hilo de Describe global
+	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+	pthread_detach(hiloMetadataRefresh);
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
@@ -201,7 +202,6 @@ int main(void) {
 	}
 
 	sem_wait(&fin);
-	free(arrayDeHilos);
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	usleep(5 * 1000);
 	cerrarKernel();

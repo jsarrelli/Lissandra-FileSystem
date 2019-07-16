@@ -166,6 +166,7 @@ int consolaInsert(char*argumentos) {
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
+	free(diferencia);
 	cantInserts++;
 
 	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
@@ -524,8 +525,8 @@ int consolaRun(char*path) {
 			else
 				ejemplo[tam - 1] = '\0';
 
-			// TODO: Aca creo que hag un memory leak -> Arreglar, PERO NO SE CUAL ES EL PROBLEMA
-			char* aGuardar = (char*) malloc(tam - 1);
+			tam = strlen(ejemplo) + 1;
+			char* aGuardar = (char*) malloc(tam);
 			strcpy(aGuardar, ejemplo);
 			agregarRequestAlProceso(proceso, aGuardar);
 		}

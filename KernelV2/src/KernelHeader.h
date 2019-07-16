@@ -108,6 +108,7 @@ typedef struct {
 
 // Variables globales
 
+t_config *kernelConfig;
 t_queue* colaReady;
 t_list* listaHilos;
 t_list* listaMetadataTabla;
