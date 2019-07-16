@@ -464,6 +464,7 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch) {
 	t_archivo* file = malloc(sizeof(t_archivo));
 	file->BLOQUES = list_create();
+	agregarNuevoBloque(file);
 	file->TAMANIO = 0;
 	file->cantBloques = 0;
 

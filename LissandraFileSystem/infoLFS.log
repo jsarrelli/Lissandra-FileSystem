@@ -1,66 +1,28 @@
-[INFO] 12:48:46:166 LFS Logs/(14240:14240): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 12:52:33:561 LFS Logs/(14603:14603): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 12:48:46:194 LFS Logs/(14240:14240): Levantando archivo de configuracion del proceso LFS 
+[INFO] 12:52:33:563 LFS Logs/(14603:14603): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 12:48:46:219 LFS Logs/(14240:14240): Archivo de configuracion del proceso LFS levantado 
+[INFO] 12:52:33:563 LFS Logs/(14603:14603): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 12:48:46:463 LFS Logs/(14240:14240): El tamanio del bitmap es de 3000 bits
-[INFO] 12:48:46:467 LFS Logs/(14240:14240): Levantando tablas ya existentes..
-[INFO] 12:48:50:446 LFS Logs/(14240:14240): Bloque 14 liberado
-[INFO] 12:48:50:449 LFS Logs/(14240:14240): Bloque 17 liberado
-[INFO] 12:48:50:450 LFS Logs/(14240:14240): Bloque 18 liberado
-[INFO] 12:48:50:451 LFS Logs/(14240:14240): Bloque 24 liberado
-[INFO] 12:48:50:453 LFS Logs/(14240:14240): Bloque 25 liberado
-[INFO] 12:48:50:461 LFS Logs/(14240:14240): Bloque 14 reservado
-[INFO] 12:48:50:482 LFS Logs/(14240:14240): Bloque 19 liberado
-[INFO] 12:48:50:486 LFS Logs/(14240:14240): Bloque 20 liberado
-[INFO] 12:48:50:487 LFS Logs/(14240:14240): Bloque 21 liberado
-[INFO] 12:48:50:489 LFS Logs/(14240:14240): Bloque 22 liberado
-[INFO] 12:48:50:491 LFS Logs/(14240:14240): Bloque 17 reservado
-[INFO] 12:48:50:536 LFS Logs/(14240:14240): TABLA eliminada
-[INFO] 12:49:07:23 LFS Logs/(14240:14240): Bloque 18 reservado
-[INFO] 12:49:07:27 LFS Logs/(14240:14240): Bloque 19 reservado
-[INFO] 12:49:07:28 LFS Logs/(14240:14240): Bloque 20 reservado
-[INFO] 12:49:07:30 LFS Logs/(14240:14240): Bloque 21 reservado
-[INFO] 12:49:07:47 LFS Logs/(14240:14240): Compactando tabla: TABLA
-[INFO] 12:49:07:51 LFS Logs/(14240:14240): Obteniendo directorios de archivos binarios..
-[INFO] 12:49:07:57 LFS Logs/(14240:14240): Modificando tmp a tmpc..
-[INFO] 12:49:07:64 LFS Logs/(14240:14240): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 12:49:07:77 LFS Logs/(14240:14240): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 12:49:07:88 LFS Logs/(14240:14240): Mergeando registros viejos con nuevos
-[INFO] 12:49:07:91 LFS Logs/(14240:14240): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:49:07:99 LFS Logs/(14240:14240): Bloque 22 reservado
-[INFO] 12:49:07:101 LFS Logs/(14240:14240): Bloque 23 reservado
-[INFO] 12:49:07:103 LFS Logs/(14240:14240): Bloque 24 reservado
-[INFO] 12:49:07:111 LFS Logs/(14240:14240): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/1.bin... 
-[INFO] 12:49:07:113 LFS Logs/(14240:14240): Bloque 25 reservado
-[INFO] 12:49:07:114 LFS Logs/(14240:14240): Bloque 26 reservado
-[INFO] 12:49:07:121 LFS Logs/(14240:14240): Bloque 18 liberado
-[INFO] 12:49:07:122 LFS Logs/(14240:14240): Bloque 19 liberado
-[INFO] 12:49:07:123 LFS Logs/(14240:14240): Bloque 20 liberado
-[INFO] 12:49:07:124 LFS Logs/(14240:14240): Bloque 21 liberado
-[INFO] 12:49:07:126 LFS Logs/(14240:14240): Bloque 18 reservado
-[INFO] 12:49:16:711 LFS Logs/(14240:14240): Bloque 19 reservado
-[INFO] 12:49:16:713 LFS Logs/(14240:14240): Bloque 20 reservado
-[INFO] 12:49:16:715 LFS Logs/(14240:14240): Bloque 21 reservado
-[INFO] 12:49:16:719 LFS Logs/(14240:14240): Compactando tabla: TABLA
-[INFO] 12:49:16:721 LFS Logs/(14240:14240): Obteniendo directorios de archivos binarios..
-[INFO] 12:49:16:723 LFS Logs/(14240:14240): Modificando tmp a tmpc..
-[INFO] 12:49:16:724 LFS Logs/(14240:14240): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 12:49:16:726 LFS Logs/(14240:14240): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 12:49:16:727 LFS Logs/(14240:14240): Mergeando registros viejos con nuevos
-[INFO] 12:49:16:728 LFS Logs/(14240:14240): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:49:16:732 LFS Logs/(14240:14240): Bloque 22 liberado
-[INFO] 12:49:16:737 LFS Logs/(14240:14240): Bloque 23 liberado
-[INFO] 12:49:16:739 LFS Logs/(14240:14240): Bloque 24 liberado
-[INFO] 12:49:16:740 LFS Logs/(14240:14240): Bloque 22 reservado
-[INFO] 12:49:16:743 LFS Logs/(14240:14240): Bloque 23 reservado
-[INFO] 12:49:16:744 LFS Logs/(14240:14240): Bloque 24 reservado
-[INFO] 12:49:16:746 LFS Logs/(14240:14240): Bloque 27 reservado
-[INFO] 12:49:16:747 LFS Logs/(14240:14240): Bloque 28 reservado
-[INFO] 12:49:16:749 LFS Logs/(14240:14240): Bloque 29 reservado
-[INFO] 12:49:16:756 LFS Logs/(14240:14240): Bloque 19 liberado
-[INFO] 12:49:16:758 LFS Logs/(14240:14240): Bloque 20 liberado
-[INFO] 12:49:16:760 LFS Logs/(14240:14240): Bloque 21 liberado
-[INFO] 12:49:16:762 LFS Logs/(14240:14240): Bloque 19 reservado
-[INFO] 12:49:18:631 LFS Logs/(14240:14240): Fin de leectura por consola
+[INFO] 12:52:33:592 LFS Logs/(14603:14603): El tamanio del bitmap es de 3000 bits
+[INFO] 12:52:33:592 LFS Logs/(14603:14603): Levantando tablas ya existentes..
+[INFO] 12:52:46:302 LFS Logs/(14603:14603): Bloque 2 reservado
+[INFO] 12:52:46:309 LFS Logs/(14603:14603): Bloque 3 reservado
+[INFO] 12:52:46:310 LFS Logs/(14603:14603): Bloque 4 reservado
+[INFO] 12:52:46:312 LFS Logs/(14603:14603): Bloque 5 reservado
+[INFO] 12:52:46:313 LFS Logs/(14603:14603): Compactando tabla: TABLA
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Obteniendo directorios de archivos binarios..
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Modificando tmp a tmpc..
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Mergeando registros viejos con nuevos
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
+[INFO] 12:52:46:314 LFS Logs/(14603:14603): Bloque 0 liberado
+[INFO] 12:52:46:315 LFS Logs/(14603:14603): Bloque 0 reservado
+[INFO] 12:52:46:317 LFS Logs/(14603:14603): Bloque 6 reservado
+[INFO] 12:52:46:318 LFS Logs/(14603:14603): Bloque 7 reservado
+[INFO] 12:52:46:320 LFS Logs/(14603:14603): Bloque 8 reservado
+[INFO] 12:52:46:323 LFS Logs/(14603:14603): Bloque 3 liberado
+[INFO] 12:52:46:324 LFS Logs/(14603:14603): Bloque 4 liberado
+[INFO] 12:52:46:325 LFS Logs/(14603:14603): Bloque 5 liberado
+[INFO] 12:52:46:327 LFS Logs/(14603:14603): Bloque 3 reservado
