@@ -1,18 +1,10 @@
-[INFO] 19:38:39:527 LFS Logs/(4490:4490): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 12:23:33:425 LFS Logs/(12992:12992): Inicializando proceso LISSANDRA FILE SYSTEM. 
 
-[INFO] 19:38:39:543 LFS Logs/(4490:4490): Levantando archivo de configuracion del proceso LFS 
+[INFO] 12:23:33:429 LFS Logs/(12992:12992): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 19:38:39:557 LFS Logs/(4490:4490): Archivo de configuracion del proceso LFS levantado 
+[INFO] 12:23:33:429 LFS Logs/(12992:12992): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 19:38:40:106 LFS Logs/(4490:4490): El tamanio del bitmap es de 3000 bits
-[INFO] 19:38:40:111 LFS Logs/(4490:4490): Levantando tablas ya existentes..
-[TRACE] 19:38:40:113 LFS Logs/(4490:4490): TABLA insertada en memtable 
-
-[TRACE] 19:38:51:374 LFS Logs/(4490:4490): Se creo la tabla: TABLA2 en LFS
-
-[TRACE] 19:38:53:141 LFS Logs/(4490:4490): TABLA2 insertada en memtable 
-
-[INFO] 19:38:53:144 LFS Logs/(4490:4490): Metadata de TABLA2 creada
-
-[TRACE] 19:38:53:147 LFS Logs/(4490:4490): Metadata de TABLA2 creada
+[INFO] 12:23:33:450 LFS Logs/(12992:12992): El tamanio del bitmap es de 3000 bits
+[INFO] 12:23:33:450 LFS Logs/(12992:12992): Levantando tablas ya existentes..
+[TRACE] 12:23:33:450 LFS Logs/(12992:12992): TABLA insertada en memtable 
 

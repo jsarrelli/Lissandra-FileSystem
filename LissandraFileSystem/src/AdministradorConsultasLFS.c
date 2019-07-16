@@ -16,7 +16,7 @@ int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaCh
 int funcionDROP(char* nombreTabla) {
 	if (existeTabla(nombreTabla)) {
 		removerTabla(nombreTabla);
-		log_trace("%s eliminada\n\n", nombreTabla);
+		log_info(loggerInfo,"%s eliminada", nombreTabla);
 		return 0;
 	} else {
 		puts("La tabla que se quiere eliminar no existe");
@@ -32,6 +32,9 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
+	///////
+	crearYEscribirArchivosTemporales(rutas.Tablas);
+	compactarTabla("TABLA");
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
