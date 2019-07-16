@@ -153,6 +153,7 @@ void cerrarKernel() {
 //	free(arrayDeHilos);
 	destruirMetrics();
 	free(config);
+	printf("Llego al final ok");
 }
 
 //void terminarHilos() {
