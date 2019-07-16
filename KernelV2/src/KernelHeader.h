@@ -108,6 +108,7 @@ typedef struct {
 
 // Variables globales
 
+t_config *kernelConfig;
 t_queue* colaReady;
 t_list* listaHilos;
 t_list* listaMetadataTabla;
@@ -133,12 +134,14 @@ sem_t mutex_id_proceso;
 sem_t bin_main;
 sem_t fin;
 sem_t cantProcesosColaReady;
+sem_t semMetricas;
 //sem_t* arraySemaforos; // Borrar
 logStruct* log_master;
 bool haySC;
 bool puedeHaberRequests;
 bool hayMetricas;
 t_metrics metricas;
+t_metrics copiaMetricas;
 
 // Funciones extras, muchas son de la shared library pero todavia no las anexe para ver si funcionaba
 int get_campo_config_int(t_config* archivo_configuracion, char* nombre_campo);

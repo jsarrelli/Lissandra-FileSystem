@@ -66,12 +66,6 @@ char* get_campo_config_string(t_config* archivo_configuracion,
 	return NULL;
 }
 
-//<<<<<<< HEAD
-//void cargarConfigKernel() {
-//	log_info(log_master->logInfo,
-//			"Levantando archivo de configuracion del proceso Kernel ");
-//
-//=======
 void freeConfigKernel() {
 	if (config->IP_MEMORIA != NULL) {
 		free(config->IP_MEMORIA);
@@ -87,9 +81,8 @@ void cargarConfigKernel() {
 	if (config != NULL) {
 		freeConfigKernel();
 	}
-//>>>>>>> d47fbace383f93ecea3aa5815e4b57dce5ca6366
 	config = malloc(sizeof(t_config_kernel));
-	t_config *kernelConfig = config_create(RUTA_CONFIG_KERNEL);
+	kernelConfig = config_create(RUTA_CONFIG_KERNEL);
 
 	if (kernelConfig == NULL) {
 		perror("Error ");
@@ -115,7 +108,7 @@ void cargarConfigKernel() {
 //	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 //	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
 //=======
-	config_destroy(kernelConfig);
+//	config_destroy(kernelConfig);
 	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/config/",
 			cargarConfigKernel);
@@ -177,19 +170,19 @@ void agregarRequestAlProceso(procExec* proceso, char* operacion) {
 //	return NULL;
 //}
 
-void otorgarId(bool* tieneID) {
-	if (!(*tieneID)) {
-		sem_wait(&mutex_id_proceso);
-		idHilo++;
-		sem_post(&mutex_id_proceso);
-
-		*tieneID = true;
-
-		if (idHilo == multiprocesamientoUsado)
-			sem_post(&bin_main);
-	}
-
-}
+//void otorgarId(bool* tieneID) {
+//	if (!(*tieneID)) {
+//		sem_wait(&mutex_id_proceso);
+//		idHilo++;
+//		sem_post(&mutex_id_proceso);
+//
+//		*tieneID = true;
+//
+//		if (idHilo == multiprocesamientoUsado)
+//			sem_post(&bin_main);
+//	}
+//
+//}
 
 //void desbloquearHilos() {
 //	int tamCola = queue_size(colaReady);
@@ -296,9 +289,9 @@ void* iniciarMultiprocesamiento(void* args) {
 	return NULL;
 }
 
-void ejecutarProcesos() {
-	sem_post(&ejecutarHilos);
-}
+//void ejecutarProcesos() {
+//	sem_post(&ejecutarHilos);
+//}
 
 void inicializarLogStruct() {
 	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1,
@@ -434,7 +427,7 @@ void destruirInfoMemoria(infoMemoria* memoria){
 }
 
 void destruirListaMemorias() {
-	list_destroy_and_destroy_elements(listaMemorias, (void*) free);
+	list_destroy_and_destroy_elements(listaMemorias, (void*) destruirInfoMemoria);
 }
 
 void crearProcesoYMandarloAReady(char* operacion) {
@@ -455,7 +448,8 @@ int conocerMemorias() {
 
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, TABLA_GOSSIPING);
 	Paquete paquete;
-	while (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) > 0) {
+	int codRecibir =0;
+	while ((codRecibir = RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete)) > 0) {
 
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0],
@@ -466,6 +460,8 @@ int conocerMemorias() {
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
+	if(codRecibir < 0)
+		return SUPER_ERROR;
 	return TODO_OK;
 }
 

@@ -123,31 +123,31 @@ int instruccionSeaMetrics(char* operacion) {
 	return strcmp(operacion, "METRICS") == 0;
 }
 
-void crearMetrica() {
-	metricas.readLatency = 0;
-	metricas.writeLatency = 0;
-	metricas.reads = 0;
-	metricas.writes = 0;
-	metricas.diferenciaDeTiempoReadLatency = list_create();
-	metricas.diferenciaDeTiempoWriteLatency = list_create();
+void crearMetrics(t_metrics* metrica) {
+	metrica->readLatency = 0;
+	metrica->writeLatency = 0;
+	metrica->reads = 0;
+	metrica->writes = 0;
+	metrica->diferenciaDeTiempoReadLatency = list_create();
+	metrica->diferenciaDeTiempoWriteLatency = list_create();
 //	metricas.memoryLoadMemorias = list_create();
-	hayMetricas = true;
+	hayMetricas = false;
 }
 
-void destruirMetrics() {
-	list_destroy(metricas.diferenciaDeTiempoReadLatency);
-	list_destroy(metricas.diferenciaDeTiempoWriteLatency);
+void destruirMetrics(t_metrics* metrica) {
+	list_destroy_and_destroy_elements(metrica->diferenciaDeTiempoReadLatency, free);
+	list_destroy_and_destroy_elements(metrica->diferenciaDeTiempoWriteLatency, free);
 //	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
-void reiniciarMetrics() {
+void reiniciarMetrics(t_metrics* metrica) {
 	// Ahora reinicio los valores:
-	metricas.reads = 0;
-	metricas.writes = 0;
-	metricas.readLatency = 0;
-	metricas.writeLatency = 0;
-	list_clean(metricas.diferenciaDeTiempoReadLatency);
-	list_clean(metricas.diferenciaDeTiempoWriteLatency);
+	metrica->reads = 0;
+	metrica->writes = 0;
+	metrica->readLatency = 0;
+	metrica->writeLatency = 0;
+	list_clean_and_destroy_elements(metrica->diferenciaDeTiempoReadLatency, free);
+	list_clean_and_destroy_elements(metrica->diferenciaDeTiempoWriteLatency, free);
 //	list_clean(metricas.memoryLoadMemorias);
 	// TODO:
 	// Acordarse de borrar la info de todas las memorias
@@ -208,6 +208,7 @@ void calcularMetrics() {
 //		list_add(metricas.memoryLoadMemorias, memoryLoadMemoria); // Este es un problema. Que pasa si se me cae una memoria??
 		// Hay que guardar este dato en cada memoria, y si se me cae la memoria, pierdo el dato (esta ok), porque recalculo siempre
 		memoria->memoryLoadUnaMemoria = *memoryLoadMemoria;
+		free(memoryLoadMemoria);
 	}
 
 	if (cantSelectsEInsertsTotales != 0) {
@@ -233,21 +234,31 @@ void calcularMetrics() {
 
 }
 
-void imprimirMetrics() {
+void copiarMetrics(t_metrics otroMetrica, t_metrics metrica){
+	otroMetrica.readLatency = metrica.readLatency;
+	otroMetrica.writeLatency = metrica.writeLatency;
+	otroMetrica.reads = metrica.reads;
+	otroMetrica.writes = metrica.writes;
+	otroMetrica.diferenciaDeTiempoReadLatency = metrica.diferenciaDeTiempoReadLatency;
+	otroMetrica.diferenciaDeTiempoWriteLatency = metrica.diferenciaDeTiempoWriteLatency;
+
+}
+
+void imprimirMetrics(t_metrics metrica) {
 
 	void _imprimirMemoryLoadsDeMemorias(void* memoria) {
-		if (((infoMemoria*) memoria)->memoryLoadUnaMemoria == 0)
+		if (((infoMemoria*) memoria)->memoryLoadUnaMemoria != 0)
 			log_info(log_master->logInfo, "El memory load de memoria %d es: %f",
 					((infoMemoria*) memoria)->id,
 					((infoMemoria*) memoria)->memoryLoadUnaMemoria);
 	}
 
 	log_info(log_master->logInfo, "Las metricas son: ");
-	log_info(log_master->logInfo, "Read latency: %f", metricas.readLatency);
-	log_info(log_master->logInfo, "Write latency: %f", metricas.writeLatency);
-	log_info(log_master->logInfo, "Reads: %f", metricas.reads);
-	log_info(log_master->logInfo, "Writes: %f", metricas.writes);
-//	log_info(log_master->logInfo, "Memory load: %f\n", metricas.memoryLoad);
+	log_info(log_master->logInfo, "Read latency: %f", metrica.readLatency);
+	log_info(log_master->logInfo, "Write latency: %f", metrica.writeLatency);
+	log_info(log_master->logInfo, "Reads: %f", metrica.reads);
+	log_info(log_master->logInfo, "Writes: %f", metrica.writes);
+//	log_info(log_master->logInfo, "Memory load: %f\n", metrica.memoryLoad);
 	list_iterate(listaMemorias, _imprimirMemoryLoadsDeMemorias);
 
 }

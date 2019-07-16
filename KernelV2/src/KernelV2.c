@@ -19,7 +19,7 @@
  * TODO: (Cosas boludas)
  * 		- Mejorar la estructura del Kernel (mas expresivo y declarativo)
  * 		- Mejorar el manejo de errores (agregarle cosas)
- *		- Algunos leaks -> Muy importante
+ *		- Algunos leaks (SOLO FALTAN LEAKS MENORES)
  * 		- Mejorar algunas cositas que deje marcadas y buscar mas errores
  */
 
@@ -28,15 +28,17 @@ void iniciarVariablesKernel() {
 	inicializarLogStruct();
 	cargarConfigKernel();
 
-	crearMetrica();
+	crearMetrics(&metricas);
+	crearMetrics(&copiaMetricas);
 
-	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
+//	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
 	sem_init(&mutex_colaReadyPOP, 0, 1);
 	sem_init(&mutex_colaReadyPUSH, 0, 1);
 	sem_init(&mutex_id_proceso, 0, 1);
 	sem_init(&bin_main, 0, 0);
 	sem_init(&fin, 0, 0);
 	sem_init(&cantProcesosColaReady, 0, 0);
+	sem_init(&semMetricas, 0, 1);
 
 	haySC = false;
 	hayMetricas = false;
@@ -83,18 +85,30 @@ void iniciarVariablesKernel() {
 }
 
 void* iniciarhiloMetrics(void* args) {
-	// TODO: Mejorar esto
+
+	// TODO: Mejorar esto (Creo que ya esta)
 	while (puedeHaberRequests) {
 		usleep(30000 * 1000); // algo asi...
-		calcularMetrics();
-		imprimirMetrics();
-		// Ahora reinicio los valores:
-		reiniciarMetrics();
+		if (puedeHaberRequests) {
+			sem_wait(&semMetricas);
+			calcularMetrics();
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			copiarMetrics(copiaMetricas, metricas);
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			imprimirMetrics(copiaMetricas);
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			reiniciarMetrics(&metricas);
+			sem_post(&semMetricas);
+		}
 	}
 	return NULL;
 }
 
 void iniciarConsolaKernel() {
+
 	char* operacion;
 
 	while (puedeHaberRequests) {
@@ -108,14 +122,15 @@ void iniciarConsolaKernel() {
 				//free(operacion);
 			}
 		} else {
-			calcularMetrics();
-			imprimirMetrics();
+//			calcularMetrics();
+			imprimirMetrics(copiaMetricas);
 			free(operacion);
 		}
 	}
 }
 
 void iniciarHiloMetadataRefresh() {
+
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
 		if (consolaDescribe(NULL) == SUPER_ERROR)
@@ -151,9 +166,19 @@ void cerrarKernel() {
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
 //	free(arrayDeHilos);
-	destruirMetrics();
+
+	sem_wait(&semMetricas);
+	destruirMetrics(&metricas);
+	sem_post(&semMetricas);
+	sem_wait(&semMetricas);
+	destruirMetrics(&copiaMetricas);
+	sem_post(&semMetricas);
+
+//	free(config->IP_MEMORIA);
 	free(config);
-	printf("Llego al final ok");
+	config_destroy(kernelConfig);
+	free(arrayDeHilos);
+	printf("Llego al final ok\n");
 }
 
 //void terminarHilos() {
@@ -161,29 +186,27 @@ void cerrarKernel() {
 //}
 
 int main(void) {
-
+	iniciarVariablesKernel();
 	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
-	iniciarVariablesKernel();
 //	conocerMemorias();
 //	if(conocerMemorias()==-1){
+//		log_error(log_master->logError, "No se pudo conocer las memorias");
 //		return EXIT_FAILURE;
 //	}
-//	inicioKernelUnProcesador();
 
 	// Hilo de metrics
-//	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
-//	pthread_detach(hiloMetrics);
+	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
+	pthread_detach(hiloMetrics);
 
 	// Hilo de consola
 
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 
-//	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
-//	pthread_detach(hiloMetadataRefresh);
-
-	//iniciarConsolaKernel();
+	// Hilo de Describe global
+	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+	pthread_detach(hiloMetadataRefresh);
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
@@ -201,7 +224,6 @@ int main(void) {
 	}
 
 	sem_wait(&fin);
-	free(arrayDeHilos);
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	usleep(5 * 1000);
 	cerrarKernel();

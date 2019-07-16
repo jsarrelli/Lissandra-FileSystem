@@ -14,7 +14,7 @@ int procesarInputKernel(char* linea) {
 	if (strcmp(operacion, "INSERT") == 0) {
 		//	INSERT [NOMBRE_TABLA] [KEY] “[VALUE]”
 		log_trace(log_master->logTrace, "Se ha escrito el comando INSERT");
-		if (consolaInsert(argumentos) == SUPER_ERROR){
+		if (consolaInsert(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
@@ -22,14 +22,14 @@ int procesarInputKernel(char* linea) {
 	} else if (strcmp(operacion, "SELECT") == 0) {
 		//	SELECT [NOMBRE_TABLA] [KEY]
 		log_trace(log_master->logTrace, "Se ha escrito el comando SELECT");
-		if (consolaSelect(argumentos) == SUPER_ERROR){
+		if (consolaSelect(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
 	} else if (strcmp(operacion, "CREATE") == 0) {
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 		log_trace(log_master->logTrace, "Se ha escrito el comando CREATE");
-		if (consolaCreate(argumentos) == SUPER_ERROR){
+		if (consolaCreate(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
@@ -37,34 +37,34 @@ int procesarInputKernel(char* linea) {
 		// DESCRIBE [NOMBRE_TABLA]
 		// DESCRIBE
 		log_trace(log_master->logTrace, "Se ha escrito el comando DESCRIBE");
-		if (consolaDescribe(argumentos) == SUPER_ERROR){
+		if (consolaDescribe(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
 	} else if (strcmp(operacion, "DROP") == 0) {
 		//	DROP [NOMBRE_TABLA]
 		log_trace(log_master->logTrace, "Se ha escrito el comando DROP");
-		if (consolaDrop(argumentos) == SUPER_ERROR){
+		if (consolaDrop(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
 	} else if (strcmp(operacion, "ADD") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando ADD");
-		if (consolaAdd(argumentos) == SUPER_ERROR){
+		if (consolaAdd(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
 	} else if (strcmp(operacion, "RUN") == 0) {
 		//	ADD MEMORY [id] TO [consistencia]
 		log_trace(log_master->logTrace, "Se ha escrito el comando RUN");
-		if (consolaRun(argumentos) == SUPER_ERROR){
+		if (consolaRun(argumentos) == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
 	} else if (strcmp(operacion, "JOURNAL") == 0) {
 		log_trace(log_master->logTrace, "Se ha escrito el comando JOURNAL");
-		if (consolaJournal() == SUPER_ERROR){
+		if (consolaJournal() == SUPER_ERROR) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
@@ -166,6 +166,7 @@ int consolaInsert(char*argumentos) {
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
+	free(diferencia);
 	cantInserts++;
 
 	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto,
@@ -233,11 +234,10 @@ int consolaSelect(char*argumentos) {
 //		}
 
 		if (enviarInfoMemoria(socketMemoria, request, INSERT,
-				&paquete) == SUPER_ERROR){
+				&paquete) == SUPER_ERROR) {
 			freePunteroAPunteros(valores);
 			return SUPER_ERROR;
-		}
-		else {
+		} else {
 			log_info(log_master->logInfo, "Registro de tabla %s: %s",
 					nombreTabla, paquete.mensaje);
 		}
@@ -245,7 +245,7 @@ int consolaSelect(char*argumentos) {
 		free(paquete.mensaje);
 		freePunteroAPunteros(valores);
 
-	} else{
+	} else {
 		freePunteroAPunteros(valores);
 		return SUPER_ERROR;
 	}
@@ -336,12 +336,13 @@ int consolaCreate(char*argumentos) {
 
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 
-//	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla, consistenciaChar, memoriaAlAzar) == SUPER_ERROR) {
-//		return SUPER_ERROR;
-//	} else {
-//		metadataTabla* metaData = deserealizarMetadata(argumentos);
-//		agregarTabla(metaData);
-//	}
+	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla,
+			consistenciaChar, memoriaAlAzar) == SUPER_ERROR) {
+		return SUPER_ERROR;
+	} else {
+		metadataTabla* metaData = deserealizarMetadata(argumentos);
+		agregarTabla(metaData);
+	}
 
 	freePunteroAPunteros(valores);
 	free(argumentoAux);
@@ -483,18 +484,21 @@ int consolaDrop(char*nombreTabla) {
 
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 
-//	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
-//	char request[100];
-//	sprintf(request, "%s", nombreTabla);
-//	if (enviarInfoMemoria(socketMemoria, request, DROP) == SUPER_ERROR) {
-//		return SUPER_ERROR;
-//	} else {
-//
-//		bool findByNombre(metadataTabla* tablaActual) {
-//			return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
-//		}
-//		list_remove_and_destroy_by_condition(listaMetadataTabla, (void*) findByNombre, (void*) freeMetadata);
-//	}
+	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto,
+			memoriaAlAzar->ip);
+	char request[100];
+	sprintf(request, "%s", nombreTabla);
+	Paquete paquete;
+	if (enviarInfoMemoria(socketMemoria, request, DROP, &paquete) == SUPER_ERROR) {
+		return SUPER_ERROR;
+	} else {
+
+		bool findByNombre(metadataTabla* tablaActual) {
+			return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
+		}
+		list_remove_and_destroy_by_condition(listaMetadataTabla,
+				(void*) findByNombre, (void*) freeMetadata);
+	}
 
 	return TODO_OK;
 }
@@ -524,8 +528,8 @@ int consolaRun(char*path) {
 			else
 				ejemplo[tam - 1] = '\0';
 
-			// TODO: Aca creo que hag un memory leak -> Arreglar, PERO NO SE CUAL ES EL PROBLEMA
-			char* aGuardar = (char*) malloc(tam - 1);
+			tam = strlen(ejemplo) + 1;
+			char* aGuardar = (char*) malloc(tam);
 			strcpy(aGuardar, ejemplo);
 			agregarRequestAlProceso(proceso, aGuardar);
 		}
@@ -548,7 +552,7 @@ void consolaSalir(char*nada) {
 	for (int i = 0; i < multiprocesamiento; i++)
 		sem_post(&cantProcesosColaReady);
 	usleep(5);
-	for(int i=0; i < multiprocesamiento;i++)
+	for (int i = 0; i < multiprocesamiento; i++)
 		sem_post(&fin);
 }
 
