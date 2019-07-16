@@ -82,7 +82,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		//sem_wait(&mutexEscrituraBloques);
-		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
+		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual,true);
 		//sem_post(&mutexEscrituraBloques);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
@@ -280,28 +280,48 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		return;
 	}
 
-	int i = 0;
 	log_info(loggerInfo, "Leyendo registros de %s... ", pathArchivo);
 
-	void cargarRegistrosDeBloque(int bloque) {
+	char* contenidoBloques = string_new();
 
-		char* rutaArchivoBloque = string_duplicate(rutas.Bloques);
-		string_append_with_format(&rutaArchivoBloque, "%d.bin\0", bloque);
-		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
-		t_list* registrosObtenidos = obtenerRegistrosFromBloque(rutaArchivoBloque);
-		if (registrosObtenidos != NULL) {
-			if (!list_is_empty(registrosObtenidos)) {
-				list_add_all(listaRegistros, registrosObtenidos);
-			}
-			//borro la referecia a registros obtenidos ya que ya estan cargados en listaRegistros
-			list_destroy(registrosObtenidos);
+	void cargarRegistrosDeBloque(int bloque) {
+		if(archivo->TAMANIO==0){
+			return;
 		}
 
-		free(rutaArchivoBloque);
-		i++;
+		char* rutaBloque = armarRutaBloque(bloque);
+		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
+
+		int fd = open(rutaBloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+		if (fd == -1) {
+			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);
+		}
+
+		//char * contenidoBloque =NULL;
+		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+		string_append(&contenidoBloques, contenidoBloque);
+
+		munmap(contenidoBloque, metadata.BLOCK_SIZE);
+
+		close(fd);
+		free(rutaBloque);
 	}
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
+
+	char** registrosChar = string_split(contenidoBloques, "\n");
+	int i = 0;
+	while (registrosChar[i] != NULL) {
+		char** valores = string_split(registrosChar[i], ";");
+		t_registro* registro = registro_new(valores);
+		list_add(listaRegistros, registro);
+//		freePunteroAPunteros(valores);
+		i++;
+	}
+
+	//freePunteroAPunteros(registrosChar);
+	free(contenidoBloques);
 	freeArchivo(archivo);
 }
 
@@ -399,7 +419,6 @@ void iniciarThreadCompactacion(char* nombreTabla) {
 		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
 		compactarTabla(nombreTabla);
-
 
 	}
 

@@ -12,6 +12,8 @@
 #include "LissandraFileSystem.h"
 #include "EstructurasFileSystem.h"
 #include "Compactador.h"
+#include <stdlib.h>
+#include <math.h>
 //t_list* listaNombresTablas;
 
 //tablas
@@ -39,7 +41,7 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual);
 t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key);
-t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) ;
+t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key);
 t_registro* getRegistroFromBinByKey(char* nombreTabla, int key);
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 
@@ -62,7 +64,7 @@ void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 int contarArchivosTemporales(t_list* archivos);
-int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir);
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir, bool sobreEscribirBloques);
 t_list* buscarRegistrosDeTabla(char*nombreTabla);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);
@@ -71,13 +73,16 @@ void eliminarArchivo(char* rutaArchivo);
 
 void insertarTablaEnMemtable(char* nombreTabla);
 t_tabla_memtable* newTablaMemtable(char* nombreTabla);
-FILE* obtenerArchivoBloque(int numeroBloque, bool appendMode);
-int escribirRegistrosEnBloquesByPathCompact(t_list* registrosAEscribir, char*pathArchivoAEscribir);
+FILE* obtenerArchivoBloque(int numeroBloque, bool sobreEscribirBloques);
 void borrarContenidoArchivoBloque(int bloque);
 void freeArchivo(t_archivo *archivo);
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 
 void vaciarMemtable();
 void freeTabla(t_tabla_memtable* tabla);
+
+int tamanioTotalBloquesPorArchivo(t_list* bloques);
+char* armarRutaBloque(int bloque);
+int agregarNuevoBloque(t_archivo* archivo);
 
 #endif /* FUNCIONESLFS_H_ */

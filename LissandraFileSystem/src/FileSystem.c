@@ -46,10 +46,13 @@ t_list* buscarBloquesLibres(int cant) {
 void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
 	log_info(loggerInfo, "Bloque %d liberado", index);
+	escribirBitmap();
 }
 
 void reservarBloque(int index) {
 	bitarray_set_bit(bitmap, index);
+	log_info(loggerInfo, "Bloque %d reservado", index);
+	escribirBitmap();
 }
 
 void leerBitmap() {
@@ -116,7 +119,7 @@ int cargarMetadata() {
 	string_append(&path, "/Metadata.bin");
 	rutas.Metadata = path;
 	FILE*arch1 = fopen(rutas.Metadata, "w+");
-	fprintf(arch1, "BLOCK_SIZE=100\n");
+	fprintf(arch1, "BLOCK_SIZE=30\n");
 	fprintf(arch1, "BLOCKS=3000\n");
 	fprintf(arch1, "MAGIC_NUMBER=LISSANDRA\n");
 	fclose(arch1);
