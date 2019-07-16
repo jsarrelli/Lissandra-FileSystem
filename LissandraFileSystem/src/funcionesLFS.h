@@ -64,7 +64,7 @@ void crearYEscribirTemporal(char*rutaTabla);
 void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 int contarArchivosTemporales(t_list* archivos);
-int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir, bool sobreEscribirBloques);
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir);
 t_list* buscarRegistrosDeTabla(char*nombreTabla);
 
 char* obtenerNombreTablaByRuta(char* rutaTabla);

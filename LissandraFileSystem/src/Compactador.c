@@ -12,7 +12,7 @@ void compactarTabla(char*nombreTabla) {
 	pthread_mutex_lock(&mutexFS);
 
 	log_info(loggerInfo, "Compactando tabla: %s", nombreTabla);
-	log_info(loggerInfo, "Modificando tmp a tmpc..");
+
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
@@ -25,6 +25,7 @@ void compactarTabla(char*nombreTabla) {
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
 	int cantParticiones = list_size(archivosBinarios);
 
+	log_info(loggerInfo, "Modificando tmp a tmpc..");
 	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
 	log_trace(loggerInfo, "Se cambio la extension de los temporales");
 
@@ -82,7 +83,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		//sem_wait(&mutexEscrituraBloques);
-		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual, true);
+		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 		//sem_post(&mutexEscrituraBloques);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
@@ -316,11 +317,11 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char** valores = string_split(registrosChar[i], ";");
 		t_registro* registro = registro_new(valores);
 		list_add(listaRegistros, registro);
-//		freePunteroAPunteros(valores);
+		//freePunteroAPunteros(valores);
 		i++;
 	}
 
-	//freePunteroAPunteros(registrosChar);
+	freePunteroAPunteros(registrosChar);
 	free(contenidoBloques);
 	freeArchivo(archivo);
 }
@@ -418,7 +419,7 @@ void iniciarThreadCompactacion(char* nombreTabla) {
 
 		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
-		compactarTabla(nombreTabla);
+		//compactarTabla(nombreTabla);
 
 	}
 

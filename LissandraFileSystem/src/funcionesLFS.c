@@ -430,9 +430,9 @@ void crearYEscribirTemporal(char* rutaTabla) {
 		t_list* registros = list_map(tabla->registros, (void*) registroToChar);
 
 		//sem_wait(&mutexEscrituraBloques);
-		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal, false);
+		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal);
 		//sem_post(&mutexEscrituraBloques);
-		//	list_destroy_and_destroy_elements(registros, free);
+		list_destroy_and_destroy_elements(registros, free);
 		limpiarRegistrosDeTabla(nombTabla);
 	}
 
@@ -557,10 +557,7 @@ int agregarNuevoBloque(t_archivo* archivo) {
 	return bloqueLibre;
 }
 
-/*le pasas el path de un archivo, se fija cuales son sus bloques
- y te escribe los registros en esos bloques*/
-
-int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir, bool sobreEscribirBloques) {
+int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
 	char* registrosAcumulados = string_new();
 
 	t_archivo *archivo = malloc(sizeof(t_archivo));
@@ -600,107 +597,16 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		munmap(contenidoBloque, metadata.BLOCK_SIZE);
 
 		close(fd);
+		free(rutaBloqueActual);
+		free(registrosDeBloque);
 
 	}
 	escribirBitmap();
 	archivo->TAMANIO = tamanioTotalBloquesPorArchivo(archivo->BLOQUES);
 	escribirArchivo(pathArchivoAEscribir, archivo);
-
+	free(registrosAcumulados);
 	freeArchivo(archivo);
 	return 1;
-
-//int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir, bool sobreEscribirBloques) {
-//	log_info(loggerInfo, "Escribiendo registros en bloques de archivo %s", pathArchivoAEscribir);
-//
-//	pthread_mutex_lock(&mutexEscrituraBloque);
-//	t_archivo *archivoTmp = malloc(sizeof(t_archivo));
-//	int res = leerArchivoDeTabla(pathArchivoAEscribir, archivoTmp);
-//	if (res < 0) {
-//		free(archivoTmp);
-//		return -1;
-//	}
-//	int bloqueActual = (int) list_get(archivoTmp->BLOQUES, 0);
-////	if(list_is_empty(archivoTmp->BLOQUES)){
-////		bloqueActual = agregarNuevoBloque(archivoTmp);
-////	}else{
-////		bloqueActual = (int) list_get(archivoTmp->BLOQUES, 0);
-////	}
-//
-//
-//	void escribirRegistroEnBloque(char* registro) {
-//		log_info(loggerInfo, "Escribiendo registros en bloques %d", bloqueActual);
-//
-//		FILE* archivoBloque = obtenerArchivoBloque(bloqueActual, sobreEscribirBloques);
-//		//le ponemos este formato para despues levantarlo piolINa
-//		string_append(&registro, ";\n");
-//		//preguntamos si el registro entra en el bloque
-//		int espacioOcupadoEnBloque = tamanioArchivo(archivoBloque);
-//		int largoDelRegistroAEscribir = strlen(registro);
-//
-//		if (espacioOcupadoEnBloque + largoDelRegistroAEscribir <= metadata.BLOCK_SIZE) {
-//			fprintf(archivoBloque, "%s", registro);
-//			reservarBloque(bloqueActual);
-//
-//		} else if (espacioOcupadoEnBloque == metadata.BLOCK_SIZE) {
-//			//si el bloque esta completamente lleno lo tenes que meter en uno nuevo
-//			if ((bloqueActual = agregarNuevoBloque(archivoTmp)) == -1) {
-//				//no hay mas bloques libres
-//				fclose(archivoBloque);
-//				return;
-//			}
-//
-//			escribirRegistroEnBloque(registro);
-//
-//		} else {
-//			//si entra un poquito, partilo
-//			int diferencia = espacioOcupadoEnBloque + largoDelRegistroAEscribir - metadata.BLOCK_SIZE;
-//			char* primeraMitadRegistro = string_substring_until(registro, strlen(registro) - diferencia);
-//			fprintf(archivoBloque, "%s", primeraMitadRegistro);
-//			reservarBloque(bloqueActual);
-//			free(primeraMitadRegistro);
-//
-//			//ahora agarramos la segunda parte
-//			char* segundaMitadRegistro = string_substring_from(registro, strlen(registro) - diferencia); //la ultima parte con el ;\n final
-//			char** aux = string_split(segundaMitadRegistro, "\n");
-//			if(diferencia==1){
-//				fclose(archivoBloque);
-//				return;
-//			}
-//			char* segundaMitadRegistroAux = string_substring_until(aux[0], strlen(aux[0]) - 1); //toda esta joda es para sacarle el ;\n
-//
-//
-//			//se podria hacer mejor? Si.
-//			//Pero asi funciona? Si
-//			//VEMO
-//
-//			if ((bloqueActual = agregarNuevoBloque(archivoTmp)) == -1) {
-//				escribirRegistroEnBloque("");
-//				fclose(archivoBloque);
-//				return;
-//			}
-//
-//			escribirRegistroEnBloque(segundaMitadRegistroAux);
-//
-//			freePunteroAPunteros(aux);
-//			//free(segundaMitadRegistro);
-//			//free(segundaMitadRegistroAux);
-//
-//		}
-//		fclose(archivoBloque);
-//
-//	}
-//
-//	list_iterate(registrosAEscribir, (void*) escribirRegistroEnBloque);
-//	escribirBitmap();
-//	archivoTmp->TAMANIO = tamanioTotalBloquesPorArchivo(archivoTmp->BLOQUES);
-//	escribirArchivo(pathArchivoAEscribir, archivoTmp);
-//	freeArchivo(archivoTmp);
-//
-//	pthread_mutex_unlock(&mutexEscrituraBloque);
-//
-//	log_info(loggerInfo, "Registros del archivo %s escritos con exito", pathArchivoAEscribir);
-//	return 1;
-//}
 }
 
 int tamanioTotalBloquesPorArchivo(t_list* bloques) {
