@@ -59,22 +59,18 @@ void inicializarLoggers() {
 
 int main(void) {
 	inicializarLoggers();
-	log_info(loggerInfo, "Inicializando proceso LISSANDRA FILE SYSTEM. \n");
-
-	cargarConfig();
-
-	cargarMetadata(config);
-	printf("Metadata cargada \n ");
-
-	cargarMemtable();
+	log_info(loggerInfo, "Inicializando LISSANDRA FILE SYSTEM.");
 
 	//INICIALIZAMOS LOS SEMAFOROS
+	listaSemaforos = list_create();
+	pthread_mutex_init(&mutexBitarray, NULL);
 
-	pthread_mutex_init(&mutexFS, NULL);
-	pthread_mutex_init(&mutexDump, NULL);
-	pthread_mutex_init(&mutexEscrituraBloque, NULL);
-//	sem_init(&mutexDump, 0, 1);
-//	sem_init(&mutexCompactacion, 0,1);
+	//CARGAMOS ARCHIVOS DE CONFIGURACION
+	cargarConfig();
+	cargarMetadata(config);
+
+	//CARGA MEMTABLE
+	cargarMemtable();
 
 	//HILO ESCUCHA SERVIDOR
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, NULL);
@@ -84,15 +80,17 @@ int main(void) {
 	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
 	pthread_detach(dumpThread);
 
+	//API
 	consolaLFS();
-	pthread_kill(serverThread,SIGUSR1);
-	//procesoDump();
+
+	//FINALIZAR FILESYSTEM
+	pthread_kill(serverThread, SIGUSR1);
 	vaciarMemtable();
 	freeConfig();
 	bitarray_destroy(bitmap);
-	pthread_mutex_destroy(&mutexFS);
-	pthread_mutex_destroy(&mutexDump);
-	pthread_mutex_destroy(&mutexEscrituraBloque);
+	list_destroy_and_destroy_elements(listaSemaforos, (void*) freeSemaforoTabla);
+	pthread_mutex_destroy(&mutexBitarray);
+
 	return EXIT_SUCCESS;
 }
 

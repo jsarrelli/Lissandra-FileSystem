@@ -33,8 +33,5 @@ void cargarConfig();
 void freeConfig();
 void iniciarSocketServidor();
 
-pthread_mutex_t mutexFS;
-pthread_mutex_t mutexDump;
-pthread_mutex_t mutexEscrituraBloque;
 
 #endif /* LISSANDRAFILESYSTEM_H_ */

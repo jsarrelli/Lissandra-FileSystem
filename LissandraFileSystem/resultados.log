@@ -1,0 +1,19 @@
+[TRACE] 16:24:56:787 LFS Results Logs/(23431:23431): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:25:45:394 LFS Results Logs/(23431:23431): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:28:02:188 LFS Results Logs/(23724:23724): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:28:31:423 LFS Results Logs/(23724:23724): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:31:04:404 LFS Results Logs/(23898:23898): Compactacion de <TABLA> exitosa. Tiempo: 9000.000000 milisegundos
+[TRACE] 16:31:22:461 LFS Results Logs/(23898:23898): Compactacion de <TABLA> exitosa. Tiempo: 14000.000000 milisegundos
+[TRACE] 16:31:38:561 LFS Results Logs/(23898:23898): Compactacion de <TABLA> exitosa. Tiempo: 9000.000000 milisegundos
+[TRACE] 16:31:41:494 LFS Results Logs/(23898:23898): Registro con mayor timestamp: 1563305497057.000000;25;FDSFSDFSF
+[TRACE] 16:31:50:631 LFS Results Logs/(23898:23898): Registro con mayor timestamp: 1563305456806.000000;8;DSGSDFSD
+[TRACE] 16:34:40:637 LFS Results Logs/(24109:24109): 
+Metadata de TABLA: 
+ CONSISTENCIA: 2
+PARTICIONES=2
+TIEMPO_COMPACTACION=2
+[TRACE] 16:35:20:280 LFS Results Logs/(24206:24206): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
