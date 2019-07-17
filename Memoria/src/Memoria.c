@@ -111,8 +111,8 @@ void iniciarSocketServidor() {
 
 void procesoTemporalJournal() {
 	while (1) {
-		pthread_mutex_lock(&lockMemoria);
 		usleep(configuracion->TIEMPO_JOURNAL * 1000);
+		pthread_mutex_lock(&lockMemoria);
 		printf("Realizando proceso temporal Journal");
 		journalMemoria();
 		pthread_mutex_unlock(&lockMemoria);
