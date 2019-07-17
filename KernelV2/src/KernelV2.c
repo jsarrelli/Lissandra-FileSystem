@@ -142,15 +142,16 @@ void iniciarHiloMetadataRefresh() {
 void iniciarHiloGossiping() {
 	log_info(log_master->logInfo, "Iniciando hilo de gossiping");
 	log_info(log_master->logInfo, "Descubriendo memorias..");
-//	while (true) {
-//		usleep(tiempoGossiping*1000);
-//		if (conocerMemorias() == SUPER_ERROR)
-//			log_error(log_master->logError, "Fallo conocer memorias");
-//	}
-	if (conocerMemorias() == SUPER_ERROR)
-		log_error(log_master->logError, "Fallo conocer memorias");
-}
+	while (true) {
+		usleep(tiempoGossiping * 1000);
+		if (conocerMemorias() == SUPER_ERROR) {
 
+			log_error(log_master->logError, "Fallo conocer memorias");
+		}
+
+	}
+
+}
 
 void cerrarKernel() {
 
@@ -175,10 +176,10 @@ void cerrarKernel() {
 	printf("Llego al final ok\n");
 }
 
-
 int main(void) {
 	iniciarVariablesKernel();
 
+	conocerMemorias();
 	// Hilo de Gossiping
 	pthread_create(&hiloGossiping, NULL, (void*) iniciarHiloGossiping, NULL);
 	pthread_detach(hiloGossiping);
@@ -188,8 +189,8 @@ int main(void) {
 	pthread_detach(hiloMetrics);
 
 	// Hilo de Describe global
-//	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
-//	pthread_detach(hiloMetadataRefresh);
+	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+	pthread_detach(hiloMetadataRefresh);
 
 	// Hilo de consola
 
