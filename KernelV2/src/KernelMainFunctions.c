@@ -383,8 +383,8 @@ int conocerMemorias() {
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
 		agregarMemoriaConocida(memoriaConocida);
-		//log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
-		//		memoriaConocida->id);
+		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
+				memoriaConocida->id);
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
