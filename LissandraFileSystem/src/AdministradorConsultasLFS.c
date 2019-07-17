@@ -1,10 +1,8 @@
 #include "AdministradorConsultasLFS.h"
 
 int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaChar, char* tiempoCompactacion) {
-	cargarSemaforosTabla(nombreTabla);
 	if (existeTabla(nombreTabla)) {
 		log_error(loggerError, "Ya existe una tabla con el nombre %s en el FileSystem ", nombreTabla);
-		freeSemaforoTabla(getSemaforoByTabla(nombreTabla));
 		return 1;
 	}
 	crearTablaYParticiones(nombreTabla, cantParticiones);

@@ -104,6 +104,7 @@ void cargarMemtable() {
 
 	t_list* nombreTablas = list_map(listaDirectorios, (void*) obtenerNombreTablaByRuta);
 
+
 	list_iterate(nombreTablas, (void*) insertarTablaEnMemtable);
 
 	list_destroy_and_destroy_elements(nombreTablas, free);
