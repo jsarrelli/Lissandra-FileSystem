@@ -221,7 +221,7 @@ int consolaSelect(char*argumentos) {
 //			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 //		}
 
-		if (enviarInfoMemoria(socketMemoria, request, INSERT, &paquete) == SUPER_ERROR) {
+		if (enviarInfoMemoria(socketMemoria, request, SELECT, &paquete) == SUPER_ERROR) {
 			freePunteroAPunteros(valores);
 			return SUPER_ERROR;
 		} else {
