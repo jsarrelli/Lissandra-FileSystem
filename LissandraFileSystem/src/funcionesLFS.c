@@ -652,7 +652,15 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
-	//t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
+	list_add_all(listaRegistros, registros);
+	list_destroy(registros);
+	list_destroy_and_destroy_elements(temporales, free);
+}
+
+void getRegistrosFromTempcByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
+	t_list* temporales = buscarTmpcsByNombreTabla(nombreTabla);
+	t_list* registros = list_create();
+	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
 	list_add_all(listaRegistros, registros);
 	list_destroy(registros);
 	list_destroy_and_destroy_elements(temporales, free);
@@ -699,6 +707,12 @@ t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 		list_add(registros, registroTmp);
 	}
 
+	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmpc", keyActual, nombreTabla);
+	t_registro* registroTmpc = getRegistroFromTmpcByKey(nombreTabla, keyActual);
+	if (registroTmpc != NULL) {
+		list_add(registros, registroTmpc);
+	}
+
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en bin", keyActual, nombreTabla);
 	t_registro* registroBin = getRegistroFromBinByKey(nombreTabla, keyActual);
 	if (registroBin != NULL) {
@@ -732,6 +746,19 @@ t_registro* getRegistroFromBinByKey(char* nombreTabla, int key) {
 t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) {
 	t_list* registros = list_create();
 	getRegistrosFromTempByNombreTabla(nombreTabla, registros);
+	if (list_is_empty(registros)) {
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroEncontrado = buscarRegistroByKeyFromListaRegistros(registros, key);
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+	return registroEncontrado;
+}
+
+t_registro* getRegistroFromTmpcByKey(char* nombreTabla, int key) {
+	t_list* registros = list_create();
+	getRegistrosFromTempcByNombreTabla(nombreTabla, registros);
 	if (list_is_empty(registros)) {
 		list_destroy(registros);
 		return NULL;

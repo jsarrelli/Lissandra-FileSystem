@@ -1,9 +1,19 @@
-[INFO] 16:35:18:283 LFS Logs/(24206:24206): Inicializando LISSANDRA FILE SYSTEM.
-[INFO] 16:35:18:283 LFS Logs/(24206:24206): Levantando archivo de configuracion del proceso LFS 
+[INFO] 21:31:13:757 LFS Logs/(8855:8855): Inicializando LISSANDRA FILE SYSTEM.
+[INFO] 21:31:13:757 LFS Logs/(8855:8855): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 16:35:18:283 LFS Logs/(24206:24206): Archivo de configuracion del proceso LFS levantado 
+[INFO] 21:31:13:757 LFS Logs/(8855:8855): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 16:35:18:307 LFS Logs/(24206:24206): El tamanio del bitmap es de 3000 bits
-[INFO] 16:35:18:308 LFS Logs/(24206:24206): Archivo Metadata cargado
-[INFO] 16:35:18:308 LFS Logs/(24206:24206): Levantando tablas ya existentes..
-[INFO] 16:35:20:281 LFS Logs/(24206:24206): Compactando tabla: TABLA
+[INFO] 21:31:13:802 LFS Logs/(8855:8855): El tamanio del bitmap es de 3000 bits
+[INFO] 21:31:13:803 LFS Logs/(8855:8855): Archivo Metadata cargado
+[INFO] 21:31:13:803 LFS Logs/(8855:8855): Levantando tablas ya existentes..
+[INFO] 21:31:59:688 LFS Logs/(8855:8855): Bloque 4 reservado
+[INFO] 21:31:59:690 LFS Logs/(8855:8855): Archivo temporal creado en TABLA
+[INFO] 21:31:59:690 LFS Logs/(8855:8855): Bloque 5 reservado
+[INFO] 21:31:59:691 LFS Logs/(8855:8855): Bloque 6 reservado
+[INFO] 21:31:59:691 LFS Logs/(8855:8855): Bloque 13 reservado
+[INFO] 21:31:59:692 LFS Logs/(8855:8855): Bloque 14 reservado
+[INFO] 21:31:59:694 LFS Logs/(8855:8855): Compactando tabla: TABLA
+[INFO] 21:31:59:694 LFS Logs/(8855:8855): Obteniendo directorios de archivos binarios..
+[INFO] 21:31:59:694 LFS Logs/(8855:8855): Modificando tmp a tmpc..
+[INFO] 21:31:59:694 LFS Logs/(8855:8855): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
+[INFO] 21:31:59:694 LFS Logs/(8855:8855): Lectura de registros de los tmpc finalizada. Hay 3 registros nuevos en tmpc

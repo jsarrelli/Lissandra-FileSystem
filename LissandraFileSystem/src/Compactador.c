@@ -28,7 +28,7 @@ void compactarTabla(char*nombreTabla) {
 
 	t_list* registrosNuevos = list_create();
 	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
-	log_info(loggerInfo, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(archivosTmpc));
+	log_info(loggerInfo, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(registrosNuevos));
 	filtrarRegistros(registrosNuevos);
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
@@ -384,6 +384,25 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 	bool isTemporal(char* rutaArchivoActual) {
 		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
 		bool result = strcmp(extension, "tmp") == 0;
+		free(extension);
+		if (!result) {
+			free(rutaArchivoActual);
+		}
+		return result;
+	}
+	t_list* archivosTemporales = list_filter(archivos, (void*) isTemporal);
+	list_destroy(archivos);
+	return archivosTemporales;
+
+}
+
+
+t_list* buscarTmpcsByNombreTabla(char* nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
+
+	bool isTemporal(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		bool result = strcmp(extension, "tmpc") == 0;
 		free(extension);
 		if (!result) {
 			free(rutaArchivoActual);
