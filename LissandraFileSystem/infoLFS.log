@@ -1,20 +1,13 @@
-[INFO] 09:04:25:43 LFS Logs/(6141:6141): Inicializando LISSANDRA FILE SYSTEM.
-[INFO] 09:04:25:44 LFS Logs/(6141:6141): Levantando archivo de configuracion del proceso LFS 
+[INFO] 09:09:46:590 LFS Logs/(6769:6769): Inicializando LISSANDRA FILE SYSTEM.
+[INFO] 09:09:46:591 LFS Logs/(6769:6769): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 09:04:25:44 LFS Logs/(6141:6141): Archivo de configuracion del proceso LFS levantado 
+[INFO] 09:09:46:591 LFS Logs/(6769:6769): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 09:04:25:58 LFS Logs/(6141:6141): El tamanio del bitmap es de 3000 bits
-[INFO] 09:04:25:59 LFS Logs/(6141:6141): Archivo Metadata cargado
-[INFO] 09:04:25:59 LFS Logs/(6141:6141): Levantando tablas ya existentes..
-[INFO] 09:04:35:171 LFS Logs/(6141:6141): Bloque 0 liberado
-[INFO] 09:04:35:173 LFS Logs/(6141:6141): Bloque 7 liberado
-[INFO] 09:04:35:174 LFS Logs/(6141:6141): Bloque 8 liberado
-[INFO] 09:04:35:174 LFS Logs/(6141:6141): Bloque 9 liberado
-[INFO] 09:04:35:175 LFS Logs/(6141:6141): Bloque 17 liberado
-[INFO] 09:04:35:176 LFS Logs/(6141:6141): Bloque 18 liberado
-[INFO] 09:04:35:177 LFS Logs/(6141:6141): Bloque 1 liberado
-[INFO] 09:04:35:178 LFS Logs/(6141:6141): Bloque 10 liberado
-[INFO] 09:04:35:178 LFS Logs/(6141:6141): Bloque 11 liberado
-[INFO] 09:04:35:179 LFS Logs/(6141:6141): Bloque 12 liberado
-[INFO] 09:04:35:180 LFS Logs/(6141:6141): TABLA eliminada
-[INFO] 09:05:45:257 LFS Logs/(6141:6141): Fin de leectura por consola
+[INFO] 09:09:46:606 LFS Logs/(6769:6769): El tamanio del bitmap es de 3000 bits
+[INFO] 09:09:46:606 LFS Logs/(6769:6769): Archivo Metadata cargado
+[INFO] 09:09:46:606 LFS Logs/(6769:6769): Levantando tablas ya existentes..
+[INFO] 09:10:04:168 LFS Logs/(6769:6771): Request de memoria recibida.. 
+
+[INFO] 09:11:20:410 LFS Logs/(6769:6771): Request de memoria recibida.. 
+
+[INFO] 09:11:20:611 LFS Logs/(6769:6771): Procesando DESCRIBE ALL
