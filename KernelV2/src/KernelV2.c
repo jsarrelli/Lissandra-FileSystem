@@ -49,11 +49,11 @@ void iniciarVariablesKernel() {
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
-	hardcodearInfoMemorias();
+//	hardcodearInfoMemorias();
 //	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
 //			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
-	hardcodearListaMetadataTabla();
+//	hardcodearListaMetadataTabla();
 
 //	quantum = config->QUANTUM;
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
@@ -130,9 +130,9 @@ void iniciarConsolaKernel() {
 }
 
 void iniciarHiloMetadataRefresh() {
-
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
+		log_trace(log_master->logTrace, "Iniciar Describe global");
 		if (consolaDescribe(NULL) == SUPER_ERROR)
 			log_error(log_master->logError, "Fallo el describe global automatico");
 
@@ -150,6 +150,7 @@ void iniciarHiloGossiping() {
 	if (conocerMemorias() == SUPER_ERROR)
 		log_error(log_master->logError, "Fallo conocer memorias");
 }
+
 
 void cerrarKernel() {
 
@@ -174,6 +175,7 @@ void cerrarKernel() {
 	printf("Llego al final ok\n");
 }
 
+
 int main(void) {
 	iniciarVariablesKernel();
 
@@ -185,14 +187,14 @@ int main(void) {
 	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
 	pthread_detach(hiloMetrics);
 
+	// Hilo de Describe global
+//	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+//	pthread_detach(hiloMetadataRefresh);
+
 	// Hilo de consola
 
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
-
-	// Hilo de Describe global
-	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
-	pthread_detach(hiloMetadataRefresh);
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);

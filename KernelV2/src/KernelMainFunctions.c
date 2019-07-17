@@ -390,6 +390,7 @@ int conocerMemorias() {
 	}
 	if (codRecibir < 0)
 		return SUPER_ERROR;
+	log_trace(log_master->logTrace, "El tamaño de la listaMemorias es: %d", list_size(listaMemorias));
 	return TODO_OK;
 }
 

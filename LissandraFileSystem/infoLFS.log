@@ -1,13 +1,16 @@
-[INFO] 09:09:46:590 LFS Logs/(6769:6769): Inicializando LISSANDRA FILE SYSTEM.
-[INFO] 09:09:46:591 LFS Logs/(6769:6769): Levantando archivo de configuracion del proceso LFS 
+[INFO] 12:26:52:483 LFS Logs/(2906:2906): Inicializando LISSANDRA FILE SYSTEM.
+[INFO] 12:26:52:489 LFS Logs/(2906:2906): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 09:09:46:591 LFS Logs/(6769:6769): Archivo de configuracion del proceso LFS levantado 
+[INFO] 12:26:52:489 LFS Logs/(2906:2906): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 09:09:46:606 LFS Logs/(6769:6769): El tamanio del bitmap es de 3000 bits
-[INFO] 09:09:46:606 LFS Logs/(6769:6769): Archivo Metadata cargado
-[INFO] 09:09:46:606 LFS Logs/(6769:6769): Levantando tablas ya existentes..
-[INFO] 09:10:04:168 LFS Logs/(6769:6771): Request de memoria recibida.. 
+[INFO] 12:26:52:604 LFS Logs/(2906:2906): El tamanio del bitmap es de 3000 bits
+[INFO] 12:26:52:604 LFS Logs/(2906:2906): Archivo Metadata cargado
+[INFO] 12:26:52:604 LFS Logs/(2906:2906): Levantando tablas ya existentes..
+[INFO] 12:27:01:576 LFS Logs/(2906:2913): Request de memoria recibida.. 
 
-[INFO] 09:11:20:410 LFS Logs/(6769:6771): Request de memoria recibida.. 
+[INFO] 12:28:00:692 LFS Logs/(2906:2913): Request de memoria recibida.. 
 
-[INFO] 09:11:20:611 LFS Logs/(6769:6771): Procesando DESCRIBE ALL
+[INFO] 12:28:00:893 LFS Logs/(2906:2913): Procesando DESCRIBE ALL
+[INFO] 12:33:45:204 LFS Logs/(2906:2913): Request de memoria recibida.. 
+
+[INFO] 12:33:45:420 LFS Logs/(2906:3298): Procesando DESCRIBE ALL
