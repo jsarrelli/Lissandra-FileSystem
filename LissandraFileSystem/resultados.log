@@ -72,3 +72,4 @@ Metadata de TABLA:
 -PARTICIONES=2
 -TIEMPO_COMPACTACION=2
 [TRACE] 21:36:50:998 LFS Results Logs/(9225:9225): Compactacion de <TABLA> exitosa. Tiempo: 10000.000000 milisegundos
+[TRACE] 21:38:59:529 LFS Results Logs/(9225:9225): Registro con mayor timestamp: 1563323808925.000000;4;FSDFSFDS

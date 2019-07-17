@@ -1,30 +1,23 @@
-[INFO] 21:36:41:386 LFS Logs/(9225:9225): Inicializando LISSANDRA FILE SYSTEM.
-[INFO] 21:36:41:387 LFS Logs/(9225:9225): Levantando archivo de configuracion del proceso LFS 
+[INFO] 21:48:28:385 LFS Logs/(9947:9947): Inicializando LISSANDRA FILE SYSTEM.
+[INFO] 21:48:28:385 LFS Logs/(9947:9947): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 21:36:41:387 LFS Logs/(9225:9225): Archivo de configuracion del proceso LFS levantado 
+[INFO] 21:48:28:385 LFS Logs/(9947:9947): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 21:36:41:402 LFS Logs/(9225:9225): El tamanio del bitmap es de 3000 bits
-[INFO] 21:36:41:402 LFS Logs/(9225:9225): Archivo Metadata cargado
-[INFO] 21:36:41:403 LFS Logs/(9225:9225): Levantando tablas ya existentes..
-[INFO] 21:36:50:982 LFS Logs/(9225:9225): Bloque 15 reservado
-[INFO] 21:36:50:984 LFS Logs/(9225:9225): Archivo temporal creado en TABLA
-[INFO] 21:36:50:984 LFS Logs/(9225:9225): Bloque 16 reservado
-[INFO] 21:36:50:985 LFS Logs/(9225:9225): Bloque 17 reservado
-[INFO] 21:36:50:987 LFS Logs/(9225:9225): Compactando tabla: TABLA
-[INFO] 21:36:50:987 LFS Logs/(9225:9225): Obteniendo directorios de archivos binarios..
-[INFO] 21:36:50:987 LFS Logs/(9225:9225): Modificando tmp a tmpc..
-[INFO] 21:36:50:987 LFS Logs/(9225:9225): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 21:36:50:987 LFS Logs/(9225:9225): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 21:36:50:987 LFS Logs/(9225:9225): Mergeando registros viejos con nuevos
-[INFO] 21:36:50:988 LFS Logs/(9225:9225): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 21:36:50:988 LFS Logs/(9225:9225): Bloque 0 liberado
-[INFO] 21:36:50:989 LFS Logs/(9225:9225): Bloque 7 liberado
-[INFO] 21:36:50:989 LFS Logs/(9225:9225): Bloque 8 liberado
-[INFO] 21:36:50:990 LFS Logs/(9225:9225): Bloque 9 liberado
-[INFO] 21:36:50:991 LFS Logs/(9225:9225): Bloque 0 reservado
-[INFO] 21:36:50:992 LFS Logs/(9225:9225): Bloque 7 reservado
-[INFO] 21:36:50:992 LFS Logs/(9225:9225): Bloque 8 reservado
-[INFO] 21:36:50:994 LFS Logs/(9225:9225): Bloque 9 reservado
-[INFO] 21:36:50:995 LFS Logs/(9225:9225): Bloque 18 reservado
-[INFO] 21:36:50:996 LFS Logs/(9225:9225): Bloque 16 liberado
-[INFO] 21:36:50:997 LFS Logs/(9225:9225): Bloque 17 liberado
+[INFO] 21:48:28:401 LFS Logs/(9947:9947): El tamanio del bitmap es de 3000 bits
+[INFO] 21:48:28:401 LFS Logs/(9947:9947): Archivo Metadata cargado
+[INFO] 21:48:28:401 LFS Logs/(9947:9947): Levantando tablas ya existentes..
+[INFO] 21:48:56:540 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
+[INFO] 21:59:05:429 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
+[INFO] 22:01:54:560 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
+[INFO] 22:07:33:746 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
+[INFO] 22:10:16:56 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
+[INFO] 22:11:58:468 LFS Logs/(9947:9950): Iniciando proceso Dump
+[INFO] 22:13:32:67 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
+[INFO] 22:16:59:473 LFS Logs/(9947:9949): Request de memoria recibida.. 
+
