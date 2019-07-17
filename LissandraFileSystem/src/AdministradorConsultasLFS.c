@@ -34,8 +34,8 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
 	///////
-	crearYEscribirArchivosTemporales(rutas.Tablas);
-	compactarTabla("TABLA");
+//	crearYEscribirArchivosTemporales(rutas.Tablas);
+//	compactarTabla("TABLA");
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
@@ -46,7 +46,7 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_trace(loggerInfo, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
+		log_trace(loggerTrace, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
 		log_error(loggerError, "La tabla %s no existe", nombreTabla);
@@ -58,16 +58,13 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
 
 		pthread_mutex_t semaforoCompactacion = getSemaforoByTabla(nombreTabla)->mutexCompactacion;
-		pthread_mutex_lock(&semaforoCompactacion);
 
+		pthread_mutex_lock(&semaforoCompactacion);
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
+		pthread_mutex_unlock(&semaforoCompactacion);
 
 		if (registro != NULL) {
 			log_trace(loggerTrace, "Registro con mayor timestamp: %f;%d;%s", registro->timestamp, registro->key, registro->value);
-
-			log_info(loggerInfo, "Select a key %d", registro->key);
-
-			pthread_mutex_unlock(&semaforoCompactacion);
 			return registro;
 
 		} else {

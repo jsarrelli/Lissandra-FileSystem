@@ -559,6 +559,8 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		return -1;
 	}
 
+	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) liberarBloque);
+
 	void acumularRegistros(char* registro) {
 		string_append_with_format(&registrosAcumulados, "%s;\n", registro);
 	}
@@ -568,7 +570,6 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 
 	int cantidadBloquesNecesarios = ceil((double) tamanioTotalEscribir / metadata.BLOCK_SIZE);
 
-	list_clean(archivo->BLOQUES);
 	for (int i = 0; i < cantidadBloquesNecesarios; i++) {
 		agregarNuevoBloque(archivo);
 	}

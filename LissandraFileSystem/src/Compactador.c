@@ -76,11 +76,9 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		filtrarRegistros(registrosNuevos);
 
 		//pasamos la lista de registros a una lista de char* para escribirlos en el binario
-
 		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
-
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
@@ -441,7 +439,7 @@ void iniciarThreadCompactacion(char* nombreTabla) {
 
 		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
-		//compactarTabla(nombreTabla);
+		compactarTabla(nombreTabla);
 
 	}
 
