@@ -284,13 +284,15 @@ int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 		char* consistenciaChar, infoMemoria* memoria) {
 
 	int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
-	char request[100];
-	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
-			cantParticiones, tiempoCompactacion);
-	Paquete paquete;
-	if (enviarInfoMemoria(socketMemoria, request, CREATE,
-			&paquete) == SUPER_ERROR)
-		return SUPER_ERROR;
+	if (socketMemoria < 0) {
+		char request[100];
+		sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar,
+				cantParticiones, tiempoCompactacion);
+		Paquete paquete;
+		if (enviarInfoMemoria(socketMemoria, request, CREATE,
+				&paquete) == SUPER_ERROR)
+			return SUPER_ERROR;
+	}
 	return TODO_OK;
 }
 
