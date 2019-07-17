@@ -298,7 +298,7 @@ t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
 }
 
 void journalMemoria() {
-	pthread_mutex_lock(&lockMemoria);
+
 
 	log_info(loggerInfo, "Realizando Journal..");
 
@@ -324,7 +324,7 @@ void journalMemoria() {
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
 	log_info(loggerInfo, "Journal finalizado con exito");
-	pthread_mutex_unlock(&lockMemoria);
+
 }
 
 bool existeSegmentoFS(char* nombreSegmento) {

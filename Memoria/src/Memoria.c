@@ -34,8 +34,8 @@ int main() {
 	pthread_detach(serverThread);
 
 	//HILO DE JOURNAL
-//	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
-//	pthread_detach(intTemporalJournal);
+	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
+	pthread_detach(intTemporalJournal);
 
 //HILO DE GOSSIPING
 	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
@@ -111,9 +111,11 @@ void iniciarSocketServidor() {
 
 void procesoTemporalJournal() {
 	while (1) {
+		pthread_mutex_lock(&lockMemoria);
 		usleep(configuracion->TIEMPO_JOURNAL * 1000);
 		printf("Realizando proceso temporal Journal");
 		journalMemoria();
+		pthread_mutex_unlock(&lockMemoria);
 	}
 }
 

@@ -16,11 +16,12 @@ void escuchar(int listenningSocket) {
 			//O hace un journal o procesa una accion, boludeces no
 			pthread_mutex_lock(&lockMemoria);
 			procesarAccion(socketCliente);
+			close(socketCliente);
 			pthread_mutex_unlock(&lockMemoria);
 
 			printf("Escuchando.. \n");
 		}
-		close(socketCliente);
+
 
 	}
 
