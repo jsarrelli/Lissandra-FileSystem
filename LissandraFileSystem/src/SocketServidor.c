@@ -18,9 +18,12 @@ void escuchar(int listenningSocket) {
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			log_info(loggerInfo, "Request de memoria recibida.. \n");
-			pthread_mutex_lock(&mutexFS);
+
+			pthread_t hiloRequest;
+			pthread_create(&hiloRequest, NULL, (void*) procesarAccion,(void*) socketMemoria);
+			pthread_detach(hiloRequest);
+
 			procesarAccion(socketMemoria);
-			pthread_mutex_unlock(&mutexFS);
 
 		} else {
 			log_info(loggerInfo, "Fallo la conexion con Memoria");

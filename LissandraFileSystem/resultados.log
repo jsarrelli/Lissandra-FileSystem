@@ -1,0 +1,96 @@
+[TRACE] 16:24:56:787 LFS Results Logs/(23431:23431): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:25:45:394 LFS Results Logs/(23431:23431): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:28:02:188 LFS Results Logs/(23724:23724): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:28:31:423 LFS Results Logs/(23724:23724): Compactacion de <(null)> exitosa. Tiempo: 0.000000 milisegundos
+[TRACE] 16:31:04:404 LFS Results Logs/(23898:23898): Compactacion de <TABLA> exitosa. Tiempo: 9000.000000 milisegundos
+[TRACE] 16:31:22:461 LFS Results Logs/(23898:23898): Compactacion de <TABLA> exitosa. Tiempo: 14000.000000 milisegundos
+[TRACE] 16:31:38:561 LFS Results Logs/(23898:23898): Compactacion de <TABLA> exitosa. Tiempo: 9000.000000 milisegundos
+[TRACE] 16:31:41:494 LFS Results Logs/(23898:23898): Registro con mayor timestamp: 1563305497057.000000;25;FDSFSDFSF
+[TRACE] 16:31:50:631 LFS Results Logs/(23898:23898): Registro con mayor timestamp: 1563305456806.000000;8;DSGSDFSD
+[TRACE] 16:34:40:637 LFS Results Logs/(24109:24109): 
+Metadata de TABLA: 
+ CONSISTENCIA: 2
+PARTICIONES=2
+TIEMPO_COMPACTACION=2
+[TRACE] 16:35:20:280 LFS Results Logs/(24206:24206): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:26:46:160 LFS Results Logs/(8574:8574): Registro con mayor timestamp: 1563323202455.000000;4;FSDFSDF
+[TRACE] 21:26:48:503 LFS Results Logs/(8574:8574): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:26:48:520 LFS Results Logs/(8574:8574): Compactacion de <TABLA> exitosa. Tiempo: 8000.000000 milisegundos
+[TRACE] 21:26:56:86 LFS Results Logs/(8574:8574): Registro con mayor timestamp: 1563323202455.000000;4;FSDFSDF
+[TRACE] 21:27:11:4 LFS Results Logs/(8574:8574): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:27:11:25 LFS Results Logs/(8574:8574): Compactacion de <TABLA> exitosa. Tiempo: 12000.000000 milisegundos
+[TRACE] 21:27:14:143 LFS Results Logs/(8574:8574): Registro con mayor timestamp: 1563323229441.000000;10;FSDFDSFSDDF
+[TRACE] 21:27:34:265 LFS Results Logs/(8574:8574): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:27:34:285 LFS Results Logs/(8574:8574): Compactacion de <TABLA> exitosa. Tiempo: 10000.000000 milisegundos
+[TRACE] 21:28:08:816 LFS Results Logs/(8574:8574): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:28:08:903 LFS Results Logs/(8574:8574): Compactacion de <TABLA> exitosa. Tiempo: 74000.000000 milisegundos
+[TRACE] 21:29:23:518 LFS Results Logs/(8719:8719): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:30:41:485 LFS Results Logs/(8800:8800): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:30:41:518 LFS Results Logs/(8800:8800): Compactacion de <TABLA> exitosa. Tiempo: 20000.000000 milisegundos
+[TRACE] 21:30:55:551 LFS Results Logs/(8800:8800): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:30:55:581 LFS Results Logs/(8800:8800): Compactacion de <TABLA> exitosa. Tiempo: 21000.000000 milisegundos
+[TRACE] 21:31:59:687 LFS Results Logs/(8855:8855): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:36:50:982 LFS Results Logs/(9225:9225): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 21:36:50:998 LFS Results Logs/(9225:9225): Compactacion de <TABLA> exitosa. Tiempo: 10000.000000 milisegundos
+[TRACE] 21:38:59:529 LFS Results Logs/(9225:9225): Registro con mayor timestamp: 1563323808925.000000;4;FSDFSFDS
+[TRACE] 09:00:24:735 LFS Results Logs/(5968:5968): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 09:00:59:971 LFS Results Logs/(5968:5968): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 09:00:59:996 LFS Results Logs/(5968:5968): Compactacion de <TABLA> exitosa. Tiempo: 16000.000000 milisegundos
+[TRACE] 09:01:03:303 LFS Results Logs/(5968:5968): Registro con mayor timestamp: 1563364858016.000000;32;DALE JULI
+[TRACE] 09:01:35:905 LFS Results Logs/(5968:5968): Registro con mayor timestamp: 1563364858016.000000;32;DALE JULI
+[TRACE] 09:01:40:425 LFS Results Logs/(5968:5968): 
+Metadata de TABLA: 
+-CONSISTENCIA: 2
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=2
+[TRACE] 09:01:40:450 LFS Results Logs/(5968:5968): Compactacion de <TABLA> exitosa. Tiempo: 12000.000000 milisegundos
+[TRACE] 09:01:43:330 LFS Results Logs/(5968:5968): Registro con mayor timestamp: 1563364858016.000000;32;DALE JULI
+[TRACE] 09:04:30:32 LFS Results Logs/(6141:6141): Insert de 4;FSDFDS en TABLA realizado en memtable

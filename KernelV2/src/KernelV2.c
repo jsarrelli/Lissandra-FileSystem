@@ -81,6 +81,7 @@ void iniciarVariablesKernel() {
 //		}
 //	}
 
+	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 }
 
 void* iniciarhiloMetrics(void* args) {
@@ -114,7 +115,7 @@ void iniciarConsolaKernel() {
 		operacion = readline(">");
 		// Para salir, escriba SALIR -> esta operacion se acumula en la cola de Ready y se encarga de destruir los hilos, etc
 		if (!instruccionSeaMetrics(operacion)) {
-			if(strlen(operacion)!=0){
+			if (strlen(operacion) != 0) {
 				crearProcesoYMandarloAReady(operacion);
 //				desbloquearHilos();
 				sem_post(&bin_main);
@@ -133,11 +134,21 @@ void iniciarHiloMetadataRefresh() {
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
 		if (consolaDescribe(NULL) == SUPER_ERROR)
-			log_error(log_master->logError,
-					"Fallo el describe global automatico");
-		if (conocerMemorias() == SUPER_ERROR)
-			log_error(log_master->logError, "Fallo conocer memorias");
+			log_error(log_master->logError, "Fallo el describe global automatico");
+
 	}
+}
+
+void iniciarHiloGossiping() {
+	log_info(log_master->logInfo, "Iniciando hilo de gossiping");
+	log_info(log_master->logInfo, "Descubriendo memorias..");
+//	while (true) {
+//		usleep(tiempoGossiping*1000);
+//		if (conocerMemorias() == SUPER_ERROR)
+//			log_error(log_master->logError, "Fallo conocer memorias");
+//	}
+	if (conocerMemorias() == SUPER_ERROR)
+		log_error(log_master->logError, "Fallo conocer memorias");
 }
 
 void cerrarKernel() {
@@ -165,13 +176,10 @@ void cerrarKernel() {
 
 int main(void) {
 	iniciarVariablesKernel();
-	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
-//	conocerMemorias();
-//	if(conocerMemorias()==-1){
-//		log_error(log_master->logError, "No se pudo conocer las memorias");
-//		return EXIT_FAILURE;
-//	}
+	// Hilo de Gossiping
+	pthread_create(&hiloGossiping, NULL, (void*) iniciarHiloGossiping, NULL);
+	pthread_detach(hiloGossiping);
 
 	// Hilo de metrics
 	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
@@ -193,8 +201,7 @@ int main(void) {
 
 	for (int i = 0; i < multiprocesamiento; i++) {
 		arrayDeHilosPuntero = arrayDeHilos;
-		pthread_create(&arrayDeHilosPuntero[i], NULL,
-				(void*) iniciarMultiprocesamiento, NULL);
+		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*) iniciarMultiprocesamiento, NULL);
 	}
 
 	for (int i = 0; i < multiprocesamiento; i++) {

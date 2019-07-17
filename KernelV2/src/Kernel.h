@@ -12,9 +12,11 @@
 
 pthread_t hiloConsola;
 pthread_t hiloMetrics;
+pthread_t hiloGossiping;
 pthread_t hiloMetadataRefresh;
 pthread_t* arrayDeHilos;
 pthread_t* arrayDeHilosPuntero;
+int tiempoGossiping;
 
 void cerrarKernel();
 void terminarHilos();

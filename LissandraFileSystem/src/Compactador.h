@@ -22,6 +22,7 @@ void persistirParticionesDeTabla(t_list* listaListas, t_list*archivosBin);
 
 t_list* buscarTemporalesByNombreTabla(char* nombreTabla);
 t_list* buscarBinariosByNombreTabla(char* nombreTabla);
+t_list* buscarTmpcsByNombreTabla(char* nombreTabla);
 
 void agregarRegistrosFromBloqueByPath(char* rutaTmpc, t_list* listaRegistros);
 t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque);

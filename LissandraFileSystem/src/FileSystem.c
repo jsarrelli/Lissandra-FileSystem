@@ -29,6 +29,7 @@ void crearBloques() {
 }
 
 t_list* buscarBloquesLibres(int cant) {
+
 	t_list* bloquesLibres = list_create();
 	for (int i = 0; i < metadata.BLOCKS && list_size(bloquesLibres) < cant; ++i) {
 		if (bitarray_test_bit(bitmap, i) == 0) {
@@ -103,6 +104,7 @@ void cargarMemtable() {
 
 	t_list* nombreTablas = list_map(listaDirectorios, (void*) obtenerNombreTablaByRuta);
 
+
 	list_iterate(nombreTablas, (void*) insertarTablaEnMemtable);
 
 	list_destroy_and_destroy_elements(nombreTablas, free);
@@ -120,7 +122,7 @@ int cargarMetadata() {
 	string_append(&path, "/Metadata.bin");
 	rutas.Metadata = path;
 	FILE*arch1 = fopen(rutas.Metadata, "w+");
-	fprintf(arch1, "BLOCK_SIZE=30\n");
+	fprintf(arch1, "BLOCK_SIZE=100\n");
 	fprintf(arch1, "BLOCKS=3000\n");
 	fprintf(arch1, "MAGIC_NUMBER=LISSANDRA\n");
 	fclose(arch1);
@@ -147,6 +149,8 @@ int cargarMetadata() {
 
 	leerBitmap();
 	printf("Bitmap creado\n\n");
+
+	log_info(loggerInfo, "Archivo Metadata cargado");
 	return 1;
 }
 
@@ -182,4 +186,33 @@ int leerMetadata() {
 	}
 	config_destroy(config);
 	return 1;
+}
+
+t_semaforos_tabla* getSemaforoByTabla(char* nombreTabla) {
+
+	bool isTablaBuscada(t_semaforos_tabla* semaforoTabla) {
+		return strcmp(semaforoTabla->nombreTabla, nombreTabla) == 0;
+	}
+	return list_find(listaSemaforos, (void*) isTablaBuscada);
+}
+
+void cargarSemaforosTabla(char* nombreTabla) {
+	t_semaforos_tabla* semaforoTabla = malloc(sizeof(t_semaforos_tabla));
+
+	semaforoTabla->nombreTabla = string_duplicate(nombreTabla);
+
+	pthread_mutex_t mutexCompactacion = semaforoTabla->mutexCompactacion;
+	pthread_mutex_init(&mutexCompactacion, NULL);
+
+	list_add(listaSemaforos, semaforoTabla);
+
+}
+
+void freeSemaforoTabla(t_semaforos_tabla* semaforoTabla) {
+	free(semaforoTabla->nombreTabla);
+
+	pthread_mutex_t mutexCompactacion = semaforoTabla->mutexCompactacion;
+
+	pthread_mutex_destroy(&mutexCompactacion);
+
 }

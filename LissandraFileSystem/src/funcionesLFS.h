@@ -38,10 +38,12 @@ int obtenerTamanioListaRegistros(t_list* registros);
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list* listaRegistros);
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros);
+void getRegistrosFromTempcByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual);
 t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key);
 t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key);
+t_registro* getRegistroFromTmpcByKey(char* nombreTabla, int key);
 t_registro* getRegistroFromBinByKey(char* nombreTabla, int key);
 t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
 

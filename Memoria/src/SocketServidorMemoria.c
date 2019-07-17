@@ -2,7 +2,7 @@
 
 void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
-	log_info(loggerInfo,"Servidor memoria escuchando..");
+	log_info(loggerInfo, "Servidor memoria escuchando..");
 	while (true) {
 		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
@@ -16,7 +16,7 @@ void escuchar(int listenningSocket) {
 			//O hace un journal o procesa una accion, boludeces no
 			pthread_mutex_lock(&lockMemoria);
 			procesarAccion(socketCliente);
-			pthread_mutex_lock(&lockMemoria);
+			pthread_mutex_unlock(&lockMemoria);
 
 			printf("Escuchando.. \n");
 		}
@@ -29,7 +29,7 @@ void escuchar(int listenningSocket) {
 void procesarAccion(int socketEntrante) {
 	Paquete paquete;
 	void* datos;
-	if (RecibirPaqueteServidor(socketEntrante, MEMORIA, &paquete) > 0) {
+	if (RecibirPaquete(socketEntrante, &paquete) > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
 			datos = paquete.mensaje;
@@ -63,7 +63,6 @@ void procesarAccion(int socketEntrante) {
 				JOURNAL_MEMORIA();
 				break;
 			}
-
 
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");
@@ -169,6 +168,12 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 
 void procesarRequestTABLA_GOSSIPING(int socketKernel) {
 	log_info(loggerInfo, "Request tabla gossiping recibida de Kernel");
+
+	char* tiempoGossiping = string_new();
+	string_append_with_format(&tiempoGossiping, "%d", configuracion->TIEMPO_GOSSIPING);
+	EnviarDatosTipo(socketKernel, MEMORIA, tiempoGossiping, strlen(tiempoGossiping) + 1, TABLA_GOSSIPING);
+	free(tiempoGossiping);
+
 	void enviarMemoria(t_memoria* memoria) {
 		char* response = string_new();
 		string_append_with_format(&response, "%s %s %d", memoria->ip, memoria->puerto, memoria->memoryNumber);

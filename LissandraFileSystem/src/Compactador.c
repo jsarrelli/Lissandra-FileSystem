@@ -9,15 +9,12 @@
 
 void compactarTabla(char*nombreTabla) {
 
-	pthread_mutex_lock(&mutexFS);
-
 	log_info(loggerInfo, "Compactando tabla: %s", nombreTabla);
 
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
 		log_error(loggerError, "No hay nada para compactar");
-		pthread_mutex_unlock(&mutexFS);
 		return;
 	}
 
@@ -31,12 +28,15 @@ void compactarTabla(char*nombreTabla) {
 
 	t_list* registrosNuevos = list_create();
 	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
-	log_info(loggerInfo, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(archivosTmpc));
+	log_info(loggerInfo, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(registrosNuevos));
 	filtrarRegistros(registrosNuevos);
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
 
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
+	pthread_mutex_t semaforoCompactacion = getSemaforoByTabla(nombreTabla)->mutexCompactacion;
+	double tiempoInicial = getCurrentTime();
+	pthread_mutex_lock(&semaforoCompactacion);
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
 
 	list_iterate(archivosTmpc, (void*) eliminarArchivo);
@@ -44,9 +44,10 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosTemporales, free);
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
-	log_trace(loggerInfo, "Compactacion de <%s> exitosa", nombreTabla);
+	double tiempoFinal = getCurrentTime();
+	pthread_mutex_unlock(&semaforoCompactacion);
 
-	pthread_mutex_unlock(&mutexFS);
+	log_trace(loggerTrace, "Compactacion de <%s> exitosa. Tiempo: %f milisegundos",nombreTabla, (tiempoFinal - tiempoInicial) * 1000);
 }
 
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
@@ -75,16 +76,12 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		filtrarRegistros(registrosNuevos);
 
 		//pasamos la lista de registros a una lista de char* para escribirlos en el binario
-
 		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
-
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
-		//sem_wait(&mutexEscrituraBloques);
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
-		//sem_post(&mutexEscrituraBloques);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
@@ -278,6 +275,7 @@ void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	if (leerArchivoDeTabla(pathArchivo, archivo) == -1) {
+		log_error(loggerError, "No se pudo abrir el archivo %s", pathArchivo);
 		return;
 	}
 
@@ -296,9 +294,9 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		int fd = open(rutaBloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 		if (fd == -1) {
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);
+			return;
 		}
 
-		//char * contenidoBloque =NULL;
 		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 		string_append(&contenidoBloques, contenidoBloque);
@@ -311,17 +309,20 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
 
-	char** registrosChar = string_split(contenidoBloques, "\n");
-	int i = 0;
-	while (registrosChar[i] != NULL) {
-		char** valores = string_split(registrosChar[i], ";");
-		t_registro* registro = registro_new(valores);
-		list_add(listaRegistros, registro);
-		//freePunteroAPunteros(valores);
-		i++;
-	}
+	if (!string_is_empty(contenidoBloques)) {
 
-	freePunteroAPunteros(registrosChar);
+		char** registrosChar = string_split(contenidoBloques, "\n");
+		int i = 0;
+		while (registrosChar[i] != NULL) {
+			char** valores = string_split(registrosChar[i], ";");
+			t_registro* registro = registro_new(valores);
+			list_add(listaRegistros, registro);
+			//freePunteroAPunteros(valores);
+			i++;
+		}
+
+		freePunteroAPunteros(registrosChar);
+	}
 	free(contenidoBloques);
 	freeArchivo(archivo);
 }
@@ -393,6 +394,25 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 
 }
 
+
+t_list* buscarTmpcsByNombreTabla(char* nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
+
+	bool isTemporal(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		bool result = strcmp(extension, "tmpc") == 0;
+		free(extension);
+		if (!result) {
+			free(rutaArchivoActual);
+		}
+		return result;
+	}
+	t_list* archivosTemporales = list_filter(archivos, (void*) isTemporal);
+	list_destroy(archivos);
+	return archivosTemporales;
+
+}
+
 t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 	t_list* archivos = buscarArchivos(nombreTabla);
 	bool isBin(char* rutaArchivoActual) {
@@ -419,7 +439,7 @@ void iniciarThreadCompactacion(char* nombreTabla) {
 
 		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
-		//compactarTabla(nombreTabla);
+		compactarTabla(nombreTabla);
 
 	}
 

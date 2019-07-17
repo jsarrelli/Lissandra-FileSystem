@@ -43,20 +43,6 @@ char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal) {
 
 int existeTabla(char* nombreTabla) {
 
-//	char* rutaTabla = armarRutaTabla(nombreTabla);
-//	DIR* tablaActual;
-//
-//	tablaActual = opendir(rutaTabla);
-//
-//	if (tablaActual != NULL) {
-//		closedir(tablaActual);
-//		free(rutaTabla);
-//		return 1;
-//	}
-//	closedir(tablaActual);
-//	free(rutaTabla);
-//	return 0;
-
 	t_list* directorios = list_create();
 	buscarDirectorios(rutas.Tablas, directorios);
 
@@ -70,13 +56,15 @@ int existeTabla(char* nombreTabla) {
 
 	bool resultado = list_any_satisfy(directorios, (void*) isTablaBuscada);
 	list_destroy_and_destroy_elements(directorios, free);
+
 	return resultado;
 }
 
 void insertarTablaEnMemtable(char* nombreTabla) {
+	cargarSemaforosTabla(nombreTabla);
 	t_tabla_memtable* tabla = newTablaMemtable(nombreTabla);
 	list_add(memtable, tabla);
-	log_trace(loggerInfo,"%s insertada en memtable \n", tabla->tabla);
+	log_trace(loggerInfo, "%s insertada en memtable \n", tabla->nombreTabla);
 }
 
 void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones) {
@@ -104,7 +92,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones) {
 
 t_tabla_memtable* newTablaMemtable(char* nombreTabla) {
 	t_tabla_memtable* tabla = malloc(sizeof(t_tabla_memtable));
-	tabla->tabla = string_duplicate(nombreTabla);
+	tabla->nombreTabla = string_duplicate(nombreTabla);
 	tabla->registros = list_create();
 	return tabla;
 }
@@ -135,9 +123,8 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 }
 
 void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
-	printf("\nMetadata de %s: \n", nombreTabla);
-	printf("CONSISTENCIA: %d\nPARTICIONES=%i\nTIEMPO_COMPACTACION=%i\n\n", metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES,
-			metadataTabla.T_COMPACTACION);
+	log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %d\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
+			metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 }
 
 char* armarRutaTabla(char* nombreTabla) {
@@ -252,7 +239,6 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 
 	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
 
-	agregarNuevoBloque(archivo);
 	escribirArchivo(rutaArchivo, archivo);
 	freeArchivo(archivo);
 	return 1;
@@ -302,7 +288,7 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 void removerTabla(char* nombreTabla) {
 
 	bool isTablaBuscada(t_tabla_memtable* tablaActual) {
-		return strcmp(tablaActual->tabla, nombreTabla) == 0;
+		return strcmp(tablaActual->nombreTabla, nombreTabla) == 0;
 	}
 
 	list_remove_and_destroy_by_condition(memtable, (void*) isTablaBuscada, (void*) freeTabla);
@@ -312,13 +298,14 @@ void removerTabla(char* nombreTabla) {
 	char* rutaTabla = armarRutaTabla(nombreTabla);
 	rmdir(rutaTabla);
 	free(rutaTabla);
+
 }
 
 void freeTabla(t_tabla_memtable* tabla) {
 	if (tabla->registros != NULL) {
 		list_destroy_and_destroy_elements(tabla->registros, (void*) freeRegistro);
 	}
-	free(tabla->tabla);
+	free(tabla->nombreTabla);
 	free(tabla);
 }
 
@@ -393,10 +380,9 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 	t_tabla_memtable *tabla = getTablaFromMemtable(nombreTabla);
 
 	t_registro* registro = malloc(sizeof(t_registro));
-	registro->value = malloc(strlen(value) + 1);
+	registro->value = string_duplicate(value);
 	registro->timestamp = timestamp;
 	registro->key = clave;
-	strcpy(registro->value, value);
 
 	list_add(tabla->registros, registro);
 
@@ -425,15 +411,16 @@ void crearYEscribirTemporal(char* rutaTabla) {
 	t_tabla_memtable* tabla = getTablaFromMemtable(nombTabla);
 	if (tabla != NULL && !list_is_empty(tabla->registros)) {
 		crearArchReservarBloqueYEscribirBitmap(rutaArchTemporal);
-		printf("Archivo temporal creado en %s\n\n", nombTabla);
+		log_info(loggerInfo, "Archivo temporal creado en %s", nombTabla);
 
 		t_list* registros = list_map(tabla->registros, (void*) registroToChar);
 
-		//sem_wait(&mutexEscrituraBloques);
-		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal);
-		//sem_post(&mutexEscrituraBloques);
-		list_destroy_and_destroy_elements(registros, free);
 		limpiarRegistrosDeTabla(nombTabla);
+
+		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal);
+
+		list_destroy_and_destroy_elements(registros, free);
+
 	}
 
 	free(rutaArchTemporal);
@@ -507,7 +494,7 @@ int obtenerTamanioListaRegistros(t_list* registros) {
 t_tabla_memtable* getTablaFromMemtable(char* nombreTabla) {
 
 	bool isTablaBuscada(t_tabla_memtable* tablaActual) {
-		return strcmp(tablaActual->tabla, nombreTabla) == 0;
+		return strcmp(tablaActual->nombreTabla, nombreTabla) == 0;
 	}
 	return (t_tabla_memtable*) list_find(memtable, (void*) isTablaBuscada);
 }
@@ -537,6 +524,8 @@ FILE* obtenerArchivoBloque(int numeroBloque, bool sobreEscribirBloques) {
 }
 
 int agregarNuevoBloque(t_archivo* archivo) {
+	pthread_mutex_lock(&mutexBitarray);
+
 	t_list* bloquesLibres = buscarBloquesLibres(1);
 	if (bloquesLibres == NULL) {
 		//no hay mas bloques libres
@@ -555,6 +544,8 @@ int agregarNuevoBloque(t_archivo* archivo) {
 	}
 
 	list_destroy(bloquesLibres);
+
+	pthread_mutex_unlock(&mutexBitarray);
 	return bloqueLibre;
 }
 
@@ -568,6 +559,8 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		return -1;
 	}
 
+	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) liberarBloque);
+
 	void acumularRegistros(char* registro) {
 		string_append_with_format(&registrosAcumulados, "%s;\n", registro);
 	}
@@ -577,7 +570,6 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 
 	int cantidadBloquesNecesarios = ceil((double) tamanioTotalEscribir / metadata.BLOCK_SIZE);
 
-	list_clean(archivo->BLOQUES);
 	for (int i = 0; i < cantidadBloquesNecesarios; i++) {
 		agregarNuevoBloque(archivo);
 	}
@@ -662,7 +654,15 @@ void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros
 	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
-	//t_list* registrosTempToChar = list_map(registros, (void*) registroToChar);
+	list_add_all(listaRegistros, registros);
+	list_destroy(registros);
+	list_destroy_and_destroy_elements(temporales, free);
+}
+
+void getRegistrosFromTempcByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
+	t_list* temporales = buscarTmpcsByNombreTabla(nombreTabla);
+	t_list* registros = list_create();
+	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
 	list_add_all(listaRegistros, registros);
 	list_destroy(registros);
 	list_destroy_and_destroy_elements(temporales, free);
@@ -689,7 +689,6 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 	int numParticionABuscarKey = keyActual % cantParticiones;
 	char* pathArchivo = list_get(archivosBinarios, numParticionABuscarKey);
 	agregarRegistrosFromBloqueByPath(pathArchivo, listaRegistrosBin);
-	//t_list* registrosBinToChar = list_map(listaRegistrosBin, (void*) registroToChar);
 	list_add_all(listaRegistros, listaRegistrosBin);
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 	list_destroy(listaRegistrosBin);
@@ -698,16 +697,25 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 	t_list* registros = list_create();
 
+	log_info(loggerInfo, "Buscando key:%d  de tabla: %s en memtable", keyActual, nombreTabla);
 	t_registro* registroMemtable = getRegistroFromMemtableByKey(nombreTabla, keyActual);
 	if (registroMemtable != NULL) {
 		list_add(registros, registroMemtable);
-
 	}
+
+	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmp", keyActual, nombreTabla);
 	t_registro* registroTmp = getRegistroFromTmpByKey(nombreTabla, keyActual);
 	if (registroTmp != NULL) {
 		list_add(registros, registroTmp);
 	}
 
+	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmpc", keyActual, nombreTabla);
+	t_registro* registroTmpc = getRegistroFromTmpcByKey(nombreTabla, keyActual);
+	if (registroTmpc != NULL) {
+		list_add(registros, registroTmpc);
+	}
+
+	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en bin", keyActual, nombreTabla);
 	t_registro* registroBin = getRegistroFromBinByKey(nombreTabla, keyActual);
 	if (registroBin != NULL) {
 		list_add(registros, registroBin);
@@ -750,12 +758,29 @@ t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) {
 	return registroEncontrado;
 }
 
+t_registro* getRegistroFromTmpcByKey(char* nombreTabla, int key) {
+	t_list* registros = list_create();
+	getRegistrosFromTempcByNombreTabla(nombreTabla, registros);
+	if (list_is_empty(registros)) {
+		list_destroy(registros);
+		return NULL;
+	}
+	filtrarRegistros(registros);
+	t_registro* registroEncontrado = buscarRegistroByKeyFromListaRegistros(registros, key);
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+	return registroEncontrado;
+}
+
 t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key) {
+	t_registro* registro = NULL;
+	//aca se tiro un semaforo porque si vos me dropeas la tabla yo estoy procesando al memtable, puede explotar
+
 	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
 	if (tablaMemtable != NULL && !list_is_empty(tablaMemtable->registros)) {
 		filtrarRegistros(tablaMemtable->registros);
-		return buscarRegistroByKeyFromListaRegistros(tablaMemtable->registros, key);
+		registro = buscarRegistroByKeyFromListaRegistros(tablaMemtable->registros, key);
 	}
-	return NULL;
+
+	return registro;
 }
 

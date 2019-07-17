@@ -13,7 +13,7 @@ typedef struct {
 } t_configuracion_LFS;
 
 typedef struct {
-	char* tabla;
+	char* nombreTabla;
 	t_list* registros;
 } t_tabla_memtable;
 
@@ -23,10 +23,23 @@ typedef struct {
 	int cantBloques;
 } t_archivo;
 
+typedef struct {
+	char* nombreTabla;
+	pthread_mutex_t mutexCompactacion;
+} t_semaforos_tabla;
+
 t_list* memtable;
 t_log* loggerInfo;
 t_log* loggerError;
 t_log* loggerTrace;
+t_list* listaSemaforos;
+
+
+pthread_mutex_t mutexBitarray;
+
+
+
+
 
 
 

@@ -2,7 +2,7 @@
 
 int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaChar, char* tiempoCompactacion) {
 	if (existeTabla(nombreTabla)) {
-		printf("Ya existe una tabla con el nombre %s en el FileSystem\n", nombreTabla);
+		log_error(loggerError, "Ya existe una tabla con el nombre %s en el FileSystem ", nombreTabla);
 		return 1;
 	}
 	crearTablaYParticiones(nombreTabla, cantParticiones);
@@ -14,12 +14,13 @@ int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaCh
 }
 
 int funcionDROP(char* nombreTabla) {
+
 	if (existeTabla(nombreTabla)) {
 		removerTabla(nombreTabla);
-		log_info(loggerInfo,"%s eliminada", nombreTabla);
+		log_info(loggerInfo, "%s eliminada", nombreTabla);
 		return 0;
 	} else {
-		puts("La tabla que se quiere eliminar no existe");
+		log_error(loggerError, "La tabla que se quiere eliminar no existe");
 	}
 	return 1;
 }
@@ -33,8 +34,8 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
 	///////
-	crearYEscribirArchivosTemporales(rutas.Tablas);
-	compactarTabla("TABLA");
+//	crearYEscribirArchivosTemporales(rutas.Tablas);
+//	compactarTabla("TABLA");
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
@@ -45,31 +46,33 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 	}
 	if (existeTabla(nombreTabla)) {
 		insertarKey(nombreTabla, key, value, timeStamp);
-		log_trace(loggerInfo, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
+		log_trace(loggerTrace, "Insert de %s;%s en %s realizado en memtable", key, value, nombreTabla);
 		return 0;
 	} else {
-		log_error(loggerError, "La tabla %s no existe",nombreTabla);
+		log_error(loggerError, "La tabla %s no existe", nombreTabla);
 		return 1;
 	}
 }
 
 t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
+
+		pthread_mutex_t semaforoCompactacion = getSemaforoByTabla(nombreTabla)->mutexCompactacion;
+
+		pthread_mutex_lock(&semaforoCompactacion);
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
+		pthread_mutex_unlock(&semaforoCompactacion);
 
 		if (registro != NULL) {
-			printf("\nRegistro con mayor timestamp: %f;%d;%s\n", registro->timestamp, registro->key, registro->value);
-
-			log_info(loggerInfo, "Select a key %d", registro->key);
-
+			log_trace(loggerTrace, "Registro con mayor timestamp: %f;%d;%s", registro->timestamp, registro->key, registro->value);
 			return registro;
 
 		} else {
-			puts("No hay registros para mostrar");
+			log_trace(loggerTrace, "Registro no encontrado");
 			return NULL;
 		}
 	} else {
-		log_error(loggerError,"La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
+		log_error(loggerError, "La tabla sobre la que se quiere hacer SELECT no existe en LFS\n");
 		return NULL;
 	}
 }
@@ -77,12 +80,10 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 void procesoDump() {
 
 	while (1) {
-		pthread_mutex_lock(&mutexDump);
 
 		usleep(config->TIEMPO_DUMP * 1000);
-		//log_info(loggerInfo, "Iniciando proceso Dump");
+		log_info(loggerInfo, "Iniciando proceso Dump");
 		crearYEscribirArchivosTemporales(rutas.Tablas);
 
-		pthread_mutex_unlock(&mutexDump);
 	}
 }

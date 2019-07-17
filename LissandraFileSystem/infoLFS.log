@@ -1,28 +1,13 @@
-[INFO] 12:52:33:561 LFS Logs/(14603:14603): Inicializando proceso LISSANDRA FILE SYSTEM. 
+[INFO] 09:09:46:590 LFS Logs/(6769:6769): Inicializando LISSANDRA FILE SYSTEM.
+[INFO] 09:09:46:591 LFS Logs/(6769:6769): Levantando archivo de configuracion del proceso LFS 
 
-[INFO] 12:52:33:563 LFS Logs/(14603:14603): Levantando archivo de configuracion del proceso LFS 
+[INFO] 09:09:46:591 LFS Logs/(6769:6769): Archivo de configuracion del proceso LFS levantado 
 
-[INFO] 12:52:33:563 LFS Logs/(14603:14603): Archivo de configuracion del proceso LFS levantado 
+[INFO] 09:09:46:606 LFS Logs/(6769:6769): El tamanio del bitmap es de 3000 bits
+[INFO] 09:09:46:606 LFS Logs/(6769:6769): Archivo Metadata cargado
+[INFO] 09:09:46:606 LFS Logs/(6769:6769): Levantando tablas ya existentes..
+[INFO] 09:10:04:168 LFS Logs/(6769:6771): Request de memoria recibida.. 
 
-[INFO] 12:52:33:592 LFS Logs/(14603:14603): El tamanio del bitmap es de 3000 bits
-[INFO] 12:52:33:592 LFS Logs/(14603:14603): Levantando tablas ya existentes..
-[INFO] 12:52:46:302 LFS Logs/(14603:14603): Bloque 2 reservado
-[INFO] 12:52:46:309 LFS Logs/(14603:14603): Bloque 3 reservado
-[INFO] 12:52:46:310 LFS Logs/(14603:14603): Bloque 4 reservado
-[INFO] 12:52:46:312 LFS Logs/(14603:14603): Bloque 5 reservado
-[INFO] 12:52:46:313 LFS Logs/(14603:14603): Compactando tabla: TABLA
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Obteniendo directorios de archivos binarios..
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Modificando tmp a tmpc..
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/tmp0.tmpc... 
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Lectura de registros de los tmpc finalizada. Hay 1 registros nuevos en tmpc
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Mergeando registros viejos con nuevos
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Leyendo registros de /home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Tablas/TABLA/0.bin... 
-[INFO] 12:52:46:314 LFS Logs/(14603:14603): Bloque 0 liberado
-[INFO] 12:52:46:315 LFS Logs/(14603:14603): Bloque 0 reservado
-[INFO] 12:52:46:317 LFS Logs/(14603:14603): Bloque 6 reservado
-[INFO] 12:52:46:318 LFS Logs/(14603:14603): Bloque 7 reservado
-[INFO] 12:52:46:320 LFS Logs/(14603:14603): Bloque 8 reservado
-[INFO] 12:52:46:323 LFS Logs/(14603:14603): Bloque 3 liberado
-[INFO] 12:52:46:324 LFS Logs/(14603:14603): Bloque 4 liberado
-[INFO] 12:52:46:325 LFS Logs/(14603:14603): Bloque 5 liberado
-[INFO] 12:52:46:327 LFS Logs/(14603:14603): Bloque 3 reservado
+[INFO] 09:11:20:410 LFS Logs/(6769:6771): Request de memoria recibida.. 
+
+[INFO] 09:11:20:611 LFS Logs/(6769:6771): Procesando DESCRIBE ALL
