@@ -49,12 +49,12 @@ void iniciarVariablesKernel() {
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
-//	hardcodearInfoMemorias();
+
+	//hardcodearInfoMemorias();
 //	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
 //			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
-//	hardcodearListaMetadataTabla();
-
+	//hardcodearListaMetadataTabla();
 //	quantum = config->QUANTUM;
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
 	multiprocesamientoUsado = 0;

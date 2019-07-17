@@ -43,3 +43,275 @@
 [TRACE] 15:56:10:765 MEMORIA Logs/(5925:5925): Registro: 8 / JAJAJ / 1563216909914.000000
 [TRACE] 15:56:14:437 MEMORIA Logs/(5925:5925): Se ha eliminado la tabla TABLA
 [TRACE] 15:56:18:176 MEMORIA Logs/(5925:5925): Registro no encontrado
+[TRACE] 13:59:23:761 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 13:59:23:761 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:00:11:320 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:00:11:321 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:00:36:161 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:00:36:162 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:00:51:468 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:00:51:468 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:01:01:962 MEMORIA Logs/(9537:9537): Se ha eliminado la tabla POSTRES
+[TRACE] 14:01:06:778 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:01:18:216 MEMORIA Logs/(9537:9546): Se ha creado la tabla POSTRES
+[TRACE] 14:04:04:724 MEMORIA Logs/(9537:9546): Se ha insertado el siguiente registro: 100 "Flan" en la tabla POSTRES 
+
+[TRACE] 14:04:43:710 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:04:43:711 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:06:27:738 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:06:27:739 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:07:00:761 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:07:00:762 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:07:16:70 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:07:16:71 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:07:16:403 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:07:16:404 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:07:31:377 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:07:31:378 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:07:46:682 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:07:46:683 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:08:01:992 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:08:01:993 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:08:17:298 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:08:17:298 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:16:52:811 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:16:52:811 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:17:09:975 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:17:09:976 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:17:25:571 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:17:25:572 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:17:40:878 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:17:40:878 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:17:56:184 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:17:56:184 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:18:11:492 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:18:11:493 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:18:26:800 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:18:26:800 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:18:42:106 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:18:42:106 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:18:57:411 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:18:57:411 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:19:12:720 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:19:12:720 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:19:28:28 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:19:28:29 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:19:43:335 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:19:43:335 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:19:58:643 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:19:58:643 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:20:13:951 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:20:13:951 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:20:29:257 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:20:29:258 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:20:44:564 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:20:44:564 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:20:59:869 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:20:59:870 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:21:15:174 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:21:15:175 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:21:30:481 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:21:30:481 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:21:45:789 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:21:45:789 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:22:01:95 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:22:01:95 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:22:16:404 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:22:16:404 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:22:31:713 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:22:31:714 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:22:47:21 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:22:47:21 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:23:02:330 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:23:02:330 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:23:17:640 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:23:17:641 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:23:32:950 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:23:32:951 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:23:48:261 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:23:48:261 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:24:03:568 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:24:03:568 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:24:18:876 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:24:18:876 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:24:34:180 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:24:34:181 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:24:49:487 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:24:49:487 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:25:04:792 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:25:04:793 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:25:20:102 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:25:20:102 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:25:35:410 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:25:35:410 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:25:50:715 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:25:50:716 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:26:06:20 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:26:06:21 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:26:21:331 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:26:21:331 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:26:36:637 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:26:36:637 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:26:51:945 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:26:51:946 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:27:07:253 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:27:07:253 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:27:22:560 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:27:22:560 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:27:37:864 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:27:37:864 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:27:53:181 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:27:53:181 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:28:08:512 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:28:08:514 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:28:23:829 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:28:23:830 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:28:39:136 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:28:39:136 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:28:54:443 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:28:54:443 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:29:09:750 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:29:09:750 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:29:25:89 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:29:25:89 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:29:40:399 MEMORIA Logs/(9537:9546): Segmento: POSTRES 
+ Consistencia: SC / cantParticiones: 3 / tiempoCompactacion: 60000 
+[TRACE] 14:29:40:399 MEMORIA Logs/(9537:9546): Segmento: TABL3 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 44444 
+[TRACE] 14:34:15:73 MEMORIA Logs/(9537:9546): Se ha creado la tabla ALGO
+[TRACE] 14:34:17:415 MEMORIA Logs/(9537:9546): Segmento: ALGO 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 4444444 
+[TRACE] 14:34:32:893 MEMORIA Logs/(9537:9546): Segmento: ALGO 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 4444444 
+[TRACE] 14:34:51:919 MEMORIA Logs/(9537:9546): Segmento: ALGO 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 4444444 
+[TRACE] 14:36:16:924 MEMORIA Logs/(9537:9546): Segmento: ALGO 
+ Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 4444444 
+[TRACE] 14:51:20:150 MEMORIA Logs/(11931:11931): Registro: 4 / FDSFSDFSDFS / 1563385361387.000000

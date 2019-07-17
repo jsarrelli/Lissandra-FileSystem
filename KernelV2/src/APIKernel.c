@@ -242,7 +242,6 @@ int consolaSelect(char*argumentos) {
 int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete) {
 //	Paquete paquete;
 	int success;
-
 	if (EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, protocolo)) {
 		log_trace(log_master->logTrace, "El paquete se envio exitosamente");
 	} else {
