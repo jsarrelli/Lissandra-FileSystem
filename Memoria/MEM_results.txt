@@ -315,3 +315,7 @@
 [TRACE] 14:36:16:924 MEMORIA Logs/(9537:9546): Segmento: ALGO 
  Consistencia: SC / cantParticiones: 2 / tiempoCompactacion: 4444444 
 [TRACE] 14:51:20:150 MEMORIA Logs/(11931:11931): Registro: 4 / FDSFSDFSDFS / 1563385361387.000000
+[TRACE] 18:39:19:457 MEMORIA Logs/(8821:8821): Segmento: TABLA 
+ Consistencia: SC / cantParticiones: 4 / tiempoCompactacion: 444444 
+[TRACE] 18:41:45:716 MEMORIA Logs/(8821:8821): Segmento: TABLA 
+ Consistencia: SC / cantParticiones: 4 / tiempoCompactacion: 444444 
