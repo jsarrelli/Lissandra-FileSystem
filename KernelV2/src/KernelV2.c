@@ -17,10 +17,9 @@
  * El Kernel anda, en general, bastante bien
  *
  * TODO: (Cosas boludas)
- * 		- Mejorar la estructura del Kernel (mas expresivo y declarativo)
- * 		- Mejorar el manejo de errores (agregarle cosas)
- *		- Algunos leaks (SOLO FALTAN LEAKS MENORES)
- * 		- Mejorar algunas cositas que deje marcadas y buscar mas errores
+ * 		- Mejorar el manejo de errores (agregarle cosas) + VALIDACIONES
+ *		- Solucionar algunas condiciones de carrera (creo)
+ *
  */
 
 void iniciarVariablesKernel() {
@@ -94,10 +93,10 @@ void* iniciarhiloMetrics(void* args) {
 			calcularMetrics();
 			sem_post(&semMetricas);
 			sem_wait(&semMetricas);
-			copiarMetrics(copiaMetricas, metricas);
+			copiarMetrics();
 			sem_post(&semMetricas);
 			sem_wait(&semMetricas);
-			imprimirMetrics(copiaMetricas);
+			imprimirMetrics(metricas);
 			sem_post(&semMetricas);
 			sem_wait(&semMetricas);
 			reiniciarMetrics(&metricas);
@@ -141,49 +140,28 @@ void iniciarHiloMetadataRefresh() {
 	}
 }
 
-//void inicioKernelUnProcesador() {
-//	char* operacion;
-//	operacion = readline(">");
-//	while (!instruccionSeaSalir(operacion)) {
-//		crearProcesoYMandarloAReady(operacion);
-//		iniciarMultiprocesamiento(NULL);
-//		operacion = readline(">");
-//	}
-//	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
-//	free(operacion);
-//	destruirElementosMain(listaHilos, colaReady);
-//	destruirListaMemorias();
-//	log_info(log_master->logInfo, "Consola terminada");
-//	destruirLogStruct(log_master);
-//}
-
 void cerrarKernel() {
 
-	//terminarHilos();
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
-	log_info(log_master->logInfo, "Consola terminada");
-	destruirLogStruct(log_master);
-//	free(arrayDeHilos);
 
 	sem_wait(&semMetricas);
 	destruirMetrics(&metricas);
 	sem_post(&semMetricas);
 	sem_wait(&semMetricas);
-	destruirMetrics(&copiaMetricas);
+//	destruirMetrics(&copiaMetricas);
+//	list_destroy(copiaMetricas.diferenciaDeTiempoReadLatency);
+//	list_destroy(copiaMetricas.diferenciaDeTiempoWriteLatency);
 	sem_post(&semMetricas);
 
-//	free(config->IP_MEMORIA);
 	free(config);
 	config_destroy(kernelConfig);
 	free(arrayDeHilos);
+	log_info(log_master->logInfo, "Consola terminada");
+	destruirLogStruct(log_master);
 	printf("Llego al final ok\n");
 }
-
-//void terminarHilos() {
-//	pthread_kill(hiloConsola, SIGUSR1);
-//}
 
 int main(void) {
 	iniciarVariablesKernel();

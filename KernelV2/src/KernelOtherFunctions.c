@@ -112,13 +112,6 @@ int contarLineasArchivo(FILE* fichero, char* path) {
 	return num_lineas + 1;
 }
 
-//void destruirArraySemaforos() {
-//	for (int i = 0; i < multiprocesamiento; i++)
-//		sem_destroy(&arraySemaforos[i]);
-//
-//	free(arraySemaforos);
-//}
-
 int instruccionSeaMetrics(char* operacion) {
 	return strcmp(operacion, "METRICS") == 0;
 }
@@ -135,8 +128,16 @@ void crearMetrics(t_metrics* metrica) {
 }
 
 void destruirMetrics(t_metrics* metrica) {
-	list_destroy_and_destroy_elements(metrica->diferenciaDeTiempoReadLatency, free);
-	list_destroy_and_destroy_elements(metrica->diferenciaDeTiempoWriteLatency, free);
+	if (list_is_empty(metrica->diferenciaDeTiempoReadLatency)
+			&& list_is_empty(metrica->diferenciaDeTiempoWriteLatency)) {
+		list_destroy(metrica->diferenciaDeTiempoReadLatency);
+		list_destroy(metrica->diferenciaDeTiempoWriteLatency);
+	} else {
+		list_destroy_and_destroy_elements(
+				metrica->diferenciaDeTiempoReadLatency, free);
+		list_destroy_and_destroy_elements(
+				metrica->diferenciaDeTiempoWriteLatency, free);
+	}
 //	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
@@ -234,13 +235,15 @@ void calcularMetrics() {
 
 }
 
-void copiarMetrics(t_metrics otroMetrica, t_metrics metrica){
-	otroMetrica.readLatency = metrica.readLatency;
-	otroMetrica.writeLatency = metrica.writeLatency;
-	otroMetrica.reads = metrica.reads;
-	otroMetrica.writes = metrica.writes;
-	otroMetrica.diferenciaDeTiempoReadLatency = metrica.diferenciaDeTiempoReadLatency;
-	otroMetrica.diferenciaDeTiempoWriteLatency = metrica.diferenciaDeTiempoWriteLatency;
+void copiarMetrics(){
+	copiaMetricas.readLatency = metricas.readLatency;
+	copiaMetricas.writeLatency = metricas.writeLatency;
+	copiaMetricas.reads = metricas.reads;
+	copiaMetricas.writes = metricas.writes;
+	list_add_all(copiaMetricas.diferenciaDeTiempoReadLatency, metricas.diferenciaDeTiempoReadLatency);
+	list_add_all(copiaMetricas.diferenciaDeTiempoWriteLatency, metricas.diferenciaDeTiempoWriteLatency);
+//	copiaMetricas.diferenciaDeTiempoReadLatency = metricas.diferenciaDeTiempoReadLatency;
+//	copiaMetricas.diferenciaDeTiempoWriteLatency = metricas.diferenciaDeTiempoWriteLatency;
 
 }
 
