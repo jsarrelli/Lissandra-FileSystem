@@ -319,3 +319,23 @@
  Consistencia: SC / cantParticiones: 4 / tiempoCompactacion: 444444 
 [TRACE] 18:41:45:716 MEMORIA Logs/(8821:8821): Segmento: TABLA 
  Consistencia: SC / cantParticiones: 4 / tiempoCompactacion: 444444 
+[TRACE] 19:11:32:427 MEMORIA Logs/(10559:10569): Se ha creado la tabla COLORS
+[TRACE] 19:11:46:627 MEMORIA Logs/(10559:10569): Se ha insertado el siguiente registro: 1 "Blue" en la tabla COLORS 
+
+[TRACE] 19:12:05:97 MEMORIA Logs/(10559:10569): Registro: 1 / Blue / 1563401494582.000000
+[TRACE] 19:16:22:871 MEMORIA Logs/(10917:10928): Se ha creado la tabla COLORS
+[TRACE] 19:16:24:84 MEMORIA Logs/(10917:10928): Se ha insertado el siguiente registro: 1 "Blue" en la tabla COLORS 
+
+[TRACE] 19:16:25:294 MEMORIA Logs/(10917:10928): Registro: 1 / Blue / 1563401783976.000000
+[TRACE] 19:25:08:276 MEMORIA Logs/(11471:11483): Se ha creado la tabla COLORS
+[TRACE] 19:25:09:492 MEMORIA Logs/(11471:11483): Se ha insertado el siguiente registro: 1 "Blue" en la tabla COLORS 
+
+[TRACE] 19:26:58:955 MEMORIA Logs/(11471:11483): Registro: 1 / Blue / 1563402309384.000000
+[TRACE] 19:34:10:783 MEMORIA Logs/(12297:12308): Se ha creado la tabla COLORS
+[TRACE] 19:34:11:989 MEMORIA Logs/(12297:12308): Se ha insertado el siguiente registro: 1 "Blue" en la tabla COLORS 
+
+[TRACE] 19:34:17:582 MEMORIA Logs/(12297:12308): Registro: 1 / Blue / 1563402851886.000000
+[TRACE] 19:45:54:910 MEMORIA Logs/(13516:13526): Se ha creado la tabla COLORS
+[TRACE] 19:45:56:154 MEMORIA Logs/(13516:13526): Se ha insertado el siguiente registro: 1 "Blue" en la tabla COLORS 
+
+[TRACE] 19:46:17:682 MEMORIA Logs/(13516:13526): Registro: 1 / Blue / 1563403556053.000000

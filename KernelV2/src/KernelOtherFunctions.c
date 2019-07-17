@@ -147,8 +147,15 @@ void reiniciarMetrics(t_metrics* metrica) {
 	metrica->writes = 0;
 	metrica->readLatency = 0;
 	metrica->writeLatency = 0;
-	list_clean_and_destroy_elements(metrica->diferenciaDeTiempoReadLatency, free);
-	list_clean_and_destroy_elements(metrica->diferenciaDeTiempoWriteLatency, free);
+	list_clean(metrica->diferenciaDeTiempoReadLatency);
+	list_clean(metrica->diferenciaDeTiempoWriteLatency);
+	//list_clean_and_destroy_elements(metrica->diferenciaDeTiempoReadLatency, free);
+//	list_clean_and_destroy_elements(metrica->diferenciaDeTiempoWriteLatency, free);
+
+
+
+
+
 //	list_clean(metricas.memoryLoadMemorias);
 	// TODO:
 	// Acordarse de borrar la info de todas las memorias

@@ -104,7 +104,6 @@ void cargarMemtable() {
 
 	t_list* nombreTablas = list_map(listaDirectorios, (void*) obtenerNombreTablaByRuta);
 
-
 	list_iterate(nombreTablas, (void*) insertarTablaEnMemtable);
 
 	list_destroy_and_destroy_elements(nombreTablas, free);
@@ -201,8 +200,10 @@ void cargarSemaforosTabla(char* nombreTabla) {
 
 	semaforoTabla->nombreTabla = string_duplicate(nombreTabla);
 
-	pthread_mutex_t mutexCompactacion = semaforoTabla->mutexCompactacion;
+	pthread_mutex_t mutexCompactacion;
 	pthread_mutex_init(&mutexCompactacion, NULL);
+
+	semaforoTabla->mutexCompactacion = mutexCompactacion;
 
 	list_add(listaSemaforos, semaforoTabla);
 

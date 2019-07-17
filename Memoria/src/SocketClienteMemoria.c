@@ -190,7 +190,7 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	free(consulta);
 
 	Paquete paquete;
-	if(RecibirPaquete(socketFileSystem, &paquete)<0){
+	if (RecibirPaquete(socketFileSystem, &paquete) <= 0) {
 		return NULL;
 	}
 

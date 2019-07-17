@@ -211,11 +211,12 @@ int consolaSelect(char*argumentos) {
 		char* request = string_new();
 		string_append_with_format(&request, "%s %d", nombreTabla, key);
 
-		if (enviarInfoMemoria(socketMemoria, request, SELECT, &paquete) == SUPER_ERROR) {
+		EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, SELECT);
+		if (RecibirPaquete(socketMemoria, &paquete) <= 0) {
 			freePunteroAPunteros(valores);
 			return SUPER_ERROR;
 		} else {
-			log_info(log_master->logInfo, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
+			log_trace(log_master->logTrace, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 		}
 
 		free(paquete.mensaje);
@@ -238,7 +239,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		log_error(log_master->logError, "Error al enviar paquete");
 		return SUPER_ERROR;
 	}
-	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, paquete) < 0) {
+	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, paquete) <= 0) {
 		success = 1;
 	} else {
 		success = atoi(paquete->mensaje);
@@ -398,7 +399,7 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1, DESCRIBE);
 
 	Paquete paquete;
-	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) < 0) {
+	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) <= 0) {
 		return SUPER_ERROR;
 	} else if (atoi(paquete.mensaje) == 1) {
 		puts("La tabla no existe");

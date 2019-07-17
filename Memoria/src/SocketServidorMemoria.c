@@ -77,7 +77,7 @@ void procesarAccion(int socketEntrante) {
 
 void procesarRequestSELECT(char* request, int socketKernel) {
 	log_info(loggerInfo, "Procesando SELECT");
-	t_registro* registro = procesarSELECT(request);
+	t_registro_memoria* registro = procesarSELECT(request);
 
 	if (registro != NULL) {
 		char* response = string_new();
@@ -92,7 +92,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 void procesarRequestINSERT(char* request, int socketKernel) {
 	char* consulta = string_duplicate(request);
 	log_info(loggerInfo, "Procesando INSERT");
-	t_registro* registro = procesarINSERT(consulta);
+	t_registro_memoria* registro = procesarINSERT(consulta);
 	log_info(loggerInfo, "Regitro ya insertado, enviado respuesta a Kernel");
 	if (registro != NULL) {
 		enviarSuccess(0, INSERT, socketKernel);
