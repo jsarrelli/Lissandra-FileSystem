@@ -111,11 +111,12 @@ int consolaAdd(char*argumento) {
 	consistencia cons = procesarConsistencia(valores[3]);
 
 	int id = atoi(valores[1]);
-	if (procesarAdd(id, cons) == SUPER_ERROR)
+	if (procesarAdd(id, cons) == SUPER_ERROR) {
+		freePunteroAPunteros(valores);
 		return SUPER_ERROR;
+	}
 
 	freePunteroAPunteros(valores);
-//	free(argumentoAux);
 
 	return TODO_OK;
 }
@@ -265,11 +266,15 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
 
 	int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
-	char request[100];
-	sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
-	Paquete paquete;
-	if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR)
-		return SUPER_ERROR;
+
+	if (socketMemoria > 0) {
+		char request[100];
+		sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
+		Paquete paquete;
+		if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR)
+			return SUPER_ERROR;
+	}
+
 	return TODO_OK;
 }
 
@@ -280,9 +285,15 @@ void enviarJournalMemoria(int socketMemoria) {
 
 int consolaJournal() {
 	void journalMemoria(infoMemoria* memoria) {
+
 		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d", memoria->id);
-//		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
-//		EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
+		if (socketMemoria < 0) {
+			log_error(log_master->logError, "No se pudo mandar el mensaje");
+		} else {
+			EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
+		}
+
 	}
 
 	bool _tieneCriterio(void* memoria) {
@@ -337,7 +348,7 @@ metadataTabla* deserealizarMetadata(char* metadataSerializada) {
 	int tiempoCompactacion = atoi(datos[3]);
 	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
 
-	//mostrarMetadata(metadata);
+//mostrarMetadata(metadata);
 
 	freePunteroAPunteros(datos);
 	free(nombreTabla);
@@ -374,45 +385,55 @@ int procesarDescribeAll(int socketMemoria) {
 	Paquete paquete;
 	while ((estadoRecibir = RecibirPaquete(socketMemoria, &paquete)) > 0) {
 		metadataTabla* metadata = deserealizarMetadata(paquete.mensaje);
+
 		log_trace(log_master->logTrace, "Tabla:%s.  Consistencia:%d  Cant. Particiones: %d", metadata->nombreTabla, metadata->consistencia,
 				metadata->nParticiones);
+
 		agregarTabla(metadata);
 		free(paquete.mensaje);
 	}
 
 	if (estadoRecibir < 0)
 		return SUPER_ERROR;
+	log_trace(log_master->logTrace, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));
 	return TODO_OK;
 }
 
 int procesarDescribe(int socketMemoria, char* nombreTabla) {
 	log_trace(log_master->logTrace, "Se pide la metadata de %s", nombreTabla);
-//	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1, DESCRIBE);
-//
-//	Paquete paquete;
-//	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) < 0) {
-//		return SUPER_ERROR;
-//	} else if (atoi(paquete.mensaje) == 1) {
-//		puts("La tabla no existe");
-//
-//	} else {
-//		// TODO: Agregar verificacion aca
-//		metadataTabla* metadataRecibida = deserealizarMetadata(paquete.mensaje);
-//		agregarTabla(metadataRecibida);
-//	}
-//	free(paquete.mensaje);
+	EnviarDatosTipo(socketMemoria, KERNEL, nombreTabla, strlen(nombreTabla) + 1, DESCRIBE);
+
+	Paquete paquete;
+	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) < 0) {
+		return SUPER_ERROR;
+	} else if (atoi(paquete.mensaje) == 1) {
+		puts("La tabla no existe");
+
+	} else {
+		// TODO: Agregar verificacion aca
+		metadataTabla* metadataRecibida = deserealizarMetadata(paquete.mensaje);
+		agregarTabla(metadataRecibida);
+	}
+	free(paquete.mensaje);
 	return TODO_OK;
 }
 
 int consolaDescribe(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
-	if (nombreTabla == NULL) {
-		if (procesarDescribeAll(socketMemoria) == SUPER_ERROR)
-			return SUPER_ERROR;
+
+	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto,
+
+	memoriaAlAzar->ip);
+	if (socketMemoria > 0) {
+		log_error(log_master->logError, "Error de conexion");
 	} else {
-		if (procesarDescribe(socketMemoria, nombreTabla) == SUPER_ERROR)
-			return SUPER_ERROR;
+		if (nombreTabla == NULL) {
+			if (procesarDescribeAll(socketMemoria) == SUPER_ERROR)
+				return SUPER_ERROR;
+		} else {
+			if (procesarDescribe(socketMemoria, nombreTabla) == SUPER_ERROR)
+				return SUPER_ERROR;
+		}
 	}
 
 	return TODO_OK;
@@ -457,17 +478,23 @@ int consolaDrop(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 
 	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
-	char request[100];
-	sprintf(request, "%s", nombreTabla);
-	Paquete paquete;
-	if (enviarInfoMemoria(socketMemoria, request, DROP, &paquete) == SUPER_ERROR) {
-		return SUPER_ERROR;
-	} else {
+	if (socketMemoria < 0) {
+		log_error(log_master->logError, "Error de conexion");
 
-		bool findByNombre(metadataTabla* tablaActual) {
-			return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
+	} else {
+		char request[100];
+		sprintf(request, "%s", nombreTabla);
+		Paquete paquete;
+		if (enviarInfoMemoria(socketMemoria, request, DROP, &paquete) == SUPER_ERROR) {
+			return SUPER_ERROR;
+		} else {
+
+			bool findByNombre(metadataTabla* tablaActual) {
+				return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
+			}
+			list_remove_and_destroy_by_condition(listaMetadataTabla, (void*) findByNombre, (void*) freeMetadata);
 		}
-		list_remove_and_destroy_by_condition(listaMetadataTabla, (void*) findByNombre, (void*) freeMetadata);
+
 	}
 
 	return TODO_OK;

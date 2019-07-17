@@ -29,7 +29,7 @@ void crearMetrics(t_metrics* metrica);
 void destruirMetrics(t_metrics* metrica);
 void reiniciarMetrics(t_metrics* metrica);
 void calcularMetrics();
-void copiarMetrics(t_metrics otroMetrica, t_metrics metrica);
+void copiarMetrics();
 void imprimirMetrics(t_metrics metrica);
 bool memoriaTieneALgunCriterio(infoMemoria* memoria);
 

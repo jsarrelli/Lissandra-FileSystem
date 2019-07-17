@@ -17,10 +17,9 @@
  * El Kernel anda, en general, bastante bien
  *
  * TODO: (Cosas boludas)
- * 		- Mejorar la estructura del Kernel (mas expresivo y declarativo)
- * 		- Mejorar el manejo de errores (agregarle cosas)
- *		- Algunos leaks (SOLO FALTAN LEAKS MENORES)
- * 		- Mejorar algunas cositas que deje marcadas y buscar mas errores
+ * 		- Mejorar el manejo de errores (agregarle cosas) + VALIDACIONES
+ *		- Solucionar algunas condiciones de carrera (creo)
+ *
  */
 
 void iniciarVariablesKernel() {
@@ -50,11 +49,11 @@ void iniciarVariablesKernel() {
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
-	hardcodearInfoMemorias();
+//	hardcodearInfoMemorias();
 //	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
 //			((infoMemoria*) list_get(listaMemorias, 1))->id);
 	listaMetadataTabla = list_create();
-	hardcodearListaMetadataTabla();
+//	hardcodearListaMetadataTabla();
 
 //	quantum = config->QUANTUM;
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
@@ -82,6 +81,7 @@ void iniciarVariablesKernel() {
 //		}
 //	}
 
+	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 }
 
 void* iniciarhiloMetrics(void* args) {
@@ -94,10 +94,10 @@ void* iniciarhiloMetrics(void* args) {
 			calcularMetrics();
 			sem_post(&semMetricas);
 			sem_wait(&semMetricas);
-			copiarMetrics(copiaMetricas, metricas);
+			copiarMetrics();
 			sem_post(&semMetricas);
 			sem_wait(&semMetricas);
-			imprimirMetrics(copiaMetricas);
+			imprimirMetrics(metricas);
 			sem_post(&semMetricas);
 			sem_wait(&semMetricas);
 			reiniciarMetrics(&metricas);
@@ -130,9 +130,9 @@ void iniciarConsolaKernel() {
 }
 
 void iniciarHiloMetadataRefresh() {
-
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
+		log_trace(log_master->logTrace, "Iniciar Describe global");
 		if (consolaDescribe(NULL) == SUPER_ERROR)
 			log_error(log_master->logError, "Fallo el describe global automatico");
 
@@ -140,81 +140,61 @@ void iniciarHiloMetadataRefresh() {
 }
 
 void iniciarHiloGossiping() {
-	log_info(log_master->logInfo, "Iniciando hilo de gossiping. Tiempo:%d milisegundos", tiempoGossiping);
-	while (true) {
-		usleep(tiempoGossiping*1000);
-		if (conocerMemorias() == SUPER_ERROR)
-			log_error(log_master->logError, "Fallo conocer memorias");
-	}
-}
-//void inicioKernelUnProcesador() {
-//	char* operacion;
-//	operacion = readline(">");
-//	while (!instruccionSeaSalir(operacion)) {
-//		crearProcesoYMandarloAReady(operacion);
-//		iniciarMultiprocesamiento(NULL);
-//		operacion = readline(">");
+	log_info(log_master->logInfo, "Iniciando hilo de gossiping");
+	log_info(log_master->logInfo, "Descubriendo memorias..");
+//	while (true) {
+//		usleep(tiempoGossiping*1000);
+//		if (conocerMemorias() == SUPER_ERROR)
+//			log_error(log_master->logError, "Fallo conocer memorias");
 //	}
-//	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
-//	free(operacion);
-//	destruirElementosMain(listaHilos, colaReady);
-//	destruirListaMemorias();
-//	log_info(log_master->logInfo, "Consola terminada");
-//	destruirLogStruct(log_master);
-//}
+	if (conocerMemorias() == SUPER_ERROR)
+		log_error(log_master->logError, "Fallo conocer memorias");
+}
+
 
 void cerrarKernel() {
 
-	//terminarHilos();
 	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
-	log_info(log_master->logInfo, "Consola terminada");
-	destruirLogStruct(log_master);
-//	free(arrayDeHilos);
 
 	sem_wait(&semMetricas);
 	destruirMetrics(&metricas);
 	sem_post(&semMetricas);
 	sem_wait(&semMetricas);
-	destruirMetrics(&copiaMetricas);
+//	destruirMetrics(&copiaMetricas);
+//	list_destroy(copiaMetricas.diferenciaDeTiempoReadLatency);
+//	list_destroy(copiaMetricas.diferenciaDeTiempoWriteLatency);
 	sem_post(&semMetricas);
 
-//	free(config->IP_MEMORIA);
 	free(config);
 	config_destroy(kernelConfig);
 	free(arrayDeHilos);
+	log_info(log_master->logInfo, "Consola terminada");
+	destruirLogStruct(log_master);
 	printf("Llego al final ok\n");
 }
 
-//void terminarHilos() {
-//	pthread_kill(hiloConsola, SIGUSR1);
-//}
 
 int main(void) {
 	iniciarVariablesKernel();
-	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
 
-	conocerMemorias();
-//	if(conocerMemorias()==-1){
-//		log_error(log_master->logError, "No se pudo conocer las memorias");
-//		return EXIT_FAILURE;
-//	}
-
+	// Hilo de Gossiping
 	pthread_create(&hiloGossiping, NULL, (void*) iniciarHiloGossiping, NULL);
 	pthread_detach(hiloGossiping);
+
 	// Hilo de metrics
 	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
 	pthread_detach(hiloMetrics);
+
+	// Hilo de Describe global
+//	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+//	pthread_detach(hiloMetadataRefresh);
 
 	// Hilo de consola
 
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
-
-	// Hilo de Describe global
-	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
-	pthread_detach(hiloMetadataRefresh);
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);

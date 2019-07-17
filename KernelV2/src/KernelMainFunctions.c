@@ -138,47 +138,6 @@ void agregarRequestAlProceso(procExec* proceso, char* operacion) {
 	list_add(proceso->script, operacion);
 }
 
-//void* funcionThread(void* args) {
-//	sem_wait(&ejecutarHilos);
-//
-//	sem_wait(&mutex_colaReadyPOP);
-//	procExec* proceso = NULL;
-//	proceso = queue_pop(colaReady);
-//	sem_post(&mutex_colaReadyPOP);
-//
-//	void _correrProceso(char*request) {
-//		procesarInputKernel(request);
-//		cantRequestsEjecutadas++;
-//	}
-//
-//	list_iterate(proceso->script, (void*) _correrProceso);
-//	destruirProceso(proceso);
-//
-//	// Creo que aca se liberan los recursos del proceso
-//	return NULL;
-//}
-
-//void otorgarId(bool* tieneID) {
-//	if (!(*tieneID)) {
-//		sem_wait(&mutex_id_proceso);
-//		idHilo++;
-//		sem_post(&mutex_id_proceso);
-//
-//		*tieneID = true;
-//
-//		if (idHilo == multiprocesamientoUsado)
-//			sem_post(&bin_main);
-//	}
-//
-//}
-
-//void desbloquearHilos() {
-//	int tamCola = queue_size(colaReady);
-//	if (tamCola <= multiprocesamiento)
-//		for (int i = 0; i < tamCola; i++)
-//			sem_post(&arraySemaforos[i]);
-//}
-
 bool interrupcionPorEstado(estadoProceso estado) {
 	return estado == ERROR;
 }
@@ -268,10 +227,6 @@ void* iniciarMultiprocesamiento(void* args) {
 
 	return NULL;
 }
-
-//void ejecutarProcesos() {
-//	sem_post(&ejecutarHilos);
-//}
 
 void inicializarLogStruct() {
 	log_master->logInfo = log_create((char*) INFO_KERNEL, "Kernel Info Logs", 1, LOG_LEVEL_INFO);
@@ -409,10 +364,8 @@ void crearProcesoYMandarloAReady(char* operacion) {
 }
 
 int conocerMemorias() {
-	log_info(log_master->logInfo, "Descubriendo memorias..");
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
 	if (socketMemoria == -1) {
-		log_error(log_master->logError, "Nuestra memoria seed no esta conectada");
 		return SUPER_ERROR;
 	}
 
@@ -437,6 +390,7 @@ int conocerMemorias() {
 	}
 	if (codRecibir < 0)
 		return SUPER_ERROR;
+	log_trace(log_master->logTrace, "El tamaño de la listaMemorias es: %d", list_size(listaMemorias));
 	return TODO_OK;
 }
 
