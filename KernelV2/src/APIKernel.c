@@ -186,7 +186,7 @@ int consolaSelect(char*argumentos) {
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
-	log_trace(log_master->logTrace, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
+	log_info(log_master->logInfo, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
@@ -216,7 +216,13 @@ int consolaSelect(char*argumentos) {
 			freePunteroAPunteros(valores);
 			return SUPER_ERROR;
 		} else {
-			log_trace(log_master->logTrace, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
+
+			if (atoi(paquete.mensaje) == 1) {
+				log_trace(log_master->logTrace, "Registros no encontrado");
+			} else {
+				log_trace(log_master->logTrace, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
+			}
+
 		}
 
 		free(paquete.mensaje);

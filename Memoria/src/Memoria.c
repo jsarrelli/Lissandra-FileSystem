@@ -10,9 +10,9 @@
 #include "Memoria.h"
 
 int main() {
-	loggerInfo = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
-	loggerTrace = log_create("MEM_results.txt", "MEMORIA Logs", true, LOG_LEVEL_TRACE);
-	loggerError = log_create("MEM_resuslts.txt", "MEMORIA Logs", true, LOG_LEVEL_ERROR);
+	loggerInfo = log_create("MEM_logs.log", "MEMORIA Logs", true, LOG_LEVEL_INFO);
+	loggerTrace = log_create("MEM_results.log", "MEMORIA Logs", true, LOG_LEVEL_TRACE);
+	loggerError = log_create("MEM_resuslts.log", "MEMORIA Logs", true, LOG_LEVEL_ERROR);
 
 	log_info(loggerInfo, "--Inicializando proceso MEMORIA--");
 	cargarConfiguracion();
