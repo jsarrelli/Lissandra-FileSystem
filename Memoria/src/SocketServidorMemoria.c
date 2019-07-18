@@ -31,7 +31,9 @@ void procesarAccion(int socketEntrante) {
 	if (cantDatosRecibidos > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
+
 			pthread_mutex_lock(&lockMemoria);
+
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
@@ -74,6 +76,7 @@ void procesarAccion(int socketEntrante) {
 				break;
 			}
 			pthread_mutex_unlock(&lockMemoria);
+
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
@@ -83,7 +86,6 @@ void procesarAccion(int socketEntrante) {
 		free(paquete.mensaje);
 		close(socketEntrante);
 	}
-
 
 }
 
@@ -158,23 +160,16 @@ void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {
 	free(succes);
 }
 
-void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
+void procesarGossiping(char* memoriasGossiping, int socketMemoria) {
 	//recibimos toda la tabla
-	t_memoria* memoriaRecibida = deserealizarMemoria(memoriaGossiping);
-	agregarMemoriaNueva(memoriaRecibida);
-
-	Paquete paquete;
-	while (true) {
-		if (RecibirPaquete(socketMemoria, &paquete) > 0) {
-			if (strcmp(paquete.mensaje, "fin") == 0) {
-				free(paquete.mensaje);
-				break;
-			}
-			t_memoria* memoriaRecibida = deserealizarMemoria(memoriaGossiping);
-			agregarMemoriaNueva(memoriaRecibida);
-			free(paquete.mensaje);
-		}
+	int i = 0;
+	char** memorias = string_split(memoriasGossiping, "/");
+	while (memorias[i] != NULL) {
+		t_memoria* memoriaRecibida = deserealizarMemoria(memorias[i]);
+		agregarMemoriaNueva(memoriaRecibida);
+		i++;
 	}
+	freePunteroAPunteros(memorias);
 
 	//enviamos nuestra tabla
 	enviarTablaGossiping(socketMemoria);

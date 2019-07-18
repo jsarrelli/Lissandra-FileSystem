@@ -145,39 +145,40 @@ int HandshakeInicial() {
 }
 
 void enviarTablaGossiping(int socketMemoriaDestino) {
+	char* memoriasSerializadas = string_new();
 
-	void enviarMemoriaConocida(t_memoria* memoriaConocida) {
-		char request[100];
-		sprintf(request, "%s %s %d", memoriaConocida->ip, memoriaConocida->puerto, memoriaConocida->memoryNumber);
-		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
+	void serializarMemoria(t_memoria* memoriaConocida) {
+		string_append_with_format(&memoriasSerializadas, "%s %s %d /", memoriaConocida->ip, memoriaConocida->puerto,
+				memoriaConocida->memoryNumber);
 	}
-	list_iterate(tablaGossiping, (void*) enviarMemoriaConocida);
-	EnviarDatosTipo(socketMemoriaDestino, MEMORIA, "fin", 4, GOSSIPING);
+	list_iterate(tablaGossiping, (void*) serializarMemoria);
+	EnviarDatosTipo(socketMemoriaDestino, MEMORIA, memoriasSerializadas, strlen(memoriasSerializadas) + 1, GOSSIPING);
 }
 
-void intercambiarTablasGossiping(t_memoria* memoria) {
-	int socketMemoria = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
-
-	if (socketMemoria == -1) {
+void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
+	int socketMemoriaSeed = ConectarAServidor(atoi(memoriaSeed->puerto), memoriaSeed->ip);
+	if (socketMemoriaSeed == -1) {
 		return;
 	}
-	enviarTablaGossiping(socketMemoria);
+
+	enviarTablaGossiping(socketMemoriaSeed);
 
 	Paquete paquete;
-	while (true) {
-		if (RecibirPaquete(socketMemoria, &paquete) > 0) {
 
-			if (strcmp(paquete.mensaje, "fin") == 0) {
-				free(paquete.mensaje);
-				break;
-			}
-			t_memoria* memoriaRecibida = deserealizarMemoria(paquete.mensaje);
+	if (RecibirPaquete(socketMemoriaSeed, &paquete) > 0) {
+
+		int i = 0;
+		char** memorias = string_split(paquete.mensaje, "/");
+		while (memorias[i] != NULL) {
+			t_memoria* memoriaRecibida = deserealizarMemoria(memorias[i]);
 			agregarMemoriaNueva(memoriaRecibida);
-			free(paquete.mensaje);
+			i++;
 		}
+		freePunteroAPunteros(memorias);
+		free(paquete.mensaje);
 	}
-}
 
+}
 t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(loggerInfo, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
