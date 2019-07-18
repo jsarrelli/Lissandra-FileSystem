@@ -9,7 +9,7 @@
 
 void compactarTabla(char*nombreTabla) {
 
-	log_info(loggerInfo, "Compactando tabla: %s", nombreTabla);
+	log_trace(loggerTrace, "Compactando tabla: %s", nombreTabla);
 
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
@@ -34,9 +34,9 @@ void compactarTabla(char*nombreTabla) {
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
 
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
-	pthread_mutex_t semaforoCompactacion = getSemaforoByTabla(nombreTabla)->mutexCompactacion;
+
 	double tiempoInicial = getCurrentTime();
-	pthread_mutex_lock(&semaforoCompactacion);
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
 
 	list_iterate(archivosTmpc, (void*) eliminarArchivo);
@@ -45,9 +45,9 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
 	double tiempoFinal = getCurrentTime();
-	pthread_mutex_unlock(&semaforoCompactacion);
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
-	log_trace(loggerTrace, "Compactacion de <%s> exitosa. Tiempo: %f milisegundos",nombreTabla, (tiempoFinal - tiempoInicial) * 1000);
+	log_trace(loggerTrace, "Compactacion de <%s> exitosa. Tiempo: %f milisegundos", nombreTabla, (tiempoFinal - tiempoInicial) * 1000);
 }
 
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
@@ -296,7 +296,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);
 			return;
 		}
-
+		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
 		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 		string_append(&contenidoBloques, contenidoBloque);
@@ -393,7 +393,6 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 	return archivosTemporales;
 
 }
-
 
 t_list* buscarTmpcsByNombreTabla(char* nombreTabla) {
 	t_list* archivos = buscarArchivos(nombreTabla);

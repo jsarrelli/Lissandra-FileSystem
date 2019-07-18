@@ -21,6 +21,21 @@ int ConectarAServidor(int puerto, char* ip) {
 
 }
 
+int ConectarAServidorPlus(int puerto, char* ip) {
+	int socket;
+	while (true) {
+
+		socket = ConectarAServidor(puerto, ip);
+		if (socket != -1) {
+			break;
+		}
+		usleep(100);
+		printf("No se pudo conectar a %s / %d, reintentando..\n",ip,puerto);
+	}
+
+	return socket;
+}
+
 int configurarSocketServidor(char* puertoEscucha) {
 
 	struct addrinfo hints;

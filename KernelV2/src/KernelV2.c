@@ -128,7 +128,6 @@ void iniciarConsolaKernel() {
 		}
 	}
 }
-
 void iniciarHiloMetadataRefresh() {
 	while (true) {
 		usleep(config->METADATA_REFRESH * 1000);
@@ -193,7 +192,6 @@ int main(void) {
 	pthread_detach(hiloMetadataRefresh);
 
 	// Hilo de consola
-
 	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
 

@@ -124,7 +124,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 			(memoriaAEnviar->cantInsertEjecutados)++;
 		}
 
-		log_trace(log_master->logTrace, "Los datos obtenidos son:");
+		//log_trace(log_master->logTrace, "Los datos obtenidos son:");
 		imprimirCriterio(memoriaAEnviar->criterios);
 		log_trace(log_master->logTrace, "Id de la memoria: %d", memoriaAEnviar->id);
 	} else {
@@ -364,7 +364,7 @@ void crearProcesoYMandarloAReady(char* operacion) {
 }
 
 int conocerMemorias() {
-	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	int socketMemoria = ConectarAServidorPlus(config->PUERTO_MEMORIA, config->IP_MEMORIA);
 	if (socketMemoria == -1) {
 		return SUPER_ERROR;
 	}

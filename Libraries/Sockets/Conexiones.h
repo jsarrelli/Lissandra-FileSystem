@@ -1,4 +1,3 @@
-
 #ifndef CONEXIONES_H_
 #define CONEXIONES_H_
 #include <sys/socket.h>
@@ -33,6 +32,6 @@
 
 int ConectarAServidor(int puerto, char* ip);
 int configurarSocketServidor(char* puertoEscucha);
-
+int ConectarAServidorPlus(int puerto, char* ip);
 
 #endif /* CONEXIONES_H_ */

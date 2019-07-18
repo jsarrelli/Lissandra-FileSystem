@@ -57,11 +57,9 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
 
-		pthread_mutex_t semaforoCompactacion = getSemaforoByTabla(nombreTabla)->mutexCompactacion;
-
-		pthread_mutex_lock(&semaforoCompactacion);
+		pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
-		pthread_mutex_unlock(&semaforoCompactacion);
+		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
 		if (registro != NULL) {
 			log_trace(loggerTrace, "Registro con mayor timestamp: %f;%d;%s", registro->timestamp, registro->key, registro->value);

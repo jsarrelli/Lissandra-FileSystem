@@ -162,7 +162,7 @@ int consolaInsert(char*argumentos) {
 	free(diferencia);
 	cantInserts++;
 
-	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
+	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
 	Paquete paquete;
 	if (socketMemoria >= 0)
@@ -203,7 +203,7 @@ int consolaSelect(char*argumentos) {
 	}
 
 	// Ahora mandamos el mensaje
-	int socketMemoria = ConectarAServidor(memoriaAEnviar->puerto, memoriaAEnviar->ip);
+	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 	// El mennsaje de error se imprime por pantalla en esta funcion
 
 	if (socketMemoria >= 0) {
@@ -265,7 +265,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
 
-	int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
+	int socketMemoria = ConectarAServidorPlus(memoria->puerto, memoria->ip);
 
 	if (socketMemoria > 0) {
 		char request[100];
@@ -284,7 +284,7 @@ int consolaJournal() {
 	void journalMemoria(infoMemoria* memoria) {
 
 		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d", memoria->id);
-		int socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
+		int socketMemoria = ConectarAServidorPlus(memoria->puerto, memoria->ip);
 		if (socketMemoria < 0) {
 			log_error(log_master->logError, "No se pudo mandar el mensaje");
 		} else {
@@ -421,7 +421,7 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 int consolaDescribe(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 
-	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
+	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	if (socketMemoria < 0) {
 		log_error(log_master->logError, "Error de conexion");
 		return SUPER_ERROR;
@@ -476,7 +476,7 @@ int consolaDrop(char*nombreTabla) {
 
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 
-	int socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
+	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	if (socketMemoria < 0) {
 		log_error(log_master->logError, "Error de conexion");
 		return SUPER_ERROR;

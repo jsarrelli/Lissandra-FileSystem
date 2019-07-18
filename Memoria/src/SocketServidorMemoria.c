@@ -8,20 +8,16 @@ void escuchar(int listenningSocket) {
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 		int socketCliente = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketCliente != -1) {
-			//no  me convence esto del multihilo
 //			pthread_t threadId;
-//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketKernel);
+//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketCliente);
 //			pthread_detach(threadId);
 
 			//O hace un journal o procesa una accion, boludeces no
-			pthread_mutex_lock(&lockMemoria);
+
 			procesarAccion(socketCliente);
-			close(socketCliente);
-			pthread_mutex_unlock(&lockMemoria);
 
 			printf("Escuchando.. \n");
 		}
-
 
 	}
 
@@ -30,19 +26,28 @@ void escuchar(int listenningSocket) {
 void procesarAccion(int socketEntrante) {
 	Paquete paquete;
 	void* datos;
-	if (RecibirPaquete(socketEntrante, &paquete) > 0) {
+	int cantDatosRecibidos = RecibirPaquete(socketEntrante, &paquete);
+
+	if (cantDatosRecibidos > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
+			pthread_mutex_lock(&lockMemoria);
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
+
 				procesarRequestSELECT(datos, socketEntrante);
+
 				break;
 			case (INSERT):
+
 				procesarRequestINSERT(datos, socketEntrante);
+
 				break;
 			case (CREATE):
+
 				procesarRequestCREATE(datos, socketEntrante);
+
 				break;
 
 			case (DESCRIBE):
@@ -54,17 +59,21 @@ void procesarAccion(int socketEntrante) {
 				break;
 
 			case (DROP):
+
 				procesarRequestDROP(datos, socketEntrante);
+
 				break;
 
 			case (TABLA_GOSSIPING):
 				procesarRequestTABLA_GOSSIPING(socketEntrante);
 				break;
 			case (JOURNAL):
+
 				JOURNAL_MEMORIA();
+
 				break;
 			}
-
+			pthread_mutex_unlock(&lockMemoria);
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
@@ -72,7 +81,10 @@ void procesarAccion(int socketEntrante) {
 			log_info(loggerInfo, "No es ningun proceso valido para Memoria");
 		}
 		free(paquete.mensaje);
+		close(socketEntrante);
 	}
+
+
 }
 
 void procesarRequestSELECT(char* request, int socketKernel) {
@@ -153,14 +165,15 @@ void procesarGossiping(char* memoriaGossiping, int socketMemoria) {
 
 	Paquete paquete;
 	while (true) {
-		RecibirPaqueteServidor(socketMemoria, MEMORIA, &paquete);
-		if (strcmp(paquete.mensaje, "fin") == 0) {
+		if (RecibirPaquete(socketMemoria, &paquete) > 0) {
+			if (strcmp(paquete.mensaje, "fin") == 0) {
+				free(paquete.mensaje);
+				break;
+			}
+			t_memoria* memoriaRecibida = deserealizarMemoria(memoriaGossiping);
+			agregarMemoriaNueva(memoriaRecibida);
 			free(paquete.mensaje);
-			break;
 		}
-		t_memoria* memoriaRecibida = deserealizarMemoria(memoriaGossiping);
-		agregarMemoriaNueva(memoriaRecibida);
-		free(paquete.mensaje);
 	}
 
 	//enviamos nuestra tabla

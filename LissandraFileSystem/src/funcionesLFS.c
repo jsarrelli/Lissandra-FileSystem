@@ -252,21 +252,17 @@ void borrarContenidoArchivoBloque(int bloque) {
 int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 	t_config* config = config_create(rutaArchivo);
 
+	int success = 1;
 	if (config == NULL) {
 		config_destroy(config);
 		return -1;
 		puts("El archivo no existe");
 	}
 
-	if (config_has_property(config, "TAMANIO")) {
+	if (config_has_property(config, "TAMANIO") && config_has_property(config, "BLOQUES")) {
 		archivo->TAMANIO = config_get_int_value(config, "TAMANIO");
-	} else {
-		config_destroy(config);
-		return -2; //Archivo corrupto
-	}
-	if (config_has_property(config, "BLOQUES")) {
-
 		char** arrayBloques = config_get_array_value(config, "BLOQUES");
+
 		int i = 0;
 		archivo->BLOQUES = list_create();
 		while (arrayBloques[i] != NULL) {
@@ -276,13 +272,13 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 		}
 		archivo->cantBloques = list_size(archivo->BLOQUES);
 		freePunteroAPunteros(arrayBloques);
+
 	} else {
-		config_destroy(config);
-		return -2;
+		success = -1;
 	}
 
 	config_destroy(config);
-	return 1;
+	return success;
 }
 
 void removerTabla(char* nombreTabla) {

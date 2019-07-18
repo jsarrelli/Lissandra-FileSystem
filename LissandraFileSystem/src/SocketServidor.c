@@ -113,7 +113,7 @@ void procesarCREATE(char* request, int socketMemoria) {
 	log_info(loggerInfo, "Procesando CREATE:  %s", request);
 	char* requestAux = string_duplicate(request);
 	char** valores = string_split(requestAux, " ");
-	char* nombreTabla = valores[0];
+	char* nombreTabla = string_duplicate(valores[0]);
 	char* consistenciaChar = valores[1];
 	char* cantParticiones = valores[2];
 	char* tiempoCompactacion = valores[3];
@@ -123,6 +123,7 @@ void procesarCREATE(char* request, int socketMemoria) {
 	enviarSuccess(resultado, CREATE, socketMemoria);
 	freePunteroAPunteros(valores);
 	free(requestAux);
+	free(nombreTabla);
 }
 
 void procesarDROP(char* nombreTabla, int socketMemoria) {
