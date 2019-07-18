@@ -34,7 +34,7 @@ int main() {
 	pthread_detach(serverThread);
 
 	//HILO DE JOURNAL
-	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
+	pthread_create(&intTemporalJournal, NULL, (void*) procesoTemporalJournal, NULL);
 	pthread_detach(intTemporalJournal);
 
 //HILO DE GOSSIPING
@@ -57,7 +57,7 @@ void* leerConsola() {
 		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
 
-		if (strlen(consulta)!=0) {
+		if (strlen(consulta) != 0) {
 
 			procesarConsulta(consulta);
 			add_history(consulta);
@@ -114,7 +114,7 @@ void procesoTemporalJournal() {
 		usleep(configuracion->TIEMPO_JOURNAL * 1000);
 		pthread_mutex_lock(&lockMemoria);
 		printf("Realizando proceso temporal Journal");
-		journalMemoria();
+		JOURNAL_MEMORIA();
 		pthread_mutex_unlock(&lockMemoria);
 	}
 }
@@ -138,8 +138,8 @@ void liberarDatosConfiguracion() {
 void liberarVariables() {
 	log_destroy(loggerInfo);
 	liberarDatosConfiguracion();
-	list_destroy_and_destroy_elements(seeds,(void*)freeMemoria);
-	list_destroy_and_destroy_elements(tablaGossiping,(void*)freeMemoria);
+	list_destroy_and_destroy_elements(seeds, (void*) freeMemoria);
+	list_destroy_and_destroy_elements(tablaGossiping, (void*) freeMemoria);
 	pthread_mutex_destroy(&lockMemoria);
 }
 

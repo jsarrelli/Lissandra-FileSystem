@@ -1,2 +1,5 @@
 # .gitignore's para los modulos del tp
 infoLFS.log
+
+*.cfg
+*.log

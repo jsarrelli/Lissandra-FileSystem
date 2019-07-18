@@ -89,7 +89,7 @@ t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
 
 	t_metadata_tabla* metadata = describeSegmento(nombreTabla);
 	if (metadata == NULL) {
-		log_error(loggerError, "La tabla: %s no se encuentra en sistema", nombreTabla);
+		log_error(loggerError, "La tabla: %s no Sse encuentra en sistema", nombreTabla);
 		return NULL;
 	} else {
 		mostrarMetadata(metadata);
@@ -116,6 +116,6 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 
 void JOURNAL_MEMORIA() {
 
-	journalMemoria();
+	//journalMemoria();
 
 }

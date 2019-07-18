@@ -8,3 +8,6 @@ MEM_logs.txt
 MEM_results.txt
 MEM_resuslts.txt
 Memoria
+
+*.cfg
+*.log
