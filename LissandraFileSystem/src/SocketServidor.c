@@ -74,6 +74,7 @@ void procesarAccion(int socketMemoria) {
 	}
 	close(socketMemoria);
 
+
 }
 
 void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
