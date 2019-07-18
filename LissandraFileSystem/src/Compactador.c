@@ -291,18 +291,34 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char* rutaBloque = armarRutaBloque(bloque);
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
 
+		//muchas dudas
+//		FILE* archivoBloque = obtenerArchivoBloque(bloque, false);
+//		if (archivoBloque == NULL) {
+//			return;
+//		}
+//		int espacioOcupadoDeBloque = tamanioArchivo(archivoBloque);
+//		fclose(archivoBloque);
+//
+//		if(espacioOcupadoDeBloque==0){
+//			return;
+//		}
+////
+//
 		int fd = open(rutaBloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 		if (fd == -1) {
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);
 			return;
 		}
+
+		//ftruncate(fd, metadata.BLOCK_SIZE);
 		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
 		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		if (!string_is_empty(contenidoBloque)) {
+			string_append(&contenidoBloques, contenidoBloque);
 
-		string_append(&contenidoBloques, contenidoBloque);
+		}
 
 		munmap(contenidoBloque, metadata.BLOCK_SIZE);
-
 		close(fd);
 		free(rutaBloque);
 	}
@@ -310,10 +326,10 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
 
 	if (!string_is_empty(contenidoBloques)) {
-
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
+			log_info(loggerInfo, "Recuperando %s",registrosChar[i]);;
 			char** valores = string_split(registrosChar[i], ";");
 			t_registro* registro = registro_new(valores);
 			list_add(listaRegistros, registro);

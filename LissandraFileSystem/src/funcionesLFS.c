@@ -397,6 +397,8 @@ void crearYEscribirArchivosTemporales(char*ruta) {
 void crearYEscribirTemporal(char* rutaTabla) {
 	char* nombTabla = obtenerNombreTablaByRuta(rutaTabla);
 
+	pthread_mutex_lock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
+
 	t_list*archivos = buscarArchivos(nombTabla);
 	int cantidadTmp = contarArchivosTemporales(archivos);
 
@@ -421,8 +423,10 @@ void crearYEscribirTemporal(char* rutaTabla) {
 
 	free(rutaArchTemporal);
 	list_destroy_and_destroy_elements(archivos, free);
-	free(nombTabla);
 
+
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
+	free(nombTabla);
 }
 
 void limpiarRegistrosDeTabla(char*nombreTabla) {
