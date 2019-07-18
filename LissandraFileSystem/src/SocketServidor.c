@@ -12,22 +12,22 @@ void escuchar(int listenningSocket) {
 	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
 
 	while (true) {
+
+		printf("Escuchando.. \n");
 		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
-		printf("Escuchando.. \n");
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
 			log_info(loggerInfo, "Request de memoria recibida.. \n");
 
 			pthread_t hiloRequest;
-			pthread_create(&hiloRequest, NULL, (void*) procesarAccion,(void*) socketMemoria);
+			pthread_create(&hiloRequest, NULL, (void*) procesarAccion, (void*) socketMemoria);
 			pthread_detach(hiloRequest);
 
 		} else {
 			log_info(loggerInfo, "Fallo la conexion con Memoria");
 
 		}
-
 
 	}
 }
