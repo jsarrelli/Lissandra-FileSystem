@@ -28,7 +28,10 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	}
 	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento) + 1, DESCRIBE);
 	Paquete paquete;
-	RecibirPaquete(socketFileSystem, &paquete);
+	if (RecibirPaquete(socketFileSystem, &paquete) < 0) {
+		log_error(loggerError, "Algo fallo en el describe de %s en fileSystem",nombreSegmento);
+		return NULL;
+	}
 
 	if (atoi(paquete.mensaje) == 1) {
 		free(paquete.mensaje);
@@ -133,6 +136,8 @@ int HandshakeInicial() {
 	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		valueMaximo = atoi(paquete.mensaje);
 		free(paquete.mensaje);
+	}else{
+		log_error(loggerError, "Algo fallo en la conexion en la Conexion con fileSystem");
 	}
 
 	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximo);

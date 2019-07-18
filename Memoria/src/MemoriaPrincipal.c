@@ -312,6 +312,7 @@ void journalMemoria() {
 	}
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
+		log_info(loggerInfo, "Realizando Journal de %s",segmento->nombreTabla);
 		if (existeSegmentoFS(segmento->nombreTabla)) {
 			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
 		} else {

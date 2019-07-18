@@ -29,7 +29,7 @@ void escuchar(int listenningSocket) {
 			log_info(loggerInfo, "Fallo la conexion con Memoria");
 
 		}
-		close(socketMemoria);
+
 
 	}
 }
@@ -74,6 +74,7 @@ void procesarAccion(int socketMemoria) {
 			free(paquete.mensaje);
 		}
 	}
+	close(socketMemoria);
 
 }
 
