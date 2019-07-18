@@ -115,7 +115,5 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 }
 
 void JOURNAL_MEMORIA() {
-
-	//journalMemoria();
-
+	journalMemoria();
 }
