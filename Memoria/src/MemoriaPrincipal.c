@@ -19,7 +19,7 @@ void inicializarEstadoMemoria() {
 void inicializarMemoria(int tamanioMemoriaRecibido) {
 	tamanioRegistro = sizeof(int) + sizeof(double) + valueMaximo;
 	tamanioMemoria = tamanioMemoriaRecibido;
-	cantFrames = tamanioMemoria / tamanioRegistro;
+	cantFrames = (int) round(tamanioMemoria / tamanioRegistro);
 	memoria = malloc(tamanioMemoria);
 
 	segmentos = list_create();
@@ -67,6 +67,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 			}
 		}
 
+		log_info(loggerInfo, "Asignando marco libre..");
 		void* marcoVacio = darMarcoVacio();
 
 		t_registro_memoria* registro = malloc(tamanioRegistro);
@@ -192,40 +193,42 @@ bool todosModificados() {
 	return todosModificados;
 }
 
-void* liberarUltimoUsado() {
+void liberarUltimoUsado() {
 	log_info(loggerInfo, "Aplicando algortimo LRU");
-	EstadoFrame* frameMenosUtilizado = list_get(memoriaStatus, 0);
-	Pagina* paginaMenosUtilizada;
-	Segmento* segmentoPaginaMenosUtilizada;
-	Segmento* segmentoActual;
+	EstadoFrame* estadoFrameMenosUtilizado = NULL;
+	Pagina* paginaMenosUtilizada = NULL;
+	Segmento* segmentoPaginaMenosUtilizada = NULL;
 
-	void LRUPagina(Pagina* pagina) {
-		EstadoFrame* frameDePagina = getEstadoFrame(pagina);
+	void buscarPaginaLRU(Pagina* pagina, Segmento* segmento) {
+		if (pagina->modificado) {
+			return;
+		}
+		EstadoFrame* estadoFrameActual = getEstadoFrame(pagina);
+		if (paginaMenosUtilizada == NULL || estadoFrameActual->fechaObtencion < estadoFrameMenosUtilizado->fechaObtencion) {
 
-		if (!pagina->modificado && frameDePagina->fechaObtencion <= frameMenosUtilizado->fechaObtencion) {
-			frameMenosUtilizado = frameDePagina;
-			segmentoPaginaMenosUtilizada = segmentoActual;
 			paginaMenosUtilizada = pagina;
+			estadoFrameMenosUtilizado = estadoFrameActual;
+			segmentoPaginaMenosUtilizada = segmento;
+
 		}
 	}
-	void recorrerSegmentos(Segmento* segmento) {
-		segmentoActual = segmento;
-		list_iterate(segmento->paginas, (void*) LRUPagina);
 
+	void recorrerSegmentos(Segmento* segmento) {
+		list_iterate2(segmento->paginas,(void*) buscarPaginaLRU, (void*)segmento);
 	}
 
-	list_iterate(segmentos, (void*) recorrerSegmentos);
+	list_iterate(segmentos,(void*) recorrerSegmentos);
 
 	log_trace(loggerTrace, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
 			paginaMenosUtilizada->registro->key, paginaMenosUtilizada->registro->timestamp);
 
 	reemplazarPagina(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
-	return frameMenosUtilizado;
 }
 
 void reemplazarPagina(Pagina* pagina, Segmento* segmento) {
-
+	log_info(loggerInfo, "Pagina de registro %d, %s de tabla %s reemplazada", pagina->registro->key, pagina->registro->value,
+			segmento->nombreTabla);
 	bool isPaginaEliminar(Pagina* paginaAEliminar) {
 		return pagina->registro->key == paginaAEliminar->registro->key;
 	}
@@ -292,12 +295,6 @@ void finalizarMemoria() {
 
 bool isModificada(Pagina* pagina) {
 	return pagina->modificado == MODIFICADO;
-}
-
-t_list* obtenerPaginasModificadasFromSegmento(Segmento* segmento) {
-
-	t_list* paginasModificadas = list_filter(segmento->paginas, (void*) isModificada);
-	return paginasModificadas;
 }
 
 void journalMemoria() {

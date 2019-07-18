@@ -14,6 +14,7 @@
 #include "Sockets/Serializacion.h"
 #include "SocketClienteMemoria.h"
 #include "EstructurasMemoria.h"
+#include <math.h>
 
 void* memoria;
 
@@ -38,7 +39,7 @@ bool memoriaLlena();
 void* darMarcoVacio();
 bool todosModificados();
 
-void* liberarUltimoUsado();
+void liberarUltimoUsado();
 t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
