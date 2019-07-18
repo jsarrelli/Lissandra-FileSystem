@@ -66,5 +66,5 @@ LissandraFileSystem/Debug/LissandraFileSystem
 Memoria/MEM_results.txt
 Memoria/MEM_resuslts.txt
 
-*.cfg
 *.log
+*.cfg
