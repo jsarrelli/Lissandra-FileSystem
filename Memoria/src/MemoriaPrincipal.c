@@ -344,7 +344,7 @@ void journalMemoria() {
 	}
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
-
+	list_destroy_and_destroy_elements(tablas, free);
 	log_info(loggerInfo, "Journal finalizado con exito");
 	pthread_mutex_unlock(&mutexJournal);
 
@@ -352,9 +352,13 @@ void journalMemoria() {
 
 t_list* obtenerTablasFileSystem() {
 	char* tablasSerializadas = describeAllFileSystem();
+	t_list* listaTablas = list_create();
+
+	if (tablasSerializadas == NULL) {
+		return listaTablas;
+	}
 	char** tablasAux = string_split(tablasSerializadas, "/");
 	int i = 0;
-	t_list* listaTablas = list_create();
 
 	while (tablasAux[i] != NULL) {
 
