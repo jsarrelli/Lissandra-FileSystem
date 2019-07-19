@@ -83392,3 +83392,1135 @@ Metadata de METALS:
 -CONSISTENCIA: 1
 -PARTICIONES=3
 -TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:25:929 LFS Results Logs/(28950:29087): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:28:951 LFS Results Logs/(28950:29094): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:30:129 LFS Results Logs/(28950:29101): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:30:131 LFS Results Logs/(28950:29104): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:30:131 LFS Results Logs/(28950:29103): Insert de 126;beasts en ANIMALS realizado en memtable
+[TRACE] 23:59:30:133 LFS Results Logs/(28950:29102): Insert de 65;tigers en ANIMALS realizado en memtable
+[TRACE] 23:59:30:133 LFS Results Logs/(28950:29106): Insert de 66;ferro en METALS realizado en memtable
+[TRACE] 23:59:30:133 LFS Results Logs/(28950:29105): Insert de 136;aluminiferous en METALS realizado en memtable
+[TRACE] 23:59:31:88 LFS Results Logs/(28950:29108): Registro con mayor timestamp: 1563505168430.000000;136;aluminiferous
+[TRACE] 23:59:31:907 LFS Results Logs/(28950:29112): Registro no encontrado
+[TRACE] 23:59:31:933 LFS Results Logs/(28950:29113): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:31:938 LFS Results Logs/(28950:29117): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:31:938 LFS Results Logs/(28950:29116): Insert de 16;bullies en ANIMALS realizado en memtable
+[TRACE] 23:59:31:940 LFS Results Logs/(28950:29115): Insert de 87;primates en ANIMALS realizado en memtable
+[TRACE] 23:59:31:941 LFS Results Logs/(28950:29114): Insert de 135;tortoises en ANIMALS realizado en memtable
+[TRACE] 23:59:32:534 LFS Results Logs/(28950:29118): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:33:98 LFS Results Logs/(28950:29119): Insert de 71;ferrous en METALS realizado en memtable
+[TRACE] 23:59:33:343 LFS Results Logs/(28950:29120): Insert de 64;moly en METALS realizado en memtable
+[TRACE] 23:59:33:763 LFS Results Logs/(28950:29121): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:34:167 LFS Results Logs/(28950:29123): Insert de 105;biological en ANIMALS realizado en memtable
+[TRACE] 23:59:35:79 LFS Results Logs/(28950:29127): Registro con mayor timestamp: 1563505171676.000000;71;ferrous
+[TRACE] 23:59:35:182 LFS Results Logs/(28950:29128): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:35:310 LFS Results Logs/(28950:29130): Insert de 16;chemicals en METALS realizado en memtable
+[TRACE] 23:59:35:493 LFS Results Logs/(28950:29131): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:35:603 LFS Results Logs/(28950:29133): Registro con mayor timestamp: 1563505173430.000000;16;chemicals
+[TRACE] 23:59:35:614 LFS Results Logs/(28950:29134): Insert de 19;livestock en ANIMALS realizado en memtable
+[TRACE] 23:59:35:970 LFS Results Logs/(28950:29135): Registro con mayor timestamp: 1563505173430.000000;16;chemicals
+[TRACE] 23:59:36:174 LFS Results Logs/(28950:29137): Registro con mayor timestamp: 1563505170652.000000;105;biological
+[TRACE] 23:59:36:480 LFS Results Logs/(28950:29139): Registro con mayor timestamp: 1563505170128.000000;135;tortoises
+[TRACE] 23:59:36:786 LFS Results Logs/(28950:29142): Registro con mayor timestamp: 1563505166214.000000;65;tigers
+[TRACE] 23:59:37:555 LFS Results Logs/(28950:29144): Registro con mayor timestamp: 1563505166698.000000;126;beasts
+[TRACE] 23:59:37:941 LFS Results Logs/(28950:29145): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:37:942 LFS Results Logs/(28950:29146): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:37:943 LFS Results Logs/(28950:29148): Insert de 21;precious metals en METALS realizado en memtable
+[TRACE] 23:59:37:943 LFS Results Logs/(28950:29147): Insert de 46;dysprosium en METALS realizado en memtable
+[TRACE] 23:59:37:980 LFS Results Logs/(28950:29150): Registro con mayor timestamp: 1563505166698.000000;126;beasts
+[TRACE] 23:59:38:471 LFS Results Logs/(28950:29151): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:38:971 LFS Results Logs/(28950:29152): Insert de 101;auriferous en METALS realizado en memtable
+[TRACE] 23:59:39:176 LFS Results Logs/(28950:29154): Insert de 172;petrochemicals en METALS realizado en memtable
+[TRACE] 23:59:39:607 LFS Results Logs/(28950:29155): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:39:992 LFS Results Logs/(28950:29157): Insert de 18;warheads en ANIMALS realizado en memtable
+[TRACE] 23:59:40:300 LFS Results Logs/(28950:29159): Insert de 71;bovine en ANIMALS realizado en memtable
+[TRACE] 23:59:41:908 LFS Results Logs/(28950:29163): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:41:966 LFS Results Logs/(28950:29165): Insert de 150;bronze en METALS realizado en memtable
+[TRACE] 23:59:42:9 LFS Results Logs/(28950:29166): Registro no encontrado
+[TRACE] 23:59:42:23 LFS Results Logs/(28950:29167): Insert de 9;europium en METALS realizado en memtable
+[TRACE] 23:59:42:293 LFS Results Logs/(28950:29168): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:42:454 LFS Results Logs/(28950:29170): Registro con mayor timestamp: 1563505176962.000000;21;precious metals
+[TRACE] 23:59:42:464 LFS Results Logs/(28950:29171): Insert de 99;horses en ANIMALS realizado en memtable
+[TRACE] 23:59:42:716 LFS Results Logs/(28950:29173): Insert de 144;species en ANIMALS realizado en memtable
+[TRACE] 23:59:42:960 LFS Results Logs/(28950:29174): Insert de 173;puppies en ANIMALS realizado en memtable
+[TRACE] 23:59:43:547 LFS Results Logs/(28950:29177): Registro con mayor timestamp: 1563505183467.000000;144;species
+[TRACE] 23:59:43:896 LFS Results Logs/(28950:29178): Registro con mayor timestamp: 1563505170744.000000;87;primates
+[TRACE] 23:59:43:944 LFS Results Logs/(28950:29179): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:43:946 LFS Results Logs/(28950:29182): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:43:947 LFS Results Logs/(28950:29181): Insert de 133;biological en ANIMALS realizado en memtable
+[TRACE] 23:59:43:948 LFS Results Logs/(28950:29180): Insert de 36;pets en ANIMALS realizado en memtable
+[TRACE] 23:59:43:949 LFS Results Logs/(28950:29183): Insert de 128;nickel alloy en METALS realizado en memtable
+[TRACE] 23:59:44:267 LFS Results Logs/(28950:29186): Registro con mayor timestamp: 1563505181346.000000;36;pets
+[TRACE] 23:59:45:225 LFS Results Logs/(28950:29190): Registro con mayor timestamp: 1563505179320.000000;172;petrochemicals
+[TRACE] 23:59:45:434 LFS Results Logs/(28950:29191): Registro con mayor timestamp: 1563505176962.000000;21;precious metals
+[TRACE] 23:59:45:837 LFS Results Logs/(28950:29192): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:46:411 LFS Results Logs/(28950:29193): Insert de 105;aluminous en METALS realizado en memtable
+[TRACE] 23:59:46:687 LFS Results Logs/(28950:29194): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:47:68 LFS Results Logs/(28950:29195): Insert de 177;llamas en ANIMALS realizado en memtable
+[TRACE] 23:59:47:287 LFS Results Logs/(28950:29196): Insert de 154;hogs en ANIMALS realizado en memtable
+[TRACE] 23:59:47:623 LFS Results Logs/(28950:29198): Registro no encontrado
+[TRACE] 23:59:48:194 LFS Results Logs/(28950:29199): Registro con mayor timestamp: 1563505176735.000000;19;livestock
+[TRACE] 23:59:48:705 LFS Results Logs/(28950:29201): Registro con mayor timestamp: 1563505186628.000000;154;hogs
+[TRACE] 23:59:49:77 LFS Results Logs/(28950:29203): Registro con mayor timestamp: 1563505173430.000000;16;chemicals
+[TRACE] 23:59:49:179 LFS Results Logs/(28950:29204): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:49:534 LFS Results Logs/(28950:29206): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:49:959 LFS Results Logs/(28950:29209): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:49:985 LFS Results Logs/(28950:29211): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:49:986 LFS Results Logs/(28950:29210): Insert de 112;mammals en ANIMALS realizado en memtable
+[TRACE] 23:59:50:547 LFS Results Logs/(28950:29214): Registro con mayor timestamp: 1563505184889.000000;105;aluminous
+[TRACE] 23:59:51:71 LFS Results Logs/(28950:29215): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:51:603 LFS Results Logs/(28950:29216): Insert de 153;plastics en METALS realizado en memtable
+[TRACE] 23:59:51:812 LFS Results Logs/(28950:29217): Insert de 86;industrials en METALS realizado en memtable
+[TRACE] 23:59:51:992 LFS Results Logs/(28950:29219): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:52:236 LFS Results Logs/(28950:29221): Insert de 167;beast en ANIMALS realizado en memtable
+[TRACE] 23:59:52:557 LFS Results Logs/(28950:29223): Registro con mayor timestamp: 1563505166698.000000;126;beasts
+[TRACE] 23:59:53:504 LFS Results Logs/(28950:29225): Registro con mayor timestamp: 1563505182715.000000;133;biological
+[TRACE] 23:59:53:958 LFS Results Logs/(28950:29226): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:54:343 LFS Results Logs/(28950:29228): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:54:910 LFS Results Logs/(28950:29230): Insert de 28;monkeys en ANIMALS realizado en memtable
+[TRACE] 23:59:55:154 LFS Results Logs/(28950:29232): Insert de 74;arseholes en ANIMALS realizado en memtable
+[TRACE] 23:59:55:383 LFS Results Logs/(28950:29233): Insert de 135;housecats en ANIMALS realizado en memtable
+[TRACE] 23:59:55:576 LFS Results Logs/(28950:29235): Registro con mayor timestamp: 1563505193543.000000;74;arseholes
+[TRACE] 23:59:56:29 LFS Results Logs/(28950:29237): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:56:61 LFS Results Logs/(28950:29238): Insert de 134;bovine en ANIMALS realizado en memtable
+[TRACE] 23:59:56:62 LFS Results Logs/(28950:29240): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:56:62 LFS Results Logs/(28950:29239): Insert de 198;seals en ANIMALS realizado en memtable
+[TRACE] 23:59:56:391 LFS Results Logs/(28950:29241): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:56:707 LFS Results Logs/(28950:29244): Registro con mayor timestamp: 1563505166214.000000;65;tigers
+[TRACE] 23:59:56:754 LFS Results Logs/(28950:29245): Insert de 90;precious metal en METALS realizado en memtable
+[TRACE] 23:59:57:43 LFS Results Logs/(28950:29246): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:57:426 LFS Results Logs/(28950:29247): Insert de 171;primates en ANIMALS realizado en memtable
+[TRACE] 23:59:57:715 LFS Results Logs/(28950:29248): Insert de 88;pups en ANIMALS realizado en memtable
+[TRACE] 23:59:57:875 LFS Results Logs/(28950:29249): Insert de 185;freaks en ANIMALS realizado en memtable
+[TRACE] 23:59:58:201 LFS Results Logs/(28950:29250): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:58:656 LFS Results Logs/(28950:29251): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 23:59:59:414 LFS Results Logs/(28950:29253): Registro con mayor timestamp: 1563505182715.000000;133;biological
+[TRACE] 23:59:59:829 LFS Results Logs/(28950:29256): Registro con mayor timestamp: 1563505184889.000000;105;aluminous
+[TRACE] 00:00:00:242 LFS Results Logs/(28950:29258): Registro no encontrado
+[TRACE] 00:00:01:218 LFS Results Logs/(28950:29260): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:01:724 LFS Results Logs/(28950:29261): Insert de 168;earths en METALS realizado en memtable
+[TRACE] 00:00:02:87 LFS Results Logs/(28950:29262): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:02:134 LFS Results Logs/(28950:29263): Insert de 45;specimens en ANIMALS realizado en memtable
+[TRACE] 00:00:02:135 LFS Results Logs/(28950:29264): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:02:142 LFS Results Logs/(28950:29265): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:02:532 LFS Results Logs/(28950:29267): Insert de 99;ruminants en ANIMALS realizado en memtable
+[TRACE] 00:00:02:828 LFS Results Logs/(28950:29268): Insert de 199;bovine en ANIMALS realizado en memtable
+[TRACE] 00:00:03:196 LFS Results Logs/(28950:29270): Registro con mayor timestamp: 1563505183479.000000;173;puppies
+[TRACE] 00:00:04:163 LFS Results Logs/(28950:29274): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:04:171 LFS Results Logs/(28950:29275): Registro con mayor timestamp: 1563505182715.000000;133;biological
+[TRACE] 00:00:04:376 LFS Results Logs/(28950:29277): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:04:874 LFS Results Logs/(28950:29279): Insert de 101;humans en ANIMALS realizado en memtable
+[TRACE] 00:00:04:976 LFS Results Logs/(28950:29281): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:04:979 LFS Results Logs/(28950:29283): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:04:985 LFS Results Logs/(28950:29282): Insert de 149;warheads en ANIMALS realizado en memtable
+[TRACE] 00:00:04:987 LFS Results Logs/(28950:29284): Insert de 92;environ en METALS realizado en memtable
+[TRACE] 00:00:05:95 LFS Results Logs/(28950:29285): Insert de 181;reptiles en ANIMALS realizado en memtable
+[TRACE] 00:00:05:907 LFS Results Logs/(28950:29289): Registro con mayor timestamp: 1563505197590.000000;88;pups
+[TRACE] 00:00:06:477 LFS Results Logs/(28950:29291): Registro con mayor timestamp: 1563505197602.000000;90;precious metal
+[TRACE] 00:00:07:140 LFS Results Logs/(28950:29294): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:07:359 LFS Results Logs/(28950:29296): Insert de 117;metallic element en METALS realizado en memtable
+[TRACE] 00:00:07:687 LFS Results Logs/(28950:29297): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:08:138 LFS Results Logs/(28950:29298): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:08:141 LFS Results Logs/(28950:29302): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:08:141 LFS Results Logs/(28950:29301): Insert de 152;feed en ANIMALS realizado en memtable
+[TRACE] 00:00:08:141 LFS Results Logs/(28950:29300): Insert de 78;idiots en ANIMALS realizado en memtable
+[TRACE] 00:00:08:142 LFS Results Logs/(28950:29299): Insert de 19;feed en ANIMALS realizado en memtable
+[TRACE] 00:00:08:170 LFS Results Logs/(28950:29303): Insert de 60;cetaceans en ANIMALS realizado en memtable
+[TRACE] 00:00:08:376 LFS Results Logs/(28950:29304): Insert de 153;chickens en ANIMALS realizado en memtable
+[TRACE] 00:00:09:372 LFS Results Logs/(28950:29308): Registro con mayor timestamp: 1563505204374.000000;92;environ
+[TRACE] 00:00:09:579 LFS Results Logs/(28950:29309): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:10:109 LFS Results Logs/(28950:29311): Insert de 116;metallic en METALS realizado en memtable
+[TRACE] 00:00:10:511 LFS Results Logs/(28950:29313): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:10:885 LFS Results Logs/(28950:29314): Insert de 76;wildlife en ANIMALS realizado en memtable
+[TRACE] 00:00:11:194 LFS Results Logs/(28950:29315): Insert de 74;carnal en ANIMALS realizado en memtable
+[TRACE] 00:00:11:877 LFS Results Logs/(28950:29317): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:12:249 LFS Results Logs/(28950:29320): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:12:766 LFS Results Logs/(28950:29323): Registro con mayor timestamp: 1563505193896.000000;135;housecats
+[TRACE] 00:00:12:969 LFS Results Logs/(28950:29325): Registro con mayor timestamp: 1563505204971.000000;19;feed
+[TRACE] 00:00:12:970 LFS Results Logs/(28950:29326): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:12:972 LFS Results Logs/(28950:29330): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:12:972 LFS Results Logs/(28950:29329): Insert de 118;elephants en ANIMALS realizado en memtable
+[TRACE] 00:00:12:976 LFS Results Logs/(28950:29328): Insert de 155;calves en ANIMALS realizado en memtable
+[TRACE] 00:00:12:977 LFS Results Logs/(28950:29327): Insert de 114;pigs en ANIMALS realizado en memtable
+[TRACE] 00:00:12:977 LFS Results Logs/(28950:29331): Insert de 134;steel en METALS realizado en memtable
+[TRACE] 00:00:13:400 LFS Results Logs/(28950:29333): Registro con mayor timestamp: 1563505181346.000000;36;pets
+[TRACE] 00:00:14:145 LFS Results Logs/(28950:29336): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:14:146 LFS Results Logs/(28950:29338): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:14:147 LFS Results Logs/(28950:29337): Insert de 102;rabbits en ANIMALS realizado en memtable
+[TRACE] 00:00:14:408 LFS Results Logs/(28950:29340): Registro con mayor timestamp: 1563505190730.000000;153;plastics
+[TRACE] 00:00:14:745 LFS Results Logs/(28950:29343): Registro con mayor timestamp: 1563505205426.000000;78;idiots
+[TRACE] 00:00:15:626 LFS Results Logs/(28950:29346): Registro con mayor timestamp: 1563505210006.000000;116;metallic
+[TRACE] 00:00:15:937 LFS Results Logs/(28950:29347): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:16:159 LFS Results Logs/(28950:29348): Insert de 190;metallic en METALS realizado en memtable
+[TRACE] 00:00:16:619 LFS Results Logs/(28950:29349): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:17:75 LFS Results Logs/(28950:29350): Insert de 104;greyhounds en ANIMALS realizado en memtable
+[TRACE] 00:00:17:289 LFS Results Logs/(28950:29351): Insert de 92;calves en ANIMALS realizado en memtable
+[TRACE] 00:00:17:623 LFS Results Logs/(28950:29353): Registro con mayor timestamp: 1563505189278.000000;112;mammals
+[TRACE] 00:00:18:28 LFS Results Logs/(28950:29354): Registro con mayor timestamp: 1563505169609.000000;66;ferro
+[TRACE] 00:00:18:331 LFS Results Logs/(28950:29355): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:18:811 LFS Results Logs/(28950:29356): Insert de 56;vanadium en METALS realizado en memtable
+[TRACE] 00:00:19:139 LFS Results Logs/(28950:29358): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:19:746 LFS Results Logs/(28950:29360): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:20:150 LFS Results Logs/(28950:29361): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:20:152 LFS Results Logs/(28950:29362): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:20:153 LFS Results Logs/(28950:29363): Insert de 47;golden en METALS realizado en memtable
+[TRACE] 00:00:20:252 LFS Results Logs/(28950:29365): Insert de 39;copper en METALS realizado en memtable
+[TRACE] 00:00:20:467 LFS Results Logs/(28950:29366): Insert de 47;pgm en METALS realizado en memtable
+[TRACE] 00:00:20:679 LFS Results Logs/(28950:29367): Insert de 87;nickel en METALS realizado en memtable
+[TRACE] 00:00:21:11 LFS Results Logs/(28950:29368): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:21:587 LFS Results Logs/(28950:29369): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:22:199 LFS Results Logs/(28950:29370): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:23:679 LFS Results Logs/(28950:29376): Registro con mayor timestamp: 1563505172934.000000;64;moly
+[TRACE] 00:00:23:923 LFS Results Logs/(28950:29377): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:24:331 LFS Results Logs/(28950:29379): Insert de 120;zinc en METALS realizado en memtable
+[TRACE] 00:00:24:631 LFS Results Logs/(28950:29380): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:25:118 LFS Results Logs/(28950:29382): Insert de 198;felines en ANIMALS realizado en memtable
+[TRACE] 00:00:25:276 LFS Results Logs/(28950:29384): Insert de 124;pigs en ANIMALS realizado en memtable
+[TRACE] 00:00:26:155 LFS Results Logs/(28950:29388): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:26:157 LFS Results Logs/(28950:29391): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:26:157 LFS Results Logs/(28950:29390): Insert de 1;critters en ANIMALS realizado en memtable
+[TRACE] 00:00:26:159 LFS Results Logs/(28950:29389): Insert de 108;beast en ANIMALS realizado en memtable
+[TRACE] 00:00:26:159 LFS Results Logs/(28950:29392): Insert de 15;cerium en METALS realizado en memtable
+[TRACE] 00:00:26:262 LFS Results Logs/(28950:29393): Registro con mayor timestamp: 1563505214298.000000;92;calves
+[TRACE] 00:00:26:763 LFS Results Logs/(28950:29394): Registro con mayor timestamp: 1563505204549.000000;181;reptiles
+[TRACE] 00:00:27:520 LFS Results Logs/(28950:29397): Registro no encontrado
+[TRACE] 00:00:27:520 LFS Results Logs/(28950:29396): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:27:985 LFS Results Logs/(28950:29398): Insert de 94;europium en METALS realizado en memtable
+[TRACE] 00:00:28:89 LFS Results Logs/(28950:29399): Registro con mayor timestamp: 1563505204971.000000;19;feed
+[TRACE] 00:00:28:96 LFS Results Logs/(28950:29400): Insert de 128;nickel alloy en METALS realizado en memtable
+[TRACE] 00:00:28:301 LFS Results Logs/(28950:29402): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:28:737 LFS Results Logs/(28950:29403): Insert de 145;bears en ANIMALS realizado en memtable
+[TRACE] 00:00:28:848 LFS Results Logs/(28950:29405): Registro con mayor timestamp: 1563505196687.000000;171;primates
+[TRACE] 00:00:28:857 LFS Results Logs/(28950:29406): Insert de 87;coyotes en ANIMALS realizado en memtable
+[TRACE] 00:00:29:576 LFS Results Logs/(28950:29410): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:29:577 LFS Results Logs/(28950:29411): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:29:580 LFS Results Logs/(28950:29414): Insert de 190;loadings en METALS realizado en memtable
+[TRACE] 00:00:29:580 LFS Results Logs/(28950:29413): Insert de 168;metallic element en METALS realizado en memtable
+[TRACE] 00:00:29:580 LFS Results Logs/(28950:29412): Insert de 185;ferrochromium en METALS realizado en memtable
+[TRACE] 00:00:30:188 LFS Results Logs/(28950:29417): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:30:692 LFS Results Logs/(28950:29418): Insert de 129;ferrochromium en METALS realizado en memtable
+[TRACE] 00:00:30:909 LFS Results Logs/(28950:29419): Insert de 199;fluorspar en METALS realizado en memtable
+[TRACE] 00:00:31:120 LFS Results Logs/(28950:29420): Insert de 72;industrials en METALS realizado en memtable
+[TRACE] 00:00:31:444 LFS Results Logs/(28950:29421): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:31:915 LFS Results Logs/(28950:29422): Registro con mayor timestamp: 1563505177821.000000;101;auriferous
+[TRACE] 00:00:32:160 LFS Results Logs/(28950:29423): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:32:162 LFS Results Logs/(28950:29425): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:32:162 LFS Results Logs/(28950:29424): Insert de 83;mice en ANIMALS realizado en memtable
+[TRACE] 00:00:32:3 LFS Results Logs/(28950:29428): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:33:342 LFS Results Logs/(28950:29430): Insert de 72;cupric sulfate en METALS realizado en memtable
+[TRACE] 00:00:33:566 LFS Results Logs/(28950:29431): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:33:917 LFS Results Logs/(28950:29432): Insert de 131;wolves en ANIMALS realizado en memtable
+[TRACE] 00:00:34:426 LFS Results Logs/(28950:29435): Registro con mayor timestamp: 1563505200759.000000;199;bovine
+[TRACE] 00:00:34:683 LFS Results Logs/(28950:29436): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:35:32 LFS Results Logs/(28950:29438): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:35:311 LFS Results Logs/(28950:29440): Insert de 127;chickens en ANIMALS realizado en memtable
+[TRACE] 00:00:35:556 LFS Results Logs/(28950:29441): Insert de 95;walruses en ANIMALS realizado en memtable
+[TRACE] 00:00:35:825 LFS Results Logs/(28950:29442): Insert de 161;coyotes en ANIMALS realizado en memtable
+[TRACE] 00:00:36:245 LFS Results Logs/(28950:29444): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:36:610 LFS Results Logs/(28950:29446): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:36:612 LFS Results Logs/(28950:29447): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:36:614 LFS Results Logs/(28950:29450): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:36:616 LFS Results Logs/(28950:29449): Insert de 135;puppies en ANIMALS realizado en memtable
+[TRACE] 00:00:36:617 LFS Results Logs/(28950:29448): Insert de 77;cattle en ANIMALS realizado en memtable
+[TRACE] 00:00:36:617 LFS Results Logs/(28950:29452): Insert de 107;barytes en METALS realizado en memtable
+[TRACE] 00:00:36:617 LFS Results Logs/(28950:29451): Insert de 152;iron ore en METALS realizado en memtable
+[TRACE] 00:00:37:862 LFS Results Logs/(28950:29457): Registro con mayor timestamp: 1563505191952.000000;167;beast
+[TRACE] 00:00:38:164 LFS Results Logs/(28950:29458): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:38:165 LFS Results Logs/(28950:29460): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:38:166 LFS Results Logs/(28950:29459): Insert de 71;birds en ANIMALS realizado en memtable
+[TRACE] 00:00:38:167 LFS Results Logs/(28950:29461): Insert de 60;industrials en METALS realizado en memtable
+[TRACE] 00:00:38:192 LFS Results Logs/(28950:29462): Registro con mayor timestamp: 1563505183479.000000;173;puppies
+[TRACE] 00:00:38:681 LFS Results Logs/(28950:29463): Registro con mayor timestamp: 1563505229449.000000;129;ferrochromium
+[TRACE] 00:00:39:8 LFS Results Logs/(28950:29464): Registro con mayor timestamp: 1563505227693.000000;94;europium
+[TRACE] 00:00:39:343 LFS Results Logs/(28950:29466): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:39:607 LFS Results Logs/(28950:29467): Insert de 121;fluorspar en METALS realizado en memtable
+[TRACE] 00:00:39:770 LFS Results Logs/(28950:29469): Insert de 175;cerium en METALS realizado en memtable
+[TRACE] 00:00:40:68 LFS Results Logs/(28950:29470): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:41:150 LFS Results Logs/(28950:29474): Registro con mayor timestamp: 1563505227693.000000;94;europium
+[TRACE] 00:00:42:433 LFS Results Logs/(28950:29478): Registro con mayor timestamp: 1563505223631.000000;124;pigs
+[TRACE] 00:00:42:869 LFS Results Logs/(28950:29480): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:42:872 LFS Results Logs/(28950:29484): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:42:872 LFS Results Logs/(28950:29483): Insert de 22;savages en ANIMALS realizado en memtable
+[TRACE] 00:00:42:874 LFS Results Logs/(28950:29482): Insert de 146;equines en ANIMALS realizado en memtable
+[TRACE] 00:00:42:874 LFS Results Logs/(28950:29481): Insert de 5;fools en ANIMALS realizado en memtable
+[TRACE] 00:00:43:69 LFS Results Logs/(28950:29485): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:43:444 LFS Results Logs/(28950:29487): Insert de 135;zinc en METALS realizado en memtable
+[TRACE] 00:00:43:695 LFS Results Logs/(28950:29489): Insert de 128;sodium sulfate en METALS realizado en memtable
+[TRACE] 00:00:43:885 LFS Results Logs/(28950:29491): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:44:167 LFS Results Logs/(28950:29493): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:44:169 LFS Results Logs/(28950:29495): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:44:170 LFS Results Logs/(28950:29494): Insert de 51;dogs en ANIMALS realizado en memtable
+[TRACE] 00:00:44:170 LFS Results Logs/(28950:29497): Insert de 5;nodules en METALS realizado en memtable
+[TRACE] 00:00:44:171 LFS Results Logs/(28950:29496): Insert de 74;smelting en METALS realizado en memtable
+[TRACE] 00:00:44:647 LFS Results Logs/(28950:29499): Registro con mayor timestamp: 1563505243327.000000;51;dogs
+[TRACE] 00:00:45:46 LFS Results Logs/(28950:29501): Registro con mayor timestamp: 1563505243780.000000;5;nodules
+[TRACE] 00:00:45:547 LFS Results Logs/(28950:29503): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:46:51 LFS Results Logs/(28950:29504): Insert de 109;sodium sulphate en METALS realizado en memtable
+[TRACE] 00:00:46:263 LFS Results Logs/(28950:29505): Insert de 155;aluminous en METALS realizado en memtable
+[TRACE] 00:00:46:612 LFS Results Logs/(28950:29506): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:48:458 LFS Results Logs/(28950:29510): Registro con mayor timestamp: 1563505212162.000000;118;elephants
+[TRACE] 00:00:48:777 LFS Results Logs/(28950:29511): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:49:67 LFS Results Logs/(28950:29512): Insert de 115;ilmenite en METALS realizado en memtable
+[TRACE] 00:00:49:424 LFS Results Logs/(28950:29514): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:49:840 LFS Results Logs/(28950:29516): Insert de 30;bears en ANIMALS realizado en memtable
+[TRACE] 00:00:50:51 LFS Results Logs/(28950:29517): Insert de 189;wildlife en ANIMALS realizado en memtable
+[TRACE] 00:00:50:172 LFS Results Logs/(28950:29518): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:50:176 LFS Results Logs/(28950:29522): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:50:176 LFS Results Logs/(28950:29521): Insert de 55;otters en ANIMALS realizado en memtable
+[TRACE] 00:00:50:176 LFS Results Logs/(28950:29520): Insert de 72;biological en ANIMALS realizado en memtable
+[TRACE] 00:00:50:177 LFS Results Logs/(28950:29519): Insert de 121;flora en ANIMALS realizado en memtable
+[TRACE] 00:00:50:178 LFS Results Logs/(28950:29523): Insert de 92;rope en METALS realizado en memtable
+[TRACE] 00:00:50:280 LFS Results Logs/(28950:29526): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:50:643 LFS Results Logs/(28950:29528): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:50:651 LFS Results Logs/(28950:29529): Registro con mayor timestamp: 1563505234040.000000;127;chickens
+[TRACE] 00:00:51:379 LFS Results Logs/(28950:29532): Registro con mayor timestamp: 1563505219351.000000;39;copper
+[TRACE] 00:00:52:315 LFS Results Logs/(28950:29534): Registro con mayor timestamp: 1563505228299.000000;168;metallic element
+[TRACE] 00:00:52:644 LFS Results Logs/(28950:29535): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:53:55 LFS Results Logs/(28950:29536): Insert de 94;gold-bearing en METALS realizado en memtable
+[TRACE] 00:00:53:155 LFS Results Logs/(28950:29539): Insert de 41;argentiferous en METALS realizado en memtable
+[TRACE] 00:00:53:347 LFS Results Logs/(28950:29540): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:53:483 LFS Results Logs/(28950:29541): Insert de 65;pet en ANIMALS realizado en memtable
+[TRACE] 00:00:53:787 LFS Results Logs/(28950:29543): Registro con mayor timestamp: 1563505205426.000000;78;idiots
+[TRACE] 00:00:54:557 LFS Results Logs/(28950:29547): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:54:560 LFS Results Logs/(28950:29551): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:54:560 LFS Results Logs/(28950:29550): Insert de 12;fools en ANIMALS realizado en memtable
+[TRACE] 00:00:54:561 LFS Results Logs/(28950:29549): Insert de 31;cows en ANIMALS realizado en memtable
+[TRACE] 00:00:54:561 LFS Results Logs/(28950:29548): Insert de 44;buggers en ANIMALS realizado en memtable
+[TRACE] 00:00:55:580 LFS Results Logs/(28950:29555): Registro con mayor timestamp: 1563505179320.000000;172;petrochemicals
+[TRACE] 00:00:56:178 LFS Results Logs/(28950:29557): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:56:181 LFS Results Logs/(28950:29560): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:56:181 LFS Results Logs/(28950:29559): Insert de 172;savages en ANIMALS realizado en memtable
+[TRACE] 00:00:56:182 LFS Results Logs/(28950:29558): Insert de 173;whales en ANIMALS realizado en memtable
+[TRACE] 00:00:56:182 LFS Results Logs/(28950:29561): Insert de 148;ferromanganese en METALS realizado en memtable
+[TRACE] 00:00:56:981 LFS Results Logs/(28950:29564): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:56:989 LFS Results Logs/(28950:29565): Registro con mayor timestamp: 1563505244301.000000;128;sodium sulfate
+[TRACE] 00:00:57:125 LFS Results Logs/(28950:29566): Insert de 74;contaminants en METALS realizado en memtable
+[TRACE] 00:00:57:317 LFS Results Logs/(28950:29568): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:57:715 LFS Results Logs/(28950:29570): Insert de 135;pet en ANIMALS realizado en memtable
+[TRACE] 00:00:58:629 LFS Results Logs/(28950:29573): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:58:630 LFS Results Logs/(28950:29575): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:00:58:633 LFS Results Logs/(28950:29574): Insert de 162;horses en ANIMALS realizado en memtable
+[TRACE] 00:00:58:633 LFS Results Logs/(28950:29578): Insert de 26;precious metals en METALS realizado en memtable
+[TRACE] 00:00:58:634 LFS Results Logs/(28950:29577): Insert de 126;tungsten en METALS realizado en memtable
+[TRACE] 00:00:58:634 LFS Results Logs/(28950:29576): Insert de 135;industrials en METALS realizado en memtable
+[TRACE] 00:01:00:837 LFS Results Logs/(28950:29585): Registro con mayor timestamp: 1563505258521.000000;135;pet
+[TRACE] 00:01:01:373 LFS Results Logs/(28950:29587): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:01:375 LFS Results Logs/(28950:29590): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:01:377 LFS Results Logs/(28950:29589): Insert de 45;individuals en ANIMALS realizado en memtable
+[TRACE] 00:01:01:377 LFS Results Logs/(28950:29588): Insert de 102;bears en ANIMALS realizado en memtable
+[TRACE] 00:01:01:378 LFS Results Logs/(28950:29591): Insert de 39;zircon en METALS realizado en memtable
+[TRACE] 00:01:01:940 LFS Results Logs/(28950:29592): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:02:183 LFS Results Logs/(28950:29593): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:02:185 LFS Results Logs/(28950:29594): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:02:187 LFS Results Logs/(28950:29595): Insert de 66;golden en METALS realizado en memtable
+[TRACE] 00:01:02:471 LFS Results Logs/(28950:29596): Insert de 136;rhodium en METALS realizado en memtable
+[TRACE] 00:01:02:714 LFS Results Logs/(28950:29597): Insert de 28;iridium en METALS realizado en memtable
+[TRACE] 00:01:03:43 LFS Results Logs/(28950:29598): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:04:226 LFS Results Logs/(28950:29600): Insert de 16;cattle en ANIMALS realizado en memtable
+[TRACE] 00:01:04:556 LFS Results Logs/(28950:29602): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:05:33 LFS Results Logs/(28950:29606): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:05:392 LFS Results Logs/(28950:29608): Insert de 5;turtles en ANIMALS realizado en memtable
+[TRACE] 00:01:05:468 LFS Results Logs/(28950:29609): Registro con mayor timestamp: 1563505184889.000000;105;aluminous
+[TRACE] 00:01:05:474 LFS Results Logs/(28950:29610): Insert de 44;wolves en ANIMALS realizado en memtable
+[TRACE] 00:01:06:823 LFS Results Logs/(28950:29614): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:06:826 LFS Results Logs/(28950:29618): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:06:826 LFS Results Logs/(28950:29617): Insert de 28;bullies en ANIMALS realizado en memtable
+[TRACE] 00:01:06:830 LFS Results Logs/(28950:29615): Insert de 194;fools en ANIMALS realizado en memtable
+[TRACE] 00:01:06:834 LFS Results Logs/(28950:29616): Insert de 142;arseholes en ANIMALS realizado en memtable
+[TRACE] 00:01:06:835 LFS Results Logs/(28950:29619): Insert de 189;plastics en METALS realizado en memtable
+[TRACE] 00:01:08:83 LFS Results Logs/(28950:29622): Registro con mayor timestamp: 1563505202142.000000;101;humans
+[TRACE] 00:01:08:187 LFS Results Logs/(28950:29623): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:08:189 LFS Results Logs/(28950:29625): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:08:190 LFS Results Logs/(28950:29624): Insert de 45;savages en ANIMALS realizado en memtable
+[TRACE] 00:01:08:191 LFS Results Logs/(28950:29627): Insert de 94;rare earth en METALS realizado en memtable
+[TRACE] 00:01:08:191 LFS Results Logs/(28950:29626): Insert de 184;platinum en METALS realizado en memtable
+[TRACE] 00:01:09:26 LFS Results Logs/(28950:29630): Registro con mayor timestamp: 1563505241509.000000;146;equines
+[TRACE] 00:01:09:528 LFS Results Logs/(28950:29632): Registro con mayor timestamp: 1563505226988.000000;185;ferrochromium
+[TRACE] 00:01:10:536 LFS Results Logs/(28950:29636): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:11:156 LFS Results Logs/(28950:29637): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:11:711 LFS Results Logs/(28950:29638): Insert de 113;ruminants en ANIMALS realizado en memtable
+[TRACE] 00:01:11:846 LFS Results Logs/(28950:29639): Insert de 89;bison en ANIMALS realizado en memtable
+[TRACE] 00:01:12:266 LFS Results Logs/(28950:29641): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:12:282 LFS Results Logs/(28950:29642): Registro con mayor timestamp: 1563505239183.000000;121;fluorspar
+[TRACE] 00:01:12:666 LFS Results Logs/(28950:29643): Insert de 50;steel en METALS realizado en memtable
+[TRACE] 00:01:12:772 LFS Results Logs/(28950:29644): Registro con mayor timestamp: 1563505261371.000000;66;golden
+[TRACE] 00:01:12:782 LFS Results Logs/(28950:29645): Insert de 163;gold en METALS realizado en memtable
+[TRACE] 00:01:13:193 LFS Results Logs/(28950:29646): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:13:202 LFS Results Logs/(28950:29647): Registro con mayor timestamp: 1563505258626.000000;102;bears
+[TRACE] 00:01:13:586 LFS Results Logs/(28950:29648): Insert de 21;creatures en ANIMALS realizado en memtable
+[TRACE] 00:01:14:124 LFS Results Logs/(28950:29651): Registro con mayor timestamp: 1563505190730.000000;153;plastics
+[TRACE] 00:01:14:195 LFS Results Logs/(28950:29653): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:14:198 LFS Results Logs/(28950:29657): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:14:198 LFS Results Logs/(28950:29656): Insert de 149;chickens en ANIMALS realizado en memtable
+[TRACE] 00:01:14:199 LFS Results Logs/(28950:29655): Insert de 182;pigs en ANIMALS realizado en memtable
+[TRACE] 00:01:14:199 LFS Results Logs/(28950:29654): Insert de 74;buggers en ANIMALS realizado en memtable
+[TRACE] 00:01:16:373 LFS Results Logs/(28950:29666): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:16:376 LFS Results Logs/(28950:29669): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:16:378 LFS Results Logs/(28950:29668): Insert de 92;foxes en ANIMALS realizado en memtable
+[TRACE] 00:01:16:378 LFS Results Logs/(28950:29667): Insert de 105;puppies en ANIMALS realizado en memtable
+[TRACE] 00:01:16:379 LFS Results Logs/(28950:29671): Insert de 33;hydrometallurgy en METALS realizado en memtable
+[TRACE] 00:01:16:379 LFS Results Logs/(28950:29670): Insert de 181;silver en METALS realizado en memtable
+[TRACE] 00:01:17:592 LFS Results Logs/(28950:29672): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:18:60 LFS Results Logs/(28950:29673): Insert de 104;environ en METALS realizado en memtable
+[TRACE] 00:01:18:325 LFS Results Logs/(28950:29674): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:18:995 LFS Results Logs/(28950:29675): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:19:432 LFS Results Logs/(28950:29677): Insert de 107;years en METALS realizado en memtable
+[TRACE] 00:01:19:759 LFS Results Logs/(28950:29679): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:20:201 LFS Results Logs/(28950:29681): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:20:202 LFS Results Logs/(28950:29682): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:20:204 LFS Results Logs/(28950:29683): Insert de 69;years en METALS realizado en memtable
+[TRACE] 00:01:20:221 LFS Results Logs/(28950:29680): Insert de 126;snakes en ANIMALS realizado en memtable
+[TRACE] 00:01:20:480 LFS Results Logs/(28950:29686): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:21:217 LFS Results Logs/(28950:29689): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:21:644 LFS Results Logs/(28950:29688): Insert de 32;golden en METALS realizado en memtable
+[TRACE] 00:01:22:136 LFS Results Logs/(28950:29692): Registro con mayor timestamp: 1563505232672.000000;152;iron ore
+[TRACE] 00:01:22:654 LFS Results Logs/(28950:29694): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:22:656 LFS Results Logs/(28950:29697): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:22:658 LFS Results Logs/(28950:29696): Insert de 16;cetaceans en ANIMALS realizado en memtable
+[TRACE] 00:01:22:659 LFS Results Logs/(28950:29695): Insert de 160;primates en ANIMALS realizado en memtable
+[TRACE] 00:01:22:659 LFS Results Logs/(28950:29699): Insert de 182;argentiferous en METALS realizado en memtable
+[TRACE] 00:01:22:659 LFS Results Logs/(28950:29698): Insert de 112;aluminum en METALS realizado en memtable
+[TRACE] 00:01:23:555 LFS Results Logs/(28950:29701): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:23:868 LFS Results Logs/(28950:29703): Insert de 55;bimetal en METALS realizado en memtable
+[TRACE] 00:01:24:520 LFS Results Logs/(28950:29705): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:24:981 LFS Results Logs/(28950:29708): Registro con mayor timestamp: 1563505197602.000000;90;precious metal
+[TRACE] 00:01:25:758 LFS Results Logs/(28950:29712): Registro con mayor timestamp: 1563505273596.000000;149;chickens
+[TRACE] 00:01:26:89 LFS Results Logs/(28950:29715): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:26:205 LFS Results Logs/(28950:29716): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:26:208 LFS Results Logs/(28950:29718): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:26:209 LFS Results Logs/(28950:29717): Insert de 73;bassets en ANIMALS realizado en memtable
+[TRACE] 00:01:26:210 LFS Results Logs/(28950:29720): Insert de 169;palladium en METALS realizado en memtable
+[TRACE] 00:01:26:210 LFS Results Logs/(28950:29719): Insert de 17;nickel en METALS realizado en memtable
+[TRACE] 00:01:26:661 LFS Results Logs/(28950:29721): Insert de 149;metallurgical en METALS realizado en memtable
+[TRACE] 00:01:27:208 LFS Results Logs/(28950:29722): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:27:886 LFS Results Logs/(28950:29723): Insert de 127;weevils en ANIMALS realizado en memtable
+[TRACE] 00:01:28:66 LFS Results Logs/(28950:29724): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:28:184 LFS Results Logs/(28950:29725): Registro con mayor timestamp: 1563505198040.000000;185;freaks
+[TRACE] 00:01:28:523 LFS Results Logs/(28950:29726): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:28:526 LFS Results Logs/(28950:29727): Registro con mayor timestamp: 1563505258199.000000;26;precious metals
+[TRACE] 00:01:28:737 LFS Results Logs/(28950:29729): Insert de 195;canines en ANIMALS realizado en memtable
+[TRACE] 00:01:30:864 LFS Results Logs/(28950:29737): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:30:865 LFS Results Logs/(28950:29738): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:30:867 LFS Results Logs/(28950:29742): Insert de 126;bullion en METALS realizado en memtable
+[TRACE] 00:01:30:868 LFS Results Logs/(28950:29741): Insert de 83;raw materials en METALS realizado en memtable
+[TRACE] 00:01:30:868 LFS Results Logs/(28950:29740): Insert de 33;metallike en METALS realizado en memtable
+[TRACE] 00:01:30:868 LFS Results Logs/(28950:29739): Insert de 140;rhenium en METALS realizado en memtable
+[TRACE] 00:01:32:211 LFS Results Logs/(28950:29743): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:32:213 LFS Results Logs/(28950:29745): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:32:213 LFS Results Logs/(28950:29744): Insert de 38;beasts en ANIMALS realizado en memtable
+[TRACE] 00:01:38:219 LFS Results Logs/(28950:29749): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:38:224 LFS Results Logs/(28950:29751): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:44:227 LFS Results Logs/(28950:29754): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:44:228 LFS Results Logs/(28950:29755): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:50:234 LFS Results Logs/(28950:29758): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:50:239 LFS Results Logs/(28950:29760): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:56:243 LFS Results Logs/(28950:29765): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:01:56:245 LFS Results Logs/(28950:29766): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:02:253 LFS Results Logs/(28950:29769): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:02:261 LFS Results Logs/(28950:29771): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:08:263 LFS Results Logs/(28950:29774): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:08:264 LFS Results Logs/(28950:29775): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:14:271 LFS Results Logs/(28950:29778): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:14:280 LFS Results Logs/(28950:29780): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:20:283 LFS Results Logs/(28950:29783): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:20:284 LFS Results Logs/(28950:29784): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:26:291 LFS Results Logs/(28950:29790): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:26:299 LFS Results Logs/(28950:29792): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:32:301 LFS Results Logs/(28950:29795): 
+Metadata de ANIMALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=2
+-TIEMPO_COMPACTACION=5000
+[TRACE] 00:02:32:302 LFS Results Logs/(28950:29796): 
+Metadata de METALS: 
+-CONSISTENCIA: 1
+-PARTICIONES=3
+-TIEMPO_COMPACTACION=5000
