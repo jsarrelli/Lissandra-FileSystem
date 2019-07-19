@@ -1,22 +1,17 @@
 #include "SocketServidorMemoria.h"
 
 void escuchar(int listenningSocket) {
-	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
+	listen(listenningSocket, 300); // es una syscall bloqueante
 	log_info(loggerInfo, "Servidor memoria escuchando..");
 	while (true) {
 		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
+		log_info(loggerInfo, "Esperando requests...");
 		int socketCliente = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketCliente != -1) {
 			pthread_t threadId;
 			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketCliente);
 			pthread_detach(threadId);
-
-			//O hace un journal o procesa una accion, boludeces no
-
-			//procesarAccion(socketCliente);
-
-			printf("Escuchando.. \n");
 		}
 
 	}

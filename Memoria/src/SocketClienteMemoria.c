@@ -20,12 +20,16 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 }
 
 t_metadata_tabla* describeSegmento(char* nombreSegmento) {
+
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
 
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
 		return NULL;
 	}
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento) + 1, DESCRIBE);
 	Paquete paquete;
 	if (RecibirPaquete(socketFileSystem, &paquete) < 0) {
@@ -45,6 +49,7 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 }
 
 void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
@@ -53,16 +58,18 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	t_registro_memoria* registro = pagina->registro;
 	char * consulta = string_new();
 	string_append_with_format(&consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
-	log_info(loggerInfo, "Enviando registro a FileSystem");
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, INSERT);
 }
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
 		return 1;
 	}
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento) + 1, DROP);
 	Paquete paquete;
 	int succes = 1;
@@ -75,6 +82,7 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 }
 
 int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
@@ -83,7 +91,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
 			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
-	log_info(loggerInfo, "Enviando CREATE a fileSystem", consulta);
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, CREATE);
 	free(consulta);
 
@@ -98,11 +106,13 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 }
 
 char* describeAllFileSystem() {
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
 		return NULL;
 	}
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, DESCRIBE_ALL);
 
 
@@ -181,7 +191,6 @@ void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
 t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(loggerInfo, "Enviando consulta SELECT al fileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
-	log_info(loggerInfo, "Socket FileSsytem: %d", socketFileSystem);
 
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "No se pudo conectar con el fileSystem");
@@ -190,7 +199,7 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
-	log_info(loggerInfo, "Select enviado a fileSystem: %s", consulta);
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
 	free(consulta);

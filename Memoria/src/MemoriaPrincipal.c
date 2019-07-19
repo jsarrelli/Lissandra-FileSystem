@@ -61,7 +61,6 @@ void* asignarMarco() {
 		if (!todosModificados()) {
 			liberarUltimoUsado();
 		} else {
-			pthread_mutex_unlock(&mutexJournal);
 			journalMemoria();
 		}
 	}
@@ -81,7 +80,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 	log_info(loggerInfo, "Insertando pagina en memoria..");
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
-		log_info(loggerInfo, "Insertando registro en memoria..");
+		log_info(loggerInfo, "Insertando registro %d \"%s\" %f en memoria..",key,value,timeStamp);
 
 		void* marcoVacio = asignarMarco();
 
@@ -110,6 +109,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
 	estadoFrame->estado = OCUPADO;
 	estadoFrame->fechaObtencion = getCurrentTime();
+	log_info(loggerInfo, "Registro %d \"%s\" %f insertado en memoria",key,value,timeStamp);
 
 	return paginaNueva;
 }
