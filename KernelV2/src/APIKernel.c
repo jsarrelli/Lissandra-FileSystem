@@ -164,8 +164,11 @@ int consolaInsert(char*argumentos) {
 	Paquete paquete;
 	if (socketMemoria >= 0) {
 		log_info(log_master->logInfo, "Conexion existosa");
-		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, &paquete) == SUPER_ERROR)
-			return SUPER_ERROR;
+		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, &paquete) == SUPER_ERROR) {
+			log_error(log_master->logError, "Por algun motivo lo recibe mal");
+			//return SUPER_ERROR;
+		}
+
 	}
 
 	freePunteroAPunteros(valoresAux);
@@ -217,8 +220,9 @@ int consolaSelect(char*argumentos) {
 		free(request);
 		log_info(log_master->logInfo, "Recibiendo datos.. ", nombreTabla, key);
 		if (RecibirPaquete(socketMemoria, &paquete) <= 0) {
-			freePunteroAPunteros(valores);
-			success = SUPER_ERROR;
+
+			log_error(log_master->logError, "Fijate que algo fallo en ese SELECT");
+			//success = SUPER_ERROR;
 		} else {
 			log_info(log_master->logInfo, "Datos recibidos ", nombreTabla, key);
 			if (atoi(paquete.mensaje) == 1) {
@@ -251,14 +255,16 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		return SUPER_ERROR;
 	}
 	log_info(log_master->logInfo, "Esperando para recibir datos..");
-	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, paquete) <= 0) {
+	if (RecibirPaquete(socketMemoria, paquete) <= 0) {
 		log_info(log_master->logInfo, "Error en la recepcion del paquete..");
 		success = 1;
 	} else {
 		log_info(log_master->logInfo, "Se recibio el paquete con exito..");
 		success = atoi(paquete->mensaje);
 	}
-	close(socketMemoria);
+	if (socketMemoria != -1) {
+		close(socketMemoria);
+	}
 
 	free(paquete->mensaje);
 	return success;

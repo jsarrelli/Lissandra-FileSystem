@@ -25,18 +25,18 @@ void procesarAccion(int socketEntrante) {
 	void* datos;
 	int cantDatosRecibidos = RecibirPaquete(socketEntrante, &paquete);
 
-	log_info(loggerInfo, "Request en memoria recibida");
+	log_info(loggerInfo, "Request en memoria recibida: %s / %d",paquete.mensaje,cantDatosRecibidos);
 
 	if (cantDatosRecibidos > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
-			pthread_mutex_lock(&mutexJournal);
+
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
-
+				pthread_mutex_lock(&mutexSelect);
 				procesarRequestSELECT(datos, socketEntrante);
-
+				pthread_mutex_unlock(&mutexSelect);
 				break;
 			case (INSERT):
 
@@ -71,16 +71,18 @@ void procesarAccion(int socketEntrante) {
 				JOURNAL_MEMORIA();
 				break;
 			}
-			pthread_mutex_unlock(&mutexJournal);
+
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
+
 		} else {
 			log_info(loggerInfo, "No es ningun proceso valido para Memoria");
 		}
 		free(paquete.mensaje);
+		close(socketEntrante);
 	}
-	close(socketEntrante);
+	//close(socketEntrante);
 
 }
 
@@ -89,10 +91,10 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 
 	t_registro_memoria* registro = procesarSELECT(request);
 
-
 	if (registro != NULL) {
 		char* response = string_new();
 		string_append_with_format(&response, "%d \"%s\" %f", registro->key, registro->value, registro->timestamp);
+		log_info(loggerInfo, "Enviado registro a kernel: %s", response);
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, SELECT);
 		free(response);
 	} else {

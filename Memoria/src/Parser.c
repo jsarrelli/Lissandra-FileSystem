@@ -15,7 +15,7 @@ void procesarConsulta(char* consulta) {
 	} else if (strcmp(operacion, "DROP") == 0) {
 		procesarDROP(argumentos);
 	} else if (strcmp(operacion, "JOURNAL") == 0) {
-		journalMemoria();
+		JOURNAL_MEMORIA();
 	} else {
 		puts("Comando no encontrado");
 	}

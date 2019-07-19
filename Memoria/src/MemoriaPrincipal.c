@@ -27,7 +27,7 @@ void inicializarMemoria(int tamanioMemoriaRecibido) {
 	//recemosle a Dios y a la virgen
 	pthread_mutex_init(&mutexJournal, NULL);
 	pthread_mutex_init(&mutexAsignacionMarco, NULL);
-	pthread_mutex_init(&mutexLRU, NULL);
+	pthread_mutex_init(&mutexSelect, NULL);
 }
 
 Segmento* newSegmento(char* nombreSegmento) {
@@ -52,9 +52,6 @@ bool validarValueMaximo(char* value) {
 }
 
 void* asignarMarco() {
-
-	//porque estaba bloqueado desde el servidor
-	pthread_mutex_unlock(&mutexJournal);
 
 	pthread_mutex_lock(&mutexAsignacionMarco);
 
@@ -319,7 +316,7 @@ bool isModificada(Pagina* pagina) {
 }
 
 void journalMemoria() {
-	pthread_mutex_lock(&mutexJournal);
+
 	log_info(loggerInfo, "Realizando Journal..");
 	t_list* tablas = obtenerTablasFileSystem();
 
@@ -346,7 +343,7 @@ void journalMemoria() {
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 	list_destroy_and_destroy_elements(tablas, free);
 	log_info(loggerInfo, "Journal finalizado con exito");
-	pthread_mutex_unlock(&mutexJournal);
+
 
 }
 

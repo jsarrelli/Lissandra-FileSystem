@@ -25,6 +25,7 @@ int tamanioRegistro;
 pthread_mutex_t mutexJournal;
 pthread_mutex_t mutexAsignacionMarco;
 pthread_mutex_t mutexLRU;
+pthread_mutex_t mutexSelect;
 
 void inicializarMemoria(int tamanioMemoriaRecibido);
 
