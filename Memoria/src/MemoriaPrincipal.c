@@ -72,7 +72,6 @@ void* asignarMarco() {
 	log_info(loggerInfo, "Marco asignado ");
 	pthread_mutex_unlock(&mutexAsignacionMarco);
 
-
 	return marcoVacio;
 }
 
@@ -83,7 +82,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 	log_info(loggerInfo, "Insertando pagina en memoria..");
 	Pagina* paginaNueva = buscarPaginaEnMemoria(segmento, key);
 	if (paginaNueva == NULL) {
-		log_info(loggerInfo, "Insertando registro %d \"%s\" %f en memoria..",key,value,timeStamp);
+		log_info(loggerInfo, "Insertando registro %d \"%s\" %f en memoria..", key, value, timeStamp);
 
 		void* marcoVacio = asignarMarco();
 
@@ -112,7 +111,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
 	estadoFrame->estado = OCUPADO;
 	estadoFrame->fechaObtencion = getCurrentTime();
-	log_info(loggerInfo, "Registro %d \"%s\" %f insertado en memoria",key,value,timeStamp);
+	log_info(loggerInfo, "Registro %d \"%s\" %f insertado en memoria", key, value, timeStamp);
 
 	return paginaNueva;
 }
@@ -234,16 +233,15 @@ void liberarUltimoUsado() {
 	}
 
 	void recorrerSegmentos(Segmento* segmento) {
-		list_iterate2(segmento->paginas,(void*) buscarPaginaLRU, (void*)segmento);
+		list_iterate2(segmento->paginas, (void*) buscarPaginaLRU, (void*) segmento);
 	}
 
-	list_iterate(segmentos,(void*) recorrerSegmentos);
+	list_iterate(segmentos, (void*) recorrerSegmentos);
 
 	log_trace(loggerTrace, "Se eliminara la pagina con key: %d y timeStamp:%f por ser la menos accedida",
 			paginaMenosUtilizada->registro->key, paginaMenosUtilizada->registro->timestamp);
 
 	reemplazarPagina(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
-
 
 }
 
@@ -323,6 +321,8 @@ bool isModificada(Pagina* pagina) {
 void journalMemoria() {
 	pthread_mutex_lock(&mutexJournal);
 	log_info(loggerInfo, "Realizando Journal..");
+	t_list* tablas = obtenerTablasFileSystem();
+
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
 
 		if (isModificada(pagina)) {
@@ -334,7 +334,7 @@ void journalMemoria() {
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
 		log_info(loggerInfo, "Realizando Journal de %s", segmento->nombreTabla);
-		if (existeSegmentoFS(segmento->nombreTabla)) {
+		if (existeSegmentoFS(segmento->nombreTabla, tablas)) {
 			list_iterate2(segmento->paginas, (void*) enviarSiEstaModificada, segmento);
 		} else {
 			log_info(loggerInfo, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
@@ -350,13 +350,36 @@ void journalMemoria() {
 
 }
 
-bool existeSegmentoFS(char* nombreSegmento) {
-	t_metadata_tabla* metadata = describeSegmento(nombreSegmento);
-	if (metadata != NULL) {
-		free(metadata);
-		return true;
+t_list* obtenerTablasFileSystem() {
+	char* tablasSerializadas = describeAllFileSystem();
+	char** tablasAux = string_split(tablasSerializadas, "/");
+	int i = 0;
+	t_list* listaTablas = list_create();
+
+	while (tablasAux[i] != NULL) {
+
+		char* tablaAux = string_duplicate(tablasAux[i]);
+		char** valores = string_split(tablaAux, " ");
+		char* nombreTabla = string_duplicate(valores[0]);
+
+		list_add(listaTablas, nombreTabla);
+
+		freePunteroAPunteros(valores);
+		free(tablaAux);
+
+		i++;
 	}
-	free(metadata);
-	return false;
+	freePunteroAPunteros(tablasAux);
+	free(tablasSerializadas);
+
+	return listaTablas;
+}
+
+bool existeSegmentoFS(char* nombreSegmento, t_list* tablas) {
+
+	bool mismaTabla(char* nombreTablaActual) {
+		return strcmp(nombreTablaActual, nombreSegmento) == 0;
+	}
+	return list_any_satisfy(tablas, (void*) mismaTabla);
 }
 

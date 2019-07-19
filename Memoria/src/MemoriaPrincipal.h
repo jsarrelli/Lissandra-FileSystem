@@ -54,11 +54,13 @@ void journalMemoria();
 void freeSegmento(Segmento* segmentoAEliminar);
 
 bool isModificada(Pagina* pagina);
-bool existeSegmentoFS(char* nombreSegmento);
+bool existeSegmentoFS(char* nombreSegmento, t_list* tablas);
 bool validarValueMaximo(char* value);
 
 Segmento* newSegmento(char* nombreSegmento);
 void vaciarMemoria();
 void finalizarMemoria();
+
+t_list* obtenerTablasFileSystem();
 
 #endif /*MEMORIAPRINCIPAL_H_*/

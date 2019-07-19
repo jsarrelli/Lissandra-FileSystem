@@ -181,7 +181,8 @@ int consolaSelect(char*argumentos) {
 	timestampSelectAlIniciar = getCurrentTime();
 
 	// Ahora evaluamos el comando en si
-	char** valores = string_split(argumentos, " ");
+	char* argumentosAux = string_duplicate(argumentos);
+	char** valores = string_split(argumentosAux, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
@@ -225,10 +226,8 @@ int consolaSelect(char*argumentos) {
 			} else {
 				log_trace(log_master->logTrace, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);
 			}
-
+			free(paquete.mensaje);
 		}
-
-		free(paquete.mensaje);
 
 	} else {
 		log_error(log_master->logError, "Hubo un error en la recepcion del mensaje");
@@ -236,6 +235,7 @@ int consolaSelect(char*argumentos) {
 	}
 
 	freePunteroAPunteros(valores);
+	free(argumentosAux);
 	close(socketMemoria);
 	return success;
 }
@@ -475,7 +475,7 @@ void agregarTabla(metadataTabla* tabla) {
 
 	if (!list_any_satisfy(listaMetadataTabla, (void*) findByNombre)) {
 		list_add(listaMetadataTabla, tabla);
-	}else{
+	} else {
 		free(tabla->nombreTabla);
 		free(tabla);
 	}
