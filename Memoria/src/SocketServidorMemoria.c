@@ -28,6 +28,8 @@ void procesarAccion(int socketEntrante) {
 	void* datos;
 	int cantDatosRecibidos = RecibirPaquete(socketEntrante, &paquete);
 
+	log_info(loggerInfo, "Request en memoria recibida");
+
 	if (cantDatosRecibidos > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
@@ -72,7 +74,6 @@ void procesarAccion(int socketEntrante) {
 				JOURNAL_MEMORIA();
 				break;
 			}
-
 
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");

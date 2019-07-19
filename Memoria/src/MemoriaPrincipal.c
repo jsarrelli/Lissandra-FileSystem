@@ -62,7 +62,7 @@ void* asignarMarco() {
 	}
 	log_info(loggerInfo, "Asignando marco libre..");
 	void* marcoVacio = darMarcoVacio();
-	pthread_mutex_lock(&mutexAsignacionMarco);
+	pthread_mutex_unlock(&mutexAsignacionMarco);
 	return marcoVacio;
 }
 
