@@ -32,8 +32,6 @@ void procesarAccion(int socketEntrante) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
 
-
-
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
