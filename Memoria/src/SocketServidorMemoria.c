@@ -140,7 +140,7 @@ void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
 void procesarRequestDESCRIBE_ALL(int socketKernel) {
 	char* tablasSerializadas = DESCRIBE_ALL_MEMORIA();
 	if (tablasSerializadas == NULL) {
-		enviarSuccess(0, DESCRIBE_ALL, socketKernel);
+		enviarSuccess(1, DESCRIBE_ALL, socketKernel);
 	} else {
 		EnviarDatosTipo(socketKernel, MEMORIA, tablasSerializadas, strlen(tablasSerializadas) + 1, DESCRIBE_ALL);
 		free(tablasSerializadas);

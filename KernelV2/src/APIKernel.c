@@ -375,7 +375,6 @@ metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int can
 }
 
 int procesarDescribeAll(int socketMemoria) {
-	int estadoRecibir = 0;
 	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
 
