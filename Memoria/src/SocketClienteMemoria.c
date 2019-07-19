@@ -88,7 +88,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	free(consulta);
 
 	Paquete paquete;
-	int succes = 0;
+	int succes = 1;
 	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
