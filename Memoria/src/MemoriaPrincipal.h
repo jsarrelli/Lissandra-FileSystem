@@ -22,7 +22,8 @@ t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de 
 int valueMaximo;
 int socketFileSystem;
 int tamanioRegistro;
-pthread_mutex_t lockMemoria;
+pthread_mutex_t mutexJournal;
+pthread_mutex_t mutexAsignacionMarco;
 
 void inicializarMemoria(int tamanioMemoriaRecibido);
 

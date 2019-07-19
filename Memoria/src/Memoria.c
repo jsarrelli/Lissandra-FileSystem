@@ -112,10 +112,8 @@ void iniciarSocketServidor() {
 void procesoTemporalJournal() {
 	while (1) {
 		usleep(configuracion->TIEMPO_JOURNAL * 1000);
-		pthread_mutex_lock(&lockMemoria);
 		printf("Realizando proceso temporal Journal");
 		JOURNAL_MEMORIA();
-		pthread_mutex_unlock(&lockMemoria);
 	}
 }
 
@@ -140,6 +138,6 @@ void liberarVariables() {
 	liberarDatosConfiguracion();
 	list_destroy_and_destroy_elements(seeds, (void*) freeMemoria);
 	list_destroy_and_destroy_elements(tablaGossiping, (void*) freeMemoria);
-	pthread_mutex_destroy(&lockMemoria);
+	pthread_mutex_destroy(&mutexJournal);
 }
 

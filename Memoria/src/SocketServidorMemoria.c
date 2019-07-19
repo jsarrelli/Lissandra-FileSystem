@@ -8,13 +8,13 @@ void escuchar(int listenningSocket) {
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 		int socketCliente = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketCliente != -1) {
-//			pthread_t threadId;
-//			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketCliente);
-//			pthread_detach(threadId);
+			pthread_t threadId;
+			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketCliente);
+			pthread_detach(threadId);
 
 			//O hace un journal o procesa una accion, boludeces no
 
-			procesarAccion(socketCliente);
+			//procesarAccion(socketCliente);
 
 			printf("Escuchando.. \n");
 		}
@@ -32,7 +32,7 @@ void procesarAccion(int socketEntrante) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
 
-			pthread_mutex_lock(&lockMemoria);
+
 
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
@@ -72,10 +72,9 @@ void procesarAccion(int socketEntrante) {
 			case (JOURNAL):
 
 				JOURNAL_MEMORIA();
-
 				break;
 			}
-			pthread_mutex_unlock(&lockMemoria);
+
 
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");
@@ -84,8 +83,8 @@ void procesarAccion(int socketEntrante) {
 			log_info(loggerInfo, "No es ningun proceso valido para Memoria");
 		}
 		free(paquete.mensaje);
-		close(socketEntrante);
 	}
+	close(socketEntrante);
 
 }
 

@@ -25,7 +25,8 @@ void inicializarMemoria(int tamanioMemoriaRecibido) {
 	segmentos = list_create();
 	inicializarEstadoMemoria();
 	//recemosle a Dios y a la virgen
-	pthread_mutex_init(&lockMemoria, NULL);
+	pthread_mutex_init(&mutexJournal, NULL);
+	pthread_mutex_init(&mutexAsignacionMarco, NULL);
 }
 
 Segmento* newSegmento(char* nombreSegmento) {
@@ -49,6 +50,22 @@ bool validarValueMaximo(char* value) {
 	return true;
 }
 
+void* asignarMarco() {
+	pthread_mutex_lock(&mutexAsignacionMarco);
+	if (memoriaLlena()) {
+		log_info(loggerInfo, "Memoria llena");
+		if (!todosModificados()) {
+			liberarUltimoUsado();
+		} else {
+			journalMemoria();
+		}
+	}
+	log_info(loggerInfo, "Asignando marco libre..");
+	void* marcoVacio = darMarcoVacio();
+	pthread_mutex_lock(&mutexAsignacionMarco);
+	return marcoVacio;
+}
+
 //inserta una pagina en la memoria y te devuelve la direccion de
 //donde la puso
 Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento, bool modificado) {
@@ -58,17 +75,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 	if (paginaNueva == NULL) {
 		log_info(loggerInfo, "Insertando registro en memoria..");
 
-		if (memoriaLlena()) {
-			log_info(loggerInfo, "Memoria llena");
-			if (!todosModificados()) {
-				liberarUltimoUsado();
-			} else {
-				journalMemoria();
-			}
-		}
-
-		log_info(loggerInfo, "Asignando marco libre..");
-		void* marcoVacio = darMarcoVacio();
+		void* marcoVacio = asignarMarco();
 
 		t_registro_memoria* registro = malloc(tamanioRegistro);
 		registro->key = key;
