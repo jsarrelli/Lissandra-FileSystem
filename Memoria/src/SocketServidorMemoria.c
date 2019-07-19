@@ -88,7 +88,7 @@ void procesarAccion(int socketEntrante) {
 }
 
 void procesarRequestSELECT(char* request, int socketKernel) {
-	log_info(loggerInfo, "Procesando SELECT");
+	log_info(loggerInfo, "Procesando SELECT: %s",request);
 	t_registro_memoria* registro = procesarSELECT(request);
 
 	if (registro != NULL) {
@@ -103,7 +103,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 
 void procesarRequestINSERT(char* request, int socketKernel) {
 	char* consulta = string_duplicate(request);
-	log_info(loggerInfo, "Procesando INSERT");
+	log_info(loggerInfo, "Procesando INSERT: %s",request);
 	t_registro_memoria* registro = procesarINSERT(consulta);
 	log_info(loggerInfo, "Regitro ya insertado, enviado respuesta a Kernel");
 	if (registro != NULL) {
@@ -115,13 +115,13 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 
 void procesarRequestCREATE(char* request, int socketKernel) {
 
-	log_info(loggerInfo, "Procesando CREATE. Request %s", request);
+	log_info(loggerInfo, "Procesando CREATE: %s", request);
 	int success = procesarCREATE(request);
 	enviarSuccess(success, CREATE, socketKernel);
 }
 
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
-	log_info(loggerInfo, "Procesando DESCRIBE");
+	log_info(loggerInfo, "Procesando DESCRIBE: %s",nombreTabla);
 	t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
 	if (metaData != NULL) {
 		char response[100];
@@ -147,6 +147,7 @@ void procesarRequestDESCRIBE_ALL(int socketKernel) {
 }
 
 void procesarRequestDROP(char* nombreTabla, int socketKernel) {
+	log_info(loggerInfo, "Procesando DROP: %s", nombreTabla);
 	int succes = procesarDROP(nombreTabla);
 	enviarSuccess(succes, DROP, socketKernel);
 }
@@ -159,6 +160,7 @@ void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {
 }
 
 void procesarGossiping(char* memoriasGossiping, int socketMemoria) {
+	log_info(loggerInfo, "Enviando success..");
 	//recibimos toda la tabla
 	int i = 0;
 	char** memorias = string_split(memoriasGossiping, "/");
