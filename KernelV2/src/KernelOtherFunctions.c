@@ -60,13 +60,13 @@ void hardcodearInfoMemorias() {
 
 void imprimirCriterio(bool* criterio) {
 	if (criterio[0]) {
-		log_trace(log_master->logTrace, "Esta memoria tiene criterio SC");
+		log_info(log_master->logInfo, "Esta memoria tiene criterio SC");
 	}
 	if (criterio[1]) {
-		log_trace(log_master->logTrace, "Esta memoria tiene criterio SHC");
+		log_info(log_master->logInfo, "Esta memoria tiene criterio SHC");
 	}
 	if (criterio[2]) {
-		log_trace(log_master->logTrace, "Esta memoria tiene criterio EC");
+		log_info(log_master->logInfo, "Esta memoria tiene criterio EC");
 	}
 	if (criterio[3]) {
 		log_error(log_master->logError,
