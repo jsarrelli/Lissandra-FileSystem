@@ -273,9 +273,11 @@ int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla,
 		char request[100];
 		sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
 		Paquete paquete;
-		if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR)
+		if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR) {
 			log_info(log_master->logInfo, "Error al enviar la info a memoria CREATE");
-		return SUPER_ERROR;
+			return SUPER_ERROR;
+		}
+
 	} else {
 		return SUPER_ERROR;
 	}
