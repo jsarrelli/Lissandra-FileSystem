@@ -51,6 +51,7 @@ bool validarValueMaximo(char* value) {
 }
 
 void* asignarMarco() {
+
 	pthread_mutex_lock(&mutexAsignacionMarco);
 	pthread_mutex_lock(&mutexJournal);
 	log_info(loggerInfo, "Asignando marco libre..");
@@ -59,6 +60,7 @@ void* asignarMarco() {
 		if (!todosModificados()) {
 			liberarUltimoUsado();
 		} else {
+			pthread_mutex_unlock(&mutexJournal);
 			journalMemoria();
 		}
 	}
@@ -67,6 +69,7 @@ void* asignarMarco() {
 	log_info(loggerInfo, "Marco asignado ");
 	pthread_mutex_unlock(&mutexAsignacionMarco);
 	pthread_mutex_unlock(&mutexJournal);
+
 	return marcoVacio;
 }
 
@@ -184,6 +187,7 @@ Segmento* buscarSegmento(char* nombreSegmento) {
 }
 
 bool memoriaLlena() {
+
 	bool estaLibre(EstadoFrame* estado) {
 		return estado->estado == LIBRE;
 	}
