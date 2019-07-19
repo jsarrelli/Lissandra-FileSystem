@@ -384,14 +384,14 @@ int conocerMemorias() {
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
 		agregarMemoriaConocida(memoriaConocida);
-		log_info(log_master->logInfo, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
+		log_info(log_master->logTrace, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
 				memoriaConocida->id);
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
 	if (codRecibir < 0)
 		return SUPER_ERROR;
-	log_trace(log_master->logTrace, "El tamaño de la listaMemorias es: %d", list_size(listaMemorias));
+	log_info(log_master->logTrace, "El tamaño de la listaMemorias es: %d", list_size(listaMemorias));
 	return TODO_OK;
 }
 
