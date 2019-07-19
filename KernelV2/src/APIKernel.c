@@ -161,13 +161,15 @@ int consolaInsert(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
 	free(diferencia);
 	cantInserts++;
-
+	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
 	Paquete paquete;
-	if (socketMemoria >= 0)
+	if (socketMemoria >= 0) {
+		log_info(log_master->logInfo, "Conexion existosa");
 		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, &paquete) == SUPER_ERROR)
 			return SUPER_ERROR;
+	}
 
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
@@ -186,7 +188,7 @@ int consolaSelect(char*argumentos) {
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
-	log_info(log_master->logInfo, "El nombre de la tabla es: %s, y la key es: %d", nombreTabla, key);
+	log_info(log_master->logInfo, "Realizando SELECT %s %d", nombreTabla, key);
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
 
@@ -202,21 +204,24 @@ int consolaSelect(char*argumentos) {
 		return SUPER_ERROR;
 	}
 
-	// Ahora mandamos el mensaje
+	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
-	// El mennsaje de error se imprime por pantalla en esta funcion
 
 	if (socketMemoria >= 0) {
+		log_info(log_master->logInfo, "Conexion exitosa", nombreTabla, key);
+
 		Paquete paquete;
 		char* request = string_new();
 		string_append_with_format(&request, "%s %d", nombreTabla, key);
 
+		log_info(log_master->logInfo, "Enviando datos..", nombreTabla, key);
 		EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, SELECT);
+		log_info(log_master->logInfo, "Recibiendo datos.. ", nombreTabla, key);
 		if (RecibirPaquete(socketMemoria, &paquete) <= 0) {
 			freePunteroAPunteros(valores);
 			return SUPER_ERROR;
 		} else {
-
+			log_info(log_master->logInfo, "Datos recibidos ", nombreTabla, key);
 			if (atoi(paquete.mensaje) == 1) {
 				log_trace(log_master->logTrace, "Registros no encontrado");
 			} else {
@@ -237,7 +242,7 @@ int consolaSelect(char*argumentos) {
 }
 
 int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete) {
-//	Paquete paquete;
+
 	int success;
 	log_info(log_master->logInfo, "Enviando datos..");
 	if (EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, protocolo)) {
@@ -255,29 +260,22 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		success = atoi(paquete->mensaje);
 	}
 
-	printf("Fue un exito? 0 = si, 1 = no: %d\n", success); // Creo que esto lo puedo sacar porque los logs ya hacen el trabajo
-	if (success == 0) {
-		log_info(log_master->logInfo, "Paquete recibido correctamente");
-	} else {
-		log_error(log_master->logError, "Error al recibir el paquete");
-		success = SUPER_ERROR;
-	}
-
 	free(paquete->mensaje);
 	return success;
 }
 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
-
+	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoria->puerto, memoria->ip);
-	log_info(log_master->logInfo, "Preparandose para enviar create a memoria..");
+
 	if (socketMemoria > 0) {
+		log_info(log_master->logInfo, "Conexion existosa");
 		char request[100];
 		sprintf(request, "%s %s %d %d", nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
 		Paquete paquete;
 		if (enviarInfoMemoria(socketMemoria, request, CREATE, &paquete) == SUPER_ERROR)
 			log_info(log_master->logInfo, "Error al enviar la info a memoria CREATE");
-			return SUPER_ERROR;
+		return SUPER_ERROR;
 	} else {
 		return SUPER_ERROR;
 	}
@@ -289,10 +287,12 @@ int consolaJournal() {
 	void journalMemoria(infoMemoria* memoria) {
 
 		log_info(log_master->logInfo, "Enviando comando JOURNAL a memoria %d", memoria->id);
+		log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 		int socketMemoria = ConectarAServidorPlus(memoria->puerto, memoria->ip);
 		if (socketMemoria < 0) {
 			log_error(log_master->logError, "No se pudo mandar el mensaje DE JOURNAL");
 		} else {
+			log_info(log_master->logInfo, "Conexion existosa");
 			EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, JOURNAL);
 			log_info(log_master->logInfo, "JOURNAL ENVIADO A MEMORIA..");
 		}
@@ -383,17 +383,16 @@ metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int can
 }
 
 int procesarDescribeAll(int socketMemoria) {
-	log_info(log_master->logInfo, "Esperando para enviar datos PROCESAR DESCRIBE..");
-	log_trace(log_master->logTrace, "Se pide la metadata de todos las tablas");
+	log_info(log_master->logInfo, "Se pide la metadata de todos las tablas");
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
 
 	Paquete paquete;
 
 	int succes = TODO_OK;
-
+	log_info(log_master->logInfo, "Esperando recepcion de paquete");
 	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
 		if (atoi(paquete.mensaje) != 1) {
-			log_info(log_master->logInfo, "PAQUETE RECIBIDO DESCRIBE ALL");
+			log_info(log_master->logInfo, "Paquete recibido");
 			char* response = string_duplicate(paquete.mensaje);
 			char** tablasSerializadas = string_split(response, "/");
 			int i = 0;
@@ -411,12 +410,12 @@ int procesarDescribeAll(int socketMemoria) {
 			}
 			freePunteroAPunteros(tablasSerializadas);
 			free(response);
-		}else{
+		} else {
 			log_info(log_master->logInfo, "No hay tablas en el sistema");
 		}
 		free(paquete.mensaje);
 	} else {
-		log_info(log_master->logInfo, "ERROR PROCESAR DESCRIBE ALL..");
+		log_error(log_master->logError, "ERROR PROCESAR DESCRIBE ALL..");
 		succes = SUPER_ERROR;
 	}
 
@@ -434,7 +433,7 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 		return SUPER_ERROR;
 		log_info(log_master->logInfo, "Error recibir paquete procesar describe");
 	} else if (atoi(paquete.mensaje) == 1) {
-		puts("La tabla no existe");
+		log_info(log_master->logInfo, "La tabla no existe");
 
 	} else {
 		log_info(log_master->logInfo, "Deserializar metadata procesar describe...");
@@ -447,13 +446,13 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 
 int consolaDescribe(char*nombreTabla) {
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-	log_info(log_master->logInfo, "Esperando para conectarse consola describe.");
+	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	if (socketMemoria < 0) {
 		log_error(log_master->logError, "Error de conexion");
-		log_info(log_master->logInfo, "Error consola describe conexion..");
 		return SUPER_ERROR;
 	} else {
+		log_info(log_master->logInfo, "Conexion existosa");
 		if (nombreTabla == NULL) {
 			if (procesarDescribeAll(socketMemoria) == SUPER_ERROR)
 				return SUPER_ERROR;
@@ -503,13 +502,14 @@ int consolaDrop(char*nombreTabla) {
 	}
 
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-	log_info(log_master->logInfo, "Esperando para conectarse drop consola..");
+	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	if (socketMemoria < 0) {
 		log_error(log_master->logError, "Error de conexion");
 		return SUPER_ERROR;
 
 	} else {
+		log_info(log_master->logInfo, "Conexion existosa");
 		char request[100];
 		sprintf(request, "%s", nombreTabla);
 		Paquete paquete;

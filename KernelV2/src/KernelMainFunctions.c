@@ -126,7 +126,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 
 		//log_trace(log_master->logTrace, "Los datos obtenidos son:");
 		imprimirCriterio(memoriaAEnviar->criterios);
-		log_trace(log_master->logTrace, "Id de la memoria: %d", memoriaAEnviar->id);
+		log_info(log_master->logInfo, "Id de la memoria: %d", memoriaAEnviar->id);
 	} else {
 		log_error(log_master->logError, "Error: no existe memoria con ese criterio o todavia no hay memorias con el criterio de la tabla");
 		return SUPER_ERROR;
@@ -244,7 +244,7 @@ infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
 	infoMemoria* memoriaAlAzar = NULL;
 
 	memoriaAlAzar = obtenerMemoriaAlAzar();
-	log_trace(log_master->logTrace, "El id de la memoria obtenida es: %d", memoriaAlAzar->id);
+	log_info(log_master->logInfo, "El id de la memoria obtenida es: %d", memoriaAlAzar->id);
 
 	return memoriaAlAzar;
 }
@@ -364,6 +364,7 @@ void crearProcesoYMandarloAReady(char* operacion) {
 }
 
 int conocerMemorias() {
+
 	int socketMemoria = ConectarAServidorPlus(config->PUERTO_MEMORIA, config->IP_MEMORIA);
 	if (socketMemoria == -1) {
 		return SUPER_ERROR;
