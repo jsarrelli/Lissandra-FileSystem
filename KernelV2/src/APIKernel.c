@@ -74,9 +74,6 @@ int procesarInputKernel(char* linea) {
 		log_error(log_master->logError, "El comando no es el correcto. Por favor intente nuevamente");
 	}
 
-//	free(argumentos);
-//	free(operacion);
-//	free(comandos);
 	freePunteroAPunteros(comandos);
 
 	return TODO_OK;
@@ -178,6 +175,7 @@ int consolaInsert(char*argumentos) {
 }
 
 int consolaSelect(char*argumentos) {
+	//	SELECT [NOMBRE_TABLA] [KEY]
 	// Info inicial de las metricas
 	metricas.reads++;
 	timestampSelectAlIniciar = getCurrentTime();
@@ -316,6 +314,7 @@ int consolaJournal() {
 }
 
 int consolaCreate(char*argumentos) {
+	//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 	char* argumentoAux = string_duplicate(argumentos);
 	char** valores = string_split(argumentoAux, " ");
 	char* nombreTabla = valores[0];
@@ -354,8 +353,6 @@ metadataTabla* deserealizarMetadata(char* metadataSerializada) {
 	int cantParticiones = atoi(datos[2]);
 	int tiempoCompactacion = atoi(datos[3]);
 	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
-
-//mostrarMetadata(metadata);
 
 	freePunteroAPunteros(datos);
 	free(nombreTabla);
@@ -447,6 +444,8 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 }
 
 int consolaDescribe(char*nombreTabla) {
+	// DESCRIBE [NOMBRE_TABLA]
+	// DESCRIBE
 	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
