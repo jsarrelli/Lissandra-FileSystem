@@ -476,6 +476,9 @@ void agregarTabla(metadataTabla* tabla) {
 
 	if (!list_any_satisfy(listaMetadataTabla, (void*) findByNombre)) {
 		list_add(listaMetadataTabla, tabla);
+	}else{
+		free(tabla->nombreTabla);
+		free(tabla);
 	}
 
 }
