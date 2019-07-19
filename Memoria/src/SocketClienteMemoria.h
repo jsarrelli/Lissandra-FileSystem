@@ -18,7 +18,7 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento);
 void enviarRegistroAFileSystem(Pagina* pagina,char* nombreSegmento);
 int eliminarSegmentoFileSystem(char* nombreSegmento);
 int enviarCreateAFileSystem(t_metadata_tabla* metadata,char* nombreTabla);
-t_list* describeAllFileSystem();
+char* describeAllFileSystem();
 int HandshakeInicial();
 void intercambiarTablasGossiping(t_memoria* memoria);
 

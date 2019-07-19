@@ -97,7 +97,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	return succes;
 }
 
-t_list* describeAllFileSystem() {
+char* describeAllFileSystem() {
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
@@ -105,22 +105,21 @@ t_list* describeAllFileSystem() {
 	}
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, DESCRIBE_ALL);
 
-	t_list* segmentosRecibidos = list_create();
+
 	Paquete paquete;
 
-	while (RecibirPaquete(socketFileSystem, &paquete) > 0) {
-		if (strcmp(paquete.mensaje, "fin") == 0) {
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
+		if (atoi(paquete.mensaje) == 1) {
 			free(paquete.mensaje);
-			break;
+			return NULL;
 		}
 
-		char* tablaSerializada = malloc(paquete.header.tamanioMensaje);
-		strcpy(tablaSerializada, paquete.mensaje);
-		list_add(segmentosRecibidos, tablaSerializada);
+		char* response = string_duplicate(paquete.mensaje);
 		free(paquete.mensaje);
+		return response;
 	}
 
-	return segmentosRecibidos;
+	return NULL;
 }
 
 int HandshakeInicial() {

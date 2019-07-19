@@ -138,19 +138,19 @@ void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
 }
 
 void procesarRequestDESCRIBE_ALL(int socketKernel) {
-	t_list* metaDatas = DESCRIBE_ALL_MEMORIA();
-	void enviarMetadataAKernel(char* metadata) {
-		EnviarDatosTipo(socketKernel, MEMORIA, metadata, strlen(metadata) + 1, DESCRIBE);
+	char* tablasSerializadas = DESCRIBE_ALL_MEMORIA();
+	if (tablasSerializadas == NULL) {
+		enviarSuccess(0, DESCRIBE_ALL, socketKernel);
+	} else {
+		EnviarDatosTipo(socketKernel, MEMORIA, tablasSerializadas, strlen(tablasSerializadas) + 1, DESCRIBE_ALL);
+		free(tablasSerializadas);
 	}
-	list_iterate(metaDatas, (void*) enviarMetadataAKernel);
-	list_destroy_and_destroy_elements(metaDatas, free);
 
 }
 
 void procesarRequestDROP(char* nombreTabla, int socketKernel) {
 	int succes = procesarDROP(nombreTabla);
 	enviarSuccess(succes, DROP, socketKernel);
-
 }
 
 void enviarSuccess(int resultado, t_protocolo protocolo, int socketKernel) {

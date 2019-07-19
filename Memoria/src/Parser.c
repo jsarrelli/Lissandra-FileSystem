@@ -83,8 +83,8 @@ int procesarDROP(char* nombreTabla) {
 void procesarDESCRIBE(char* nombreTabla) {
 
 	if (nombreTabla == NULL) {
-		t_list* tablas = DESCRIBE_ALL_MEMORIA();
-		list_destroy_and_destroy_elements(tablas, free);
+		char* tablasSerializadas = DESCRIBE_ALL_MEMORIA();
+		free(tablasSerializadas);
 
 	} else {
 		t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);

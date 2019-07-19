@@ -74,11 +74,10 @@ void procesarAccion(int socketMemoria) {
 	}
 	close(socketMemoria);
 
-
 }
 
 void configuracionNuevaMemoria(int socketMemoria, int valueMaximo) {
-	log_info(loggerInfo,"Nueva memoria conectada. Socket N:%d", socketMemoria);
+	log_info(loggerInfo, "Nueva memoria conectada. Socket N:%d", socketMemoria);
 	char valueMaximoChar[10];
 	sprintf(valueMaximoChar, "%d", valueMaximo);
 	EnviarDatosTipo(socketMemoria, FILESYSTEM, valueMaximoChar, strlen(valueMaximoChar) + 1, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
@@ -138,25 +137,25 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
-	char* obtenerNombreTablaByRuta(char* rutaTabla) {
-		char* rutaTablaAux = string_duplicate(rutaTabla);
-		char** directorios = string_split(rutaTabla, "/");
-		char* nombreTabla = obtenerUltimoElementoDeUnSplit(directorios);
-		freePunteroAPunteros(directorios);
-		free(rutaTablaAux);
-		return nombreTabla;
+	char* tablasSerializadas = string_new();
 
-	}
-
-	void describeDirectorio(char* directorio) {
+	void serializarTablas(char* directorio) {
 		char* nombreTabla = obtenerNombreTablaByRuta(directorio);
-		procesarDESCRIBE(nombreTabla, socketMemoria);
+		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
+		string_append_with_format(&tablasSerializadas, "%s %s %d %d /", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA),
+				metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
 		free(nombreTabla);
 	}
 
-	list_iterate(listaDirectorios, (void*) describeDirectorio);
-	EnviarDatosTipo(socketMemoria, FILESYSTEM, "fin", 4, DESCRIBE_ALL);
+	if (list_is_empty(listaDirectorios)) {
+		enviarSuccess(1, DESCRIBE_ALL, socketMemoria);
+	} else {
+		list_iterate(listaDirectorios, (void*) serializarTablas);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, tablasSerializadas, strlen(tablasSerializadas) + 1, DESCRIBE_ALL);
+	}
+
 	list_destroy_and_destroy_elements(listaDirectorios, free);
+	free(tablasSerializadas);
 
 }
 

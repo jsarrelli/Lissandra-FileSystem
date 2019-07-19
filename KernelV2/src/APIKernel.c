@@ -380,24 +380,38 @@ int procesarDescribeAll(int socketMemoria) {
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
 
 	Paquete paquete;
-	bool error = true;
-	while ((estadoRecibir = RecibirPaquete(socketMemoria, &paquete)) > 0) {
-		error = false;
-		metadataTabla* metadata = deserealizarMetadata(paquete.mensaje);
 
-		log_trace(log_master->logTrace, "Tabla:%s.  Consistencia:%d  Cant. Particiones: %d", metadata->nombreTabla, metadata->consistencia,
-				metadata->nParticiones);
+	int succes = TODO_OK;
 
-		agregarTabla(metadata);
+	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
+		if (atoi(paquete.mensaje) != 1) {
+
+			char* response = string_duplicate(paquete.mensaje);
+			char** tablasSerializadas = string_split(response, "/");
+			int i = 0;
+			while (tablasSerializadas[i] != NULL) {
+				char* tablasSerializada = string_duplicate(tablasSerializadas[i]);
+				metadataTabla * metadata = deserealizarMetadata(tablasSerializada);
+
+				log_trace(log_master->logTrace, "Tabla:%s.  Consistencia:%d  Cant. Particiones: %d", metadata->nombreTabla,
+						metadata->consistencia, metadata->nParticiones);
+
+				agregarTabla(metadata);
+
+				free(tablasSerializada);
+				i++;
+			}
+			freePunteroAPunteros(tablasSerializadas);
+			free(response);
+		}
 		free(paquete.mensaje);
-	}
+	} else {
 
-	if (error) {
-		return SUPER_ERROR;
+		succes = SUPER_ERROR;
 	}
 
 	log_trace(log_master->logTrace, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));
-	return TODO_OK;
+	return succes;
 }
 
 int procesarDescribe(int socketMemoria, char* nombreTabla) {

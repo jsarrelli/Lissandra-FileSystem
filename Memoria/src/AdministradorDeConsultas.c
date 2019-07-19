@@ -97,7 +97,7 @@ t_metadata_tabla* DESCRIBE_MEMORIA(char* nombreTabla) {
 	}
 }
 
-t_list* DESCRIBE_ALL_MEMORIA() {
+char* DESCRIBE_ALL_MEMORIA() {
 	void mostrarMetadataSerializada(char* tablaSerializada) {
 		char* tablaSerializadaAux = string_duplicate(tablaSerializada);
 		char** valores = string_split(tablaSerializada, " ");
@@ -108,9 +108,24 @@ t_list* DESCRIBE_ALL_MEMORIA() {
 		freePunteroAPunteros(valores);
 		free(tablaSerializadaAux);
 	}
-	t_list* tablas = describeAllFileSystem();
-	list_iterate(tablas, (void*) mostrarMetadataSerializada);
-	return tablas;
+
+	char* tablasSerializadas = describeAllFileSystem();
+	if (tablasSerializadas == NULL) {
+		log_info(loggerInfo, "No hay tablas en el sistema");
+	} else {
+		char* tablasSerializadasAux = string_duplicate(tablasSerializadas);
+		char** tablas = string_split(tablasSerializadasAux, "/");
+		int i = 0;
+		while (tablas[i] != NULL) {
+			mostrarMetadataSerializada(tablas[i]);
+			i++;
+		}
+
+		freePunteroAPunteros(tablas);
+		free(tablasSerializadasAux);
+	}
+
+	return tablasSerializadas;
 
 }
 
