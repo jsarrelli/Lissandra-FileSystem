@@ -411,7 +411,7 @@ int procesarDescribeAll(int socketMemoria) {
 		succes = SUPER_ERROR;
 	}
 
-	log_trace(log_master->logTrace, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));
+	log_info(log_master->logInfo, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));
 	return succes;
 }
 
