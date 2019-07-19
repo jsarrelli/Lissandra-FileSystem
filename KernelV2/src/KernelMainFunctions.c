@@ -24,7 +24,6 @@ procExec* newProceso() {
 	procExec* proceso = malloc(sizeof(procExec));
 	proceso->script = list_create();
 	proceso->contadorRequests = 0;
-//	list_add(proceso->script, instruccion);
 	return proceso;
 }
 
@@ -96,14 +95,7 @@ void cargarConfigKernel() {
 
 	log_info(log_master->logInfo, "Archivo de configuracion del proceso Kernel levantado ");
 
-//<<<<<<< HEAD
-//	config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
-//	listenArchivo(RUTA_CONFIG_KERNEL, cargarConfigKernel);
-//=======
-//	config_destroy(kernelConfig);
-	//config_destroy(kernelConfig);  // Si lo ponemos, se pierden los datos
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/KernelV2/config/", cargarConfigKernel);
-//>>>>>>> d47fbace383f93ecea3aa5815e4b57dce5ca6366
 }
 
 int cantidadParametros(char ** palabras) {
@@ -124,7 +116,6 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 			(memoriaAEnviar->cantInsertEjecutados)++;
 		}
 
-		//log_trace(log_master->logTrace, "Los datos obtenidos son:");
 		imprimirCriterio(memoriaAEnviar->criterios);
 		log_info(log_master->logInfo, "Id de la memoria: %d", memoriaAEnviar->id);
 	} else {
@@ -194,7 +185,6 @@ void* iniciarMultiprocesamiento(void* args) {
 
 				log_trace(log_master->logTrace, "El script termino de ejecutarse correctamente");
 				if (cantRequestsEjecutadasPorQuantum == quantum) {
-//					usleep(retardoEjecucion * 1000);
 					log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
 				}
 				cantRequestsEjecutadasPorQuantum = 0;
@@ -208,7 +198,6 @@ void* iniciarMultiprocesamiento(void* args) {
 				log_info(log_master->logInfo, "Llega a fin de quantum.\nDesalojando");
 				proceso->contadorRequests = cantRequestsEjecutadas;
 				cantRequestsEjecutadasPorQuantum = 0;
-//				usleep(retardoEjecucion * 1000);
 				deNewAReady(proceso);
 			}
 			if (interrupcionPorEstado(estado)) {
@@ -235,7 +224,6 @@ void inicializarLogStruct() {
 }
 
 infoMemoria* obtenerMemoriaAlAzar() {
-//	srand(time(NULL));
 	int numeroAleatorio = rand() % list_size(listaMemorias);
 	return list_get(listaMemorias, numeroAleatorio);
 }

@@ -123,7 +123,6 @@ void crearMetrics(t_metrics* metrica) {
 	metrica->writes = 0;
 	metrica->diferenciaDeTiempoReadLatency = list_create();
 	metrica->diferenciaDeTiempoWriteLatency = list_create();
-//	metricas.memoryLoadMemorias = list_create();
 	hayMetricas = false;
 }
 
@@ -138,7 +137,6 @@ void destruirMetrics(t_metrics* metrica) {
 		list_destroy_and_destroy_elements(
 				metrica->diferenciaDeTiempoWriteLatency, free);
 	}
-//	list_destroy_and_destroy_elements(metricas.memoryLoadMemorias, free);
 }
 
 void reiniciarMetrics(t_metrics* metrica) {
@@ -149,18 +147,6 @@ void reiniciarMetrics(t_metrics* metrica) {
 	metrica->writeLatency = 0;
 	list_clean(metrica->diferenciaDeTiempoReadLatency);
 	list_clean(metrica->diferenciaDeTiempoWriteLatency);
-	//list_clean_and_destroy_elements(metrica->diferenciaDeTiempoReadLatency, free);
-//	list_clean_and_destroy_elements(metrica->diferenciaDeTiempoWriteLatency, free);
-
-
-
-
-
-//	list_clean(metricas.memoryLoadMemorias);
-	// TODO:
-	// Acordarse de borrar la info de todas las memorias
-	// Acordarse de borrar las metricas de las estructuras de las memorias -> Creo que no me interesa
-	// Recordar que pueden seguir estando o no las memorias de los datos	-> MUY IMPORTANTE!!!!!
 }
 
 void calcularMetrics() {
@@ -213,8 +199,6 @@ void calcularMetrics() {
 		*memoryLoadMemoria = cantSelectsEInsertsMemoria
 				/ cantSelectsEInsertsTotales;
 
-//		list_add(metricas.memoryLoadMemorias, memoryLoadMemoria); // Este es un problema. Que pasa si se me cae una memoria??
-		// Hay que guardar este dato en cada memoria, y si se me cae la memoria, pierdo el dato (esta ok), porque recalculo siempre
 		memoria->memoryLoadUnaMemoria = *memoryLoadMemoria;
 		free(memoryLoadMemoria);
 	}
@@ -227,14 +211,6 @@ void calcularMetrics() {
 
 		listaFiltrada = list_filter(listaMemorias, _hizoSelectOInsert);
 		list_iterate(listaFiltrada, (void*) _calcularMemoryLoadUnaMemoria);
-
-//		tamLista = list_size(metricas.memoryLoadMemorias);
-//		for (int i = 0; i < tamLista; i++) {
-//			double* elemento = (double*) list_get(metricas.memoryLoadMemorias,
-//					i);
-//			double elemento2 = *elemento;
-//			metricas.memoryLoad += elemento2;
-//		}
 
 		list_destroy(listaFiltrada);
 
@@ -249,8 +225,6 @@ void copiarMetrics(){
 	copiaMetricas.writes = metricas.writes;
 	list_add_all(copiaMetricas.diferenciaDeTiempoReadLatency, metricas.diferenciaDeTiempoReadLatency);
 	list_add_all(copiaMetricas.diferenciaDeTiempoWriteLatency, metricas.diferenciaDeTiempoWriteLatency);
-//	copiaMetricas.diferenciaDeTiempoReadLatency = metricas.diferenciaDeTiempoReadLatency;
-//	copiaMetricas.diferenciaDeTiempoWriteLatency = metricas.diferenciaDeTiempoWriteLatency;
 
 }
 
@@ -268,7 +242,6 @@ void imprimirMetrics(t_metrics metrica) {
 	log_info(log_master->logInfo, "Write latency: %f", metrica.writeLatency);
 	log_info(log_master->logInfo, "Reads: %f", metrica.reads);
 	log_info(log_master->logInfo, "Writes: %f", metrica.writes);
-//	log_info(log_master->logInfo, "Memory load: %f\n", metrica.memoryLoad);
 	list_iterate(listaMemorias, _imprimirMemoryLoadsDeMemorias);
 
 }
