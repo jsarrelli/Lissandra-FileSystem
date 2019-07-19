@@ -27,6 +27,7 @@ void inicializarMemoria(int tamanioMemoriaRecibido) {
 	//recemosle a Dios y a la virgen
 	pthread_mutex_init(&mutexJournal, NULL);
 	pthread_mutex_init(&mutexAsignacionMarco, NULL);
+	pthread_mutex_init(&mutexLRU, NULL);
 }
 
 Segmento* newSegmento(char* nombreSegmento) {
@@ -53,7 +54,7 @@ bool validarValueMaximo(char* value) {
 void* asignarMarco() {
 
 	pthread_mutex_lock(&mutexAsignacionMarco);
-	pthread_mutex_lock(&mutexJournal);
+
 	log_info(loggerInfo, "Asignando marco libre..");
 	if (memoriaLlena()) {
 		log_info(loggerInfo, "Memoria llena");
@@ -68,7 +69,7 @@ void* asignarMarco() {
 	void* marcoVacio = darMarcoVacio();
 	log_info(loggerInfo, "Marco asignado ");
 	pthread_mutex_unlock(&mutexAsignacionMarco);
-	pthread_mutex_unlock(&mutexJournal);
+
 
 	return marcoVacio;
 }
@@ -209,6 +210,7 @@ bool todosModificados() {
 }
 
 void liberarUltimoUsado() {
+
 	log_info(loggerInfo, "Aplicando algortimo LRU");
 	EstadoFrame* estadoFrameMenosUtilizado = NULL;
 	Pagina* paginaMenosUtilizada = NULL;
@@ -239,15 +241,18 @@ void liberarUltimoUsado() {
 
 	reemplazarPagina(paginaMenosUtilizada, segmentoPaginaMenosUtilizada);
 
+
 }
 
 void reemplazarPagina(Pagina* pagina, Segmento* segmento) {
+	pthread_mutex_lock(&mutexJournal);
 	log_info(loggerInfo, "Pagina de registro %d, %s de tabla %s reemplazada", pagina->registro->key, pagina->registro->value,
 			segmento->nombreTabla);
 	bool isPaginaEliminar(Pagina* paginaAEliminar) {
 		return pagina->registro->key == paginaAEliminar->registro->key;
 	}
 	list_remove_and_destroy_by_condition(segmento->paginas, (void*) isPaginaEliminar, (void*) eliminarPaginaDeMemoria);
+	pthread_mutex_unlock(&mutexJournal);
 
 }
 
@@ -313,9 +318,8 @@ bool isModificada(Pagina* pagina) {
 }
 
 void journalMemoria() {
-
-	log_info(loggerInfo, "Realizando Journal..");
 	pthread_mutex_lock(&mutexJournal);
+	log_info(loggerInfo, "Realizando Journal..");
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
 
 		if (isModificada(pagina)) {

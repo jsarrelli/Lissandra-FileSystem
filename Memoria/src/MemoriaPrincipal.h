@@ -24,6 +24,7 @@ int socketFileSystem;
 int tamanioRegistro;
 pthread_mutex_t mutexJournal;
 pthread_mutex_t mutexAsignacionMarco;
+pthread_mutex_t mutexLRU;
 
 void inicializarMemoria(int tamanioMemoriaRecibido);
 
