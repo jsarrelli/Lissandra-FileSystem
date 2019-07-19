@@ -253,7 +253,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 
 	printf("Fue un exito? 0 = si, 1 = no: %d\n", success); // Creo que esto lo puedo sacar porque los logs ya hacen el trabajo
 	if (success == 0) {
-		log_trace(log_master->logTrace, "Paquete recibido correctamente");
+		log_info(log_master->logInfo, "Paquete recibido correctamente");
 	} else {
 		log_error(log_master->logError, "Error al recibir el paquete");
 		success = SUPER_ERROR;
@@ -403,6 +403,8 @@ int procesarDescribeAll(int socketMemoria) {
 			}
 			freePunteroAPunteros(tablasSerializadas);
 			free(response);
+		}else{
+			log_info(log_master->logInfo, "No hay tablas en el sistema");
 		}
 		free(paquete.mensaje);
 	} else {
