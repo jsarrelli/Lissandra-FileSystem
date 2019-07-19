@@ -123,10 +123,18 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 }
 
 void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
-	log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %d\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
-			metadataTabla.CONSISTENCIA, metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	if(metadataTabla.CONSISTENCIA == 1){
+	log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
+			"EVENTUAL", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	}
+	else if(metadataTabla.CONSISTENCIA == 2){
+		log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
+					"STRONG", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	}else{
+		log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
+					"STRONG HASH", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	}
 }
-
 char* armarRutaTabla(char* nombreTabla) {
 	char* rutaTabla = string_duplicate(rutas.Tablas);
 	string_append(&rutaTabla, nombreTabla);
