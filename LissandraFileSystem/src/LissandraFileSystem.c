@@ -26,6 +26,9 @@ void cargarConfig() {
 	config->RETARDO = get_campo_config_int(fsConfig, "RETARDO");
 	config->TAMANIO_VALUE = get_campo_config_int(fsConfig, "TAMANIO_VALUE");
 	config->TIEMPO_DUMP = get_campo_config_int(fsConfig, "TIEMPO_DUMP");
+	config->BLOCK_SIZE = config_get_int_value(fsConfig, "BLOCK_SIZE");
+	config->BLOCKS = config_get_int_value(fsConfig, "BLOCKS");
+	config->MAGIC_NUMBER = string_duplicate(config_get_string_value(fsConfig, "MAGIC_NUMBER"));
 	log_info(loggerInfo, "Archivo de configuracion del proceso LFS levantado \n");
 
 	config_destroy(fsConfig);

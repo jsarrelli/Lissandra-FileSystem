@@ -121,9 +121,9 @@ int cargarMetadata() {
 	string_append(&path, "/Metadata.bin");
 	rutas.Metadata = path;
 	FILE*arch1 = fopen(rutas.Metadata, "w+");
-	fprintf(arch1, "BLOCK_SIZE=64\n");
-	fprintf(arch1, "BLOCKS=4096\n");
-	fprintf(arch1, "MAGIC_NUMBER=LISSANDRA\n");
+	fprintf(arch1, "BLOCK_SIZE=%d\n", config->BLOCK_SIZE);
+	fprintf(arch1, "BLOCKS=%d\n", config->BLOCKS);
+	fprintf(arch1, "MAGIC_NUMBER=%s\n", config->MAGIC_NUMBER);
 	fclose(arch1);
 
 	path = string_new();

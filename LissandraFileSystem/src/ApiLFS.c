@@ -81,6 +81,7 @@ void consolaDrop(char* nombreTabla) {
 }
 
 void consolaInsert(char* argumentos) {
+
 	char** valores = string_split(argumentos, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
@@ -97,7 +98,9 @@ void consolaInsert(char* argumentos) {
 
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
+
 }
+
 
 void consolaSelect(char*argumentos){
 	char** valores = string_split(argumentos, " ");

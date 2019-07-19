@@ -84524,3 +84524,5 @@ Metadata de METALS:
 -CONSISTENCIA: 1
 -PARTICIONES=3
 -TIEMPO_COMPACTACION=5000
+[TRACE] 01:34:12:828 LFS Results Logs/(4949:4949): Insert de 1;FFF en TABLA realizado en memtable
+[TRACE] 01:46:48:655 LFS Results Logs/(5636:5636): Insert de 1;SS en TABLA realizado en memtable

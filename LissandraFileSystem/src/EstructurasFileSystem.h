@@ -10,6 +10,9 @@ typedef struct {
 	int RETARDO;
 	int TAMANIO_VALUE;
 	int TIEMPO_DUMP;
+	int BLOCK_SIZE;
+	int BLOCKS;
+	char* MAGIC_NUMBER;
 } t_configuracion_LFS;
 
 typedef struct {
