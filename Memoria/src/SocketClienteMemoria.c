@@ -24,7 +24,6 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 
-
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
 		return NULL;
@@ -60,6 +59,7 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	string_append_with_format(&consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
 	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, INSERT);
+	close(socketFileSystem);
 }
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
@@ -67,6 +67,7 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
+		close(socketFileSystem);
 		return 1;
 	}
 	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
@@ -77,7 +78,7 @@ int eliminarSegmentoFileSystem(char* nombreSegmento) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
-
+	close(socketFileSystem);
 	return succes;
 }
 
@@ -86,6 +87,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
+		close(socketFileSystem);
 		return 1;
 	}
 	char* consulta = string_new();
@@ -101,7 +103,7 @@ int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
-
+	close(socketFileSystem);
 	return succes;
 }
 
@@ -110,26 +112,26 @@ char* describeAllFileSystem() {
 	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_error(loggerError, "Fallo la conexion con FileSystem");
+		close(socketFileSystem);
 		return NULL;
 	}
 	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, DESCRIBE_ALL);
 
-
 	Paquete paquete;
-
+	char* response = NULL;
 	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		if (atoi(paquete.mensaje) == 1) {
 			free(paquete.mensaje);
 			return NULL;
 		}
 
-		char* response = string_duplicate(paquete.mensaje);
+		response = string_duplicate(paquete.mensaje);
 		free(paquete.mensaje);
-		return response;
-	}
 
-	return NULL;
+	}
+	close(socketFileSystem);
+	return response;
 }
 
 int HandshakeInicial() {
@@ -137,7 +139,8 @@ int HandshakeInicial() {
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
 		log_info(loggerInfo, "Fallo la conexion a File System");
-		return socketFileSystem;
+		close(socketFileSystem);
+		return -1;
 	}
 	log_info(loggerInfo, "Memoria conectada a File System");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
@@ -150,7 +153,8 @@ int HandshakeInicial() {
 	}
 
 	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximo);
-	return socketFileSystem;
+	close(socketFileSystem);
+	return 1;
 }
 
 void enviarTablaGossiping(int socketMemoriaDestino) {
@@ -162,6 +166,7 @@ void enviarTablaGossiping(int socketMemoriaDestino) {
 	}
 	list_iterate(tablaGossiping, (void*) serializarMemoria);
 	EnviarDatosTipo(socketMemoriaDestino, MEMORIA, memoriasSerializadas, strlen(memoriasSerializadas) + 1, GOSSIPING);
+
 }
 
 void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
@@ -185,6 +190,7 @@ void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
 		}
 		freePunteroAPunteros(memorias);
 		free(paquete.mensaje);
+		close(socketFileSystem);
 	}
 
 }
@@ -206,10 +212,12 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 
 	Paquete paquete;
 	if (RecibirPaquete(socketFileSystem, &paquete) <= 0) {
+		close(socketFileSystem);
 		return NULL;
 	}
 
 	if (paquete.header.tipoMensaje == NOTFOUND) {
+		close(socketFileSystem);
 		return NULL;
 	}
 	char*registroAux = string_duplicate(paquete.mensaje);
@@ -224,5 +232,6 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	free(registroAux);
 	free(paquete.mensaje);
 	log_info(loggerInfo, "Registro obtenido de fileSystem");
+	close(socketFileSystem);
 	return registro;
 }

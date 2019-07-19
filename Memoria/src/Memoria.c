@@ -19,8 +19,8 @@ int main() {
 	cargarEstructurasGossiping();
 
 //	//HANDSHAKE INICIAL CON FILESYSTEM
-	int socketFileSystem = HandshakeInicial();
-	if (socketFileSystem == -1) {
+	int success = HandshakeInicial();
+	if (success == -1) {
 		log_info(loggerInfo, "--Memoria finalizada--");
 		liberarVariables();
 		return EXIT_SUCCESS;
@@ -72,7 +72,7 @@ void* leerConsola() {
 }
 
 void cargarConfiguracion() {
-	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM1.cfg";
+	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM.cfg";
 	log_info(loggerInfo, "Levantando archivo de configuracion del proceso MEMORIA");
 	if (configuracion != NULL) {
 		liberarDatosConfiguracion();

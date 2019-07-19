@@ -6,12 +6,14 @@ void escuchar(int listenningSocket) {
 	while (true) {
 		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
-		log_info(loggerInfo, "Esperando requests...");
+
 		int socketCliente = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketCliente != -1) {
+			log_info(loggerInfo, "Esperando requests...");
 			pthread_t threadId;
 			pthread_create(&threadId, NULL, (void*) procesarAccion, (void*) socketCliente);
 			pthread_detach(threadId);
+
 		}
 
 	}
@@ -83,7 +85,7 @@ void procesarAccion(int socketEntrante) {
 }
 
 void procesarRequestSELECT(char* request, int socketKernel) {
-	log_info(loggerInfo, "Procesando SELECT: %s",request);
+	log_info(loggerInfo, "Procesando SELECT: %s", request);
 	t_registro_memoria* registro = procesarSELECT(request);
 
 	if (registro != NULL) {
@@ -98,7 +100,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 
 void procesarRequestINSERT(char* request, int socketKernel) {
 	char* consulta = string_duplicate(request);
-	log_info(loggerInfo, "Procesando INSERT: %s",request);
+	log_info(loggerInfo, "Procesando INSERT: %s", request);
 	t_registro_memoria* registro = procesarINSERT(consulta);
 	log_info(loggerInfo, "Regitro ya insertado, enviado respuesta a Kernel");
 	if (registro != NULL) {
@@ -116,7 +118,7 @@ void procesarRequestCREATE(char* request, int socketKernel) {
 }
 
 void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
-	log_info(loggerInfo, "Procesando DESCRIBE: %s",nombreTabla);
+	log_info(loggerInfo, "Procesando DESCRIBE: %s", nombreTabla);
 	t_metadata_tabla* metaData = DESCRIBE_MEMORIA(nombreTabla);
 	if (metaData != NULL) {
 		char response[100];

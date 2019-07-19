@@ -206,7 +206,7 @@ int consolaSelect(char*argumentos) {
 
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
-
+	int success = TODO_OK;
 	if (socketMemoria >= 0) {
 		log_info(log_master->logInfo, "Conexion exitosa", nombreTabla, key);
 
@@ -219,7 +219,7 @@ int consolaSelect(char*argumentos) {
 		log_info(log_master->logInfo, "Recibiendo datos.. ", nombreTabla, key);
 		if (RecibirPaquete(socketMemoria, &paquete) <= 0) {
 			freePunteroAPunteros(valores);
-			return SUPER_ERROR;
+			success = SUPER_ERROR;
 		} else {
 			log_info(log_master->logInfo, "Datos recibidos ", nombreTabla, key);
 			if (atoi(paquete.mensaje) == 1) {
@@ -235,10 +235,11 @@ int consolaSelect(char*argumentos) {
 
 	} else {
 		freePunteroAPunteros(valores);
-		return SUPER_ERROR;
+		success = SUPER_ERROR;
 	}
 
-	return TODO_OK;
+	close(socketMemoria);
+	return success;
 }
 
 int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete) {
@@ -259,6 +260,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		log_info(log_master->logInfo, "Se recibio el paquete con exito..");
 		success = atoi(paquete->mensaje);
 	}
+	close(socketMemoria);
 
 	free(paquete->mensaje);
 	return success;
@@ -463,7 +465,7 @@ int consolaDescribe(char*nombreTabla) {
 				return SUPER_ERROR;
 		}
 	}
-
+	close(socketMemoria);
 	return TODO_OK;
 }
 
