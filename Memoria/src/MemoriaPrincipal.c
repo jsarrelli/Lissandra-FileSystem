@@ -307,7 +307,7 @@ bool isModificada(Pagina* pagina) {
 void journalMemoria() {
 
 	log_info(loggerInfo, "Realizando Journal..");
-
+	pthread_mutex_lock(&mutexJournal);
 	void enviarSiEstaModificada(Pagina* pagina, Segmento* segmento) {
 
 		if (isModificada(pagina)) {
@@ -331,6 +331,7 @@ void journalMemoria() {
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 
 	log_info(loggerInfo, "Journal finalizado con exito");
+	pthread_mutex_unlock(&mutexJournal);
 
 }
 

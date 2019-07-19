@@ -130,7 +130,7 @@ char* DESCRIBE_ALL_MEMORIA() {
 }
 
 void JOURNAL_MEMORIA() {
-	pthread_mutex_lock(&mutexJournal);
+
 	journalMemoria();
-	pthread_mutex_unlock(&mutexJournal);
+
 }
