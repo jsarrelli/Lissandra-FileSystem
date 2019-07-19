@@ -31,7 +31,6 @@ void* procesarSELECT(char* argumentos) {
 	int key = atoi(valores[1]);
 
 	t_registro_memoria* registro = SELECT_MEMORIA(nombreTabla, key);
-
 	freePunteroAPunteros(valores);
 	return registro;
 

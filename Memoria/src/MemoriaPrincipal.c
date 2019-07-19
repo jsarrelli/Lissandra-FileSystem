@@ -53,6 +53,9 @@ bool validarValueMaximo(char* value) {
 
 void* asignarMarco() {
 
+	//porque estaba bloqueado desde el servidor
+	pthread_mutex_unlock(&mutexJournal);
+
 	pthread_mutex_lock(&mutexAsignacionMarco);
 
 	log_info(loggerInfo, "Asignando marco libre..");

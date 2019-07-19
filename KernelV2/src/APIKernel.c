@@ -183,8 +183,7 @@ int consolaSelect(char*argumentos) {
 	timestampSelectAlIniciar = getCurrentTime();
 
 	// Ahora evaluamos el comando en si
-	char* argumentosAux = argumentos;
-	char** valores = string_split(argumentosAux, " ");
+	char** valores = string_split(argumentos, " ");
 	char* nombreTabla = valores[0];
 	int key = atoi(valores[1]);
 
@@ -216,6 +215,7 @@ int consolaSelect(char*argumentos) {
 
 		log_info(log_master->logInfo, "Enviando datos..", nombreTabla, key);
 		EnviarDatosTipo(socketMemoria, KERNEL, request, strlen(request) + 1, SELECT);
+		free(request);
 		log_info(log_master->logInfo, "Recibiendo datos.. ", nombreTabla, key);
 		if (RecibirPaquete(socketMemoria, &paquete) <= 0) {
 			freePunteroAPunteros(valores);
@@ -231,13 +231,13 @@ int consolaSelect(char*argumentos) {
 		}
 
 		free(paquete.mensaje);
-		freePunteroAPunteros(valores);
 
 	} else {
-		freePunteroAPunteros(valores);
+		log_error(log_master->logError, "Hubo un error en la recepcion del mensaje");
 		success = SUPER_ERROR;
 	}
 
+	freePunteroAPunteros(valores);
 	close(socketMemoria);
 	return success;
 }

@@ -59,6 +59,7 @@ void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
 	string_append_with_format(&consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
 	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, INSERT);
+	free(consulta);
 	close(socketFileSystem);
 }
 
@@ -166,6 +167,7 @@ void enviarTablaGossiping(int socketMemoriaDestino) {
 	}
 	list_iterate(tablaGossiping, (void*) serializarMemoria);
 	EnviarDatosTipo(socketMemoriaDestino, MEMORIA, memoriasSerializadas, strlen(memoriasSerializadas) + 1, GOSSIPING);
+	free(memoriasSerializadas);
 
 }
 
@@ -218,6 +220,7 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 
 	if (paquete.header.tipoMensaje == NOTFOUND) {
 		close(socketFileSystem);
+		free(paquete.mensaje);
 		return NULL;
 	}
 	char*registroAux = string_duplicate(paquete.mensaje);

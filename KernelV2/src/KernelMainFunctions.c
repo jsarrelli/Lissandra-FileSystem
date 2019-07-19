@@ -314,7 +314,6 @@ int funcionHash(t_list* memoriasEncontradas, int key) {
 }
 
 infoMemoria* resolverAlAzar(t_list* memoriasEncontradas) {
-//	srand(time(NULL));
 	int randomNumber = rand() % list_size(memoriasEncontradas);
 
 	return list_get(memoriasEncontradas, randomNumber);
@@ -384,8 +383,7 @@ int conocerMemorias() {
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
 		agregarMemoriaConocida(memoriaConocida);
-		log_info(log_master->logTrace, "Memoria Descubierta IP:%s PUERTO:%d MEMORY_NUMBER:%d", memoriaConocida->ip, memoriaConocida->puerto,
-				memoriaConocida->id);
+		log_info(log_master->logTrace, "Memoria Descubierta IP:%s PUERTO:%s MEMORY_NUMBER:%s", response[0], response[1], response[2]);
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
@@ -401,6 +399,9 @@ void agregarMemoriaConocida(infoMemoria* memoria) {
 	}
 	if (!list_any_satisfy(listaMemorias, (void*) findByNumber)) {
 		list_add(listaMemorias, memoria);
+	} else {
+		free(memoria->ip);
+		free(memoria);
 	}
 }
 

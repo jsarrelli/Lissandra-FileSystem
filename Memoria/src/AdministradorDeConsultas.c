@@ -14,7 +14,7 @@ t_registro_memoria* SELECT_MEMORIA(char* nombreTabla, int key) {
 
 	Pagina* pagina = buscarPagina(tabla, key);
 	if (pagina != NULL) {
-		log_trace(loggerTrace, "SELECT: Registro: %d / %s / %f", pagina->registro->key, pagina->registro->value, pagina->registro->timestamp);
+		log_trace(loggerTrace, "Registro: %d / %s / %f", pagina->registro->key, pagina->registro->value, pagina->registro->timestamp);
 		return pagina->registro;
 	}
 
@@ -23,13 +23,14 @@ t_registro_memoria* SELECT_MEMORIA(char* nombreTabla, int key) {
 }
 
 t_registro_memoria* INSERT_MEMORIA(char* nombreTabla, int key, char* value, double timeStamp) {
+	log_info(loggerInfo, "Insertando en memoria");
 	usleep(configuracion->RETARDO_MEMORIA * 1000);
 
 	Segmento *tabla = buscarSegmento(nombreTabla);
 
 	if (validarValueMaximo(value)) {
 		Pagina* pagina = insertarPaginaEnMemoria(key, value, timeStamp, tabla, true);
-		log_trace(loggerTrace, "INSERT: Se ha insertado el siguiente registro: %d \"%s\" en la tabla %s \n", key, value, nombreTabla);
+		log_trace(loggerTrace, "Se ha insertado el siguiente registro: %d \"%s\" en la tabla %s \n", key, value, nombreTabla);
 		return pagina->registro;
 	}
 	return NULL;

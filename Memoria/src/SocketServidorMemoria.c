@@ -30,7 +30,7 @@ void procesarAccion(int socketEntrante) {
 	if (cantDatosRecibidos > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
 		if (paquete.header.quienEnvia == KERNEL) {
-
+			pthread_mutex_lock(&mutexJournal);
 			datos = paquete.mensaje;
 			switch ((int) paquete.header.tipoMensaje) {
 			case (SELECT):
@@ -71,7 +71,7 @@ void procesarAccion(int socketEntrante) {
 				JOURNAL_MEMORIA();
 				break;
 			}
-
+			pthread_mutex_unlock(&mutexJournal);
 		} else if (paquete.header.quienEnvia == MEMORIA && paquete.header.tipoMensaje == GOSSIPING) {
 			log_info(loggerInfo, "Request de tabla gossiping recibido");
 			procesarGossiping(paquete.mensaje, socketEntrante);
@@ -86,7 +86,9 @@ void procesarAccion(int socketEntrante) {
 
 void procesarRequestSELECT(char* request, int socketKernel) {
 	log_info(loggerInfo, "Procesando SELECT: %s", request);
+
 	t_registro_memoria* registro = procesarSELECT(request);
+
 
 	if (registro != NULL) {
 		char* response = string_new();
@@ -96,6 +98,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 	} else {
 		enviarSuccess(1, SELECT, socketKernel);
 	}
+
 }
 
 void procesarRequestINSERT(char* request, int socketKernel) {
@@ -108,6 +111,7 @@ void procesarRequestINSERT(char* request, int socketKernel) {
 	} else {
 		enviarSuccess(1, INSERT, socketKernel);
 	}
+	free(consulta);
 }
 
 void procesarRequestCREATE(char* request, int socketKernel) {
