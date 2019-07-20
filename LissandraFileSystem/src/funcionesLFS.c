@@ -326,11 +326,13 @@ void removerTabla(char* nombreTabla) {
 }
 
 void freeTabla(t_tabla_memtable* tabla) {
+	pthread_mutex_lock(&getSemaforoByTabla(tabla->nombreTabla)->mutexMemtable);
 	if (tabla->registros != NULL) {
 		list_destroy_and_destroy_elements(tabla->registros, (void*) freeRegistro);
 	}
 	free(tabla->nombreTabla);
 	free(tabla);
+	pthread_mutex_unlock(&getSemaforoByTabla(tabla->nombreTabla)->mutexMemtable);
 }
 
 void vaciarMemtable() {
