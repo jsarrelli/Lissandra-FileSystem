@@ -69,6 +69,7 @@ int main(void) {
 	pthread_mutex_init(&mutexBitarray, NULL);
 	pthread_mutex_init(&mutexBuscarDirectorios,NULL);
 
+
 	//CARGAMOS ARCHIVOS DE CONFIGURACION
 	cargarConfig();
 	cargarMetadata(config);

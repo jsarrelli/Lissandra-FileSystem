@@ -203,7 +203,11 @@ void cargarSemaforosTabla(char* nombreTabla) {
 	pthread_mutex_t mutexCompactacion;
 	pthread_mutex_init(&mutexCompactacion, NULL);
 
+	pthread_mutex_t mutexMemtable;
+	pthread_mutex_init(&mutexMemtable, NULL);
+
 	semaforoTabla->mutexCompactacion = mutexCompactacion;
+	semaforoTabla->mutexMemtable = mutexMemtable;
 
 	list_add(listaSemaforos, semaforoTabla);
 
@@ -212,8 +216,7 @@ void cargarSemaforosTabla(char* nombreTabla) {
 void freeSemaforoTabla(t_semaforos_tabla* semaforoTabla) {
 	free(semaforoTabla->nombreTabla);
 
-	pthread_mutex_t mutexCompactacion = semaforoTabla->mutexCompactacion;
-
-	pthread_mutex_destroy(&mutexCompactacion);
-
+	pthread_mutex_destroy(&semaforoTabla->mutexMemtable);
+	pthread_mutex_destroy(&semaforoTabla->mutexCompactacion);
+	free(semaforoTabla);
 }

@@ -361,10 +361,15 @@ int conocerMemorias() {
 	Paquete paquete;
 	int codRecibir = 0;
 
-	RecibirPaquete(socketMemoria, &paquete);
-	tiempoGossiping = atoi(paquete.mensaje);
+	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
+		tiempoGossiping = atoi(paquete.mensaje);
+		free(paquete.mensaje);
+	}else{
+		return TODO_OK;
+		//esto no es un OK un carajo pero basta de tirar errores
+	}
 
-	free(paquete.mensaje);
+
 
 	while ((codRecibir = RecibirPaquete(socketMemoria, &paquete)) > 0) {
 

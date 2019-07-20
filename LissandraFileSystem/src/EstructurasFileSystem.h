@@ -29,6 +29,7 @@ typedef struct {
 typedef struct {
 	char* nombreTabla;
 	pthread_mutex_t mutexCompactacion;
+	pthread_mutex_t mutexMemtable;
 } t_semaforos_tabla;
 
 t_list* memtable;
@@ -40,6 +41,7 @@ t_list* listaSemaforos;
 
 pthread_mutex_t mutexBitarray;
 pthread_mutex_t mutexBuscarDirectorios;
+
 
 
 

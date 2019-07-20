@@ -381,7 +381,8 @@ void mostrarMetadataTodasTablas(char *ruta) {
 }
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
-	//aca me pinta un mutex de compactacion
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexMemtable));
+
 	log_info(loggerInfo, "Insertando registro:%s %s \"%s\" en memtable..", nombreTabla, key, value);
 
 	int clave = atoi(key);
@@ -393,6 +394,8 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 	registro->key = clave;
 
 	list_add(tabla->registros, registro);
+
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexMemtable));
 
 }
 
@@ -441,9 +444,11 @@ void crearYEscribirTemporal(char* rutaTabla) {
 }
 
 void limpiarRegistrosDeTabla(char*nombreTabla) {
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexMemtable));
 	t_tabla_memtable* tabla = getTablaFromMemtable(nombreTabla);
 	list_clean_and_destroy_elements(tabla->registros, (void*) freeRegistro);
 	printf("Lista de Registros de %s limpia\n", nombreTabla);
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexMemtable));
 }
 
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
