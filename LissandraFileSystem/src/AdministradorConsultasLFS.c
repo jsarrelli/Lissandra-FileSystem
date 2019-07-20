@@ -7,9 +7,6 @@ int funcionCREATE(char* nombreTabla, char* cantParticiones, char* consistenciaCh
 	}
 	crearTablaYParticiones(nombreTabla, cantParticiones);
 	crearMetadataTabla(nombreTabla, consistenciaChar, cantParticiones, tiempoCompactacion);
-	pthread_t threadCompactacion;
-	pthread_create(&threadCompactacion, NULL, (void*) iniciarThreadCompactacion, nombreTabla);
-	pthread_detach(threadCompactacion);
 	return 0;
 }
 

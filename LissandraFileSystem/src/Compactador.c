@@ -329,7 +329,8 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
-			log_info(loggerInfo, "Recuperando %s",registrosChar[i]);;
+			log_info(loggerInfo, "Recuperando %s", registrosChar[i]);
+			;
 			char** valores = string_split(registrosChar[i], ";");
 			t_registro* registro = registro_new(valores);
 			list_add(listaRegistros, registro);
@@ -446,15 +447,18 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 }
 
 void iniciarThreadCompactacion(char* nombreTabla) {
-
+	char* nombreTablaAux = string_duplicate(nombreTabla);
 	while (true) {
-		if (!existeTabla(nombreTabla)) {
+
+		if (!existeTabla(nombreTablaAux)) {
+			free(nombreTablaAux);
 			return;
 		}
 
-		t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
+		t_metadata_tabla metadata = obtenerMetadata(nombreTablaAux);
 		usleep(metadata.T_COMPACTACION * 1000);
-		compactarTabla(nombreTabla);
+		log_info(loggerInfo, "Iniciando compactacion de tabla %s", nombreTablaAux);
+		compactarTabla(nombreTablaAux);
 
 	}
 
