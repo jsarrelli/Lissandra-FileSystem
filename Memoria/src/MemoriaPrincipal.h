@@ -26,7 +26,7 @@ pthread_mutex_t mutexJournal;
 pthread_mutex_t mutexAsignacionMarco;
 pthread_mutex_t mutexLRU;
 pthread_mutex_t mutexSelect;
-
+pthread_mutex_t mutexInsert;
 void inicializarMemoria(int tamanioMemoriaRecibido);
 
 Segmento* buscarSegmento(char* nombreSegmento);

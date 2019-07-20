@@ -123,16 +123,15 @@ t_metadata_tabla obtenerMetadata(char* nombreTabla) {
 }
 
 void mostrarMetadataTabla(t_metadata_tabla metadataTabla, char* nombreTabla) {
-	if(metadataTabla.CONSISTENCIA == 1){
-	log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
-			"EVENTUAL", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
-	}
-	else if(metadataTabla.CONSISTENCIA == 2){
+	if (metadataTabla.CONSISTENCIA == 1) {
+		log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla, "EVENTUAL",
+				metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	} else if (metadataTabla.CONSISTENCIA == 2) {
+		log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla, "STRONG",
+				metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+	} else {
 		log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
-					"STRONG", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
-	}else{
-		log_trace(loggerTrace, "\nMetadata de %s: \n-CONSISTENCIA: %s\n-PARTICIONES=%i\n-TIEMPO_COMPACTACION=%i", nombreTabla,
-					"STRONG HASH", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
+				"STRONG HASH", metadataTabla.CANT_PARTICIONES, metadataTabla.T_COMPACTACION);
 	}
 }
 char* armarRutaTabla(char* nombreTabla) {
@@ -318,7 +317,8 @@ void vaciarMemtable() {
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
-pthread_mutex_lock(&mutexBuscarDirectorios);
+	pthread_mutex_lock(&mutexBuscarDirectorios);
+	log_info(loggerInfo, "Obteniendo directorios..");
 	DIR *directorioActual;
 	struct dirent *directorio;
 //aca estamos limitando los
@@ -381,6 +381,9 @@ void mostrarMetadataTodasTablas(char *ruta) {
 }
 
 void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
+	//aca me pinta un mutex de compactacion
+	log_info(loggerInfo, "Insertando registro:%s %s \"%s\" en memtable..", nombreTabla, key, value);
+
 	int clave = atoi(key);
 	t_tabla_memtable *tabla = getTablaFromMemtable(nombreTabla);
 
@@ -432,7 +435,6 @@ void crearYEscribirTemporal(char* rutaTabla) {
 
 	free(rutaArchTemporal);
 	list_destroy_and_destroy_elements(archivos, free);
-
 
 	pthread_mutex_unlock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
 	free(nombTabla);

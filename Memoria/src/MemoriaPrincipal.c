@@ -28,6 +28,7 @@ void inicializarMemoria(int tamanioMemoriaRecibido) {
 	pthread_mutex_init(&mutexJournal, NULL);
 	pthread_mutex_init(&mutexAsignacionMarco, NULL);
 	pthread_mutex_init(&mutexSelect, NULL);
+	pthread_mutex_init(&mutexInsert, NULL);
 }
 
 Segmento* newSegmento(char* nombreSegmento) {

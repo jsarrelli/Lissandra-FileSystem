@@ -39,9 +39,9 @@ void procesarAccion(int socketEntrante) {
 				pthread_mutex_unlock(&mutexSelect);
 				break;
 			case (INSERT):
-
+		pthread_mutex_lock(&mutexInsert);
 				procesarRequestINSERT(datos, socketEntrante);
-
+				pthread_mutex_unlock(&mutexInsert);
 				break;
 			case (CREATE):
 

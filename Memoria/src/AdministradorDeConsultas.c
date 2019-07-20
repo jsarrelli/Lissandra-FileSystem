@@ -130,10 +130,12 @@ char* DESCRIBE_ALL_MEMORIA() {
 }
 
 void JOURNAL_MEMORIA() {
+	pthread_mutex_lock(&mutexInsert);
 	pthread_mutex_lock(&mutexSelect);
 	pthread_mutex_lock(&mutexJournal);
 
 	journalMemoria();
+	pthread_mutex_unlock(&mutexInsert);
 	pthread_mutex_unlock(&mutexSelect);
 	pthread_mutex_unlock(&mutexJournal);
 }
