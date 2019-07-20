@@ -133,6 +133,7 @@ void procesarDROP(char* nombreTabla, int socketMemoria) {
 
 //esta funcion podria ser mucho mas linda, pero el obtenerNombreTablas no me sale
 void procesarDESCRIBE_ALL(int socketMemoria) {
+
 	log_info(loggerInfo, "Procesando DESCRIBE ALL");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);

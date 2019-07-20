@@ -94,9 +94,7 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 		paginaNueva = malloc(sizeof(Pagina));
 		paginaNueva->modificado = modificado;
 		paginaNueva->registro = registroEnMemoria;
-		if (modificado) {
-			paginaNueva->modificado = MODIFICADO;
-		}
+
 		free(registro);
 
 		list_add(segmento->paginas, paginaNueva);
@@ -104,6 +102,10 @@ Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento
 		log_info(loggerInfo, "Esta key ya se encuentra en el sistema, se actualizara");
 		strcpy(paginaNueva->registro->value, value);
 		paginaNueva->registro->timestamp = timeStamp;
+	}
+
+	if (modificado) {
+		paginaNueva->modificado = MODIFICADO;
 	}
 
 	EstadoFrame* estadoFrame = getEstadoFrame(paginaNueva);
@@ -338,13 +340,12 @@ void journalMemoria() {
 			log_info(loggerInfo, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
 		}
 
-		list_clean_and_destroy_elements(segmento->paginas,(void*) eliminarPaginaDeMemoria);
+		list_clean_and_destroy_elements(segmento->paginas, (void*) eliminarPaginaDeMemoria);
 	}
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);
 	list_destroy_and_destroy_elements(tablas, free);
 	log_info(loggerInfo, "Journal finalizado con exito");
-
 
 }
 
