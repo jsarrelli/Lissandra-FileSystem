@@ -68,6 +68,7 @@ int main(void) {
 	listaSemaforos = list_create();
 	pthread_mutex_init(&mutexBitarray, NULL);
 	pthread_mutex_init(&mutexBuscarDirectorios,NULL);
+	pthread_mutex_init(&mutexCompactacion,NULL);
 
 
 	//CARGAMOS ARCHIVOS DE CONFIGURACION

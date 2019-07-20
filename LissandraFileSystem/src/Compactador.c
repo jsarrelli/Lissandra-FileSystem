@@ -35,6 +35,7 @@ void compactarTabla(char*nombreTabla) {
 
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
 
+	pthread_mutex_lock(&mutexCompactacion);
 	double tiempoInicial = getCurrentTime();
 	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
@@ -46,6 +47,7 @@ void compactarTabla(char*nombreTabla) {
 
 	double tiempoFinal = getCurrentTime();
 	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+	pthread_mutex_unlock(&mutexCompactacion);
 
 	log_trace(loggerTrace, "Compactacion de <%s> exitosa. Tiempo: %f milisegundos", nombreTabla, (tiempoFinal - tiempoInicial) * 1000);
 }
