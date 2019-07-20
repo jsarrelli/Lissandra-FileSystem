@@ -19,7 +19,7 @@ void gossiping() {
 
 	log_info(loggerInfo, "Las memorias conocidas son:");
 	void mostrarTablaConocida(t_memoria* memoria) {
-		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->ip, memoria->puerto, memoria->memoryNumber);
+		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->puerto, memoria->ip, memoria->memoryNumber);
 	}
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
