@@ -221,7 +221,7 @@ bool isMemoriaCaida(t_memoria* memoria) {
 		return false; //es esta misma
 	}
 
-	int socket = ConectarAServidor(memoria->puerto, memoria->ip);
+	int socket = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
 	bool caida;
 	if (socket == -1) {
 		caida = true;
