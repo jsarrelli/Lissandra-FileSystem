@@ -25,6 +25,7 @@ void gossiping() {
 }
 
 void filtrarMemoriasConocidas() {
+	log_info(loggerInfo, "Filtrando memorias.." );
 	list_remove_and_destroy_by_condition(tablaGossiping, (void*) isMemoriaCaida, (void*) freeMemoria);
 }
 

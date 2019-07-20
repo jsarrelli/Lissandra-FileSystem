@@ -113,7 +113,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 	fclose(arch);
 	free(rutaTabla);
 	log_trace(loggerInfo, "Metadata de %s creada\n", nombreTabla);
-	pthread_mutex_lock(&mutexObtenerMetadata);
+	pthread_mutex_unlock(&mutexObtenerMetadata);
 
 }
 
