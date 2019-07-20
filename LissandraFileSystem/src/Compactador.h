@@ -34,6 +34,6 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list* registrosNuevos);
 
 char* registroToChar(t_registro* registro);
-void iniciarThreadCompactacion(char* nombreTabla);
+void iniciarThreadCompactacion(t_tabla_memtable* tabla);
 t_list* cambiarExtensionTemporales(t_list* listaTemporalesTmp);
 #endif /* COMPACTADOR_H_ */

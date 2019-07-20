@@ -446,19 +446,13 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 	return archivosBinarios;
 }
 
-void iniciarThreadCompactacion(char* nombreTabla) {
-	char* nombreTablaAux = string_duplicate(nombreTabla);
-	while (true) {
+void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
+	while (tabla!=NULL) {
 
-		if (!existeTabla(nombreTablaAux)) {
-			free(nombreTablaAux);
-			return;
-		}
-
-		t_metadata_tabla metadata = obtenerMetadata(nombreTablaAux);
+		t_metadata_tabla metadata = obtenerMetadata(tabla->nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
-		log_info(loggerInfo, "Iniciando compactacion de tabla %s", nombreTablaAux);
-		compactarTabla(nombreTablaAux);
+		log_info(loggerInfo, "Iniciando compactacion de tabla %s", tabla->nombreTabla);
+		compactarTabla(tabla->nombreTabla);
 
 	}
 

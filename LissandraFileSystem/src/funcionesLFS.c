@@ -65,12 +65,10 @@ void insertarTablaEnMemtable(char* nombreTabla) {
 	t_tabla_memtable* tabla = newTablaMemtable(nombreTabla);
 	list_add(memtable, tabla);
 
-	char* nombreTablaAux = string_duplicate(nombreTabla);
 	pthread_t threadCompactacion;
-	pthread_create(&threadCompactacion, NULL, (void*) iniciarThreadCompactacion, (void*) nombreTablaAux);
+	pthread_create(&threadCompactacion, NULL, (void*) iniciarThreadCompactacion, (void*) tabla);
 	pthread_detach(threadCompactacion);
 
-	free(nombreTablaAux);
 	log_trace(loggerInfo, "%s insertada en memtable \n", tabla->nombreTabla);
 }
 

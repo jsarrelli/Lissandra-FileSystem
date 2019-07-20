@@ -13,7 +13,7 @@ void cargarListaSeeds() {
 
 void gossiping() {
 
-	filtrarMemoriasConocidas();//veo cuales estan activas
+	filtrarMemoriasConocidas(); //veo cuales estan activas
 
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
 
@@ -24,9 +24,8 @@ void gossiping() {
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
 
-
-void filtrarMemoriasConocidas(){
-	list_remove_and_destroy_by_condition(tablaGossiping,(void*)isMemoriaCaida,(void*) freeMemoria);
+void filtrarMemoriasConocidas() {
+	list_remove_and_destroy_by_condition(tablaGossiping, (void*) isMemoriaCaida, (void*) freeMemoria);
 }
 
 void cargarEstructurasGossiping() {
@@ -50,7 +49,7 @@ bool isMemoriaYaConocida(t_memoria* memoriaRecibida) {
 		}
 		return false;
 	}
-	return list_any_satisfy(tablaGossiping,(void*)equalsMemoria);
+	return list_any_satisfy(tablaGossiping, (void*) equalsMemoria);
 }
 
 void agregarMemoriaNueva(t_memoria* memoriaRecibida) {
