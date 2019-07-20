@@ -220,10 +220,20 @@ bool isMemoriaCaida(t_memoria* memoria) {
 	if (memoria->memoryNumber == configuracion->MEMORY_NUMBER) {
 		return false; //es esta misma
 	}
+	int socket;
+	int i = 0;
+	do {
+		socket = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
+		if (socket != -1) {
+			break;
+		}
+		usleep(200);
+		i++;
+	} while (i < 3);
 
-	int socket = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
 	bool caida;
 	if (socket == -1) {
+		log_error(loggerError, "Se cayo la memoria %s %s %d", memoria->ip, memoria->puerto, memoria->memoryNumber);
 		caida = true;
 	} else {
 		caida = false;
