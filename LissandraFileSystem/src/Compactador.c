@@ -315,10 +315,10 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		//ftruncate(fd, metadata.BLOCK_SIZE);
 		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
 		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-		if (!string_is_empty(contenidoBloque)) {
-			string_append(&contenidoBloques, contenidoBloque);
+		//if (!string_is_empty(contenidoBloque)) {
+		string_append(&contenidoBloques, contenidoBloque);
 
-		}
+		//}
 
 		munmap(contenidoBloque, metadata.BLOCK_SIZE);
 		close(fd);
