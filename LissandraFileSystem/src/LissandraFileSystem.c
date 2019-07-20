@@ -67,6 +67,7 @@ int main(void) {
 	//INICIALIZAMOS LOS SEMAFOROS
 	listaSemaforos = list_create();
 	pthread_mutex_init(&mutexBitarray, NULL);
+	pthread_mutex_init(&mutexBuscarDirectorios,NULL);
 
 	//CARGAMOS ARCHIVOS DE CONFIGURACION
 	cargarConfig();

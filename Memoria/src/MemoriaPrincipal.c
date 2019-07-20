@@ -326,7 +326,7 @@ void journalMemoria() {
 			enviarRegistroAFileSystem(pagina, segmento->nombreTabla);
 			log_info(loggerInfo, "Enviando registro a FileSystem..");
 		}
-		clearFrameDePagina(pagina);
+
 	}
 
 	void journalPaginasModificadasBySegmento(Segmento* segmento) {
@@ -337,7 +337,7 @@ void journalMemoria() {
 			log_info(loggerInfo, "La informacion del segmento  %s no se cargo en FS ya que el mismo no existia", segmento->nombreTabla);
 		}
 
-		list_clean_and_destroy_elements(segmento->paginas, free);
+		list_clean_and_destroy_elements(segmento->paginas,(void*) eliminarPaginaDeMemoria);
 	}
 
 	list_iterate(segmentos, (void*) journalPaginasModificadasBySegmento);

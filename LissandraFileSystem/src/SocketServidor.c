@@ -18,7 +18,6 @@ void escuchar(int listenningSocket) {
 		socklen_t datosConexionClienteSize = sizeof(datosConexionCliente);
 		int socketMemoria = accept(listenningSocket, (struct sockaddr *) &datosConexionCliente, &datosConexionClienteSize);
 		if (socketMemoria != -1) {
-			log_info(loggerInfo, "Request de memoria recibida.. \n");
 
 			pthread_t hiloRequest;
 			pthread_create(&hiloRequest, NULL, (void*) procesarAccion, (void*) socketMemoria);
@@ -36,6 +35,7 @@ void procesarAccion(int socketMemoria) {
 	Paquete paquete;
 
 	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
+		log_info(loggerInfo, "Request de memoria recibida: %s",paquete.mensaje);
 		usleep(config->RETARDO * 1000);
 		if (paquete.header.quienEnvia == MEMORIA) {
 			usleep(config->RETARDO * 1000);

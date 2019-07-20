@@ -318,7 +318,7 @@ void vaciarMemtable() {
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
-
+pthread_mutex_lock(&mutexBuscarDirectorios);
 	DIR *directorioActual;
 	struct dirent *directorio;
 //aca estamos limitando los
@@ -345,6 +345,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 
 		closedir(directorioActual);
 	}
+	pthread_mutex_unlock(&mutexBuscarDirectorios);
 }
 
 char* obtenerNombreTablaByRuta(char* rutaTabla) {

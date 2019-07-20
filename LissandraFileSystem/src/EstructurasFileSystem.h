@@ -39,6 +39,7 @@ t_list* listaSemaforos;
 
 
 pthread_mutex_t mutexBitarray;
+pthread_mutex_t mutexBuscarDirectorios;
 
 
 
