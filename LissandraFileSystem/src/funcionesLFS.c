@@ -115,15 +115,28 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 }
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla) {
+	pthread_mutex_lock(&mutexObtenerMetadata);
+	log_info(loggerInfo, "Obtentiendo Metadata de %s..", nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	t_config* configMetadata = config_create(rutaTabla);
 	t_metadata_tabla metadataTabla;
-	metadataTabla.CONSISTENCIA = getConsistenciaByChar(config_get_string_value(configMetadata, "CONSISTENCIA"));
-	metadataTabla.CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
-	metadataTabla.T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
+	if (config_has_property(configMetadata, "CONSISTENCIA")) {
+		metadataTabla.CONSISTENCIA = getConsistenciaByChar(config_get_string_value(configMetadata, "CONSISTENCIA"));
+	}
+	if (config_has_property(configMetadata, "PARTICIONES")) {
+		metadataTabla.CANT_PARTICIONES = config_get_int_value(configMetadata, "PARTICIONES");
+	}
+
+	if (config_has_property(configMetadata, "TIEMPO_COMPACTACION")) {
+		metadataTabla.T_COMPACTACION = config_get_int_value(configMetadata, "TIEMPO_COMPACTACION");
+	}
+
 	free(rutaTabla);
 	config_destroy(configMetadata);
+	log_info(loggerInfo, "Metadata de %s obtenida", nombreTabla);
+	pthread_mutex_unlock(&mutexObtenerMetadata);
+
 	return metadataTabla;
 }
 

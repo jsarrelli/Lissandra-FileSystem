@@ -449,12 +449,13 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 }
 
 void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
-	while (tabla!=NULL) {
+	while (tabla != NULL) {
 
 		t_metadata_tabla metadata = obtenerMetadata(tabla->nombreTabla);
-		usleep(metadata.T_COMPACTACION * 1000);
+
 		log_info(loggerInfo, "Iniciando compactacion de tabla %s", tabla->nombreTabla);
 		compactarTabla(tabla->nombreTabla);
+		usleep(metadata.T_COMPACTACION * 1000);
 
 	}
 
