@@ -227,7 +227,7 @@ bool isMemoriaCaida(t_memoria* memoria) {
 		if (socket != -1) {
 			break;
 		}
-		usleep(900);
+		usleep(200);
 		i++;
 	} while (i < 6);
 
