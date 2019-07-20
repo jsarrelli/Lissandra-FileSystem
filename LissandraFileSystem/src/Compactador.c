@@ -9,6 +9,10 @@
 
 void compactarTabla(char*nombreTabla) {
 
+	pthread_mutex_lock(&mutexCompactacion);
+	double tiempoInicial = getCurrentTime();
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+
 	log_trace(loggerTrace, "Compactando tabla: %s", nombreTabla);
 
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
@@ -35,9 +39,6 @@ void compactarTabla(char*nombreTabla) {
 
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
 
-	pthread_mutex_lock(&mutexCompactacion);
-	double tiempoInicial = getCurrentTime();
-	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
 
 	list_iterate(archivosTmpc, (void*) eliminarArchivo);
