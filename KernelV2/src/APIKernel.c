@@ -261,12 +261,13 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 	} else {
 		log_info(log_master->logInfo, "Se recibio el paquete con exito..");
 		success = atoi(paquete->mensaje);
+		free(paquete->mensaje);
 	}
 	if (socketMemoria != -1) {
 		close(socketMemoria);
 	}
 
-	free(paquete->mensaje);
+
 	return success;
 }
 
