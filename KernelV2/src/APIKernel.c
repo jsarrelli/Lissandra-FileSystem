@@ -267,6 +267,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		close(socketMemoria);
 	}
 
+
 	return success;
 }
 
@@ -423,7 +424,6 @@ int procesarDescribeAll(int socketMemoria) {
 		free(paquete.mensaje);
 	} else {
 		log_error(log_master->logError, "ERROR PROCESAR DESCRIBE ALL..");
-
 	}
 
 	log_info(log_master->logInfo, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));
@@ -452,14 +452,11 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 }
 
 int consolaDescribe(char*nombreTabla) {
-	int socketMemoria = 0;
-	infoMemoria* memoriaAlAzar;
-	do {
-		memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-		log_info(log_master->logInfo, "Intenando conectarse a memoria %d..", memoriaAlAzar->id);
-		socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
-	} while (socketMemoria == -1);
-
+	// DESCRIBE [NOMBRE_TABLA]
+	// DESCRIBE
+	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
+	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	if (socketMemoria < 0) {
 		log_error(log_master->logError, "Error de conexion");
 		return SUPER_ERROR;
