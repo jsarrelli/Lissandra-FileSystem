@@ -168,6 +168,7 @@ void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
 		char** memorias = string_split(paquete.mensaje, "/");
 		while (memorias[i] != NULL) {
 			t_memoria* memoriaRecibida = deserealizarMemoria(memorias[i]);
+
 			agregarMemoriaNueva(memoriaRecibida);
 			i++;
 		}
@@ -213,4 +214,21 @@ t_registro* selectFileSystem(Segmento* segmento, int key) {
 	log_info(loggerInfo, "Registro obtenido de fileSystem");
 	close(socketFileSystem);
 	return registro;
+}
+
+bool isMemoriaCaida(t_memoria* memoria) {
+	if (memoria->memoryNumber == configuracion->MEMORY_NUMBER) {
+		return false; //es esta misma
+	}
+
+	int socket = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
+	bool caida;
+	if (socket == -1) {
+		caida = true;
+	} else {
+		caida = false;
+		close(socket);
+	}
+
+	return caida;
 }

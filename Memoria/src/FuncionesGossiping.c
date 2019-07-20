@@ -11,15 +11,22 @@ void cargarListaSeeds() {
 	}
 }
 
-
 void gossiping() {
+
+	filtrarMemoriasConocidas();//veo cuales estan activas
+
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
 
-	log_info(loggerInfo, "Las memorias conocidas son");
+	log_info(loggerInfo, "Las memorias conocidas son:");
 	void mostrarTablaConocida(t_memoria* memoria) {
 		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->puerto, memoria->ip, memoria->memoryNumber);
 	}
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
+}
+
+
+void filtrarMemoriasConocidas(){
+	list_remove_and_destroy_by_condition(tablaGossiping,(void*)isMemoriaCaida,(void*) freeMemoria);
 }
 
 void cargarEstructurasGossiping() {
@@ -43,7 +50,7 @@ bool isMemoriaYaConocida(t_memoria* memoriaRecibida) {
 		}
 		return false;
 	}
-	return list_any_satisfy(tablaGossiping, (void*) equalsMemoria);
+	return list_any_satisfy(tablaGossiping,(void*)equalsMemoria);
 }
 
 void agregarMemoriaNueva(t_memoria* memoriaRecibida) {
@@ -66,10 +73,9 @@ t_memoria* deserealizarMemoria(char* mensaje) {
 	return memoriaRecibida;
 }
 
-
-
 void freeMemoria(t_memoria* memoria) {
 	free(memoria->ip);
 	free(memoria->puerto);
 	free(memoria);
 }
+

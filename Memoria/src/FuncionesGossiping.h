@@ -12,5 +12,6 @@ void cargarListaSeeds();
 t_memoria* deserealizarMemoria(char* mensaje);
 void freeMemoria(t_memoria* memoria);
 void gossiping();
+void filtrarMemoriasConocidas();
 
 #endif /* FUNCIONESGOSSIPING_H_ */
