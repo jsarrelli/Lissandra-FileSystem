@@ -364,13 +364,16 @@ int conocerMemorias() {
 	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
 		tiempoGossiping = atoi(paquete.mensaje);
 		free(paquete.mensaje);
-	}else{
+	} else {
 		return TODO_OK;
 		//esto no es un OK un carajo pero basta de tirar errores
 	}
+	void freeMemoria(infoMemoria* memoria) {
+		free(memoria->ip);
+		free(memoria);
+	}
 
-
-
+	list_clean_and_destroy_elements(listaMemorias,(void*) freeMemoria);
 	while ((codRecibir = RecibirPaquete(socketMemoria, &paquete)) > 0) {
 
 		char** response = string_split(paquete.mensaje, " ");
