@@ -103,6 +103,8 @@ t_tabla_memtable* newTablaMemtable(char* nombreTabla) {
 }
 
 void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadParticiones, char* tiempoCompactacion) {
+	log_info(loggerInfo, "Creando archivo Metadata de: %s", nombreTabla);
+	pthread_mutex_lock(&mutexObtenerMetadata);
 	char*rutaTabla = armarRutaTabla(nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
 	FILE*arch = fopen(rutaTabla, "w+");
@@ -111,6 +113,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 	fclose(arch);
 	free(rutaTabla);
 	log_trace(loggerInfo, "Metadata de %s creada\n", nombreTabla);
+	pthread_mutex_lock(&mutexObtenerMetadata);
 
 }
 
