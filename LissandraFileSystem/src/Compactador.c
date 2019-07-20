@@ -317,6 +317,8 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		void* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 		if (contenidoBloque != (void*) -1) {
 			string_append(&contenidoBloques, (char*) contenidoBloque);
+		}else{
+			log_error(loggerError, "Fallo al abrir el bloque %d",bloque);
 		}
 		//if (!string_is_empty(contenidoBloque)) {
 
