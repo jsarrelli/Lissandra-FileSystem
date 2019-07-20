@@ -25,7 +25,7 @@ void procesarAccion(int socketEntrante) {
 	void* datos;
 	int cantDatosRecibidos = RecibirPaquete(socketEntrante, &paquete);
 
-	log_info(loggerInfo, "Request en memoria recibida: %s / %d",paquete.mensaje,cantDatosRecibidos);
+	log_info(loggerInfo, "Request en memoria recibida: %s / %d", paquete.mensaje, cantDatosRecibidos);
 
 	if (cantDatosRecibidos > 0) {
 		usleep(configuracion->RETARDO_MEMORIA * 1000);
@@ -39,7 +39,7 @@ void procesarAccion(int socketEntrante) {
 				pthread_mutex_unlock(&mutexSelect);
 				break;
 			case (INSERT):
-		pthread_mutex_lock(&mutexInsert);
+				pthread_mutex_lock(&mutexInsert);
 				procesarRequestINSERT(datos, socketEntrante);
 				pthread_mutex_unlock(&mutexInsert);
 				break;
@@ -80,9 +80,12 @@ void procesarAccion(int socketEntrante) {
 			log_info(loggerInfo, "No es ningun proceso valido para Memoria");
 		}
 		free(paquete.mensaje);
+		//close(socketEntrante);
+	}
+
+	if (socketEntrante != -1) {
 		close(socketEntrante);
 	}
-	//close(socketEntrante);
 
 }
 
