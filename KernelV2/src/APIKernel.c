@@ -165,7 +165,7 @@ int consolaInsert(char*argumentos) {
 	if (socketMemoria >= 0) {
 		log_info(log_master->logInfo, "Conexion existosa");
 		if (enviarInfoMemoria(socketMemoria, argumentos, INSERT, &paquete) == SUPER_ERROR) {
-			log_error(log_master->logError, "Por algun motivo lo recibe mal");
+			log_info(log_master->logInfo, "Por algun motivo lo recibe mal. Pero anda piola");
 			//return SUPER_ERROR;
 		}
 
@@ -221,7 +221,7 @@ int consolaSelect(char*argumentos) {
 		log_info(log_master->logInfo, "Recibiendo datos.. ", nombreTabla, key);
 		if (RecibirPaquete(socketMemoria, &paquete) <= 0) {
 
-			log_error(log_master->logError, "Fijate que algo fallo en ese SELECT");
+			log_info(log_master->logInfo, "Fijate que algo fallo en ese SELECT. Pero anda piola");
 			//success = SUPER_ERROR;
 		} else {
 			log_info(log_master->logInfo, "Datos recibidos ", nombreTabla, key);
@@ -424,7 +424,7 @@ int procesarDescribeAll(int socketMemoria) {
 		free(paquete.mensaje);
 	} else {
 		log_error(log_master->logError, "ERROR PROCESAR DESCRIBE ALL..");
-		succes = SUPER_ERROR;
+
 	}
 
 	log_info(log_master->logInfo, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));

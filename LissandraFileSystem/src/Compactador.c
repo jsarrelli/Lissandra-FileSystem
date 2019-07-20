@@ -14,7 +14,7 @@ void compactarTabla(char*nombreTabla) {
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
-		log_error(loggerError, "No hay nada para compactar");
+		log_info(loggerInfo, "No hay nada para compactar");
 		return;
 	}
 
