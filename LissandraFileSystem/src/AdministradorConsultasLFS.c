@@ -77,8 +77,9 @@ void procesoDump() {
 	while (1) {
 
 		usleep(config->TIEMPO_DUMP * 1000);
-		log_info(loggerInfo, "Iniciando proceso Dump");
+		log_trace(loggerTrace, "Iniciando proceso Dump");
 		crearYEscribirArchivosTemporales(rutas.Tablas);
+		log_trace(loggerTrace, "Proceso Dump finalizado");
 
 	}
 }
