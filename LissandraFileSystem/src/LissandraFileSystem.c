@@ -84,7 +84,7 @@ int main(void) {
 	pthread_detach(serverThread);
 
 	//HILO DUMP
-	pthread_create(&dumpThread, NULL, (void*) procesoDump, NULL);
+	pthread_create(&dumpThread, NULL, (void*) iniciarProcesoDump, NULL);
 	pthread_detach(dumpThread);
 
 	//API

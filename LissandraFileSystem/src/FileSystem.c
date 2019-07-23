@@ -206,8 +206,12 @@ void cargarSemaforosTabla(char* nombreTabla) {
 	pthread_mutex_t mutexMemtable;
 	pthread_mutex_init(&mutexMemtable, NULL);
 
+	pthread_mutex_t mutexDump;
+	pthread_mutex_init(&mutexDump, NULL);
+
 	semaforoTabla->mutexCompactacion = mutexCompactacion;
 	semaforoTabla->mutexMemtable = mutexMemtable;
+	semaforoTabla->mutexDump = mutexDump;
 
 	list_add(listaSemaforos, semaforoTabla);
 

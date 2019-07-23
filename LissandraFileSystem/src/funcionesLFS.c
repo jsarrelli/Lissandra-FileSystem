@@ -84,7 +84,7 @@ void crearTablaYParticiones(char* nombreTabla, char* cantidadParticiones) {
 
 		string_append(&rutaParticion, "/");
 		string_append_with_format(&rutaParticion, "%d.bin", i);
-		crearArchReservarBloqueYEscribirBitmap(rutaParticion);
+		crearArchivo(rutaParticion);
 		printf("Particion %d creada \n", i);
 		free(rutaParticion);
 
@@ -316,7 +316,7 @@ void removerTabla(char* nombreTabla) {
 	}
 
 	list_remove_and_destroy_by_condition(memtable, (void*) isTablaBuscada, (void*) freeTabla);
-	log_trace(loggerInfo, "%s eliminada de memtable\n", nombreTabla);
+	log_trace(loggerInfo, "%s eliminada de memtable", nombreTabla);
 
 	removerArchivosDeTabla(nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
@@ -424,20 +424,23 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 
 }
 
-void crearYEscribirArchivosTemporales(char*ruta) {
+void procesoDump() {
 
 	t_list* listaDirectorios = list_create();
-	buscarDirectorios(ruta, listaDirectorios);
+	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
-	list_iterate(listaDirectorios, (void*) crearYEscribirTemporal);
+	list_iterate(listaDirectorios, (void*) dumpearTabla);
 	list_destroy_and_destroy_elements(listaDirectorios, free);
 
 }
 
-void crearYEscribirTemporal(char* rutaTabla) {
+void dumpearTabla(char* rutaTabla) {
 	char* nombTabla = obtenerNombreTablaByRuta(rutaTabla);
 
+
+	log_trace(loggerTrace, "Dumpeando %s..",nombTabla);
 	pthread_mutex_lock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
+	pthread_mutex_lock(&getSemaforoByTabla(nombTabla)->mutexDump);
 
 	t_list*archivos = buscarArchivos(nombTabla);
 	int cantidadTmp = contarArchivosTemporales(archivos);
@@ -448,7 +451,7 @@ void crearYEscribirTemporal(char* rutaTabla) {
 
 	t_tabla_memtable* tabla = getTablaFromMemtable(nombTabla);
 	if (tabla != NULL && !list_is_empty(tabla->registros)) {
-		crearArchReservarBloqueYEscribirBitmap(rutaArchTemporal);
+		crearArchivo(rutaArchTemporal);
 		log_info(loggerInfo, "Archivo temporal creado en %s", nombTabla);
 
 		t_list* registros = list_map(tabla->registros, (void*) registroToChar);
@@ -460,11 +463,12 @@ void crearYEscribirTemporal(char* rutaTabla) {
 		list_destroy_and_destroy_elements(registros, free);
 
 	}
+	pthread_mutex_unlock(&getSemaforoByTabla(nombTabla)->mutexDump);
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
 
 	free(rutaArchTemporal);
 	list_destroy_and_destroy_elements(archivos, free);
-
-	pthread_mutex_unlock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
+	log_trace(loggerTrace, "Dumpeo de %s finalizado",nombTabla);
 	free(nombTabla);
 }
 
@@ -489,7 +493,7 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
 
 }
 
-void crearArchReservarBloqueYEscribirBitmap(char* rutaArch) {
+void crearArchivo(char* rutaArch) {
 	t_archivo* file = malloc(sizeof(t_archivo));
 	file->BLOQUES = list_create();
 	agregarNuevoBloque(file);
@@ -625,6 +629,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloqueActual);
 			return -1;
 		}
+
 		ftruncate(fd, strlen(registrosDeBloque));
 		char* contenidoBloque = mmap(NULL, strlen(registrosDeBloque), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 		strcpy(contenidoBloque, registrosDeBloque);
@@ -738,17 +743,23 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 	t_list* registros = list_create();
 
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexDump));
 	log_info(loggerInfo, "Buscando key:%d  de tabla: %s en memtable", keyActual, nombreTabla);
 	t_registro* registroMemtable = getRegistroFromMemtableByKey(nombreTabla, keyActual);
 	if (registroMemtable != NULL) {
 		list_add(registros, registroMemtable);
 	}
 
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+
+
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmp", keyActual, nombreTabla);
 	t_registro* registroTmp = getRegistroFromTmpByKey(nombreTabla, keyActual);
 	if (registroTmp != NULL) {
 		list_add(registros, registroTmp);
 	}
+
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexDump));
 
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmpc", keyActual, nombreTabla);
 	t_registro* registroTmpc = getRegistroFromTmpcByKey(nombreTabla, keyActual);
@@ -761,6 +772,8 @@ t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 	if (registroBin != NULL) {
 		list_add(registros, registroBin);
 	}
+
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
 	if (list_is_empty(registros)) {
 		list_destroy(registros);

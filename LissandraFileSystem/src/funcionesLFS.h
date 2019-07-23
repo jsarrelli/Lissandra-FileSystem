@@ -61,9 +61,9 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo);
 int liberarBloquesDeArchivo(char *rutaArchivo);
 char * obtenerNombreDeArchivoDeUnaRuta(char * ruta);
 char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal);
-void crearYEscribirArchivosTemporales(char*ruta);
-void crearYEscribirTemporal(char*rutaTabla);
-void crearArchReservarBloqueYEscribirBitmap(char* rutaArch);
+void procesoDump();
+void dumpearTabla(char*rutaTabla);
+void crearArchivo(char* rutaArch);
 void escribirArchivo(char*rutaArchivo, t_archivo *archivo);
 int contarArchivosTemporales(t_list* archivos);
 int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir);
@@ -78,7 +78,7 @@ t_tabla_memtable* newTablaMemtable(char* nombreTabla);
 FILE* obtenerArchivoBloque(int numeroBloque, bool sobreEscribirBloques);
 void borrarContenidoArchivoBloque(int bloque);
 void freeArchivo(t_archivo *archivo);
-t_registro* buscarRegistroByKeyFromListaRegistros(t_list* listaRegistros, int key);
+
 
 void vaciarMemtable();
 void freeTabla(t_tabla_memtable* tabla);

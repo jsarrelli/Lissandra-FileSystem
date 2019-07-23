@@ -72,7 +72,9 @@ void* leerConsola() {
 }
 
 void cargarConfiguracion() {
-	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM2.cfg";
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM1.cfg";
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM2.cfg";
+	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM3.cfg";
 	log_info(loggerInfo, "Levantando archivo de configuracion del proceso MEMORIA");
 	if (configuracion != NULL) {
 		liberarDatosConfiguracion();

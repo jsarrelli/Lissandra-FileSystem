@@ -11,7 +11,7 @@ int funcionDROP(char* nombreTabla);
 t_metadata_tabla funcionDESCRIBE(char* nombreTabla);
 void funcionDESCRIBE_ALL();
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value);
-void procesoDump();
+void iniciarProcesoDump();
 t_registro* funcionSELECT(char*nombreTabla, int keyActual);
 
 #endif /* AdministradorDeConsultasLFS_H_ */

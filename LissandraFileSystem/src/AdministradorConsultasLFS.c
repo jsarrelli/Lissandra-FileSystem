@@ -30,9 +30,6 @@ t_metadata_tabla funcionDESCRIBE(char* nombreTabla) {
 
 void funcionDESCRIBE_ALL() {
 	mostrarMetadataTodasTablas(rutas.Tablas);
-	///////
-//	crearYEscribirArchivosTemporales(rutas.Tablas);
-//	compactarTabla("TABLA");
 }
 
 int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
@@ -54,9 +51,9 @@ int funcionINSERT(double timeStamp, char* nombreTabla, char* key, char* value) {
 t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	if (existeTabla(nombreTabla)) {
 
-		pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+
 		t_registro* registro = getRegistroByKeyAndNombreTabla(nombreTabla, keyActual);
-		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+
 
 		if (registro != NULL) {
 			log_trace(loggerTrace, "Registro con mayor timestamp: %f;%d;%s", registro->timestamp, registro->key, registro->value);
@@ -72,13 +69,13 @@ t_registro* funcionSELECT(char*nombreTabla, int keyActual) {
 	}
 }
 
-void procesoDump() {
+void iniciarProcesoDump() {
 
 	while (1) {
 
 		usleep(config->TIEMPO_DUMP * 1000);
 		log_trace(loggerTrace, "Iniciando proceso Dump");
-		crearYEscribirArchivosTemporales(rutas.Tablas);
+		procesoDump();
 		log_trace(loggerTrace, "Proceso Dump finalizado");
 
 	}

@@ -28,9 +28,7 @@ int ConectarAServidorPlus(int puerto, char* ip) {
 		if (socket != -1) {
 			break;
 		}
-
-		//printf("No se pudo conectar a %s / %d, reintentando..\n",ip,puerto);
-		usleep(2000);
+		usleep(10);
 	}
 
 	return socket;
