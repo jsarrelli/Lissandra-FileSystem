@@ -30,7 +30,7 @@ typedef struct {
 	char* nombreTabla;
 	pthread_mutex_t mutexCompactacion;
 	pthread_mutex_t mutexMemtable;
-	pthread_mutex_t mutexDump;
+	pthread_mutex_t mutexTmp;
 } t_semaforos_tabla;
 
 t_list* memtable;

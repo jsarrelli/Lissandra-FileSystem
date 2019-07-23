@@ -162,17 +162,6 @@ char* armarRutaTabla(char* nombreTabla) {
 	return rutaTabla;
 }
 
-int contarArchivosTemporales(t_list* archivos) {
-	bool isTmp(char* rutaArchivoActual) {
-		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
-		bool response = strcmp(extension, "tmp") == 0;
-		free(extension);
-		return response;
-	}
-	return list_count_satisfying(archivos, (void*) isTmp);
-
-}
-
 int existeArchivo(char*nombreTabla, char * rutaArchivoBuscado) {
 	t_list* archivos = buscarArchivos(nombreTabla);
 
@@ -435,41 +424,39 @@ void procesoDump() {
 }
 
 void dumpearTabla(char* rutaTabla) {
-	char* nombTabla = obtenerNombreTablaByRuta(rutaTabla);
+	char* nombreTabla = obtenerNombreTablaByRuta(rutaTabla);
 
+	log_trace(loggerTrace, "Dumpeando %s..", nombreTabla);
 
-	log_trace(loggerTrace, "Dumpeando %s..",nombTabla);
-	pthread_mutex_lock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
-	pthread_mutex_lock(&getSemaforoByTabla(nombTabla)->mutexDump);
-
-	t_list*archivos = buscarArchivos(nombTabla);
-	int cantidadTmp = contarArchivosTemporales(archivos);
+	t_list*archivosTmp = buscarTemporalesByNombreTabla(nombreTabla);
+	int cantidadTmp = list_size(archivosTmp);
 
 	char* rutaArchTemporal = string_duplicate(rutaTabla);
 	string_append(&rutaArchTemporal, "/");
 	string_append_with_format(&rutaArchTemporal, "tmp%d.tmp", cantidadTmp);
 
-	t_tabla_memtable* tabla = getTablaFromMemtable(nombTabla);
-	if (tabla != NULL && !list_is_empty(tabla->registros)) {
+	t_list* registros = getRegistrosFromMemtable(nombreTabla);
+	if (!list_is_empty(registros)) {
 		crearArchivo(rutaArchTemporal);
-		log_info(loggerInfo, "Archivo temporal creado en %s", nombTabla);
+		log_info(loggerInfo, "Archivo temporal creado en %s", nombreTabla);
 
-		t_list* registros = list_map(tabla->registros, (void*) registroToChar);
+		t_list* registrosChar = list_map(registros, (void*) registroToChar);
 
-		limpiarRegistrosDeTabla(nombTabla);
+		limpiarRegistrosDeTabla(nombreTabla);
 
-		escribirRegistrosEnBloquesByPath(registros, rutaArchTemporal);
+		pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchTemporal);
+		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
-		list_destroy_and_destroy_elements(registros, free);
+		list_destroy_and_destroy_elements(registros,(void*) freeRegistro);
+		list_destroy_and_destroy_elements(registrosChar, free);
 
 	}
-	pthread_mutex_unlock(&getSemaforoByTabla(nombTabla)->mutexDump);
-	pthread_mutex_unlock(&(getSemaforoByTabla(nombTabla)->mutexCompactacion));
 
 	free(rutaArchTemporal);
-	list_destroy_and_destroy_elements(archivos, free);
-	log_trace(loggerTrace, "Dumpeo de %s finalizado",nombTabla);
-	free(nombTabla);
+	list_destroy_and_destroy_elements(archivosTmp, free);
+	log_trace(loggerTrace, "Dumpeo de %s finalizado", nombreTabla);
+	free(nombreTabla);
 }
 
 void limpiarRegistrosDeTabla(char*nombreTabla) {
@@ -688,21 +675,17 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 	fclose(arch);
 }
 
-void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
-	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
-	if (tablaMemtable != NULL) {
-		list_add_all(listaRegistros, tablaMemtable->registros);
-	}
+void getRegistrosFromTmpByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
+	pthread_mutex_lock(&getSemaforoByTabla(nombreTabla)->mutexTmp);
 
-}
-
-void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
 	t_list* temporales = buscarTemporalesByNombreTabla(nombreTabla);
 	t_list* registros = list_create();
 	list_iterate2(temporales, (void*) agregarRegistrosFromBloqueByPath, registros);
 	list_add_all(listaRegistros, registros);
 	list_destroy(registros);
 	list_destroy_and_destroy_elements(temporales, free);
+
+	pthread_mutex_unlock(&getSemaforoByTabla(nombreTabla)->mutexTmp);
 }
 
 void getRegistrosFromTempcByNombreTabla(char* nombreTabla, t_list* listaRegistros) {
@@ -743,15 +726,11 @@ void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list*li
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 	t_list* registros = list_create();
 
-	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexDump));
 	log_info(loggerInfo, "Buscando key:%d  de tabla: %s en memtable", keyActual, nombreTabla);
 	t_registro* registroMemtable = getRegistroFromMemtableByKey(nombreTabla, keyActual);
 	if (registroMemtable != NULL) {
 		list_add(registros, registroMemtable);
 	}
-
-	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
-
 
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmp", keyActual, nombreTabla);
 	t_registro* registroTmp = getRegistroFromTmpByKey(nombreTabla, keyActual);
@@ -759,7 +738,7 @@ t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 		list_add(registros, registroTmp);
 	}
 
-	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexDump));
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmpc", keyActual, nombreTabla);
 	t_registro* registroTmpc = getRegistroFromTmpcByKey(nombreTabla, keyActual);
@@ -801,7 +780,7 @@ t_registro* getRegistroFromBinByKey(char* nombreTabla, int key) {
 
 t_registro* getRegistroFromTmpByKey(char* nombreTabla, int key) {
 	t_list* registros = list_create();
-	getRegistrosFromTempByNombreTabla(nombreTabla, registros);
+	getRegistrosFromTmpByNombreTabla(nombreTabla, registros);
 	if (list_is_empty(registros)) {
 		list_destroy(registros);
 		return NULL;
@@ -826,15 +805,45 @@ t_registro* getRegistroFromTmpcByKey(char* nombreTabla, int key) {
 }
 
 t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key) {
+	t_registro* registroAux = NULL;
 	t_registro* registro = NULL;
-	//aca se tiro un semaforo porque si vos me dropeas la tabla yo estoy procesando al memtable, puede explotar
+	t_list* registros = getRegistrosFromMemtable(nombreTabla);
 
-	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
-	if (tablaMemtable != NULL && !list_is_empty(tablaMemtable->registros)) {
-		filtrarRegistros(tablaMemtable->registros);
-		registro = buscarRegistroByKeyFromListaRegistros(tablaMemtable->registros, key);
+	if (!list_is_empty(registros)) {
+		filtrarRegistros(registros);
+		registroAux = buscarRegistroByKeyFromListaRegistros(registros, key);
+
 	}
 
+	if (registroAux != NULL) {
+		registro = registro_duplicate(registroAux);
+	}
+
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
+
 	return registro;
+}
+
+t_list* getRegistrosFromMemtable(char* nombreTabla) {
+
+	pthread_mutex_lock(&getSemaforoByTabla(nombreTabla)->mutexMemtable);
+
+	t_tabla_memtable* tablaMemtable = getTablaFromMemtable(nombreTabla);
+	t_list* registrosDuplicados = list_create();
+
+	if (tablaMemtable != NULL) {
+		void cargarRegistros(t_registro* registro) {
+
+			t_registro* duplicado = registro_duplicate(registro);
+			list_add(registrosDuplicados, duplicado);
+		}
+
+		list_iterate(tablaMemtable->registros, (void*) cargarRegistros);
+	}
+
+	pthread_mutex_unlock(&getSemaforoByTabla(nombreTabla)->mutexMemtable);
+
+	return registrosDuplicados;
+
 }
 

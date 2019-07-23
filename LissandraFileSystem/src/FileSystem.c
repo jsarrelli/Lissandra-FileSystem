@@ -211,7 +211,7 @@ void cargarSemaforosTabla(char* nombreTabla) {
 
 	semaforoTabla->mutexCompactacion = mutexCompactacion;
 	semaforoTabla->mutexMemtable = mutexMemtable;
-	semaforoTabla->mutexDump = mutexDump;
+	semaforoTabla->mutexTmp = mutexDump;
 
 	list_add(listaSemaforos, semaforoTabla);
 

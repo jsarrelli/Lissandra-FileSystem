@@ -10,21 +10,26 @@
 void compactarTabla(char*nombreTabla) {
 
 	log_trace(loggerTrace, "Compactando tabla: %s", nombreTabla);
+
 	pthread_mutex_lock(&mutexCompactacion);
-	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+
 
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
 		log_info(loggerInfo, "No hay nada para compactar");
-		pthread_mutex_unlock(&mutexCompactacion);
+
 		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+		pthread_mutex_unlock(&mutexCompactacion);
+
 		return;
 	}
 
 	log_info(loggerInfo, "Obteniendo directorios de archivos binarios..");
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
 	int cantParticiones = list_size(archivosBinarios);
+
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
 	log_info(loggerInfo, "Modificando tmp a tmpc..");
 	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
@@ -320,7 +325,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
 		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ, MAP_SHARED, fd, 0);
 
-		if (contenidoBloque == (void*)-1) {
+		if (contenidoBloque == (void*) -1) {
 
 			log_error(loggerError, "BOOM Bloque %d", bloque);
 

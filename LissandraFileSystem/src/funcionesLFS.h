@@ -37,7 +37,7 @@ int obtenerTamanioListaRegistros(t_list* registros);
 //Funciones del select
 void getRegistrosFromBinByNombreTabla(char*nombreTabla, int keyActual, t_list* listaRegistros);
 void getRegistrosFromMemtableByNombreTabla(char* nombreTabla, t_list* listaRegistros);
-void getRegistrosFromTempByNombreTabla(char* nombreTabla, t_list* listaRegistros);
+void getRegistrosFromTmpByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 void getRegistrosFromTempcByNombreTabla(char* nombreTabla, t_list* listaRegistros);
 
 t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual);
@@ -86,5 +86,7 @@ void freeTabla(t_tabla_memtable* tabla);
 int tamanioTotalBloquesPorArchivo(t_list* bloques);
 char* armarRutaBloque(int bloque);
 int agregarNuevoBloque(t_archivo* archivo);
+
+t_list* getRegistrosFromMemtable(char* nombreTabla);
 
 #endif /* FUNCIONESLFS_H_ */
