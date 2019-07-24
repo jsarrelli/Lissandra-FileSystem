@@ -271,9 +271,9 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 
 	int success = 1;
 	if (config == NULL) {
-		config_destroy(config);
+		log_error(loggerError, "No se pudo abrir el archivo %s", rutaArchivo);
 		return -1;
-		puts("El archivo no existe");
+
 	}
 
 	if (config_has_property(config, "TAMANIO") && config_has_property(config, "BLOQUES")) {
@@ -437,6 +437,7 @@ void dumpearTabla(char* rutaTabla) {
 
 	t_list* registros = getRegistrosFromMemtable(nombreTabla);
 	if (!list_is_empty(registros)) {
+		pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 		crearArchivo(rutaArchTemporal);
 		log_info(loggerInfo, "Archivo temporal creado en %s", nombreTabla);
 
@@ -444,11 +445,10 @@ void dumpearTabla(char* rutaTabla) {
 
 		limpiarRegistrosDeTabla(nombreTabla);
 
-		pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchTemporal);
 		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
-		list_destroy_and_destroy_elements(registros,(void*) freeRegistro);
+		list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
 
 	}
@@ -805,18 +805,13 @@ t_registro* getRegistroFromTmpcByKey(char* nombreTabla, int key) {
 }
 
 t_registro* getRegistroFromMemtableByKey(char* nombreTabla, int key) {
-	t_registro* registroAux = NULL;
 	t_registro* registro = NULL;
 	t_list* registros = getRegistrosFromMemtable(nombreTabla);
 
 	if (!list_is_empty(registros)) {
 		filtrarRegistros(registros);
-		registroAux = buscarRegistroByKeyFromListaRegistros(registros, key);
+		registro = buscarRegistroByKeyFromListaRegistros(registros, key);
 
-	}
-
-	if (registroAux != NULL) {
-		registro = registro_duplicate(registroAux);
 	}
 
 	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);

@@ -188,7 +188,7 @@ void procesarSELECT(char* request, int socketMemoria) {
 		string_append_with_format(&response, "%d;%s;%f", registro->key, registro->value, registro->timestamp);
 		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response) + 1, SELECT);
 		free(response);
-		free(registro);
+		freeRegistro(registro);
 	}
 
 	freePunteroAPunteros(valores);
