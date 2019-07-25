@@ -225,7 +225,7 @@ int consolaSelect(char*argumentos) {
 			//success = SUPER_ERROR;
 		} else {
 			log_info(log_master->logInfo, "Datos recibidos ", nombreTabla, key);
-			if (atoi(paquete.mensaje) == 1) {
+			if (atoi(paquete.mensaje) == -1) {
 				log_trace(log_master->logTrace, "Registros no encontrado");
 			} else {
 				log_trace(log_master->logTrace, "Registro de tabla %s: %s", nombreTabla, paquete.mensaje);

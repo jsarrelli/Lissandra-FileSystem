@@ -101,7 +101,7 @@ void procesarRequestSELECT(char* request, int socketKernel) {
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, SELECT);
 		free(response);
 	} else {
-		enviarSuccess(1, SELECT, socketKernel);
+		enviarSuccess(-1, SELECT, socketKernel);
 	}
 
 }
