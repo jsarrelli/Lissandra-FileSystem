@@ -301,20 +301,6 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 
 		char* rutaBloque = armarRutaBloque(bloque);
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
-
-		//muchas dudas
-//		FILE* archivoBloque = obtenerArchivoBloque(bloque, false);
-//		if (archivoBloque == NULL) {
-//			return;
-//		}
-//		int espacioOcupadoDeBloque = tamanioArchivo(archivoBloque);
-//		fclose(archivoBloque);
-//
-//		if(espacioOcupadoDeBloque==0){
-//			return;
-//		}
-////
-//
 		int fd = open(rutaBloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 		if (fd == -1) {
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);

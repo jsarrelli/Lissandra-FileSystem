@@ -42,7 +42,7 @@ char * obtenerExtensionDeArchivoDeUnaRuta(char * rutaLocal) {
 }
 
 int existeTabla(char* nombreTabla) {
-
+	pthread_mutex_lock(&mutexDrop);
 	t_list* directorios = list_create();
 	buscarDirectorios(rutas.Tablas, directorios);
 
@@ -57,6 +57,7 @@ int existeTabla(char* nombreTabla) {
 	bool resultado = list_any_satisfy(directorios, (void*) isTablaBuscada);
 	list_destroy_and_destroy_elements(directorios, free);
 
+	pthread_mutex_unlock(&mutexDrop);
 	return resultado;
 }
 
@@ -299,7 +300,7 @@ int leerArchivoDeTabla(char *rutaArchivo, t_archivo *archivo) {
 }
 
 void removerTabla(char* nombreTabla) {
-
+	pthread_mutex_lock(&mutexDrop);
 	bool isTablaBuscada(t_tabla_memtable* tablaActual) {
 		return strcmp(tablaActual->nombreTabla, nombreTabla) == 0;
 	}
@@ -311,7 +312,7 @@ void removerTabla(char* nombreTabla) {
 	char* rutaTabla = armarRutaTabla(nombreTabla);
 	rmdir(rutaTabla);
 	free(rutaTabla);
-
+	pthread_mutex_unlock(&mutexDrop);
 }
 
 void freeTabla(t_tabla_memtable* tabla) {
@@ -616,6 +617,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloqueActual);
 			return -1;
 		}
+		log_info(loggerInfo, "Escribiendo: %s en bloque %d", registrosDeBloque, i);
 
 		ftruncate(fd, strlen(registrosDeBloque));
 		char* contenidoBloque = mmap(NULL, strlen(registrosDeBloque), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -731,14 +733,13 @@ t_registro* getRegistroByKeyAndNombreTabla(char*nombreTabla, int keyActual) {
 	if (registroMemtable != NULL) {
 		list_add(registros, registroMemtable);
 	}
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmp", keyActual, nombreTabla);
 	t_registro* registroTmp = getRegistroFromTmpByKey(nombreTabla, keyActual);
 	if (registroTmp != NULL) {
 		list_add(registros, registroTmp);
 	}
-
-	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
 	log_info(loggerInfo, "Buscando key:%d  de nombreTabla: %s en tmpc", keyActual, nombreTabla);
 	t_registro* registroTmpc = getRegistroFromTmpcByKey(nombreTabla, keyActual);

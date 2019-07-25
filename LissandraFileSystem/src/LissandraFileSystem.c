@@ -70,6 +70,7 @@ int main(void) {
 	pthread_mutex_init(&mutexBuscarDirectorios,NULL);
 	pthread_mutex_init(&mutexCompactacion,NULL);
 	pthread_mutex_init(&mutexObtenerMetadata,NULL);
+	pthread_mutex_init(&mutexDrop,NULL);
 
 
 	//CARGAMOS ARCHIVOS DE CONFIGURACION

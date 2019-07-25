@@ -44,7 +44,7 @@ pthread_mutex_t mutexBitarray;
 pthread_mutex_t mutexBuscarDirectorios;
 pthread_mutex_t mutexCompactacion;
 pthread_mutex_t mutexObtenerMetadata;
-
+pthread_mutex_t mutexDrop;
 
 
 
