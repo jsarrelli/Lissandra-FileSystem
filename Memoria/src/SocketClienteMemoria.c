@@ -29,17 +29,19 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	Paquete paquete;
 	if (RecibirPaquete(socketFileSystem, &paquete) < 0) {
 		log_error(loggerError, "Algo fallo en el describe de %s en fileSystem", nombreSegmento);
+		close(socketFileSystem);
 		return NULL;
 	}
 
-	if (atoi(paquete.mensaje) == 1) {
-		free(paquete.mensaje);
+	t_metadata_tabla* metaDataRecibida = NULL;
+	if (atoi(paquete.mensaje) != 1) {
+		metaDataRecibida = deserealizarTabla(&paquete);
 		return NULL;
 		//la tabla no existe
 	}
-	t_metadata_tabla* metaDataRecibida = deserealizarTabla(&paquete);
-	free(paquete.mensaje);
 
+	free(paquete.mensaje);
+	close(socketFileSystem);
 	return metaDataRecibida;
 }
 
@@ -103,14 +105,10 @@ char* describeAllFileSystem() {
 	Paquete paquete;
 	char* response = NULL;
 	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
-		if (atoi(paquete.mensaje) == 1) {
-			free(paquete.mensaje);
-			return NULL;
+		if (atoi(paquete.mensaje) != 1) {
+			response = string_duplicate(paquete.mensaje);
 		}
-
-		response = string_duplicate(paquete.mensaje);
 		free(paquete.mensaje);
-
 	}
 	close(socketFileSystem);
 	return response;
@@ -174,8 +172,9 @@ void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
 		}
 		freePunteroAPunteros(memorias);
 		free(paquete.mensaje);
-		close(socketFileSystem);
+
 	}
+	close(socketMemoriaSeed);
 
 }
 t_registro* selectFileSystem(Segmento* segmento, int key) {
