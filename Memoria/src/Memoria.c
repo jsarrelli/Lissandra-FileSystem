@@ -72,9 +72,16 @@ void* leerConsola() {
 }
 
 void cargarConfiguracion() {
+
 	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM1.cfg";
 	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM2.cfg";
 	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM3.cfg";
+
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM1Stress.cfg";
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM2Stress.cfg";
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM3Stress.cfg";
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM4Stress.cfg";
+	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM5Stress.cfg";
 	log_info(loggerInfo, "Levantando archivo de configuracion del proceso MEMORIA");
 	if (configuracion != NULL) {
 		liberarDatosConfiguracion();
