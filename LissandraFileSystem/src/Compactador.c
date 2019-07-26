@@ -237,50 +237,6 @@ void filtrarRegistros(t_list* registros) {
 //	}
 //}
 
-void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
-	t_archivo* archivo = malloc(sizeof(t_archivo));
-	leerArchivoDeTabla(rutaBinario, archivo);
-	int i = 0, j;
-	char* rutaArchBloque = malloc(100);
-	strcpy(rutaArchBloque, rutas.Bloques);
-	int tamanioArchBloque, fd;
-	FILE* archivoBloque;
-
-	char * archivoMapeado;
-	char ** registros;
-
-	void levantarRegistrosDeBloque(int bloque) {
-		string_append_with_format(&rutaArchBloque, "%s.bin", archivo->BLOQUES[i]);
-		archivoBloque = fopen(rutaArchBloque, "rb");
-		tamanioArchBloque = tamanioArchivo(archivoBloque);
-		fd = fileno(archivoBloque);
-
-		if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED) {
-			logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
-		}
-		fclose(archivoBloque);
-		close(fd);
-
-		registros = string_split(archivoMapeado, "\n");
-		int cant = contarPunteroDePunteros(registros);
-		for (j = 0; j < cant; j++) {
-			list_add(listaRegistrosViejos, registros[j]);
-		}
-
-		munmap(archivoMapeado, tamanioArchBloque);
-
-		rutaArchBloque = obtenerRutaTablaSinArchivo(rutaArchBloque);
-		i++;
-	}
-
-	list_iterate(archivo->BLOQUES, (void*) levantarRegistrosDeBloque);
-
-	liberarPunteroDePunterosAChar(registros);
-	free(registros);
-	free(rutaArchBloque);
-	freeArchivo(archivo);
-}
-
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
@@ -300,18 +256,24 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		}
 
 		char* rutaBloque = armarRutaBloque(bloque);
+
+		int sizeOfBloque = getSizeOfFile(rutaBloque);
+		if(sizeOfBloque ==-1){
+			log_error(loggerError, "No se pudo obtener el tamanio del archivo %s", rutaBloque);
+			return;
+		}
 		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
-		int fd = open(rutaBloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+		int fd = open(rutaBloque, O_RDONLY);
 		if (fd == -1) {
 			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);
 			return;
 		}
 
-		//ftruncate(fd, metadata.BLOCK_SIZE);
-		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
-		char* contenidoBloque = mmap(NULL, metadata.BLOCK_SIZE, PROT_READ, MAP_SHARED, fd, 0);
 
-		if (contenidoBloque == (void*) -1) {
+		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
+		char* contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
+
+		if (contenidoBloque == MAP_FAILED) {
 
 			log_error(loggerError, "BOOM Bloque %d", bloque);
 
@@ -320,7 +282,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 			string_append(&contenidoBloques, contenidoBloque);
 		}
 
-		munmap(contenidoBloque, metadata.BLOCK_SIZE);
+		munmap(contenidoBloque, sizeOfBloque);
 		close(fd);
 		free(rutaBloque);
 	}
@@ -462,3 +424,5 @@ void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
 	free(nombreTablaAux);
 
 }
+
+
