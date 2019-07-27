@@ -35,7 +35,7 @@ typedef struct MEMORIA_configuracion {
 	int MEMORY_NUMBER;
 } MEMORIA_configuracion;
 
-char* pathMEMConfig;
+int numeroArchivoConfig;
 MEMORIA_configuracion* configuracion;
 pthread_t serverThread;
 pthread_t intTemporalJournal;
@@ -53,5 +53,6 @@ void procesoTemporalGossiping();
 void iniciarSocketServidor();
 void liberarVariables();
 void liberarDatosConfiguracion();
+void seleccionarArchivoConfig();
 
 #endif /*MEMORIA_H_ */
