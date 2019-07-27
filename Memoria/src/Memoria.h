@@ -35,7 +35,7 @@ typedef struct MEMORIA_configuracion {
 	int MEMORY_NUMBER;
 } MEMORIA_configuracion;
 
-int numeroArchivoConfig;
+char* archivoConfig;
 MEMORIA_configuracion* configuracion;
 pthread_t serverThread;
 pthread_t intTemporalJournal;
