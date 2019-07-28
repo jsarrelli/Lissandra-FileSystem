@@ -454,12 +454,13 @@ int consolaDescribe(char*nombreTabla) {
 	// DESCRIBE [NOMBRE_TABLA]
 	// DESCRIBE
 	int socketMemoria;
-	infoMemoria* memoriaAlAzar;
 	while (true) {
 
-		memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-		log_info(log_master->logInfo, "Intentando conectarse a memoria: %d..", memoriaAlAzar->id);
+		infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+		log_info(log_master->logInfo, "Intentando conectarse a memoria: %d/%s/%d..", memoriaAlAzar->id, memoriaAlAzar->ip,
+				memoriaAlAzar->puerto);
 		socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
+		log_info(log_master->logInfo, "Socket: %d", socketMemoria);
 		if (socketMemoria != -1) {
 			break;
 		}
