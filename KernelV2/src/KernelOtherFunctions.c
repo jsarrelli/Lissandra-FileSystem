@@ -7,107 +7,66 @@
 
 #include "KernelOtherFunctions.h"
 
-consistencia procesarConsistencia(char* palabra){
-	if(strcmp(palabra, "SC")==0)
+consistencia procesarConsistencia(char* palabra) {
+	if (strcmp(palabra, "SC") == 0)
 		return SC;
-	else if(strcmp(palabra, "SHC")==0)
+	else if (strcmp(palabra, "SHC") == 0)
 		return SHC;
-	else if(strcmp(palabra, "EC")==0)
+	else if (strcmp(palabra, "EC") == 0)
 		return EC;
 	return ERROR_CONSISTENCIA;
 }
 
-bool verificarCriterio(bool* criterio, consistencia ccia){
-	switch(ccia){
-		case SC:
-			return criterio[0];
-			break;
-		case SHC:
-			return criterio[1];
-			break;
-		case EC:
-			return criterio[2];
-		case ERROR_CONSISTENCIA:
-			return criterio[3];
+bool verificarCriterio(bool* criterio, consistencia ccia) {
+	switch (ccia) {
+	case SC:
+		return criterio[0];
+		break;
+	case SHC:
+		return criterio[1];
+		break;
+	case EC:
+		return criterio[2];
+	case ERROR_CONSISTENCIA:
+		return criterio[3];
 	}
 	return false;
 }
 
-void hardcodearInfoMemorias(){
-//	listaMemorias
-//	infoMemoria* memoria1= malloc(sizeof(infoMemoria));
-////	memoria1->ccia = SC;
-//	memoria1->id=idMemoria;
-//	list_add(listaMemorias, memoria1);
-//	idMemoria++;
+void hardcodearInfoMemorias() {
 
-	infoMemoria* memoria1 = newInfoMemoria();
+	infoMemoria* memoria1 = newInfoMemoria("127.0.0.1", 35615, 1);
 	list_add(listaMemorias, memoria1);
 
-	infoMemoria* memoria2 = newInfoMemoria();
+	infoMemoria* memoria2 = newInfoMemoria("127.0.0.1", 35615, 2);
 	list_add(listaMemorias, memoria2);
 
-	infoMemoria* memoria3 = newInfoMemoria();
+	infoMemoria* memoria3 = newInfoMemoria("127.0.0.1", 35615, 3);
 	list_add(listaMemorias, memoria3);
 
-	infoMemoria* memoria4 = newInfoMemoria();
+	infoMemoria* memoria4 = newInfoMemoria("127.0.0.1", 35615, 4);
 	list_add(listaMemorias, memoria4);
 
-	infoMemoria* memoria5 = newInfoMemoria();
+	infoMemoria* memoria5 = newInfoMemoria("127.0.0.1", 35615, 5);
 	list_add(listaMemorias, memoria5);
 
-	infoMemoria* memoria6 = newInfoMemoria();
+	infoMemoria* memoria6 = newInfoMemoria("127.0.0.1", 35615, 6);
 	list_add(listaMemorias, memoria6);
 
-	infoMemoria* memoria7 = newInfoMemoria();
+	infoMemoria* memoria7 = newInfoMemoria("127.0.0.1", 35615, 7);
 	list_add(listaMemorias, memoria7);
-//	infoMemoria* memoria2 = malloc(sizeof(infoMemoria));
-////	memoria2->ccia = SHC;
-//	memoria2->id = idMemoria;
-//	list_add(listaMemorias, memoria2);
-//	idMemoria++;
-//
-//	infoMemoria* memoria3 = malloc(sizeof(infoMemoria));
-////	memoria3->ccia = EC;
-//	memoria3->id = idMemoria;
-//	list_add(listaMemorias, memoria3);
-//	idMemoria++;
-//
-//	infoMemoria* memoria4 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria4->id = idMemoria;
-//	list_add(listaMemorias, memoria4);
-//	idMemoria++;
-//
-//	infoMemoria* memoria5 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria5->id = idMemoria;
-//	list_add(listaMemorias, memoria5);
-//	idMemoria++;
-//
-//	infoMemoria* memoria6 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria6->id = idMemoria;
-//	list_add(listaMemorias, memoria6);
-//	idMemoria++;
-//
-//	infoMemoria* memoria7 = malloc(sizeof(infoMemoria));
-//	//	memoria3->ccia = EC;
-//	memoria7->id = idMemoria;
-//	list_add(listaMemorias, memoria7);
-//	idMemoria++;
 
 }
 
 void imprimirCriterio(bool* criterio) {
 	if (criterio[0]) {
-		log_trace(log_master->logTrace, "Esta memoria tiene criterio SC");
+		log_info(log_master->logInfo, "Esta memoria tiene criterio SC");
 	}
 	if (criterio[1]) {
-		log_trace(log_master->logTrace, "Esta memoria tiene criterio SHC");
+		log_info(log_master->logInfo, "Esta memoria tiene criterio SHC");
 	}
 	if (criterio[2]) {
-		log_trace(log_master->logTrace, "Esta memoria tiene criterio EC");
+		log_info(log_master->logInfo, "Esta memoria tiene criterio EC");
 	}
 	if (criterio[3]) {
 		log_error(log_master->logError,
@@ -116,24 +75,24 @@ void imprimirCriterio(bool* criterio) {
 	}
 }
 
-bool instruccionSeaSalir(char* operacion){
-	return strcmp(operacion, "SALIR")==0;
+bool instruccionSeaSalir(char* operacion) {
+	return strcmp(operacion, "SALIR") == 0;
 }
 
-void hardcodearListaMetadataTabla(){
-	metadataTablas* metadata1 = malloc(sizeof(metadataTablas));
+void hardcodearListaMetadataTabla() {
+	metadataTabla* metadata1 = malloc(sizeof(metadataTabla));
 	metadata1->consistencia = SC;
 	metadata1->nParticiones = 2;
 	metadata1->nombreTabla = "TABLA1";
 	list_add(listaMetadataTabla, metadata1);
 
-	metadataTablas* metadata2 = malloc(sizeof(metadataTablas));
+	metadataTabla* metadata2 = malloc(sizeof(metadataTabla));
 	metadata2->consistencia = SHC;
 	metadata2->nParticiones = 3;
 	metadata2->nombreTabla = "TABLA2";
 	list_add(listaMetadataTabla, metadata2);
 
-	metadataTablas* metadata3 = malloc(sizeof(metadataTablas));
+	metadataTabla* metadata3 = malloc(sizeof(metadataTabla));
 	metadata3->consistencia = EC;
 	metadata3->nParticiones = 4;
 	metadata3->nombreTabla = "TABLA3";
@@ -143,7 +102,7 @@ void hardcodearListaMetadataTabla(){
 int contarLineasArchivo(FILE* fichero, char* path) {
 	fichero = fopen(path, "rt");
 
-	if(fichero==NULL)
+	if (fichero == NULL)
 		return 0;
 	int caracter, num_lineas = 0;
 	while ((caracter = fgetc(fichero)) != EOF)
@@ -153,9 +112,141 @@ int contarLineasArchivo(FILE* fichero, char* path) {
 	return num_lineas + 1;
 }
 
-void destruirArraySemaforos() {
-	for (int i = 0; i < multiprocesamiento; i++)
-		sem_destroy(&arraySemaforos[i]);
+int instruccionSeaMetrics(char* operacion) {
+	return strcmp(operacion, "METRICS") == 0;
+}
 
-	free(arraySemaforos);
+void crearMetrics(t_metrics* metrica) {
+	metrica->readLatency = 0;
+	metrica->writeLatency = 0;
+	metrica->reads = 0;
+	metrica->writes = 0;
+	metrica->diferenciaDeTiempoReadLatency = list_create();
+	metrica->diferenciaDeTiempoWriteLatency = list_create();
+	hayMetricas = false;
+}
+
+void destruirMetrics(t_metrics* metrica) {
+	if (list_is_empty(metrica->diferenciaDeTiempoReadLatency)
+			&& list_is_empty(metrica->diferenciaDeTiempoWriteLatency)) {
+		list_destroy(metrica->diferenciaDeTiempoReadLatency);
+		list_destroy(metrica->diferenciaDeTiempoWriteLatency);
+	} else {
+		list_destroy_and_destroy_elements(
+				metrica->diferenciaDeTiempoReadLatency, free);
+		list_destroy_and_destroy_elements(
+				metrica->diferenciaDeTiempoWriteLatency, free);
+	}
+}
+
+void reiniciarMetrics(t_metrics* metrica) {
+	// Ahora reinicio los valores:
+	metrica->reads = 0;
+	metrica->writes = 0;
+	metrica->readLatency = 0;
+	metrica->writeLatency = 0;
+	list_clean(metrica->diferenciaDeTiempoReadLatency);
+	list_clean(metrica->diferenciaDeTiempoWriteLatency);
+}
+
+void calcularMetrics() {
+
+	/*
+	 * Reads y Writes ya esta calculados
+	 *
+	 * (Se sacan solo con los contadores)
+	 */
+
+	// Calcular Read Latency
+	t_list* listaFiltrada;
+	double sumatoria = 0;
+	double tamLista = list_size(metricas.diferenciaDeTiempoReadLatency);
+
+	if (tamLista != 0) {
+		for (int i = 0; i < tamLista; i++) {
+			double* elemento = (double*) list_get(
+					metricas.diferenciaDeTiempoReadLatency, i);
+			sumatoria += (*elemento);
+		}
+
+		metricas.readLatency = sumatoria / tamLista;
+	}
+
+	// Calcular Write Latency: Idem al anterior -> Podria hacerlos una sola funcion pero... despues
+
+	sumatoria = 0;
+	tamLista = list_size(metricas.diferenciaDeTiempoWriteLatency);
+
+	if (tamLista != 0) {
+		for (int i = 0; i < tamLista; i++) {
+			double* elemento = (double*) list_get(
+					metricas.diferenciaDeTiempoWriteLatency, i);
+			sumatoria += (*elemento);
+		}
+
+		metricas.writeLatency = sumatoria / tamLista;
+	}
+
+	// Calcular Memory Load
+
+	double cantSelectsEInsertsTotales = cantSelects + cantInserts;
+
+	void _calcularMemoryLoadUnaMemoria(infoMemoria* memoria) {
+		double cantSelectsEInsertsMemoria = memoria->cantSelectsEjecutados
+				+ memoria->cantInsertEjecutados;
+
+		double* memoryLoadMemoria = malloc(sizeof(double));
+		*memoryLoadMemoria = cantSelectsEInsertsMemoria
+				/ cantSelectsEInsertsTotales;
+
+		memoria->memoryLoadUnaMemoria = *memoryLoadMemoria;
+		free(memoryLoadMemoria);
+	}
+
+	if (cantSelectsEInsertsTotales != 0) {
+		bool _hizoSelectOInsert(void* memoria) {
+			return ((infoMemoria*) memoria)->cantInsertEjecutados != 0
+					|| ((infoMemoria*) memoria)->cantSelectsEjecutados != 0;
+		}
+
+		listaFiltrada = list_filter(listaMemorias, _hizoSelectOInsert);
+		list_iterate(listaFiltrada, (void*) _calcularMemoryLoadUnaMemoria);
+
+		list_destroy(listaFiltrada);
+
+	}
+
+}
+
+void copiarMetrics(){
+	copiaMetricas.readLatency = metricas.readLatency;
+	copiaMetricas.writeLatency = metricas.writeLatency;
+	copiaMetricas.reads = metricas.reads;
+	copiaMetricas.writes = metricas.writes;
+	list_add_all(copiaMetricas.diferenciaDeTiempoReadLatency, metricas.diferenciaDeTiempoReadLatency);
+	list_add_all(copiaMetricas.diferenciaDeTiempoWriteLatency, metricas.diferenciaDeTiempoWriteLatency);
+
+}
+
+void imprimirMetrics(t_metrics metrica) {
+
+	void _imprimirMemoryLoadsDeMemorias(void* memoria) {
+		if (((infoMemoria*) memoria)->memoryLoadUnaMemoria != 0)
+			log_info(log_master->logInfo, "El memory load de memoria %d es: %f",
+					((infoMemoria*) memoria)->id,
+					((infoMemoria*) memoria)->memoryLoadUnaMemoria);
+	}
+
+	log_info(log_master->logInfo, "Las metricas son: ");
+	log_info(log_master->logInfo, "Read latency: %f", metrica.readLatency);
+	log_info(log_master->logInfo, "Write latency: %f", metrica.writeLatency);
+	log_info(log_master->logInfo, "Reads: %f", metrica.reads);
+	log_info(log_master->logInfo, "Writes: %f", metrica.writes);
+	list_iterate(listaMemorias, _imprimirMemoryLoadsDeMemorias);
+
+}
+
+bool memoriaTieneALgunCriterio(infoMemoria* memoria) {
+	return (memoria->criterios)[0] || (memoria->criterios)[1]
+			|| (memoria->criterios)[2];
 }

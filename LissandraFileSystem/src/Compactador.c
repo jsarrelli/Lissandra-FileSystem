@@ -9,29 +9,43 @@
 
 void compactarTabla(char*nombreTabla) {
 
-	log_info(logger, "Modificando tmp a tmpc..");
+	log_trace(loggerTrace, "Compactando tabla: %s", nombreTabla);
+
+	pthread_mutex_lock(&mutexCompactacion);
+
+
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
-		log_info(logger, "No hay nada para compactar");
+		log_info(loggerInfo, "No hay nada para compactar");
+
+		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+		pthread_mutex_unlock(&mutexCompactacion);
+
 		return;
 	}
 
-	log_info(logger, "Obteniendo directorios de archivos binarios..");
+	log_info(loggerInfo, "Obteniendo directorios de archivos binarios..");
 	t_list* archivosBinarios = buscarBinariosByNombreTabla(nombreTabla);
 	int cantParticiones = list_size(archivosBinarios);
 
+	pthread_mutex_lock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+
+	log_info(loggerInfo, "Modificando tmp a tmpc..");
 	t_list* archivosTmpc = cambiarExtensionTemporales(archivosTemporales);
-	log_info(logger, "Se cambio la extension de los temporales");
+	log_trace(loggerInfo, "Se cambio la extension de los temporales");
 
 	t_list* registrosNuevos = list_create();
 	list_iterate2(archivosTmpc, (void*) agregarRegistrosFromBloqueByPath, registrosNuevos);
-	log_info(logger, "Lectura de registros de los tmpc finalizada");
+	log_info(loggerInfo, "Lectura de registros de los tmpc finalizada. Hay %d registros nuevos en tmpc", list_size(registrosNuevos));
 	filtrarRegistros(registrosNuevos);
 
 	t_list* particionesRegistros = cargarRegistrosNuevosEnEstructuraParticiones(cantParticiones, registrosNuevos);
 
+	double tiempoInicial = getCurrentTime();
+
 	//mergeamos los registros viejos con los nuevos y los escribimos en los bin
+
 	mergearRegistrosNuevosConViejos(archivosBinarios, particionesRegistros);
 
 	list_iterate(archivosTmpc, (void*) eliminarArchivo);
@@ -39,13 +53,18 @@ void compactarTabla(char*nombreTabla) {
 	list_destroy_and_destroy_elements(archivosTemporales, free);
 	list_destroy_and_destroy_elements(archivosBinarios, free);
 
-	log_info(logger, "Compactacion de <%s> exitosa", nombreTabla);
+	double tiempoFinal = getCurrentTime();
+
+	pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+	pthread_mutex_unlock(&mutexCompactacion);
+
+	log_trace(loggerTrace, "Compactacion de <%s> exitosa. Tiempo: %f milisegundos", nombreTabla, (tiempoFinal - tiempoInicial) / 1000);
 }
 
 void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particionesRegistrosNuevos) {
 	int numeroParticionActual = 0;
 
-	log_info(logger, "Mergeando registros viejos con nuevos");
+	log_info(loggerInfo, "Mergeando registros viejos con nuevos");
 
 	void mergearParticion(t_list* registrosNuevos) {
 
@@ -68,12 +87,11 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		filtrarRegistros(registrosNuevos);
 
 		//pasamos la lista de registros a una lista de char* para escribirlos en el binario
-
 		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
-
 		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
+
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
 		list_destroy_and_destroy_elements(registrosNuevos, (void*) freeRegistro);
@@ -88,7 +106,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 
 char* registroToChar(t_registro* registro) {
 	char* registroChar = string_new();
-	string_append_with_format(&registroChar, "%d;%s;%f\n", registro->key, registro->value, registro->timestamp);
+	string_append_with_format(&registroChar, "%f;%d;%s", registro->timestamp, registro->key, registro->value);
 	return registroChar;
 }
 
@@ -105,7 +123,7 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 		int numeroParticionCorrespondiente = registroNuevo->key % cantParticiones;
 		if (numeroParticionCorrespondiente > list_size(particionesDeRegistrosNuevos)) {
 			freeRegistro(registroNuevo);
-			log_error(logger, "Hermano me metiste un registro de una particion que esta tabla no tiene, no te hagas el loco");
+			log_error(loggerInfo, "Hermano me metiste un registro de una particion que esta tabla no tiene, no te hagas el loco");
 			return;
 		}
 		t_list* particionCorrespondiente = list_get(particionesDeRegistrosNuevos, numeroParticionCorrespondiente);
@@ -169,9 +187,13 @@ t_list* cargarRegistrosNuevosEnEstructuraParticiones(int cantParticiones, t_list
 
 //hay una funcion mucho mas linda, pero son las 5 am tengo suenio y la vida es una mierda
 void filtrarRegistros(t_list* registros) {
-	log_info(logger, "Filtrando registros..");
+	//log_info(loggerInfo, "Filtrando registros..");
 	void eliminarDuplicadoIfTimestampMenor(t_registro* registro) {
 
+		if (registro == NULL) {
+			//hermoso parche, no preguntar ni cuestionar
+			return;
+		}
 		int index = 0;
 		bool isDuplicadoConTimeStampMenor(t_registro* registroActual) {
 
@@ -199,7 +221,7 @@ void filtrarRegistros(t_list* registros) {
 
 	list_sort(registros, (void*) sortByKey);
 
-	log_info(logger, "Filtrado completo");
+	log_trace(loggerInfo, "Filtrado completo");
 
 }
 //void filtrarRegistros(t_list* registros) {
@@ -215,80 +237,74 @@ void filtrarRegistros(t_list* registros) {
 //	}
 //}
 
-void agregarRegistrosDeBin(char* rutaBinario, t_list* listaRegistrosViejos) {
-	t_archivo* archivo = malloc(sizeof(t_archivo));
-	leerArchivoDeTabla(rutaBinario, archivo);
-	int i = 0, j;
-	char* rutaArchBloque = malloc(100);
-	strcpy(rutaArchBloque, rutas.Bloques);
-	int tamanioArchBloque, fd;
-	FILE* archivoBloque;
-
-	char * archivoMapeado;
-	char ** registros;
-
-	void levantarRegistrosDeBloque(int bloque) {
-		string_append_with_format(&rutaArchBloque, "%s.bin", archivo->BLOQUES[i]);
-		archivoBloque = fopen(rutaArchBloque, "rb");
-		tamanioArchBloque = tamanioArchivo(archivoBloque);
-		fd = fileno(archivoBloque);
-
-		if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED) {
-			logErrorAndExit("Error al hacer mmap al levantar archivo de bloque");
-		}
-		fclose(archivoBloque);
-		close(fd);
-
-		registros = string_split(archivoMapeado, "\n");
-		int cant = contarPunteroDePunteros(registros);
-		for (j = 0; j < cant; j++) {
-			list_add(listaRegistrosViejos, registros[j]);
-		}
-
-		munmap(archivoMapeado, tamanioArchBloque);
-
-		rutaArchBloque = obtenerRutaTablaSinArchivo(rutaArchBloque);
-		i++;
-	}
-
-	list_iterate(archivo->BLOQUES, (void*) levantarRegistrosDeBloque);
-
-	liberarPunteroDePunterosAChar(registros);
-	free(registros);
-	free(rutaArchBloque);
-	freeArchivo(archivo);
-}
-
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	if (leerArchivoDeTabla(pathArchivo, archivo) == -1) {
+		log_error(loggerError, "No se pudo abrir el archivo %s", pathArchivo);
 		return;
 	}
 
-	int i = 0;
-	log_info(logger, "Leyendo registros de %s... ", pathArchivo);
+	log_info(loggerInfo, "Leyendo registros de %s... ", pathArchivo);
+
+	char* contenidoBloques = string_new();
 
 	void cargarRegistrosDeBloque(int bloque) {
-
-		char* rutaArchivoBloque = string_duplicate(rutas.Bloques);
-		string_append_with_format(&rutaArchivoBloque, "%d.bin\0", bloque);
-		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
-		t_list* registrosObtenidos = obtenerRegistrosFromBloque(rutaArchivoBloque);
-		if (registrosObtenidos != NULL) {
-			if (!list_is_empty(registrosObtenidos)) {
-				list_add_all(listaRegistros, registrosObtenidos);
-			}
-			//borro la referecia a registros obtenidos ya que ya estan cargados en listaRegistros
-			list_destroy(registrosObtenidos);
+		if (archivo->TAMANIO == 0) {
+			return;
 		}
 
-		free(rutaArchivoBloque);
-		i++;
+		char* rutaBloque = armarRutaBloque(bloque);
+
+		int sizeOfBloque = getSizeOfFile(rutaBloque);
+		if(sizeOfBloque ==-1){
+			log_error(loggerError, "No se pudo obtener el tamanio del archivo %s", rutaBloque);
+			return;
+		}
+		///home/utnso/tp-2019-1c-Los-Sisoperadores/LissandraFileSystem/FS_LISSANDRA/Bloques/48.bin
+		int fd = open(rutaBloque, O_RDONLY);
+		if (fd == -1) {
+			log_error(loggerError, "No se pudo abrir el archivo %s", rutaBloque);
+			return;
+		}
+
+
+		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
+		char* contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
+
+		if (contenidoBloque == MAP_FAILED) {
+
+			log_error(loggerError, "BOOM Bloque %d", bloque);
+
+		} else if (!string_is_empty(contenidoBloque)) {
+
+			string_append(&contenidoBloques, contenidoBloque);
+		}
+
+		munmap(contenidoBloque, sizeOfBloque);
+		close(fd);
+		free(rutaBloque);
 	}
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
+
+	if (!string_is_empty(contenidoBloques)) {
+		char** registrosChar = string_split(contenidoBloques, "\n");
+		int i = 0;
+		while (registrosChar[i] != NULL) {
+			//log_info(loggerInfo, "Recuperando %s", registrosChar[i]);
+
+			char** valores = string_split(registrosChar[i], ";");
+			t_registro* registro = registro_new(valores);
+			list_add(listaRegistros, registro);
+			//freePunteroAPunteros(valores);
+			i++;
+		}
+
+		freePunteroAPunteros(registrosChar);
+	}
+	free(contenidoBloques);
 	freeArchivo(archivo);
 }
 
@@ -313,44 +329,17 @@ t_list* obtenerRegistrosFromTempByNombreTabla(char* nombreTabla) {
 t_list* obtenerRegistrosFromBloque(char* rutaArchivoBloque) {
 
 	t_list* listaRegistros = list_create();
-	FILE* archivoBloque = fopen(rutaArchivoBloque, "rb");
-//	int tamanioArchBloque = tamanioArchivo(archivoBloque);
-//	int fileDescriptor = fileno(archivoBloque);
-//
-//	//mapeamos el archivo a memoria
-//	char * archivoMapeado;
-//	if ((archivoMapeado = mmap(NULL, tamanioArchBloque, PROT_READ, MAP_SHARED, fileDescriptor, 0)) == MAP_FAILED) {
-//		log_error(loggerError, "Error al hacer mmap al levantar archivo de bloque");
-//		return NULL;
-//	}
-
-//cargo la lista con los registros obtenidos
-	char registro[400];
-	while (fgets(registro, sizeof registro, archivoBloque) != NULL) {
-		char* registroActual = string_duplicate(registro);
-		char** valores = string_split(registroActual, ";");
+	FILE* archivoBloque = fopen(rutaArchivoBloque, "r");
+	char registroChar[config->TAMANIO_VALUE];
+	while (fgets(registroChar, config->TAMANIO_VALUE, archivoBloque) != NULL) {
+		char* registroAux = string_duplicate(registroChar);
+		char** valores = string_split(registroAux, ";");
 		t_registro* registro = registro_new(valores);
 		list_add(listaRegistros, registro);
-		free(registroActual);
+		free(registroAux);
 	}
+
 	fclose(archivoBloque);
-
-//	char ** registros = string_split(archivoMapeado, "\n");
-//	int j = 0;
-//	while (registros[j] != NULL) {
-//		char* registroActual = string_duplicate(registros[j]);
-//		char** valores = string_split(registroActual, ";");
-//		t_registro* registro = registro_new(valores);
-//		list_add(listaRegistros, registro);
-//		j++;
-//		free(registroActual);
-//	}
-
-//fijate que este free no se este ya liberando con el free de valores
-//	freePunteroAPunteros(registros);
-//	munmap(archivoMapeado, tamanioArchBloque);
-	//fclose(archivoBloque);
-//	close(fileDescriptor);
 	return listaRegistros;
 }
 
@@ -386,6 +375,24 @@ t_list* buscarTemporalesByNombreTabla(char* nombreTabla) {
 
 }
 
+t_list* buscarTmpcsByNombreTabla(char* nombreTabla) {
+	t_list* archivos = buscarArchivos(nombreTabla);
+
+	bool isTemporal(char* rutaArchivoActual) {
+		char* extension = obtenerExtensionDeArchivoDeUnaRuta(rutaArchivoActual);
+		bool result = strcmp(extension, "tmpc") == 0;
+		free(extension);
+		if (!result) {
+			free(rutaArchivoActual);
+		}
+		return result;
+	}
+	t_list* archivosTemporales = list_filter(archivos, (void*) isTemporal);
+	list_destroy(archivos);
+	return archivosTemporales;
+
+}
+
 t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 	t_list* archivos = buscarArchivos(nombreTabla);
 	bool isBin(char* rutaArchivoActual) {
@@ -403,16 +410,19 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 	return archivosBinarios;
 }
 
-void iniciarThreadCompactacion(char* nombreTabla) {
-	pthread_t threadCompactacion;
-	t_metadata_tabla metadata = obtenerMetadata(nombreTabla);
-	while (0) {
-		if (!existeTabla(nombreTabla)) {
-			return;
-		}
+void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
+	usleep(200);
+	char* nombreTablaAux = string_duplicate(tabla->nombreTabla);
+	log_info(loggerInfo, "Iniciando compactacion de tabla %s..", nombreTablaAux);
+	while (existeTabla(nombreTablaAux)) {
+
+		t_metadata_tabla metadata = obtenerMetadata(tabla->nombreTabla);
+		compactarTabla(tabla->nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
-		pthread_create(&threadCompactacion, NULL, (void*) crearYEscribirArchivosTemporales, rutas.Tablas);
-		pthread_detach(threadCompactacion);
+
 	}
+	free(nombreTablaAux);
 
 }
+
+

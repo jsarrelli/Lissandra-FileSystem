@@ -10,30 +10,33 @@
 #include "Memoria.h"
 
 int main() {
-	logger = log_create("MEM_logs.txt", "MEMORIA Logs", true, LOG_LEVEL_INFO);
-	log_info(logger, "--Inicializando proceso MEMORIA--");
+	loggerInfo = log_create("MEM_logs.log", "MEMORIA Logs", true, LOG_LEVEL_INFO);
+	loggerTrace = log_create("MEM_results.log", "MEMORIA Logs", true, LOG_LEVEL_TRACE);
+	loggerError = log_create("MEM_resuslts.log", "MEMORIA Logs", true, LOG_LEVEL_ERROR);
+
+	log_info(loggerInfo, "--Inicializando proceso MEMORIA--");
+	seleccionarArchivoConfig();
 	cargarConfiguracion();
 	cargarEstructurasGossiping();
 
 //	//HANDSHAKE INICIAL CON FILESYSTEM
-	int socketFileSystem = HandshakeInicial();
-	if (socketFileSystem == -1) {
-		log_info(logger, "--Memoria finalizada--");
+	int success = HandshakeInicial();
+	if (success == -1) {
+		log_info(loggerInfo, "--Memoria finalizada--");
 		liberarVariables();
 		return EXIT_SUCCESS;
 	}
-//
 //	//INICIALIZACION DE MEMORIA PRINCIPAL
-	inicializarMemoria(valueMaximoPaginas, configuracion->TAM_MEMORIA, socketFileSystem);
-	log_info(logger, "--Memoria inicializada--");
+	inicializarMemoria(configuracion->TAM_MEMORIA);
+	log_info(loggerInfo, "--Memoria inicializada--");
 
 //INICIAR SERVIDOR
 	pthread_create(&serverThread, NULL, (void*) iniciarSocketServidor, NULL);
 	pthread_detach(serverThread);
 
 	//HILO DE JOURNAL
-//	pthread_create(&intTemporalJournal, NULL, (void*)procesoTemporalJournal, NULL);
-//	pthread_detach(intTemporalJournal);
+	pthread_create(&intTemporalJournal, NULL, (void*) procesoTemporalJournal, NULL);
+	pthread_detach(intTemporalJournal);
 
 //HILO DE GOSSIPING
 	pthread_create(&intTemporalGossiping, NULL, (void*) procesoTemporalGossiping, NULL);
@@ -55,13 +58,13 @@ void* leerConsola() {
 		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
 		consulta = readline(">");
 
-		if (strlen(consulta)!=0) {
+		if (strlen(consulta) != 0) {
 
 			procesarConsulta(consulta);
 			add_history(consulta);
 		} else {
 			free(consulta);
-			log_info(logger, "Fin de leectura por consola");
+			log_info(loggerInfo, "Fin de leectura por consola");
 			return NULL;
 		}
 
@@ -70,8 +73,11 @@ void* leerConsola() {
 }
 
 void cargarConfiguracion() {
-	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM.cfg";
-	log_info(logger, "Levantando archivo de configuracion del proceso MEMORIA");
+
+	char* pathMEMConfig = string_new();
+	string_append_with_format(&pathMEMConfig, "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/config-%s.cfg", archivoConfig);
+	log_info(loggerInfo, "Levantando configuracion de: %s", pathMEMConfig);
+
 	if (configuracion != NULL) {
 		liberarDatosConfiguracion();
 	}
@@ -92,14 +98,14 @@ void cargarConfiguracion() {
 	configuracion->TIEMPO_GOSSIPING = get_campo_config_int(archivo_configuracion, "TIEMPO_GOSSIPING");
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
 	configuracion->IP_ESCUCHA = get_campo_config_string(archivo_configuracion, "IP_ESCUCHA");
-	log_info(logger, "Archivo de configuracion levantado");
-
+	log_info(loggerInfo, "Archivo de configuracion levantado");
+	free(pathMEMConfig);
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config", cargarConfiguracion);
 
 }
 
 void iniciarSocketServidor() {
-	log_info(logger, "Configurando Listening Socket...");
+	log_info(loggerInfo, "Configurando Listening Socket...");
 	listenningSocket = configurarSocketServidor(configuracion->PUERTO_ESCUCHA);
 	if (listenningSocket != 0) {
 		escuchar(listenningSocket);
@@ -110,13 +116,15 @@ void iniciarSocketServidor() {
 void procesoTemporalJournal() {
 	while (1) {
 		usleep(configuracion->TIEMPO_JOURNAL * 1000);
-		journalMemoria();
+		log_info(loggerInfo, "Realizando proceso temporal Journal");
+		JOURNAL_MEMORIA();
 	}
 }
 
 void procesoTemporalGossiping() {
 	while (1) {
 		usleep(configuracion->TIEMPO_GOSSIPING * 1000);
+		log_info(loggerInfo, "Descubriendo memorias..");
 		gossiping();
 	}
 
@@ -130,9 +138,15 @@ void liberarDatosConfiguracion() {
 }
 
 void liberarVariables() {
-
-	log_destroy(logger);
+	log_destroy(loggerInfo);
 	liberarDatosConfiguracion();
-	list_destroy(tablaGossiping);
-	list_destroy(seeds);
+	list_destroy_and_destroy_elements(seeds, (void*) freeMemoria);
+	list_destroy_and_destroy_elements(tablaGossiping, (void*) freeMemoria);
+	pthread_mutex_destroy(&mutexJournal);
 }
+
+void seleccionarArchivoConfig() {
+	puts("Ingrese el numero de Archivo de Configuracion:");
+	archivoConfig = readline(">");
+}
+

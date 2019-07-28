@@ -13,7 +13,6 @@
 #include "LissandraFileSystem.h"
 #include <string.h>
 
-
 typedef struct {
 	int BLOCK_SIZE;
 	int BLOCKS;
@@ -43,6 +42,9 @@ t_list* buscarBloquesLibres(int cant);
 void reservarBloque(int index);
 void liberarBloque(int index);
 void cargarMemtable();
-//int crearStructRegistro(int tamanio);
+t_semaforos_tabla* getSemaforoByTabla(char* nombreTabla);
+void cargarSemaforosTabla(char* nombreTabla);
+void freeSemaforoTabla(t_semaforos_tabla* semaforoTabla);
+int getSizeOfFile(char* rutaArchivo);
 
 #endif /* FILESYSTEM_H_ */

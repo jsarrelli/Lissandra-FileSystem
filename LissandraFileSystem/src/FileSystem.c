@@ -29,6 +29,7 @@ void crearBloques() {
 }
 
 t_list* buscarBloquesLibres(int cant) {
+
 	t_list* bloquesLibres = list_create();
 	for (int i = 0; i < metadata.BLOCKS && list_size(bloquesLibres) < cant; ++i) {
 		if (bitarray_test_bit(bitmap, i) == 0) {
@@ -45,11 +46,15 @@ t_list* buscarBloquesLibres(int cant) {
 
 void liberarBloque(int index) {
 	bitarray_clean_bit(bitmap, index);
-	log_info(logger, "Bloque %d liberado", index);
+	log_info(loggerInfo, "Bloque %d liberado", index);
+	escribirBitmap();
+
 }
 
 void reservarBloque(int index) {
 	bitarray_set_bit(bitmap, index);
+	log_info(loggerInfo, "Bloque %d reservado", index);
+	escribirBitmap();
 }
 
 void leerBitmap() {
@@ -76,7 +81,7 @@ void leerBitmap() {
 
 	msync(bitarray, cantidadBloques, MS_SYNC);
 
-	log_info(logger, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
+	log_info(loggerInfo, "El tamanio del bitmap es de %d bits", bitarray_get_max_bit(bitmap));
 
 	close(fd);
 
@@ -93,7 +98,7 @@ void destruirBitmap(t_bitarray *bitmap) {
 
 void cargarMemtable() {
 	memtable = list_create();
-	log_info(logger, "Levantando tablas ya existentes..");
+	log_info(loggerInfo, "Levantando tablas ya existentes..");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
@@ -116,9 +121,9 @@ int cargarMetadata() {
 	string_append(&path, "/Metadata.bin");
 	rutas.Metadata = path;
 	FILE*arch1 = fopen(rutas.Metadata, "w+");
-	fprintf(arch1, "BLOCK_SIZE=100\n");
-	fprintf(arch1, "BLOCKS=3000\n");
-	fprintf(arch1, "MAGIC_NUMBER=LISSANDRA\n");
+	fprintf(arch1, "BLOCK_SIZE=%d\n", config->BLOCK_SIZE);
+	fprintf(arch1, "BLOCKS=%d\n", config->BLOCKS);
+	fprintf(arch1, "MAGIC_NUMBER=%s\n", config->MAGIC_NUMBER);
 	fclose(arch1);
 
 	path = string_new();
@@ -143,6 +148,8 @@ int cargarMetadata() {
 
 	leerBitmap();
 	printf("Bitmap creado\n\n");
+
+	log_info(loggerInfo, "Archivo Metadata cargado");
 	return 1;
 }
 
@@ -178,4 +185,51 @@ int leerMetadata() {
 	}
 	config_destroy(config);
 	return 1;
+}
+
+t_semaforos_tabla* getSemaforoByTabla(char* nombreTabla) {
+
+	bool isTablaBuscada(t_semaforos_tabla* semaforoTabla) {
+		return strcmp(semaforoTabla->nombreTabla, nombreTabla) == 0;
+	}
+	return list_find(listaSemaforos, (void*) isTablaBuscada);
+}
+
+void cargarSemaforosTabla(char* nombreTabla) {
+	t_semaforos_tabla* semaforoTabla = malloc(sizeof(t_semaforos_tabla));
+
+	semaforoTabla->nombreTabla = string_duplicate(nombreTabla);
+
+	pthread_mutex_t mutexCompactacion;
+	pthread_mutex_init(&mutexCompactacion, NULL);
+
+	pthread_mutex_t mutexMemtable;
+	pthread_mutex_init(&mutexMemtable, NULL);
+
+	pthread_mutex_t mutexDump;
+	pthread_mutex_init(&mutexDump, NULL);
+
+	semaforoTabla->mutexCompactacion = mutexCompactacion;
+	semaforoTabla->mutexMemtable = mutexMemtable;
+	semaforoTabla->mutexTmp = mutexDump;
+
+	list_add(listaSemaforos, semaforoTabla);
+
+}
+
+void freeSemaforoTabla(t_semaforos_tabla* semaforoTabla) {
+	free(semaforoTabla->nombreTabla);
+
+	pthread_mutex_destroy(&semaforoTabla->mutexMemtable);
+	pthread_mutex_destroy(&semaforoTabla->mutexCompactacion);
+	free(semaforoTabla);
+}
+
+int getSizeOfFile(char* rutaArchivo){
+	struct stat st;
+	if(stat(rutaArchivo,&st)==-1){
+		return -1;
+
+	}
+	return st.st_size;
 }

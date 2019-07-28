@@ -2,3 +2,5 @@ erroresKernel.log
 infoKernel.log
 tracesKernel.log
 /Debug/
+*.cfg
+*.log

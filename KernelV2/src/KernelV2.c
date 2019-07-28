@@ -9,183 +9,192 @@
  */
 
 #include "Kernel.h"
+#include "APIKernel.h"
+
+/*
+ * Estado del Kernel:
+ *
+ * El Kernel anda, en general, bastante bien
+ *
+ * TODO: (Cosas boludas)
+ * 		- Mejorar el manejo de errores (agregarle cosas) + VALIDACIONES
+ *		- Solucionar algunas condiciones de carrera (creo)
+ *
+ */
 
 void iniciarVariablesKernel() {
 	log_master = malloc(sizeof(logStruct));
 	inicializarLogStruct();
+	cargarConfigKernel();
 
-	sem_init(&ejecutarHilos, 0, 0); // Recordar cambiar el 0 a 1
+	crearMetrics(&metricas);
+	crearMetrics(&copiaMetricas);
+
 	sem_init(&mutex_colaReadyPOP, 0, 1);
 	sem_init(&mutex_colaReadyPUSH, 0, 1);
 	sem_init(&mutex_id_proceso, 0, 1);
 	sem_init(&bin_main, 0, 0);
 	sem_init(&fin, 0, 0);
 	sem_init(&cantProcesosColaReady, 0, 0);
+	sem_init(&semMetricas, 0, 1);
 
-	cantRequestsEjecutadas = 0;
 	haySC = false;
+	hayMetricas = false;
 	puedeHaberRequests = true;
 	idMemoria = 1;
 
 	srand(time(NULL));
 
-	config = cargarConfig((char*) RUTA_CONFIG_KERNEL);
-
 	colaReady = queue_create();
 	listaHilos = list_create();
 	listaMemorias = list_create();
-	hardcodearInfoMemorias();
-	log_trace(log_master->logInfo, "El id de la primera memoria es: %d\n",
-			((infoMemoria*) list_get(listaMemorias, 1))->id);
-	listaMetadataTabla = list_create();
-	hardcodearListaMetadataTabla();
 
-	quantum = config->QUANTUM;
+	//hardcodearInfoMemorias();
+	listaMetadataTabla = list_create();
+	//hardcodearListaMetadataTabla();
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
 	multiprocesamientoUsado = 0;
-	retardoEjecucion = config->SLEEP_EJECUCION;
+
+	cantSelects = 0;
+	cantInserts = 0;
+	timestampSelectAlIniciar = 0;
+	timestampSelectAlFinalizar = 0;
+	timestampInsertAlIniciar = 0;
+	timestampInsertAlFinalizar = 0;
 
 	hilosActivos = 0;
-	idHilo=0;
+	idHilo = 0;
 
-	// Inicializo array de semaforos para determinar la cant de hilos a ejecutar en base a la cantidad
-	// 		de requests que haya en la cola de ready
+	arrayDeHilos = malloc(sizeof(pthread_t) * multiprocesamiento);
+}
 
-	if(multiprocesamiento !=0){
-		arraySemaforos = malloc(sizeof(sem_t) * multiprocesamiento);
+void* iniciarhiloMetrics(void* args) {
 
-		for(int i=0; i < multiprocesamiento;i++){
-			sem_init(&arraySemaforos[i], 0, 0);
+	while (puedeHaberRequests) {
+		usleep(30000 * 1000); // algo asi...
+		if (puedeHaberRequests) {
+			sem_wait(&semMetricas);
+			calcularMetrics();
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			copiarMetrics();
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			imprimirMetrics(metricas);
+			sem_post(&semMetricas);
+			sem_wait(&semMetricas);
+			reiniciarMetrics(&metricas);
+			sem_post(&semMetricas);
 		}
 	}
+	return NULL;
+}
 
+void iniciarConsolaKernel() {
 
+	char* operacion;
+
+	while (puedeHaberRequests) {
+		operacion = readline(">");
+		// Para salir, escriba SALIR -> esta operacion se acumula en la cola de Ready y se encarga de destruir los hilos, etc
+		if (!instruccionSeaMetrics(operacion)) {
+			if (strlen(operacion) != 0) {
+				crearProcesoYMandarloAReady(operacion);
+				sem_post(&bin_main);
+			}
+		} else {
+			imprimirMetrics(copiaMetricas);
+			free(operacion);
+		}
+	}
+}
+void iniciarHiloMetadataRefresh() {
+	while (true) {
+		usleep(config->METADATA_REFRESH * 1000);
+		log_trace(log_master->logTrace, "Iniciar Describe global");
+		if (consolaDescribe(NULL) == SUPER_ERROR)
+			log_error(log_master->logError, "Fallo el describe global automatico");
+
+	}
+}
+
+void iniciarHiloGossiping() {
+	log_info(log_master->logInfo, "Iniciando hilo de gossiping");
+	log_info(log_master->logInfo, "Descubriendo memorias..");
+	while (true) {
+		usleep(tiempoGossiping * 1000);
+		if (conocerMemorias() == SUPER_ERROR) {
+
+			log_error(log_master->logError, "Fallo conocer memorias");
+		}
+
+	}
 
 }
 
-/*
- * Estado del Kernel:
- *
- * Se pueden acceder a todos los comandos del Kernel e indicar si hay algun comando invalido (API Kernel)
- *
- * Se puede asignar un criterio a una memoria (comando ADD)
- *
- * Se pueden loggear los errores correctamente y administrativamente (Muy importante!!)
- *
- * TODO:
- * 		- Manejo de errores
- * 		- Round Robin (Creo que  ya esta resuelto)
- *		- Multiprocesamiento
- *
- */
+void cerrarKernel() {
 
-void iniciarConsolaKernel(){
-	char* operacion;
-	operacion = readline(">");
-
-	while(1){
-//		if(instruccionSeaSalir(operacion)){
-////			puedeHaberRequests = false;
-////			sem_post(&cantProcesosColaReady);
-////			sem_post(&fin);
-//			break;
-//			// Añadir semaforo para continuar y terminar el hilo principal
-//		}
-//		else{
-//			// Acordarse de descomentar una cosa de: crearProcesoYMandarloAReady(operacion); ---->>>> agregarRequestAlProceso(proceso, operacion);
-//			// Es muy importante!!!
-//			crearProcesoYMandarloAReady(operacion);
-//			desbloquearHilos();
-//			sem_post(&bin_main);
-//			// free(operacion); // Para esto es importante
-//		}
-
-
-
-		crearProcesoYMandarloAReady(operacion);
-//		desbloquearHilos();
-		sem_post(&bin_main);
-		operacion = readline(">");
-	}
-//	free(operacion);
-}
-
-void inicioKernelUnProcesador() {
-	char* operacion;
-	//	agregarHiloAListaHilosEInicializo(listaHilos);
-	operacion = readline(">");
-	while (!instruccionSeaSalir(operacion)) {
-		crearProcesoYMandarloAReady(operacion);
-		//		deReadyAExec();
-		// Por ahora lo hago con un solo proceso y lo hago manual
-//		ejecutarProcesos();
-		// Prueba multiprocesamiento
-//		desbloquearHilos();
-		nuevaFuncionThread(NULL);
-		//		funcionThread(NULL);
-		//		free(operacion);
-		//		destruirProcesoExec(proceso);
-		operacion = readline(">");
-	}
-	log_info(log_master->logInfo, "Finalizando consola\nLiberando memoria");
-	free(operacion);
-	//	free(hilos);
+	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
 	destruirElementosMain(listaHilos, colaReady);
 	destruirListaMemorias();
+
+	sem_wait(&semMetricas);
+	destruirMetrics(&metricas);
+	sem_post(&semMetricas);
+	sem_wait(&semMetricas);
+//	destruirMetrics(&copiaMetricas);
+//	list_destroy(copiaMetricas.diferenciaDeTiempoReadLatency);
+//	list_destroy(copiaMetricas.diferenciaDeTiempoWriteLatency);
+	sem_post(&semMetricas);
+
+	free(config);
+	config_destroy(kernelConfig);
+	free(arrayDeHilos);
 	log_info(log_master->logInfo, "Consola terminada");
 	destruirLogStruct(log_master);
+	printf("Llego al final ok\n");
 }
 
 int main(void) {
-	pthread_t hiloConsola;
-	pthread_t hiloMultiprocesamiento;
-	pthread_t* arrayDeHilos=NULL;
-	pthread_t* arrayDeHilosPuntero=NULL;
-
-	arrayDeHilos = malloc(sizeof(pthread_t)* multiprocesamiento);
-
 	iniciarVariablesKernel();
-//	inicioKernelUnProcesador();
+
+	conocerMemorias();
+
+	// Hilo de Gossiping
+	pthread_create(&hiloGossiping, NULL, (void*) iniciarHiloGossiping, NULL);
+	pthread_detach(hiloGossiping);
+
+	// Hilo de metrics
+	pthread_create(&hiloMetrics, NULL, (void*) iniciarhiloMetrics, NULL);
+	pthread_detach(hiloMetrics);
+
+	// Hilo de Describe global
+	pthread_create(&hiloMetadataRefresh, NULL, (void*) iniciarHiloMetadataRefresh, NULL);
+	pthread_detach(hiloMetadataRefresh);
 
 	// Hilo de consola
-
-	pthread_create(&hiloConsola, NULL, (void*)iniciarConsolaKernel, NULL);
+	pthread_create(&hiloConsola, NULL, (void*) iniciarConsolaKernel, NULL);
 	pthread_detach(hiloConsola);
-
-//	iniciarConsolaKernel();
 
 	// Este semaforo es muy importante
 	sem_wait(&bin_main);
 
 	// Hilo de multiprocesamiento
 
-//	pthread_create(&hiloMultiprocesamiento, NULL, (void*)nuevaFuncionThread, NULL);
-//	pthread_detach(hiloMultiprocesamiento);
-
-	for(int i =0; i < multiprocesamiento;i++){
+	for (int i = 0; i < multiprocesamiento; i++) {
 		arrayDeHilosPuntero = arrayDeHilos;
-		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*)nuevaFuncionThread, NULL);
+		pthread_create(&arrayDeHilosPuntero[i], NULL, (void*) iniciarMultiprocesamiento, NULL);
 	}
 
-	for(int i =0; i< multiprocesamiento;i++){
+	for (int i = 0; i < multiprocesamiento; i++) {
 		pthread_detach(arrayDeHilosPuntero[i]);
 	}
 
-
 	sem_wait(&fin);
 
-	// ELiminar memoria (Esto solo se puede llegar una vez que el usuario haya escrito SALIR en consola)
+	usleep(5 * 1000);
+	cerrarKernel();
 
-	destruirArraySemaforos();
-
-	free(arrayDeHilos);
-
-//	for(int i = multiprocesamiento; i > 0; i--)
-//		free(&arraySemaforos[i]);
-
-//	config_destroy(config);
 	return EXIT_SUCCESS;
 }
-
-
 

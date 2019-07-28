@@ -17,7 +17,7 @@
  */
 
 int procesarInputKernel(char* linea);
-int enviarInfoMemoria(int socketMemoria, char request[], t_protocolo protocolo);
+int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, Paquete* paquete);
 int procesarAdd(int id, consistencia cons);
 int consolaAdd(char*argumento);
 int consolaInsert(char*request);
@@ -26,12 +26,22 @@ int consolaCreate(char*argumentos);
 int consolaDescribe(char*nombreTabla);
 int consolaDrop(char*nombreTabla);
 int consolaRun(char*path);
-void consolaSALIR(char*nada);
+int consolaJournal();
+void consolaSalir(char*nada);
+
 void enviarJournalMemoria(int socketMemoria);
-void mostrarMetadata(char* nombreSegmento, t_metadata_tabla* metadata);
+void mostrarMetadata(metadataTabla* metadataTabla);
 t_metadata_tabla* deserealizarTabla(Paquete* paquete);
+metadataTabla* deserealizarMetadata(char* metadataSerializada);
+metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int cantParticiones, int tiempoCompactacion);
+consistencia getConsitenciaFromChar(char* consistenciaChar);
+void agregarTabla(metadataTabla* tabla);
+
+int procesarDescribe(int socketMemoria, char* nombreTabla);
+consistencia getConsitenciaFromChar(char* consistenciaChar);
+char* consistenciaToChar(consistencia consistencia);
 
 
-void consolaExecute();
+void freeMetadata(metadataTabla* tabla);
 
 #endif /* APIKERNEL_H_ */

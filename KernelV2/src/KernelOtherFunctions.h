@@ -24,5 +24,13 @@ bool instruccionSeaSalir(char* operacion);
 void hardcodearListaMetadataTabla();
 int contarLineasArchivo(FILE* fichero, char* path);
 void destruirArraySemaforos();
+int instruccionSeaMetrics(char* operacion);
+void crearMetrics(t_metrics* metrica);
+void destruirMetrics(t_metrics* metrica);
+void reiniciarMetrics(t_metrics* metrica);
+void calcularMetrics();
+void copiarMetrics();
+void imprimirMetrics(t_metrics metrica);
+bool memoriaTieneALgunCriterio(infoMemoria* memoria);
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */

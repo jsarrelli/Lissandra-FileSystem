@@ -14,17 +14,20 @@
 #include "Sockets/Serializacion.h"
 #include "SocketClienteMemoria.h"
 #include "EstructurasMemoria.h"
+#include <math.h>
 
-
-
-int valueMaximo;
 void* memoria;
 
 t_list* memoriaStatus; // suerte de bitmap que guarda los frames disponibles de memoria
+int valueMaximo;
 int socketFileSystem;
 int tamanioRegistro;
-
-void inicializarMemoria(int valueMaximoRecibido, int tamanioMemoriaRecibido, int socketFileSystem);
+pthread_mutex_t mutexJournal;
+pthread_mutex_t mutexAsignacionMarco;
+pthread_mutex_t mutexLRU;
+pthread_mutex_t mutexSelect;
+pthread_mutex_t mutexInsert;
+void inicializarMemoria(int tamanioMemoriaRecibido);
 
 Segmento* buscarSegmento(char* nombreSegmento);
 Segmento* buscarSegmentoEnMemoria(char* nombreSegmento);
@@ -33,13 +36,13 @@ Pagina* buscarPaginaEnMemoria(Segmento* segmento, int key);
 Pagina* buscarPagina(Segmento* segmento, int key);
 
 Segmento* insertarSegmentoEnMemoria(char* nombreSegmento);
-Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento);
+Pagina* insertarPaginaEnMemoria(int key, char* value, double timeStamp, Segmento* segmento, bool modificado);
 
 bool memoriaLlena();
 void* darMarcoVacio();
 bool todosModificados();
 
-void* liberarUltimoUsado();
+void liberarUltimoUsado();
 t_list* obtenerSegmentosDeFileSystem();
 EstadoFrame* getEstadoFrame(Pagina* pagina);
 
@@ -52,11 +55,13 @@ void journalMemoria();
 void freeSegmento(Segmento* segmentoAEliminar);
 
 bool isModificada(Pagina* pagina);
-bool existeSegmentoFS(char* nombreSegmento);
+bool existeSegmentoFS(char* nombreSegmento, t_list* tablas);
 bool validarValueMaximo(char* value);
 
 Segmento* newSegmento(char* nombreSegmento);
 void vaciarMemoria();
 void finalizarMemoria();
+
+t_list* obtenerTablasFileSystem();
 
 #endif /*MEMORIAPRINCIPAL_H_*/

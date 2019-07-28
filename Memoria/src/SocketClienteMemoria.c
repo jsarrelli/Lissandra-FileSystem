@@ -20,153 +20,224 @@ t_metadata_tabla* deserealizarTabla(Paquete* paquete) {
 }
 
 t_metadata_tabla* describeSegmento(char* nombreSegmento) {
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
+	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, (void*) nombreSegmento, strlen(nombreSegmento) + 1, DESCRIBE);
 	Paquete paquete;
-	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
+	if (RecibirPaquete(socketFileSystem, &paquete) < 0) {
+		log_error(loggerError, "Algo fallo en el describe de %s en fileSystem", nombreSegmento);
+		close(socketFileSystem);
+		return NULL;
+	}
 
-	if (atoi(paquete.mensaje) == 1) {
-		free(paquete.mensaje);
+	t_metadata_tabla* metaDataRecibida = NULL;
+	if (atoi(paquete.mensaje) != 1) {
+		metaDataRecibida = deserealizarTabla(&paquete);
 		return NULL;
 		//la tabla no existe
 	}
-	t_metadata_tabla* metaDataRecibida = deserealizarTabla(&paquete);
-	free(paquete.mensaje);
 
+	free(paquete.mensaje);
+	close(socketFileSystem);
 	return metaDataRecibida;
 }
 
 void enviarRegistroAFileSystem(Pagina* pagina, char* nombreSegmento) {
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	t_registro* registro = pagina->registro;
-	char consulta[150];
-	sprintf(consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
+	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
+	t_registro_memoria* registro = pagina->registro;
+	char * consulta = string_new();
+	string_append_with_format(&consulta, "%s %d \"%s\" %f", nombreSegmento, registro->key, registro->value, registro->timestamp);
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, INSERT);
+	free(consulta);
+	close(socketFileSystem);
 }
 
 int eliminarSegmentoFileSystem(char* nombreSegmento) {
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento)+1, DROP);
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
+	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
+	EnviarDatosTipo(socketFileSystem, MEMORIA, nombreSegmento, strlen(nombreSegmento) + 1, DROP);
 	Paquete paquete;
-	int succes = 0;
-	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+	int succes = 1;
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
-
+	close(socketFileSystem);
 	return succes;
 }
 
 int enviarCreateAFileSystem(t_metadata_tabla* metadata, char* nombreTabla) {
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
-	char* consulta = malloc(strlen(nombreTabla) + 2 + sizeof(int) + sizeof(int) + 3);
-	sprintf(consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA), metadata->CANT_PARTICIONES,
-			metadata->T_COMPACTACION);
-	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta), CREATE);
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
+	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
+	char* consulta = string_new();
+	string_append_with_format(&consulta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata->CONSISTENCIA),
+			metadata->CANT_PARTICIONES, metadata->T_COMPACTACION);
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
+	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, CREATE);
 	free(consulta);
 
 	Paquete paquete;
-	int succes = 0;
-	if (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
+	int succes = 1;
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
 		succes = atoi(paquete.mensaje);
 		free(paquete.mensaje);
 	}
-
+	close(socketFileSystem);
 	return succes;
 }
 
-t_list* describeAllFileSystem() {
-	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
+char* describeAllFileSystem() {
+	log_info(loggerInfo, "Intentando conectarse a FileSystem..");
+	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, DESCRIBE_ALL);
 
-	t_list* segmentosRecibidos = list_create();
 	Paquete paquete;
-
-	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
-		if (strcmp(paquete.mensaje, "fin") == 0) {
-			free(paquete.mensaje);
-			break;
+	char* response = NULL;
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
+		if (atoi(paquete.mensaje) != 1) {
+			response = string_duplicate(paquete.mensaje);
 		}
-
-		char* tablaSerializada = malloc(paquete.header.tamanioMensaje);
-		strcpy(tablaSerializada, paquete.mensaje);
-		list_add(segmentosRecibidos, tablaSerializada);
 		free(paquete.mensaje);
 	}
-
-	return segmentosRecibidos;
+	close(socketFileSystem);
+	return response;
 }
 
 int HandshakeInicial() {
-	log_info(logger, "Intentandose conectar a File System..");
+	log_info(loggerInfo, "Intentandose conectar a File System..");
 	int socketFileSystem = ConectarAServidor(configuracion->PUERTO_FS, configuracion->IP_FS);
 	if (socketFileSystem == -1) {
-		log_info(logger, "Fallo la conexion a File System");
-		return socketFileSystem;
+		log_info(loggerInfo, "Fallo la conexion a File System");
+
+		return -1;
 	}
-	log_info(logger, "Memoria conectada a File System");
+	log_info(loggerInfo, "Memoria conectada a File System");
 	EnviarDatosTipo(socketFileSystem, MEMORIA, NULL, 0, CONEXION_INICIAL_FILESYSTEM_MEMORIA);
 	Paquete paquete;
-	if (RecibirPaqueteCliente(socketFileSystem, MEMORIA, &paquete) > 0) {
-		valueMaximoPaginas = atoi(paquete.mensaje);
+	if (RecibirPaquete(socketFileSystem, &paquete) > 0) {
+		valueMaximo = atoi(paquete.mensaje);
 		free(paquete.mensaje);
+	} else {
+		log_error(loggerError, "Algo fallo en la conexion en la Conexion con fileSystem");
 	}
 
-	log_info(logger, "Handshake inicial realizado. Value Maximo: %d", valueMaximoPaginas);
-	return socketFileSystem;
-}
-
-void gossiping() {
-	list_iterate(seeds, (void*) intercambiarTablasGossiping);
+	log_info(loggerInfo, "Handshake inicial realizado. Value Maximo: %d", valueMaximo);
+	close(socketFileSystem);
+	return 1;
 }
 
 void enviarTablaGossiping(int socketMemoriaDestino) {
+	char* memoriasSerializadas = string_new();
 
-	void enviarMemoriaConocida(t_memoria* memoriaConocida) {
-		char request[100];
-		sprintf(request, "%s %s", memoriaConocida->ip, memoriaConocida->puerto);
-		EnviarDatosTipo(socketMemoriaDestino, MEMORIA, request, strlen(request) + 1, GOSSIPING);
+	void serializarMemoria(t_memoria* memoriaConocida) {
+		string_append_with_format(&memoriasSerializadas, "%s %s %d /", memoriaConocida->ip, memoriaConocida->puerto,
+				memoriaConocida->memoryNumber);
 	}
-	list_iterate(tablaGossiping, (void*) enviarMemoriaConocida);
+	list_iterate(tablaGossiping, (void*) serializarMemoria);
+	EnviarDatosTipo(socketMemoriaDestino, MEMORIA, memoriasSerializadas, strlen(memoriasSerializadas) + 1, GOSSIPING);
+	free(memoriasSerializadas);
+
 }
 
-void intercambiarTablasGossiping(t_memoria* memoria) {
-	int socketMemoria = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
-
-	if (socketMemoria != -1) {
+void intercambiarTablasGossiping(t_memoria* memoriaSeed) {
+	int socketMemoriaSeed = ConectarAServidor(atoi(memoriaSeed->puerto), memoriaSeed->ip);
+	if (socketMemoriaSeed == -1) {
 		return;
 	}
-	enviarTablaGossiping(socketMemoria);
+
+	enviarTablaGossiping(socketMemoriaSeed);
 
 	Paquete paquete;
-	while (RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete) > 0) {
 
-		t_memoria* memoriaRecibida = deserealizarMemoria(paquete.mensaje);
-		agregarMemoriaNueva(memoriaRecibida);
+	if (RecibirPaquete(socketMemoriaSeed, &paquete) > 0) {
+
+		int i = 0;
+		char** memorias = string_split(paquete.mensaje, "/");
+		while (memorias[i] != NULL) {
+			t_memoria* memoriaRecibida = deserealizarMemoria(memorias[i]);
+
+			agregarMemoriaNueva(memoriaRecibida);
+			i++;
+		}
+		freePunteroAPunteros(memorias);
 		free(paquete.mensaje);
+
 	}
+	close(socketMemoriaSeed);
 
 }
-
 t_registro* selectFileSystem(Segmento* segmento, int key) {
+	log_info(loggerInfo, "Enviando consulta SELECT al fileSystem..");
+	int socketFileSystem = ConectarAServidorPlus(configuracion->PUERTO_FS, configuracion->IP_FS);
+
 	char* consulta = string_new();
 	string_append_with_format(&consulta, "%s %d", segmento->nombreTabla, key);
+	log_info(loggerInfo, "Conexion exitosa, enviando datos..");
 
 	EnviarDatosTipo(socketFileSystem, MEMORIA, consulta, strlen(consulta) + 1, SELECT);
 	free(consulta);
 
 	Paquete paquete;
-	RecibirPaqueteCliente(socketFileSystem, FILESYSTEM, &paquete);
-
-	if (paquete.header.tipoMensaje == NOTFOUND) {
+	if (RecibirPaquete(socketFileSystem, &paquete) <= 0) {
+		close(socketFileSystem);
 		return NULL;
 	}
+
+	if (paquete.header.tipoMensaje == NOTFOUND) {
+		close(socketFileSystem);
+		free(paquete.mensaje);
+		return NULL;
+	}
+	char*registroAux = string_duplicate(paquete.mensaje);
 	char** valores = string_split(paquete.mensaje, ";");
-	t_registro* registro = registro_new(valores);
+
+	t_registro* registro = malloc(sizeof(t_registro));
+	registro->key = atoi(valores[0]);
+	registro->value = string_duplicate(valores[1]);
+	registro->timestamp = atof(valores[2]);
 
 	freePunteroAPunteros(valores);
+	free(registroAux);
 	free(paquete.mensaje);
-
+	log_info(loggerInfo, "Registro obtenido de fileSystem");
+	close(socketFileSystem);
 	return registro;
+}
+
+bool isMemoriaCaida(t_memoria* memoria) {
+	if (memoria->memoryNumber == configuracion->MEMORY_NUMBER) {
+		return false; //es esta misma
+	}
+	int socket;
+	int i = 0;
+	do {
+		socket = ConectarAServidor(atoi(memoria->puerto), memoria->ip);
+		if (socket != -1) {
+			break;
+		}
+		usleep(10);
+		i++;
+	} while (i < 20);
+
+	bool caida;
+	if (socket == -1) {
+		log_error(loggerError, "Se cayo la memoria %s %s %d", memoria->ip, memoria->puerto, memoria->memoryNumber);
+		caida = true;
+	} else {
+		caida = false;
+		close(socket);
+	}
+
+	return caida;
 }

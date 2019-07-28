@@ -10,6 +10,8 @@ bool isMemoriaYaConocida(t_memoria* memoriaRecibida);
 void agregarMemoriaNueva(t_memoria* memoriaRecibida);
 void cargarListaSeeds();
 t_memoria* deserealizarMemoria(char* mensaje);
-
+void freeMemoria(t_memoria* memoria);
+void gossiping();
+void filtrarMemoriasConocidas();
 
 #endif /* FUNCIONESGOSSIPING_H_ */

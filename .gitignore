@@ -63,3 +63,8 @@ LissandraFileSystem/Debug/LissandraFileSystem
 
 # Excepciones
 !KernelV2/DebugLissandraFileSystem/infoLFS.log
+Memoria/MEM_results.txt
+Memoria/MEM_resuslts.txt
+
+*.log
+*.cfg

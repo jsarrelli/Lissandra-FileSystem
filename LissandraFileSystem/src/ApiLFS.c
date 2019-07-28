@@ -13,7 +13,7 @@ void* consolaLFS() {
 	char * consulta;
 	while (1) {
 
-		puts("\nIngrese comandos a ejecutar. Para salir presione enter");
+		puts("\nIngrese comando a ejecutar. Para salir presione enter");
 		consulta = readline(">");
 		if (consulta == NULL || strlen(consulta) == 0) {
 			free(consulta);
@@ -25,7 +25,7 @@ void* consolaLFS() {
 		}
 
 	}
-	log_info(logger, "Fin de leectura por consola");
+	log_info(loggerInfo, "Fin de leectura por consola");
 	return NULL;
 }
 
@@ -35,7 +35,7 @@ void procesarInput(char* consulta) {
 	char* argumentos = comandos[1];
 
 	if (strcmp(operacion, "SELECT") == 0) {
-		//return procesarSELECT(argumentos);
+		consolaSelect(argumentos);
 	} else if (strcmp(operacion, "INSERT") == 0) {
 		consolaInsert(argumentos);
 	} else if (strcmp(operacion, "CREATE") == 0) {
@@ -54,6 +54,7 @@ void procesarInput(char* consulta) {
 
 void consolaCreate(char*argumentos) {
 	char** valores = string_split(argumentos, " ");
+	if(cantidadParametros(valores) == 3){
 	char* nombreTabla = valores[0];
 	char* consistenciaChar = valores[1];
 	char* cantParticiones = valores[2];
@@ -61,6 +62,10 @@ void consolaCreate(char*argumentos) {
 
 	funcionCREATE(nombreTabla, cantParticiones, consistenciaChar, tiempoCompactacion);
 	freePunteroAPunteros(valores);
+	} else{
+		puts("\nError en la cantidad de parametros. El comando ingresado necesita 4.\n");
+		freePunteroAPunteros(valores);
+	}
 }
 
 void consolaDescribe(char* nombreTabla) {
@@ -76,6 +81,7 @@ void consolaDrop(char* nombreTabla) {
 }
 
 void consolaInsert(char* argumentos) {
+
 	char** valores = string_split(argumentos, "\""); //34 son las " en ASCII
 	char** valoresAux = string_split(valores[0], " ");
 	char* nombreTabla = valoresAux[0];
@@ -92,17 +98,25 @@ void consolaInsert(char* argumentos) {
 
 	freePunteroAPunteros(valoresAux);
 	freePunteroAPunteros(valores);
+
 }
+
 
 void consolaSelect(char*argumentos){
 	char** valores = string_split(argumentos, " ");
+	if(cantidadParametros(valores) == 1){
 	char* nombreTabla = valores[0];
 	char* key = valores[1];
 	int keyActual = atoi(key);
 
 	t_registro* registro=funcionSELECT(nombreTabla, keyActual);
 	if(registro!=NULL){
+
 		freeRegistro(registro);
 	}
 	freePunteroAPunteros(valores);
+	}else{
+		puts("\nError en la cantidad de parametros. El comando ingresado necesita 2.\n");
+		freePunteroAPunteros(valores);
+	}
 }
