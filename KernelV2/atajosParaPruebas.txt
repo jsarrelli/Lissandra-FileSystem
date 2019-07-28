@@ -1,0 +1,46 @@
+// Prueba Base
+ADD MEMORY 1 TO SC
+RUN ../scripts/simple_sc.lql
+ADD MEMORY 1 TO EC
+ADD MEMORY 2 TO EC
+RUN ../scripts/simple_ec.lql
+ADD MEMORY 1 TO SHC
+ADD MEMORY 2 TO SHC
+RUN ../scripts/simple_shc.lql
+JOURNAL
+
+SELECT COLORS 1
+SELECT COLORS 2
+SELECT MARCAS 1
+SELECT CELULARES 1
+SELECT CELULARES 2
+
+// Prueba Kernel
+ADD MEMORY 1 TO SC
+ADD MEMORY 2 TO SHC
+ADD MEMORY 4 TO SHC
+ADD MEMORY 3 TO EC
+ADD MEMORY 4 TO EC
+RUN ../scripts/animales.lql
+RUN ../scripts/comidas.lql
+RUN ../scripts/internet_browser_falla.lql
+METRICS
+RUN ../scripts/misc_1.lql
+RUN ../scripts/misc_2.lql
+RUN ../scripts/cosas_falla.lql
+INSERT POSTRES 63 "Flan"
+INSERT COLORES 326 "Gris"
+SELECT COSAS 332
+SELECT SERIES 89
+ADD MEMORY 3 TO SHC
+METRICS
+JOURNAL
+
+// Prueba LFS
+ADD MEMORY 1 TO EC
+ADD MEMORY 2 TO EC
+ADD MEMORY 3 TO EC
+RUN ../scripts/compactacion_larga.lql
+
+
+nano ../src/Memoria.c
