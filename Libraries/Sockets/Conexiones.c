@@ -13,6 +13,7 @@ int ConectarAServidor(int puerto, char* ip) {
 
 	conexion = connect(socketFD, (struct sockaddr *) &direccion, sizeof(struct sockaddr));
 	if (conexion == -1) {
+		close(socketFD);
 		return conexion;
 	}
 	printf("Conexion establecida \n");
@@ -48,15 +49,14 @@ int configurarSocketServidor(char* puertoEscucha) {
 //	int activado = 1;
 //	setsockopt(listenningSocket, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado)); //Para que reuse el puerto si esta ocupado
 
-
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family = AF_INET;
 	direccionServidor.sin_addr.s_addr = INADDR_ANY;
 	direccionServidor.sin_port = htons(atoi(puertoEscucha));
 
-	int servidor = socket(AF_INET,SOCK_STREAM,0);
+	int servidor = socket(AF_INET, SOCK_STREAM, 0);
 
-	if (bind(servidor, (void*) &direccionServidor,sizeof(direccionServidor)) != 0) {
+	if (bind(servidor, (void*) &direccionServidor, sizeof(direccionServidor)) != 0) {
 		perror("Fallo el bind");
 		return 0;
 	}
