@@ -75,8 +75,7 @@ void* leerConsola() {
 void cargarConfiguracion() {
 
 	char* pathMEMConfig = string_new();
-	string_append_with_format(&pathMEMConfig, "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/config-%s.cfg",
-			archivoConfig);
+	string_append_with_format(&pathMEMConfig, "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/config-%s.cfg", archivoConfig);
 	log_info(loggerInfo, "Levantando configuracion de: %s", pathMEMConfig);
 
 	if (configuracion != NULL) {
