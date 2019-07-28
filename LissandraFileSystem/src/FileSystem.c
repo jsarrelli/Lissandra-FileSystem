@@ -224,3 +224,12 @@ void freeSemaforoTabla(t_semaforos_tabla* semaforoTabla) {
 	pthread_mutex_destroy(&semaforoTabla->mutexCompactacion);
 	free(semaforoTabla);
 }
+
+int getSizeOfFile(char* rutaArchivo){
+	struct stat st;
+	if(stat(rutaArchivo,&st)==-1){
+		return -1;
+
+	}
+	return st.st_size;
+}

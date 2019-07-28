@@ -36,22 +36,30 @@ int ConectarAServidorPlus(int puerto, char* ip) {
 
 int configurarSocketServidor(char* puertoEscucha) {
 
-	struct addrinfo hints;
-	struct addrinfo *serverInfo;
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
-	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
-	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
-	getaddrinfo(NULL, puertoEscucha, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
-	int listenningSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+//	struct addrinfo hints;
+//	struct addrinfo *serverInfo;
+//	memset(&hints, 0, sizeof(hints));
+//	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
+//	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
+//	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+//	getaddrinfo(NULL, puertoEscucha, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+//	int listenningSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+//
+//	int activado = 1;
+//	setsockopt(listenningSocket, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado)); //Para que reuse el puerto si esta ocupado
 
-	int activado = 1;
-	setsockopt(listenningSocket, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado)); //Para que reuse el puerto si esta ocupado
 
-	if (bind(listenningSocket, serverInfo->ai_addr, serverInfo->ai_addrlen) != 0) {
+	struct sockaddr_in direccionServidor;
+	direccionServidor.sin_family = AF_INET;
+	direccionServidor.sin_addr.s_addr = INADDR_ANY;
+	direccionServidor.sin_port = htons(atoi(puertoEscucha));
+
+	int servidor = socket(AF_INET,SOCK_STREAM,0);
+
+	if (bind(servidor, (void*) &direccionServidor,sizeof(direccionServidor)) != 0) {
 		perror("Fallo el bind");
 		return 0;
 	}
-	freeaddrinfo(serverInfo);
-	return listenningSocket;
+
+	return servidor;
 }

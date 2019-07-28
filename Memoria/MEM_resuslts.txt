@@ -1,3 +1,0 @@
-[ERROR] 21:43:10:15 MEMORIA Logs/(6895:6895): Hubo un error al crear la tabla TABLA, la tabla ya existe
-[ERROR] 21:48:03:263 MEMORIA Logs/(7125:7125): Hubo un error al crear la tabla TABLA, la tabla ya existe
-[ERROR] 21:53:15:29 MEMORIA Logs/(7125:7125): Hubo un error al crear la tabla TABLA, la tabla ya existe

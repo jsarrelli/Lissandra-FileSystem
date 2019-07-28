@@ -1,7 +1,7 @@
 #include "SocketServidorMemoria.h"
 
 void escuchar(int listenningSocket) {
-	listen(listenningSocket, 300); // es una syscall bloqueante
+	listen(listenningSocket, SOMAXCONN); // es una syscall bloqueante
 	log_info(loggerInfo, "Servidor memoria escuchando..");
 	while (true) {
 		struct sockaddr_in datosConexionCliente; // Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.

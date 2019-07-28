@@ -15,6 +15,7 @@ int main() {
 	loggerError = log_create("MEM_resuslts.log", "MEMORIA Logs", true, LOG_LEVEL_ERROR);
 
 	log_info(loggerInfo, "--Inicializando proceso MEMORIA--");
+	seleccionarArchivoConfig();
 	cargarConfiguracion();
 	cargarEstructurasGossiping();
 
@@ -72,10 +73,12 @@ void* leerConsola() {
 }
 
 void cargarConfiguracion() {
-	pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM1.cfg";
-	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM2.cfg";
-	//pathMEMConfig = "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/configMEM3.cfg";
-	log_info(loggerInfo, "Levantando archivo de configuracion del proceso MEMORIA");
+
+	char* pathMEMConfig = string_new();
+	string_append_with_format(&pathMEMConfig, "/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config/config-%s.cfg",
+			archivoConfig);
+	log_info(loggerInfo, "Levantando configuracion de: %s", pathMEMConfig);
+
 	if (configuracion != NULL) {
 		liberarDatosConfiguracion();
 	}
@@ -97,7 +100,7 @@ void cargarConfiguracion() {
 	configuracion->MEMORY_NUMBER = get_campo_config_int(archivo_configuracion, "MEMORY_NUMBER");
 	configuracion->IP_ESCUCHA = get_campo_config_string(archivo_configuracion, "IP_ESCUCHA");
 	log_info(loggerInfo, "Archivo de configuracion levantado");
-
+	free(pathMEMConfig);
 	listenArchivo("/home/utnso/tp-2019-1c-Los-Sisoperadores/Memoria/Config", cargarConfiguracion);
 
 }
@@ -141,5 +144,10 @@ void liberarVariables() {
 	list_destroy_and_destroy_elements(seeds, (void*) freeMemoria);
 	list_destroy_and_destroy_elements(tablaGossiping, (void*) freeMemoria);
 	pthread_mutex_destroy(&mutexJournal);
+}
+
+void seleccionarArchivoConfig() {
+	puts("Ingrese el numero de Archivo de Configuracion:");
+	archivoConfig = readline(">");
 }
 

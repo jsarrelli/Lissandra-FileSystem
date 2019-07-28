@@ -9,7 +9,7 @@
 #include "AdministradorConsultasLFS.h"
 
 void escuchar(int listenningSocket) {
-	listen(listenningSocket, BACKLOG); // es una syscall bloqueante
+	listen(listenningSocket, SOMAXCONN); // es una syscall bloqueante
 
 	while (true) {
 
