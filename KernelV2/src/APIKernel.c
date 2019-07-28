@@ -454,16 +454,17 @@ int consolaDescribe(char*nombreTabla) {
 	// DESCRIBE [NOMBRE_TABLA]
 	// DESCRIBE
 	int socketMemoria;
+	infoMemoria* memoriaAlAzar;
 	while (true) {
 
-		infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+		memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
 		log_info(log_master->logInfo, "Intentando conectarse a memoria: %d..", memoriaAlAzar->id);
 		socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 		if (socketMemoria != -1) {
 			break;
 		}
 		log_error(log_master->logError, "Fallo la conexion con la memoria:%d , reitentando..", memoriaAlAzar->id);
-		usleep(20);
+		usleep(200);
 
 	}
 
