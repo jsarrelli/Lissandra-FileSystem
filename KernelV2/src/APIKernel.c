@@ -267,7 +267,6 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 		close(socketMemoria);
 	}
 
-
 	return success;
 }
 
@@ -437,10 +436,10 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 	Paquete paquete;
 	log_info(log_master->logInfo, "Esperando para recibir paquete procesar describe..");
 	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) <= 0) {
+		log_error(log_master->logError, "Error recibir paquete procesar describe");
 		return SUPER_ERROR;
-		log_info(log_master->logInfo, "Error recibir paquete procesar describe");
 	} else if (atoi(paquete.mensaje) == 1) {
-		log_info(log_master->logInfo, "La tabla no existe");
+		log_trace(log_master->logTrace, "La tabla no existe");
 
 	} else {
 		log_info(log_master->logInfo, "Deserializar metadata procesar describe...");
@@ -454,22 +453,29 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 int consolaDescribe(char*nombreTabla) {
 	// DESCRIBE [NOMBRE_TABLA]
 	// DESCRIBE
-	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
-	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
-	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
-	if (socketMemoria < 0) {
-		log_error(log_master->logError, "Error de conexion");
-		return SUPER_ERROR;
-	} else {
-		log_info(log_master->logInfo, "Conexion existosa");
-		if (nombreTabla == NULL) {
-			if (procesarDescribeAll(socketMemoria) == SUPER_ERROR)
-				return SUPER_ERROR;
-		} else {
-			if (procesarDescribe(socketMemoria, nombreTabla) == SUPER_ERROR)
-				return SUPER_ERROR;
+	int socketMemoria;
+	while (true) {
+
+		infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+		log_info(log_master->logInfo, "Intenando conectarse a memoria:%d..", memoriaAlAzar->id);
+		socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
+		if (socketMemoria != -1) {
+			break;
 		}
+		log_error(loggerError, "Fallo la conexion con la memoria:%d , reitentando..", memoriaAlAzar->id);
+		usleep(20);
+
 	}
+
+	int success = TODO_OK;
+	log_info(log_master->logInfo, "Conexion existosa");
+	if (nombreTabla == NULL) {
+		success = procesarDescribeAll(socketMemoria);
+	} else {
+		success = procesarDescribe(socketMemoria, nombreTabla);
+
+	}
+
 	close(socketMemoria);
 	return TODO_OK;
 }
