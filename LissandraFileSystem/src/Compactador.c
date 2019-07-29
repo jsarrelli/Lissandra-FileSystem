@@ -249,6 +249,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	log_info(loggerInfo, "Leyendo registros de %s... ", pathArchivo);
 
 	char* contenidoBloques = string_new();
+	bool error = false;
 
 	void cargarRegistrosDeBloque(int bloque) {
 		if (archivo->TAMANIO == 0) {
@@ -274,8 +275,8 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char* contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
 
 		if (contenidoBloque == MAP_FAILED) {
-
 			log_error(loggerError, "BOOM Bloque %d", bloque);
+			error=true;
 
 		} else if (!string_is_empty(contenidoBloque)) {
 
@@ -289,7 +290,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
 
-	if (!string_is_empty(contenidoBloques)) {
+	if (!string_is_empty(contenidoBloques)&& !error) {
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
