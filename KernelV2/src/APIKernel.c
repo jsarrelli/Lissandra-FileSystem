@@ -78,14 +78,14 @@ int procesarInputKernel(char* linea) {
 }
 
 int procesarAdd(int id, t_consistencia consistencia) {
-int success = TODO_OK;
+	int success = TODO_OK;
 
-log_info(log_master->logInfo, "Asignando criterio %s a memoria: %d",getConsistenciaCharByEnum(consistencia),id);
+	log_info(log_master->logInfo, "Asignando criterio %s a memoria: %d", getConsistenciaCharByEnum(consistencia), id);
 	bool byId(infoMemoria* memoria) {
 		return memoria->id == id;
 	}
 	infoMemoria* memoriaEncontrada = list_find(listaMemorias, (void*) byId);
-	if (memoriaEncontrada!=NULL) {
+	if (memoriaEncontrada != NULL) {
 		success = asignarCriterioMemoria(memoriaEncontrada, consistencia);
 
 		if (success == TODO_OK) {
@@ -141,12 +141,11 @@ int consolaInsert(char*argumentos) {
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, atoi(key));
 	if (memoriaAEnviar == NULL) {
-		log_error(log_master->logError, "Error: No se pudo obtener la memoria deseada");
 		freePunteroAPunteros(valoresAux);
 		freePunteroAPunteros(valores);
 		return SUPER_ERROR;
 	}
-	obtenerMemoriaSegunTablaYKey(atoi(key), nombreTabla, INSERT, memoriaAEnviar);
+	actualizarMetricasDeMemoria(atoi(key), nombreTabla, INSERT, memoriaAEnviar);
 
 	// Seguimos con las metrics
 	timestampInsertAlFinalizar = getCurrentTime();
@@ -189,6 +188,11 @@ int consolaSelect(char*argumentos) {
 	log_info(log_master->logInfo, "Realizando SELECT %s %d", nombreTabla, key);
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, key);
+	if (memoriaAEnviar == NULL) {
+		return SUPER_ERROR;
+		freePunteroAPunteros(valores);
+		free(argumentosAux);
+	}
 
 	// Seguimos con las metrics y luego mandamos el mensaje
 	timestampSelectAlFinalizar = getCurrentTime();
@@ -197,10 +201,7 @@ int consolaSelect(char*argumentos) {
 	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
 	cantSelects++;
 
-	if (obtenerMemoriaSegunTablaYKey(key, nombreTabla, SELECT, memoriaAEnviar) == SUPER_ERROR) {
-		freePunteroAPunteros(valores);
-		return SUPER_ERROR;
-	}
+	actualizarMetricasDeMemoria(key, nombreTabla, SELECT, memoriaAEnviar);
 
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
@@ -268,7 +269,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 }
 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
-	log_info(log_master->logInfo, "Intenando conectarse a memoria %d..",memoria->id);
+	log_info(log_master->logInfo, "Intenando conectarse a memoria %d..", memoria->id);
 	int socketMemoria = ConectarAServidorPlus(memoria->puerto, memoria->ip);
 
 	if (socketMemoria > 0) {
@@ -308,7 +309,7 @@ int consolaJournal() {
 		return !list_is_empty(memoria->criterios);
 	}
 
-	t_list* listaMemoriasConCriterio = list_filter(listaMemorias, (void*)_tieneCriterio);
+	t_list* listaMemoriasConCriterio = list_filter(listaMemorias, (void*) _tieneCriterio);
 	if (listaMemoriasConCriterio != NULL)
 		list_iterate(listaMemoriasConCriterio, (void*) journalMemoria);
 	else {
@@ -416,7 +417,7 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 		log_error(log_master->logError, "Error recibir paquete procesar describe");
 		return SUPER_ERROR;
 	} else if (atoi(paquete.mensaje) == -1) {
-		log_error(log_master->logError, "La tabla %S no existe",nombreTabla);
+		log_error(log_master->logError, "La tabla %S no existe", nombreTabla);
 
 	} else {
 		log_info(log_master->logInfo, "Deserializando metadata procesar describe...");

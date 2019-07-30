@@ -128,6 +128,7 @@ sem_t bin_main;
 sem_t fin;
 sem_t cantProcesosColaReady;
 sem_t semMetricas;
+pthread_mutex_t mutexListaMemorias;
 //sem_t* arraySemaforos; // Borrar
 logStruct* log_master;
 bool puedeHaberRequests;
@@ -145,7 +146,7 @@ void cargarConfigKernel();
 infoMemoria* obtenerMemoriaAlAzar();
 void desbloquearHilos();
 void crearProcesoYMandarloAReady(char* operacion);
-int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar);
+int actualizarMetricasDeMemoria(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar);
 void destruirElementosMain(t_list* lista, t_queue* cola);
 void destruirLogStruct(logStruct* log_master);
 procExec* newProceso();

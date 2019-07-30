@@ -16,7 +16,7 @@ int ConectarAServidor(int puerto, char* ip) {
 		close(socketFD);
 		return conexion;
 	}
-	printf("Conexion establecida \n");
+	//printf("Conexion establecida \n");
 	return socketFD;
 
 }

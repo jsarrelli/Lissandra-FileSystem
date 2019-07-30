@@ -106,8 +106,7 @@ int cantidadParametros(char ** palabras) {
 	return i - 1;
 }
 
-int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar) {
-	if (memoriaAEnviar != NULL) {
+int actualizarMetricasDeMemoria(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar) {
 
 		if (protocolo == SELECT) {
 			(memoriaAEnviar->cantSelectsEjecutados)++;
@@ -117,11 +116,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 		}
 
 		imprimirCriterio(memoriaAEnviar);
-		log_info(log_master->logInfo, "Id de la memoria: %d", memoriaAEnviar->id);
-	} else {
-		log_error(log_master->logError, "Error: no existe memoria con ese criterio o todavia no hay memorias con el criterio de la tabla");
-		return SUPER_ERROR;
-	}
+
 	return TODO_OK;
 }
 
@@ -229,6 +224,7 @@ infoMemoria* obtenerMemoriaAlAzar(t_list* memorias) {
 }
 
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
+	pthread_mutex_lock(&mutexListaMemorias);
 	log_info(log_master->logInfo, "Obteniendo memoria para tabla %s con key: %d", nombreTabla, key);
 	infoTabla* tabla = obtenerTablaByNombretabla(nombreTabla);
 	t_consistencia criterio = tabla->consitencia;
@@ -239,7 +235,13 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	}
 
 	infoMemoria* memoriaObtenida = obtenerMemoriaSegunCriterio(criterio, key);
-	log_info(log_master->logInfo, "Memoria obtenida: %d", memoriaObtenida->id);
+	if (memoriaObtenida != NULL) {
+		log_info(log_master->logInfo, "Memoria obtenida: %d", memoriaObtenida->id);
+	} else {
+		log_error(log_master->logError, "No existe memoria para criterio %s", getConsistenciaCharByEnum(criterio));
+	}
+
+	pthread_mutex_unlock(&mutexListaMemorias);
 	return memoriaObtenida;
 
 }
@@ -247,19 +249,21 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 infoMemoria* obtenerMemoriaSegunCriterio(t_consistencia consistenciaDeTabla, int key) {
 	infoMemoria* memoriaCorrespondiente = NULL;
 	t_list* memoriasFiltradas = filterMemoriasByCriterio(consistenciaDeTabla);
+	if (!list_is_empty(memoriasFiltradas)) {
 
-	switch (consistenciaDeTabla) {
-	case STRONG:
-		memoriaCorrespondiente = list_get(memoriasFiltradas, 0);
-		break;
-	case STRONG_HASH:
-		memoriaCorrespondiente = list_get(memoriasFiltradas, funcionHash(memoriasFiltradas, key));
-		break;
-	case EVENTUAL:
-		memoriaCorrespondiente = obtenerMemoriaAlAzar(memoriasFiltradas);
-		break;
-	default:
-		log_error(log_master->logError, "Error: en obtenerMemoriaSegunCriterio");
+		switch (consistenciaDeTabla) {
+		case STRONG:
+			memoriaCorrespondiente = list_get(memoriasFiltradas, 0);
+			break;
+		case STRONG_HASH:
+			memoriaCorrespondiente = list_get(memoriasFiltradas, funcionHash(memoriasFiltradas, key));
+			break;
+		case EVENTUAL:
+			memoriaCorrespondiente = obtenerMemoriaAlAzar(memoriasFiltradas);
+			break;
+		default:
+			log_error(log_master->logError, "Error: en obtenerMemoriaSegunCriterio");
+		}
 	}
 	list_destroy(memoriasFiltradas);
 	return memoriaCorrespondiente;
@@ -376,16 +380,18 @@ int conocerMemorias() {
 		return TODO_OK;
 		//esto no es un OK un carajo pero basta de tirar errores
 	}
-
+	pthread_mutex_lock(&mutexListaMemorias);
 	while ((codRecibir = RecibirPaquete(socketMemoria, &paquete)) > 0) {
 
 		char** response = string_split(paquete.mensaje, " ");
 		infoMemoria* memoriaConocida = newInfoMemoria(response[0], atoi(response[1]), atoi(response[2]));
 		agregarMemoriaConocida(memoriaConocida);
-		log_info(log_master->logTrace, "Memoria Descubierta IP:%s PUERTO:%s MEMORY_NUMBER:%s", response[0], response[1], response[2]);
 		free(paquete.mensaje);
 		freePunteroAPunteros(response);
 	}
+	filtrarMemorias();
+	pthread_mutex_unlock(&mutexListaMemorias);
+	listarMemorias();
 	if (codRecibir < 0)
 		return SUPER_ERROR;
 	log_info(log_master->logTrace, "El tamaño de la listaMemorias es: %d", list_size(listaMemorias));
@@ -399,8 +405,7 @@ void agregarMemoriaConocida(infoMemoria* memoria) {
 	if (!list_any_satisfy(listaMemorias, (void*) findByNumber)) {
 		list_add(listaMemorias, memoria);
 	} else {
-		free(memoria->ip);
-		free(memoria);
+		freeInfoMemoria(memoria);
 	}
 }
 

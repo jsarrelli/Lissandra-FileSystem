@@ -31,6 +31,53 @@ void hardcodearInfoMemorias() {
 	list_add(listaMemorias, memoria7);
 
 }
+void filtrarMemorias() {
+	bool isMemoriaCaida(infoMemoria* memoria) {
+
+		int socket;
+		int i = 0;
+		do {
+			socket = ConectarAServidor(memoria->puerto, memoria->ip);
+			if (socket != -1) {
+				break;
+			}
+			usleep(10);
+			i++;
+		} while (i < 20);
+
+		bool caida;
+		if (socket == -1) {
+			log_error(log_master->logError, "Se cayo la memoria %s %d %d", memoria->ip, memoria->puerto, memoria->id);
+			caida = true;
+		} else {
+			caida = false;
+			close(socket);
+		}
+
+		return caida;
+	}
+	list_remove_and_destroy_by_condition(listaMemorias, (void*) isMemoriaCaida, (void*) freeInfoMemoria);
+
+	bool comparador(infoMemoria* memoria1, infoMemoria* memoria2) {
+		return memoria1->id < memoria2->id;
+	}
+	list_sort(listaMemorias, (void*) comparador);
+}
+
+void freeInfoMemoria(infoMemoria* memoria) {
+	free(memoria->ip);
+	free(memoria);
+}
+
+void listarMemorias() {
+	log_trace(log_master->logTrace, "Las memorias conocidas son:");
+
+	void mostrarMemoria(infoMemoria* memoria) {
+		log_trace(log_master->logTrace, "%d / %s / %d", memoria->id, memoria->ip, memoria->puerto);
+	}
+	list_iterate(listaMemorias, (void*) mostrarMemoria);
+
+}
 
 void imprimirCriterio(infoMemoria* infoMemoria) {
 

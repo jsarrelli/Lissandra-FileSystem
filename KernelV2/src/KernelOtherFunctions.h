@@ -28,4 +28,8 @@ void calcularMetrics();
 void copiarMetrics();
 void imprimirMetrics(t_metrics metrica);
 
+void freeInfoMemoria(infoMemoria* memoria);
+void filtrarMemorias();
+void listarMemorias();
+
 #endif /* KERNELOTHERFUNCTIONS_H_ */
