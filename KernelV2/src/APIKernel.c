@@ -77,33 +77,32 @@ int procesarInputKernel(char* linea) {
 	return TODO_OK;
 }
 
-int procesarAdd(int id, consistencia cons) {
-	bool condicionAdd(int id, infoMemoria* memoria) {
-		return id == memoria->id;
-	}
-	bool _esCondicionAdd(void* memoria) {
-		return condicionAdd(id, memoria);
-	}
-	infoMemoria* memoriaEncontrada = NULL;
-	if ((memoriaEncontrada = list_find(listaMemorias, (void*) _esCondicionAdd)) != NULL) {
-		asignarCriterioMemoria(memoriaEncontrada, cons);
+int procesarAdd(int id, t_consistencia consistencia) {
+int success = TODO_OK;
 
-		if (!(memoriaEncontrada->criterios)[3])
-			log_trace(log_master->logTrace, "Se ha asignado el criterio a la memoria correctammente");
+log_info(log_master->logInfo, "Asignando criterio %s a memoria: %d",getConsistenciaCharByEnum(consistencia),id);
+	bool byId(infoMemoria* memoria) {
+		return memoria->id == id;
+	}
+	infoMemoria* memoriaEncontrada = list_find(listaMemorias, (void*) byId);
+	if (memoriaEncontrada!=NULL) {
+		success = asignarCriterioMemoria(memoriaEncontrada, consistencia);
 
-		imprimirCriterio(memoriaEncontrada->criterios);
-		log_trace(log_master->logTrace, "El id de esta memoria es: %d", memoriaEncontrada->id);
+		if (success == TODO_OK) {
+			log_trace(log_master->logTrace, "Criterio asignado exitosamente");
+			imprimirCriterio(memoriaEncontrada);
+		}
+
 	} else {
 		log_error(log_master->logError, "Problemas con el comando ADD: No se pudo encontrar la memoria");
-		log_error(log_master->logError, "Posible listaMemorias vacia");
 		return SUPER_ERROR;
 	}
-	return TODO_OK;
+	return success;
 }
 
 int consolaAdd(char*argumento) {
 	char** valores = string_split(argumento, " ");
-	consistencia cons = procesarConsistencia(valores[3]);
+	t_consistencia cons = getConsistenciaByChar(valores[3]);
 
 	int id = atoi(valores[1]);
 	if (procesarAdd(id, cons) == SUPER_ERROR) {
@@ -269,7 +268,7 @@ int enviarInfoMemoria(int socketMemoria, char* request, t_protocolo protocolo, P
 }
 
 int enviarCREATE(int cantParticiones, int tiempoCompactacion, char* nombreTabla, char* consistenciaChar, infoMemoria* memoria) {
-	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
+	log_info(log_master->logInfo, "Intenando conectarse a memoria %d..",memoria->id);
 	int socketMemoria = ConectarAServidorPlus(memoria->puerto, memoria->ip);
 
 	if (socketMemoria > 0) {
@@ -305,11 +304,11 @@ int consolaJournal() {
 
 	}
 
-	bool _tieneCriterio(void* memoria) {
-		return memoriaTieneALgunCriterio(memoria);
+	bool _tieneCriterio(infoMemoria* memoria) {
+		return !list_is_empty(memoria->criterios);
 	}
 
-	t_list* listaMemoriasConCriterio = list_filter(listaMemorias, _tieneCriterio);
+	t_list* listaMemoriasConCriterio = list_filter(listaMemorias, (void*)_tieneCriterio);
 	if (listaMemoriasConCriterio != NULL)
 		list_iterate(listaMemoriasConCriterio, (void*) journalMemoria);
 	else {
@@ -332,61 +331,44 @@ int consolaCreate(char*argumentos) {
 			"El nombre de la tabla es: %s, la consistencia es: %s, la cantParticiones:%d, y el tiempoCompactacion es: %d", nombreTabla,
 			consistenciaChar, cantParticiones, tiempoCompactacion);
 
-	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzar(listaMemorias);
+	int success = TODO_OK;
 
 	if (enviarCREATE(cantParticiones, tiempoCompactacion, nombreTabla, consistenciaChar, memoriaAlAzar) == SUPER_ERROR) {
-		log_info(log_master->logInfo, "ERROR AL ENVIAR EL CREATE");
-		return SUPER_ERROR;
+		log_error(log_master->logError, "ERROR AL ENVIAR EL CREATE");
+		success = SUPER_ERROR;
 	} else {
-		log_info(log_master->logInfo, "Esperando para deserializar metadata CREATE");
-		metadataTabla* metaData = deserealizarMetadata(argumentos);
-		agregarTabla(metaData);
+
+		infoTabla* infoTabla = newInfoTabla(nombreTabla, getConsistenciaByChar(valores[1]));
+		agregarTabla(infoTabla);
 	}
 
 	freePunteroAPunteros(valores);
 	free(argumentoAux);
 
-	return TODO_OK;
+	return success;
 
 }
 
-metadataTabla* deserealizarMetadata(char* metadataSerializada) {
-	char* mensaje = string_duplicate(metadataSerializada);
-	char** datos = string_split(mensaje, " ");
-	char* nombreTabla = string_duplicate(datos[0]);
+infoTabla* newInfoTabla(char* nombreTabla, t_consistencia consistencia) {
 
-	consistencia consistencia = getConsitenciaFromChar(datos[1]);
-	int cantParticiones = atoi(datos[2]);
-	int tiempoCompactacion = atoi(datos[3]);
-	metadataTabla* metadata = newMetadata(nombreTabla, consistencia, cantParticiones, tiempoCompactacion);
-
-	freePunteroAPunteros(datos);
-	free(nombreTabla);
-	free(mensaje);
-	return metadata;
-
-}
-
-consistencia getConsitenciaFromChar(char* consistenciaChar) {
-	if (strcmp(consistenciaChar, "SC") == 0) {
-		return SC;
-	} else if (strcmp(consistenciaChar, "SHC") == 0) {
-		return SHC;
-	} else {
-		return EC;
-	}
-}
-
-metadataTabla* newMetadata(char* nombreTabla, consistencia consistencia, int cantParticiones, int tiempoCompactacion) {
-
-	metadataTabla* tabla = malloc(sizeof(metadataTabla));
-	tabla->consistencia = consistencia;
-	tabla->nParticiones = cantParticiones;
+	infoTabla* tabla = malloc(sizeof(infoTabla));
 	tabla->nombreTabla = string_duplicate(nombreTabla);
+	tabla->consitencia = consistencia;
 
 	return tabla;
 }
 
+infoTabla* deserealizarInfoTabla(char* tablaSerializada) {
+	char** valores = string_split(tablaSerializada, " ");
+
+	log_trace(log_master->logTrace, "Tabla:%s / Consistencia:%s / Cant. Particiones:%s / Tiempo Compactacion:%s", valores[0], valores[1],
+			valores[2], valores[3]);
+
+	infoTabla* infoTabla = newInfoTabla(valores[0], getConsistenciaByChar(valores[1]));
+	freePunteroAPunteros(valores);
+	return infoTabla;
+}
 int procesarDescribeAll(int socketMemoria) {
 	log_info(log_master->logInfo, "Se pide la metadata de todos las tablas");
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, DESCRIBE_ALL);
@@ -402,15 +384,12 @@ int procesarDescribeAll(int socketMemoria) {
 			char** tablasSerializadas = string_split(response, "/");
 			int i = 0;
 			while (tablasSerializadas[i] != NULL) {
-				char* tablasSerializada = string_duplicate(tablasSerializadas[i]);
-				metadataTabla * metadata = deserealizarMetadata(tablasSerializada);
+				char* tablaSerializada = string_duplicate(tablasSerializadas[i]);
 
-				log_trace(log_master->logTrace, "Tabla:%s.  Consistencia:%d  Cant. Particiones: %d", metadata->nombreTabla,
-						metadata->consistencia, metadata->nParticiones);
+				infoTabla* infoTabla = deserealizarInfoTabla(tablaSerializada);
+				agregarTabla(infoTabla);
 
-				agregarTabla(metadata);
-
-				free(tablasSerializada);
+				free(tablaSerializada);
 				i++;
 			}
 			freePunteroAPunteros(tablasSerializadas);
@@ -423,7 +402,7 @@ int procesarDescribeAll(int socketMemoria) {
 		log_error(log_master->logError, "ERROR PROCESAR DESCRIBE ALL..");
 	}
 
-	log_info(log_master->logInfo, "Tam de listaMetadataTabla: %d", list_size(listaMetadataTabla));
+	log_info(log_master->logInfo, "Tam de listaMetadataTabla: %d", list_size(listaInfoTablas));
 	return succes;
 }
 
@@ -440,9 +419,9 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 		log_trace(log_master->logTrace, "La tabla no existe");
 
 	} else {
-		log_info(log_master->logInfo, "Deserializar metadata procesar describe...");
-		metadataTabla* metadataRecibida = deserealizarMetadata(paquete.mensaje);
-		agregarTabla(metadataRecibida);
+		log_info(log_master->logInfo, "Deserializando metadata procesar describe...");
+		infoTabla* infoTabla = deserealizarInfoTabla(paquete.mensaje);
+		agregarTabla(infoTabla);
 	}
 	free(paquete.mensaje);
 	return TODO_OK;
@@ -454,7 +433,7 @@ int consolaDescribe(char*nombreTabla) {
 	int socketMemoria;
 	while (true) {
 
-		infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+		infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzar(listaMemorias);
 		log_info(log_master->logInfo, "Intentando conectarse a memoria: %d/%s/%d..", memoriaAlAzar->id, memoriaAlAzar->ip,
 				memoriaAlAzar->puerto);
 		socketMemoria = ConectarAServidor(memoriaAlAzar->puerto, memoriaAlAzar->ip);
@@ -477,38 +456,22 @@ int consolaDescribe(char*nombreTabla) {
 	}
 
 	close(socketMemoria);
-	return TODO_OK;
+	return success;
 }
 
-void agregarTabla(metadataTabla* tabla) {
-	bool findByNombre(metadataTabla* tablaActual) {
+void agregarTabla(infoTabla* tabla) {
+	bool findByNombre(infoTabla* tablaActual) {
 		return strcmp(tabla->nombreTabla, tablaActual->nombreTabla) == 0;
 	}
 
-	if (!list_any_satisfy(listaMetadataTabla, (void*) findByNombre)) {
-		list_add(listaMetadataTabla, tabla);
+	if (!list_any_satisfy(listaInfoTablas, (void*) findByNombre)) {
+		list_add(listaInfoTablas, tabla);
+		log_info(log_master->logInfo, "Tabla %s agregada al sistema", tabla->nombreTabla);
 	} else {
 		free(tabla->nombreTabla);
 		free(tabla);
 	}
 
-}
-
-void mostrarMetadata(metadataTabla* metadataTabla) {
-
-	log_info(log_master->logInfo, "Segmento: %s", metadataTabla->nombreTabla);
-	log_info(log_master->logInfo, "Consistencia: %s / cantParticiones: %d ", consistenciaToChar(metadataTabla->consistencia),
-			metadataTabla->nParticiones);
-}
-
-char* consistenciaToChar(consistencia consistencia) {
-	if (consistencia == SC) {
-		return "SC";
-	} else if (consistencia == SHC) {
-		return "SHC";
-	} else {
-		return "EC";
-	}
 }
 
 int consolaDrop(char*nombreTabla) {
@@ -519,7 +482,7 @@ int consolaDrop(char*nombreTabla) {
 		return SUPER_ERROR;
 	}
 
-	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzarParaFunciones();
+	infoMemoria* memoriaAlAzar = obtenerMemoriaAlAzar(listaMemorias);
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAlAzar->puerto, memoriaAlAzar->ip);
 	if (socketMemoria < 0) {
@@ -535,10 +498,10 @@ int consolaDrop(char*nombreTabla) {
 			return SUPER_ERROR;
 		} else {
 
-			bool findByNombre(metadataTabla* tablaActual) {
+			bool findByNombre(infoTabla* tablaActual) {
 				return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
 			}
-			list_remove_and_destroy_by_condition(listaMetadataTabla, (void*) findByNombre, (void*) freeMetadata);
+			list_remove_and_destroy_by_condition(listaInfoTablas, (void*) findByNombre, (void*) freeInfoTabla);
 		}
 
 	}
@@ -546,7 +509,7 @@ int consolaDrop(char*nombreTabla) {
 	return TODO_OK;
 }
 
-void freeMetadata(metadataTabla* tabla) {
+void freeInfoTabla(infoTabla* tabla) {
 	if (tabla != NULL) {
 		free(tabla->nombreTabla);
 		free(tabla);

@@ -15,13 +15,9 @@
  *
  * Pero que son propias del Kernel
  */
-
-consistencia procesarConsistencia(char* palabra);
-bool verificarCriterio(bool* criterio, consistencia ccia);
 void hardcodearInfoMemorias();
-void imprimirCriterio(bool* criterio);
+void imprimirCriterio(infoMemoria* infoMemoria);
 bool instruccionSeaSalir(char* operacion);
-void hardcodearListaMetadataTabla();
 int contarLineasArchivo(FILE* fichero, char* path);
 void destruirArraySemaforos();
 int instruccionSeaMetrics(char* operacion);
@@ -31,6 +27,5 @@ void reiniciarMetrics(t_metrics* metrica);
 void calcularMetrics();
 void copiarMetrics();
 void imprimirMetrics(t_metrics metrica);
-bool memoriaTieneALgunCriterio(infoMemoria* memoria);
 
 #endif /* KERNELOTHERFUNCTIONS_H_ */

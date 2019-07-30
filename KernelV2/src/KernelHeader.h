@@ -46,17 +46,11 @@
  * 				Esto tiene sentido ya que el salir se encarga de guiar a los procesadores a cerrarse definitivamente
  */
 
-
 // Estructuras de datos
-
 typedef struct {
 	int contadorRequests;
 	t_list* script;
 } procExec;
-
-typedef enum {
-	SC, SHC, EC, ERROR_CONSISTENCIA // Para manejo de errores
-} consistencia;
 
 typedef struct {
 	int id;
@@ -65,16 +59,15 @@ typedef struct {
 	// Ignorando el comando Metrics y obviamente Select e Insert:
 	int cantSelectsEjecutados;
 	int cantInsertEjecutados;
-	bool criterios[4];	// Considero un caso de error para que se muestre por pantalla
+	t_list* criterios;
 // La memoria en si no conoce que criterio tiene, solo el Kernel lo sabe para saber a donde mandar la informacion
 	double memoryLoadUnaMemoria; // Para las metricas
 } infoMemoria;
 
 typedef struct {
-	char*nombreTabla;
-	consistencia consistencia;
-	int nParticiones;
-} metadataTabla;
+	char* nombreTabla;
+	t_consistencia consitencia;
+} infoTabla;
 
 typedef struct {
 	char* IP_MEMORIA;
@@ -111,7 +104,7 @@ typedef struct {
 t_config *kernelConfig;
 t_queue* colaReady;
 t_list* listaHilos;
-t_list* listaMetadataTabla;
+t_list* listaInfoTablas;
 t_list* listaMemorias;
 t_config_kernel *config;
 //int quantum;
@@ -137,7 +130,6 @@ sem_t cantProcesosColaReady;
 sem_t semMetricas;
 //sem_t* arraySemaforos; // Borrar
 logStruct* log_master;
-bool haySC;
 bool puedeHaberRequests;
 bool hayMetricas;
 t_metrics metricas;
@@ -161,21 +153,21 @@ infoMemoria* newInfoMemoria(char* ip, int puert, int id);
 void destruirProceso(procExec* proceso);
 void deNewAReady(procExec* proceso);
 void deReadyAExec();
-void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons);
-infoMemoria* obtenerMemoriaAlAzarParaFunciones();
 void agregarRequestAlProceso(procExec* proceso, char* operacion);
 void* iniciarMultiprocesamiento(void*args);
 //void* funcionThread(void* args);
 void inicializarLogStruct();
 int funcionHash(t_list* memoriasEncontradas, int key);
-infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key);
-infoMemoria* resolverAlAzar(t_list* memoriasEncontradas);
 infoMemoria* obtenerMemoria(char* nombreTabla, int key);
-consistencia obtenerConsistenciaDe(char* nombreTabla);
-infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key);
 void destruirListaMemorias();
 
 void freeConfigKernel();
 void agregarMemoriaConocida(infoMemoria* memoria);
+int asignarCriterioMemoria(infoMemoria* memoria, t_consistencia consistencia);
+
+t_list* filterMemoriasByCriterio(t_consistencia criterio);
+infoTabla* obtenerTablaByNombretabla(char* nombreTabla);
+infoMemoria* obtenerMemoriaSegunCriterio(t_consistencia consistenciaDeTabla, int key);
+bool haySC();
 
 #endif /* KERNELHEADER_H_ */

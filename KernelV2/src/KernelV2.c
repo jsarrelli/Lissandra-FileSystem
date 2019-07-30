@@ -38,7 +38,6 @@ void iniciarVariablesKernel() {
 	sem_init(&cantProcesosColaReady, 0, 0);
 	sem_init(&semMetricas, 0, 1);
 
-	haySC = false;
 	hayMetricas = false;
 	puedeHaberRequests = true;
 	idMemoria = 1;
@@ -50,7 +49,7 @@ void iniciarVariablesKernel() {
 	listaMemorias = list_create();
 
 	//hardcodearInfoMemorias();
-	listaMetadataTabla = list_create();
+	listaInfoTablas = list_create();
 	//hardcodearListaMetadataTabla();
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
 	multiprocesamientoUsado = 0;

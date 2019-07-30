@@ -116,7 +116,7 @@ int obtenerMemoriaSegunTablaYKey(int key, char* nombreTabla, t_protocolo protoco
 			(memoriaAEnviar->cantInsertEjecutados)++;
 		}
 
-		imprimirCriterio(memoriaAEnviar->criterios);
+		imprimirCriterio(memoriaAEnviar);
 		log_info(log_master->logInfo, "Id de la memoria: %d", memoriaAEnviar->id);
 	} else {
 		log_error(log_master->logError, "Error: no existe memoria con ese criterio o todavia no hay memorias con el criterio de la tabla");
@@ -223,97 +223,76 @@ void inicializarLogStruct() {
 	log_master->logTrace = log_create((char*) TRACE_KERNEL, "Kernel Trace Logs", 1, LOG_LEVEL_TRACE);
 }
 
-infoMemoria* obtenerMemoriaAlAzar() {
-	int numeroAleatorio = rand() % list_size(listaMemorias);
-	return list_get(listaMemorias, numeroAleatorio);
-}
-
-infoMemoria* obtenerMemoriaAlAzarParaFunciones() {
-	infoMemoria* memoriaAlAzar = NULL;
-
-	memoriaAlAzar = obtenerMemoriaAlAzar();
-	log_info(log_master->logInfo, "El id de la memoria obtenida es: %d", memoriaAlAzar->id);
-
-	return memoriaAlAzar;
+infoMemoria* obtenerMemoriaAlAzar(t_list* memorias) {
+	int numeroAleatorio = rand() % list_size(memorias);
+	return list_get(memorias, numeroAleatorio);
 }
 
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
-	consistencia consistenciaDeTabla = obtenerConsistenciaDe(nombreTabla);
+	infoTabla* tabla = obtenerTablaByNombretabla(nombreTabla);
+	t_consistencia criterio = tabla->consitencia;
 
-	if (consistenciaDeTabla == ERROR_CONSISTENCIA) {
-		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe o error en la consistencia");
+	if (tabla == NULL) {
+		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe");
 		return NULL;
 	}
 
-	return obtenerMemoriaSegunConsistencia(consistenciaDeTabla, key);
+	return obtenerMemoriaSegunCriterio(criterio, key);
 }
 
-consistencia obtenerConsistenciaDe(char* nombreTabla) {
-	bool findByName(metadataTabla* tabla) {
-		return strcmp(tabla->nombreTabla, nombreTabla) == 0;
-	}
-
-	metadataTabla* tabla = list_find(listaMetadataTabla, (void*) findByName);
-
-	if (tabla == NULL)
-		return ERROR_CONSISTENCIA;
-
-	return tabla->consistencia;
-}
-
-infoMemoria* obtenerMemoriaSegunConsistencia(consistencia consistenciaDeTabla, int key) {
-	t_list* memoriasEncontradas = NULL;
-	infoMemoria* memoriaPosta = NULL;
-
-	bool _condicion(infoMemoria*memoria, consistencia cons) {
-		return verificarCriterio(memoria->criterios, cons);
-	}
-	bool condicionParaEncontrarMemorias(void* memoria) {
-		return _condicion(memoria, consistenciaDeTabla);
-	}
-	memoriasEncontradas = list_filter(listaMemorias, condicionParaEncontrarMemorias);
+infoMemoria* obtenerMemoriaSegunCriterio(t_consistencia consistenciaDeTabla, int key) {
+	infoMemoria* memoriaCorrespondiente = NULL;
+	t_list* memoriasFiltradas = filterMemoriasByCriterio(consistenciaDeTabla);
 
 	switch (consistenciaDeTabla) {
-	case SC:
-		memoriaPosta = list_get(memoriasEncontradas, 0);
+	case STRONG:
+		memoriaCorrespondiente = list_get(memoriasFiltradas, 0);
 		break;
-	case SHC:
-		memoriaPosta = resolverUsandoFuncionHash(memoriasEncontradas, key);
+	case STRONG_HASH:
+		memoriaCorrespondiente = list_get(memoriasFiltradas, funcionHash(memoriasFiltradas, key));
 		break;
-	case EC:
-		memoriaPosta = resolverAlAzar(memoriasEncontradas);
+	case EVENTUAL:
+		memoriaCorrespondiente = obtenerMemoriaAlAzar(memoriasFiltradas);
 		break;
 	default:
-		log_error(log_master->logError, "Error: en obtenerMemoriaSegunConsistencia");
+		log_error(log_master->logError, "Error: en obtenerMemoriaSegunCriterio");
 	}
-	list_destroy(memoriasEncontradas);
-	return memoriaPosta;
+	list_destroy(memoriasFiltradas);
+	return memoriaCorrespondiente;
 
 }
 
-infoMemoria* resolverUsandoFuncionHash(t_list* memoriasEncontradas, int key) {
-	int posicionMemoria = funcionHash(memoriasEncontradas, key);
-	return list_get(memoriasEncontradas, posicionMemoria);
-}
-
-int funcionHash(t_list* memoriasEncontradas, int key) {
-	int size = list_size(memoriasEncontradas);
+int funcionHash(t_list* memoriasSHC, int key) {
+	int size = list_size(memoriasSHC);
 	return key % size;
 }
 
-infoMemoria* resolverAlAzar(t_list* memoriasEncontradas) {
-	int randomNumber = rand() % list_size(memoriasEncontradas);
+infoTabla* obtenerTablaByNombretabla(char* nombreTabla) {
 
-	return list_get(memoriasEncontradas, randomNumber);
+	bool byName(infoTabla* tablaActual) {
+		return strcmp(nombreTabla, tablaActual->nombreTabla) == 0;
+	}
+	return list_find(listaInfoTablas, (void*) byName);
+}
+
+t_list* filterMemoriasByCriterio(t_consistencia criterioBuscado) {
+
+	bool byCriterio(infoMemoria* memoriaActual) {
+		bool isCriterioBuscado(t_consistencia criterioActual){
+			return criterioActual==criterioBuscado;
+		}
+
+		return list_any_satisfy(memoriaActual->criterios, (void*)isCriterioBuscado);
+	}
+
+	return list_filter(listaMemorias, (void*) byCriterio);
 }
 
 infoMemoria* newInfoMemoria(char* ip, int puerto, int id) {
 	infoMemoria* memoria = malloc(sizeof(infoMemoria));
 	memoria->id = idMemoria;
 	idMemoria++;
-	for (int i = 0; i < 4; i++) {
-		(memoria->criterios)[i] = false;
-	}
+	memoria->criterios = list_create();
 	memoria->ip = string_duplicate(ip);
 	memoria->cantInsertEjecutados = 0;
 	memoria->cantSelectsEjecutados = 0;
@@ -323,16 +302,41 @@ infoMemoria* newInfoMemoria(char* ip, int puerto, int id) {
 	return memoria;
 }
 
-void asignarCriterioMemoria(infoMemoria* memoria, consistencia cons) {
-	if (!haySC && cons == SC) {
-		(memoria->criterios)[0] = true;
-		haySC = true;
-	} else if (cons == SHC)
-		(memoria->criterios)[1] = true;
-	else if (cons == EC)
-		(memoria->criterios)[2] = true;
-	else if ((haySC && cons == SC) || cons == ERROR_CONSISTENCIA)
-		(memoria->criterios)[3] = true;
+int asignarCriterioMemoria(infoMemoria* memoria, t_consistencia consistencia) {
+
+	int succcess = SUPER_ERROR;
+	bool mismoCriterio(t_consistencia criterio) {
+		return criterio == consistencia;
+	}
+	if (list_any_satisfy(memoria->criterios, (void*) mismoCriterio)) {
+		log_error(log_master->logError, "La memoria %d ya tiene asignado el criterio %s", memoria->id,
+				getConsistenciaCharByEnum(consistencia));
+	} else if (consistencia == STRONG && haySC()) {
+		log_error(log_master->logError, "Ya existe otra memoria SC");
+	} else {
+		list_add(memoria->criterios, (void*) consistencia);
+		succcess = TODO_OK;
+	}
+	return succcess;
+}
+
+bool haySC() {
+	bool response = false;
+
+	void findSC(infoMemoria* memoria) {
+
+		bool isSC(t_consistencia criterio) {
+			return criterio == STRONG;
+		}
+
+		if (list_any_satisfy(memoria->criterios, (void*) isSC)) {
+			response = true;
+		}
+
+	}
+	list_iterate(listaMemorias, (void*) findSC);
+
+	return response;
 }
 
 void destruirInfoMemoria(infoMemoria* memoria) {
