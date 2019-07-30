@@ -68,8 +68,6 @@ int procesarInputKernel(char* linea) {
 			freePunteroAPunteros(comandos);
 			return SUPER_ERROR;
 		}
-	} else if (strcmp(operacion, "SALIR") == 0) {
-		consolaSalir(argumentos);
 	} else {
 		log_error(log_master->logError, "El comando no es el correcto. Por favor intente nuevamente");
 	}
