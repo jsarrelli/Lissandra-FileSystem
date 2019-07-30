@@ -35,7 +35,7 @@ void procesarAccion(int socketMemoria) {
 	Paquete paquete;
 
 	if (RecibirPaquete(socketMemoria, &paquete) > 0) {
-		log_info(loggerInfo, "Request de memoria recibida: %s",paquete.mensaje);
+		log_info(loggerInfo, "Request de memoria recibida: %s", paquete.mensaje);
 		usleep(config->RETARDO * 1000);
 		if (paquete.header.quienEnvia == MEMORIA) {
 			usleep(config->RETARDO * 1000);
@@ -164,13 +164,13 @@ void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {
 	log_info(loggerInfo, "Procesando DESCRIBE:  %s", nombreTabla);
 	if (existeTabla(nombreTabla)) {
 		t_metadata_tabla metadata = funcionDESCRIBE(nombreTabla);
-		char respuesta[100];
-		sprintf(respuesta, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA), metadata.CANT_PARTICIONES,
-				metadata.T_COMPACTACION);
-		EnviarDatosTipo(socketMemoria, FILESYSTEM, respuesta, strlen(respuesta) + 1, DESCRIBE);
-		return;
+		char* response = string_new();
+		string_append_with_format(&response, "%s %s %d %d", nombreTabla, getConsistenciaCharByEnum(metadata.CONSISTENCIA),
+				metadata.CANT_PARTICIONES, metadata.T_COMPACTACION);
+		EnviarDatosTipo(socketMemoria, FILESYSTEM, response, strlen(response) + 1, DESCRIBE);
+	} else {
+		enviarSuccess(-1, DESCRIBE, socketMemoria);
 	}
-	enviarSuccess(1, DESCRIBE, socketMemoria);
 
 }
 

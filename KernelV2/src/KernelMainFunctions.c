@@ -229,6 +229,7 @@ infoMemoria* obtenerMemoriaAlAzar(t_list* memorias) {
 }
 
 infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
+	log_info(log_master->logInfo, "Obteniendo memoria para tabla %s con key: %d", nombreTabla, key);
 	infoTabla* tabla = obtenerTablaByNombretabla(nombreTabla);
 	t_consistencia criterio = tabla->consitencia;
 
@@ -237,7 +238,10 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 		return NULL;
 	}
 
-	return obtenerMemoriaSegunCriterio(criterio, key);
+	infoMemoria* memoriaObtenida = obtenerMemoriaSegunCriterio(criterio, key);
+	log_info(log_master->logInfo, "Memoria obtenida: %d", memoriaObtenida->id);
+	return memoriaObtenida;
+
 }
 
 infoMemoria* obtenerMemoriaSegunCriterio(t_consistencia consistenciaDeTabla, int key) {
@@ -278,11 +282,11 @@ infoTabla* obtenerTablaByNombretabla(char* nombreTabla) {
 t_list* filterMemoriasByCriterio(t_consistencia criterioBuscado) {
 
 	bool byCriterio(infoMemoria* memoriaActual) {
-		bool isCriterioBuscado(t_consistencia criterioActual){
-			return criterioActual==criterioBuscado;
+		bool isCriterioBuscado(t_consistencia criterioActual) {
+			return criterioActual == criterioBuscado;
 		}
 
-		return list_any_satisfy(memoriaActual->criterios, (void*)isCriterioBuscado);
+		return list_any_satisfy(memoriaActual->criterios, (void*) isCriterioBuscado);
 	}
 
 	return list_filter(listaMemorias, (void*) byCriterio);

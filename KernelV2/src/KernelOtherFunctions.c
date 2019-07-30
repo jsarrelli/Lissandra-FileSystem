@@ -37,7 +37,7 @@ void imprimirCriterio(infoMemoria* infoMemoria) {
 	char* criterios = string_new();
 
 	void concatenarCriterios(t_consistencia consistencia) {
-		string_append_with_format(&criterios, "%s/ ", getConsistenciaCharByEnum(consistencia));
+		string_append_with_format(&criterios, "%s ", getConsistenciaCharByEnum(consistencia));
 	}
 	list_iterate(infoMemoria->criterios, (void*) concatenarCriterios);
 	log_info(log_master->logInfo, "La memoria %d tiene criterios %s", infoMemoria->id, criterios);

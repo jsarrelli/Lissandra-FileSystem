@@ -136,7 +136,7 @@ void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
 		EnviarDatosTipo(socketKernel, FILESYSTEM, response, strlen(response) + 1, DESCRIBE);
 		free(metaData);
 	} else {
-		enviarSuccess(1, DESCRIBE, socketKernel);
+		enviarSuccess(-1, DESCRIBE, socketKernel);
 	}
 
 }

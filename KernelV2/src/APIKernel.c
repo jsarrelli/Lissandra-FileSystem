@@ -415,8 +415,8 @@ int procesarDescribe(int socketMemoria, char* nombreTabla) {
 	if (RecibirPaqueteCliente(socketMemoria, MEMORIA, &paquete) <= 0) {
 		log_error(log_master->logError, "Error recibir paquete procesar describe");
 		return SUPER_ERROR;
-	} else if (atoi(paquete.mensaje) == 1) {
-		log_trace(log_master->logTrace, "La tabla no existe");
+	} else if (atoi(paquete.mensaje) == -1) {
+		log_error(log_master->logError, "La tabla %S no existe",nombreTabla);
 
 	} else {
 		log_info(log_master->logInfo, "Deserializando metadata procesar describe...");
