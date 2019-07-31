@@ -66,6 +66,7 @@ void filtrarMemorias() {
 
 void freeInfoMemoria(infoMemoria* memoria) {
 	free(memoria->ip);
+	list_destroy(memoria->criterios);
 	free(memoria);
 }
 
