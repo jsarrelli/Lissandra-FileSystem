@@ -13,7 +13,6 @@ void compactarTabla(char*nombreTabla) {
 
 	pthread_mutex_lock(&mutexCompactacion);
 
-
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
@@ -259,7 +258,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char* rutaBloque = armarRutaBloque(bloque);
 
 		int sizeOfBloque = getSizeOfFile(rutaBloque);
-		if(sizeOfBloque ==-1){
+		if (sizeOfBloque == -1) {
 			log_error(loggerError, "No se pudo obtener el tamanio del archivo %s", rutaBloque);
 			return;
 		}
@@ -270,13 +269,23 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 			return;
 		}
 
-
 		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
-		char* contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
+		int intentos = 0;
+		char* contenidoBloque = NULL;
+		do {
+			contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
+			if (contenidoBloque != MAP_FAILED) {
+				break;
+			}
+			intentos++;
+			log_error(loggerError, "BOOM Bloque %d", bloque);
+			sleep(2);
+
+		} while (intentos < 5);
 
 		if (contenidoBloque == MAP_FAILED) {
-			log_error(loggerError, "BOOM Bloque %d", bloque);
-			error=true;
+
+			error = true;
 
 		} else if (!string_is_empty(contenidoBloque)) {
 
@@ -290,7 +299,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
 
-	if (!string_is_empty(contenidoBloques)&& !error) {
+	if (!string_is_empty(contenidoBloques) && !error) {
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
@@ -424,5 +433,4 @@ void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
 	free(nombreTablaAux);
 
 }
-
 
