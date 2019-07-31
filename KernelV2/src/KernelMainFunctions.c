@@ -353,9 +353,10 @@ void crearProcesoYMandarloAReady(char* operacion) {
 
 int conocerMemorias() {
 
-	int socketMemoria = ConectarAServidorPlus(config->PUERTO_MEMORIA, config->IP_MEMORIA);
-	if (socketMemoria == -1) {
-		return SUPER_ERROR;
+	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
+	while (socketMemoria == -1) {
+		infoMemoria* memoria = obtenerMemoriaAlAzar(listaMemorias);
+		socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
 	}
 
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, TABLA_GOSSIPING);
