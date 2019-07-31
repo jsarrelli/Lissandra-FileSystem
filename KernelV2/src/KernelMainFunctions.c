@@ -331,7 +331,9 @@ int asignarCriterioMemoria(infoMemoria* memoria, t_consistencia consistencia) {
 
 bool haySC() {
 	t_list* listaAux = filterMemoriasByCriterio(STRONG);
-	return !list_is_empty(listaAux);
+	bool result = !list_is_empty(listaAux);
+	list_destroy(listaAux);
+	return result;
 }
 
 void destruirInfoMemoria(infoMemoria* memoria) {
