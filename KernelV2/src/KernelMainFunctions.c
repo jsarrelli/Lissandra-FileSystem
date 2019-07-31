@@ -230,6 +230,7 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 
 	if (tabla == NULL) {
 		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe");
+		pthread_mutex_unlock(&mutexListaMemorias);
 		return NULL;
 	}
 
