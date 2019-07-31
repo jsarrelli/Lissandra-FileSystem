@@ -119,11 +119,10 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 }
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla) {
-
+	pthread_mutex_lock(&mutexObtenerMetadata);
 	log_info(loggerInfo, "Obtentiendo Metadata de %s..", nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
 	string_append(&rutaTabla, "Metadata.txt");
-	pthread_mutex_lock(&mutexObtenerMetadata);
 	t_config* configMetadata = config_create(rutaTabla);
 	t_metadata_tabla metadataTabla;
 	if (config_has_property(configMetadata, "CONSISTENCIA")) {
