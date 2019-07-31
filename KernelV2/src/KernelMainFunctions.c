@@ -108,14 +108,14 @@ int cantidadParametros(char ** palabras) {
 
 int actualizarMetricasDeMemoria(int key, char* nombreTabla, t_protocolo protocolo, infoMemoria* memoriaAEnviar) {
 
-		if (protocolo == SELECT) {
-			(memoriaAEnviar->cantSelectsEjecutados)++;
-		}
-		if (protocolo == INSERT) {
-			(memoriaAEnviar->cantInsertEjecutados)++;
-		}
+	if (protocolo == SELECT) {
+		(memoriaAEnviar->cantSelectsEjecutados)++;
+	}
+	if (protocolo == INSERT) {
+		(memoriaAEnviar->cantInsertEjecutados)++;
+	}
 
-		imprimirCriterio(memoriaAEnviar);
+	imprimirCriterio(memoriaAEnviar);
 
 	return TODO_OK;
 }
@@ -227,13 +227,13 @@ infoMemoria* obtenerMemoria(char* nombreTabla, int key) {
 	pthread_mutex_lock(&mutexListaMemorias);
 	log_info(log_master->logInfo, "Obteniendo memoria para tabla %s con key: %d", nombreTabla, key);
 	infoTabla* tabla = obtenerTablaByNombretabla(nombreTabla);
-	t_consistencia criterio = tabla->consitencia;
 
 	if (tabla == NULL) {
 		log_error(log_master->logError, "Error al obtener la consistencia: tabla no existe");
 		return NULL;
 	}
 
+	t_consistencia criterio = tabla->consitencia;
 	infoMemoria* memoriaObtenida = obtenerMemoriaSegunCriterio(criterio, key);
 	if (memoriaObtenida != NULL) {
 		log_info(log_master->logInfo, "Memoria obtenida: %d", memoriaObtenida->id);
@@ -329,22 +329,8 @@ int asignarCriterioMemoria(infoMemoria* memoria, t_consistencia consistencia) {
 }
 
 bool haySC() {
-	bool response = false;
-
-	void findSC(infoMemoria* memoria) {
-
-		bool isSC(t_consistencia criterio) {
-			return criterio == STRONG;
-		}
-
-		if (list_any_satisfy(memoria->criterios, (void*) isSC)) {
-			response = true;
-		}
-
-	}
-	list_iterate(listaMemorias, (void*) findSC);
-
-	return response;
+	t_list* listaAux = filterMemoriasByCriterio(STRONG);
+	return !list_is_empty(listaAux);
 }
 
 void destruirInfoMemoria(infoMemoria* memoria) {
