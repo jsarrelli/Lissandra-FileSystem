@@ -242,7 +242,7 @@ void removerArchivosDeTabla(char * nombreTabla) {
 }
 
 int liberarBloquesDeArchivo(char *rutaArchivo) {
-
+	log_info(loggerInfo, "Borrando y liberando bloques de %s", rutaArchivo);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	int result = leerArchivoDeTabla(rutaArchivo, archivo);
 	if (result < 0) {
@@ -255,10 +255,7 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 	}
 	list_iterate(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
 	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
-	list_destroy(archivo->BLOQUES);
-
-
-
+	log_info(loggerInfo, "Bloques de %s liberados", rutaArchivo);
 	escribirArchivo(rutaArchivo, archivo);
 	freeArchivo(archivo);
 	return 1;
