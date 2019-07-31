@@ -242,7 +242,7 @@ void removerArchivosDeTabla(char * nombreTabla) {
 }
 
 int liberarBloquesDeArchivo(char *rutaArchivo) {
-
+	pthread_mutex_lock(&mutexBitarray);
 	log_info(loggerInfo, "Borrando y liberando bloques de %s", rutaArchivo);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	int result = leerArchivoDeTabla(rutaArchivo, archivo);
@@ -254,7 +254,6 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 		freeArchivo(archivo);
 		return -1;
 	}
-	pthread_mutex_lock(&mutexBitarray);
 	list_iterate(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
 	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
 	log_info(loggerInfo, "Bloques de %s liberados", rutaArchivo);
@@ -594,7 +593,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		return -1;
 	}
 
-	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) liberarBloque);
+	liberarBloquesDeArchivo(pathArchivoAEscribir);
 
 	void acumularRegistros(char* registro) {
 		string_append_with_format(&registrosAcumulados, "%s;\n", registro);

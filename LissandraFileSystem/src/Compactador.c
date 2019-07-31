@@ -303,7 +303,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
-			//log_info(loggerInfo, "Recuperando %s", registrosChar[i]);
+			log_info(loggerInfo, "Recuperando %s", registrosChar[i]);
 
 			char** valores = string_split(registrosChar[i], ";");
 			t_registro* registro = registro_new(valores);
