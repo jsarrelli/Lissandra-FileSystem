@@ -412,7 +412,6 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 }
 
 void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
-	usleep(200);
 	char* nombreTablaAux = string_duplicate(tabla->nombreTabla);
 	log_info(loggerInfo, "Iniciando compactacion de tabla %s..", nombreTablaAux);
 	while (existeTabla(nombreTablaAux)) {
