@@ -253,9 +253,10 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 		freeArchivo(archivo);
 		return -1;
 	}
+	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
 	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
 
-	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
+
 
 	escribirArchivo(rutaArchivo, archivo);
 	freeArchivo(archivo);
