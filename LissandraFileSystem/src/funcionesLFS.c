@@ -457,12 +457,10 @@ void dumpearTabla(char* rutaTabla) {
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchTemporal);
 		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
-		list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
 
-	}else{
-		list_destroy(registros);
 	}
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
 
 	free(rutaArchTemporal);
 	list_destroy_and_destroy_elements(archivosTmp, free);
