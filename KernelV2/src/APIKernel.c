@@ -152,7 +152,6 @@ int consolaInsert(char*argumentos) {
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
-	free(diferencia);
 	cantInserts++;
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
