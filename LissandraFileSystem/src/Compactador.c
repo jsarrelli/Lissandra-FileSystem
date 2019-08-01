@@ -239,6 +239,7 @@ void filtrarRegistros(t_list* registros) {
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
+
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	if (leerArchivoDeTabla(pathArchivo, archivo) == -1) {
 		log_error(loggerError, "No se pudo abrir el archivo %s", pathArchivo);
@@ -303,7 +304,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
-			log_info(loggerInfo, "Recuperando %s", registrosChar[i]);
+			//log_info(loggerInfo, "Recuperando %s", registrosChar[i]);
 
 			char** valores = string_split(registrosChar[i], ";");
 			t_registro* registro = registro_new(valores);
