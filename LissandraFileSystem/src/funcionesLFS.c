@@ -119,6 +119,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 }
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla) {
+
 	pthread_mutex_lock(&mutexObtenerMetadata);
 	log_info(loggerInfo, "Obtentiendo Metadata de %s..", nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
@@ -333,6 +334,7 @@ void vaciarMemtable() {
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
+	pthread_mutex_lock(&mutexDrop);
 	pthread_mutex_lock(&mutexBuscarDirectorios);
 	log_info(loggerInfo, "Obteniendo directorios..");
 	DIR *directorioActual;
@@ -362,6 +364,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 		closedir(directorioActual);
 	}
 	pthread_mutex_unlock(&mutexBuscarDirectorios);
+	pthread_mutex_unlock(&mutexDrop);
 }
 
 char* obtenerNombreTablaByRuta(char* rutaTabla) {
