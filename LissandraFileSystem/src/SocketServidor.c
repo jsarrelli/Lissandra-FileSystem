@@ -133,7 +133,7 @@ void procesarDROP(char* nombreTabla, int socketMemoria) {
 
 //esta funcion podria ser mucho mas linda, pero el obtenerNombreTablas no me sale
 void procesarDESCRIBE_ALL(int socketMemoria) {
-
+	pthread_mutex_lock(&mutexDrop);
 	log_info(loggerInfo, "Procesando DESCRIBE ALL");
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
@@ -157,6 +157,7 @@ void procesarDESCRIBE_ALL(int socketMemoria) {
 
 	list_destroy_and_destroy_elements(listaDirectorios, free);
 	free(tablasSerializadas);
+	pthread_mutex_unlock(&mutexDrop);
 }
 
 void procesarDESCRIBE(char* nombreTabla, int socketMemoria) {

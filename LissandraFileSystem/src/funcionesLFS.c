@@ -334,7 +334,7 @@ void vaciarMemtable() {
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
-	pthread_mutex_lock(&mutexDrop);
+
 	pthread_mutex_lock(&mutexBuscarDirectorios);
 	log_info(loggerInfo, "Obteniendo directorios..");
 	DIR *directorioActual;
@@ -364,7 +364,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 		closedir(directorioActual);
 	}
 	pthread_mutex_unlock(&mutexBuscarDirectorios);
-	pthread_mutex_unlock(&mutexDrop);
+
 }
 
 char* obtenerNombreTablaByRuta(char* rutaTabla) {
