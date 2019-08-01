@@ -485,7 +485,7 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
 void crearArchivo(char* rutaArch) {
 	t_archivo* file = malloc(sizeof(t_archivo));
 	file->BLOQUES = list_create();
-	agregarNuevoBloque(file);
+	asignarBloquesArchivo(file, 1);
 	file->TAMANIO = 0;
 	file->cantBloques = 0;
 
@@ -557,30 +557,23 @@ FILE* obtenerArchivoBloque(int numeroBloque, bool sobreEscribirBloques) {
 	return archivoBloque;
 }
 
-int agregarNuevoBloque(t_archivo* archivo) {
+void asignarBloquesArchivo(t_archivo* archivo, int cantidadBloqueNecesarios) {
 	pthread_mutex_lock(&mutexBitarray);
 
-	t_list* bloquesLibres = buscarBloquesLibres(1);
+	t_list* bloquesLibres = buscarBloquesLibres(cantidadBloqueNecesarios);
 	if (bloquesLibres == NULL) {
 		//no hay mas bloques libres
 		log_error(loggerError, "No hay suficientes bloques libres");
-		return -1;
+		list_destroy(bloquesLibres);
+		return;
 	}
-	int bloqueLibre = (int) list_get(bloquesLibres, 0);
-
-	reservarBloque(bloqueLibre);
-
-	bool contieneBloque(int bloqueActual) {
-		return bloqueLibre == bloqueActual;
-	}
-	if (!list_any_satisfy(archivo->BLOQUES, (void*) contieneBloque)) {
-		list_add(archivo->BLOQUES, (void*) bloqueLibre);
-	}
+	list_iterate(bloquesLibres, (void*) reservarBloque);
+	list_clean(archivo->BLOQUES);
+	list_add_all(archivo->BLOQUES, bloquesLibres);
 
 	list_destroy(bloquesLibres);
 
 	pthread_mutex_unlock(&mutexBitarray);
-	return bloqueLibre;
 }
 
 int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
@@ -604,9 +597,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 
 	int cantidadBloquesNecesarios = ceil((double) tamanioTotalEscribir / metadata.BLOCK_SIZE);
 
-	for (int i = 0; i < cantidadBloquesNecesarios; i++) {
-		agregarNuevoBloque(archivo);
-	}
+	asignarBloquesArchivo(archivo, cantidadBloquesNecesarios);
 
 	for (int i = 0; i < cantidadBloquesNecesarios; i++) {
 		char* registrosDeBloque = string_substring(registrosAcumulados, i * metadata.BLOCK_SIZE, metadata.BLOCK_SIZE);

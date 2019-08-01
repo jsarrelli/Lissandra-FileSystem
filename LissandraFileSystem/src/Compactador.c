@@ -89,7 +89,6 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
-		//liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
