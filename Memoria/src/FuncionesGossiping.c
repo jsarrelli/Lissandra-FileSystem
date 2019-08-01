@@ -17,9 +17,9 @@ void gossiping() {
 
 	list_iterate(seeds, (void*) intercambiarTablasGossiping);
 
-	log_info(loggerInfo, "Las memorias conocidas son:");
+	log_trace(loggerTrace, "Las memorias conocidas son:");
 	void mostrarTablaConocida(t_memoria* memoria) {
-		log_info(loggerInfo, "Puerto:%s IP:%s MEMORY NUMBER:%d", memoria->puerto, memoria->ip, memoria->memoryNumber);
+		log_trace(loggerTrace, "%d /%s / %s", memoria->memoryNumber, memoria->ip, memoria->puerto);
 	}
 	list_iterate(tablaGossiping, (void*) mostrarTablaConocida);
 }
