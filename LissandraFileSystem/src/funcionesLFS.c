@@ -460,6 +460,8 @@ void dumpearTabla(char* rutaTabla) {
 		list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
 
+	}else{
+		list_destroy(registros);
 	}
 
 	free(rutaArchTemporal);
