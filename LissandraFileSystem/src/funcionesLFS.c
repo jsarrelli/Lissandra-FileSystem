@@ -251,21 +251,20 @@ int liberarBloquesDeArchivo(char *rutaArchivo) {
 	log_info(loggerInfo, "Borrando y liberando bloques de %s", rutaArchivo);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	int result = leerArchivoDeTabla(rutaArchivo, archivo);
+	int success = 1;
 	if (result < 0) {
 		free(archivo);
-		return -1;
-	}
-	if (list_is_empty(archivo->BLOQUES)) {
+		success = -1;
+	} else {
+		list_iterate(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
+		list_iterate(archivo->BLOQUES, (void*) liberarBloque);
+		escribirArchivo(rutaArchivo, archivo);
 		freeArchivo(archivo);
-		return -1;
 	}
-	list_iterate(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
-	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
-	log_info(loggerInfo, "Bloques de %s liberados", rutaArchivo);
-	escribirArchivo(rutaArchivo, archivo);
-	freeArchivo(archivo);
+
 	pthread_mutex_unlock(&mutexBitarray);
-	return 1;
+	log_info(loggerInfo, "Bloques de %s liberados", rutaArchivo);
+	return success;
 }
 
 void borrarContenidoArchivoBloque(int bloque) {
