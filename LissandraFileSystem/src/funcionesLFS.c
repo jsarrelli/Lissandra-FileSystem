@@ -119,6 +119,7 @@ void crearMetadataTabla(char*nombreTabla, char* consistencia, char* cantidadPart
 }
 
 t_metadata_tabla obtenerMetadata(char* nombreTabla) {
+
 	pthread_mutex_lock(&mutexObtenerMetadata);
 	log_info(loggerInfo, "Obtentiendo Metadata de %s..", nombreTabla);
 	char* rutaTabla = armarRutaTabla(nombreTabla);
@@ -230,11 +231,15 @@ int esDirectorio(char * ruta) {
 }
 
 void eliminarArchivo(char* rutaArchivo) {
-	liberarBloquesDeArchivo(rutaArchivo);
+
+	if (!string_contains(rutaArchivo, "Metadata.txt")) {
+		liberarBloquesDeArchivo(rutaArchivo);
+	}
 	remove(rutaArchivo);
 }
 
 void removerArchivosDeTabla(char * nombreTabla) {
+
 	t_list* archivos = buscarArchivos(nombreTabla);
 	list_iterate(archivos, (void*) eliminarArchivo);
 	list_destroy_and_destroy_elements(archivos, free);
@@ -242,24 +247,24 @@ void removerArchivosDeTabla(char * nombreTabla) {
 }
 
 int liberarBloquesDeArchivo(char *rutaArchivo) {
-
+	pthread_mutex_lock(&mutexBitarray);
+	log_info(loggerInfo, "Borrando y liberando bloques de %s", rutaArchivo);
 	t_archivo *archivo = malloc(sizeof(t_archivo));
 	int result = leerArchivoDeTabla(rutaArchivo, archivo);
+	int success = 1;
 	if (result < 0) {
 		free(archivo);
-		return -1;
-	}
-	if (list_is_empty(archivo->BLOQUES)) {
+		success = -1;
+	} else {
+		list_iterate(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
+		list_iterate(archivo->BLOQUES, (void*) liberarBloque);
+		escribirArchivo(rutaArchivo, archivo);
 		freeArchivo(archivo);
-		return -1;
 	}
-	list_iterate(archivo->BLOQUES, (void*) liberarBloque);
 
-	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) borrarContenidoArchivoBloque);
-
-	escribirArchivo(rutaArchivo, archivo);
-	freeArchivo(archivo);
-	return 1;
+	pthread_mutex_unlock(&mutexBitarray);
+	log_info(loggerInfo, "Bloques de %s liberados", rutaArchivo);
+	return success;
 }
 
 void borrarContenidoArchivoBloque(int bloque) {
@@ -313,6 +318,7 @@ void removerTabla(char* nombreTabla) {
 	rmdir(rutaTabla);
 	free(rutaTabla);
 	pthread_mutex_unlock(&mutexDrop);
+	log_trace(loggerInfo, "Archivos de %s eliminados", nombreTabla);
 }
 
 void freeTabla(t_tabla_memtable* tabla) {
@@ -332,6 +338,7 @@ void vaciarMemtable() {
 }
 
 void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
+
 	pthread_mutex_lock(&mutexBuscarDirectorios);
 	log_info(loggerInfo, "Obteniendo directorios..");
 	DIR *directorioActual;
@@ -361,6 +368,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 		closedir(directorioActual);
 	}
 	pthread_mutex_unlock(&mutexBuscarDirectorios);
+	log_info(loggerInfo, "Directorios Obtenidos");
 }
 
 char* obtenerNombreTablaByRuta(char* rutaTabla) {
@@ -415,13 +423,13 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 }
 
 void procesoDump() {
-
+	pthread_mutex_lock(&mutexDrop);
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
 	list_iterate(listaDirectorios, (void*) dumpearTabla);
 	list_destroy_and_destroy_elements(listaDirectorios, free);
-
+	pthread_mutex_unlock(&mutexDrop);
 }
 
 void dumpearTabla(char* rutaTabla) {
@@ -449,10 +457,10 @@ void dumpearTabla(char* rutaTabla) {
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchTemporal);
 		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 
-		list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
 		list_destroy_and_destroy_elements(registrosChar, free);
 
 	}
+	list_destroy_and_destroy_elements(registros, (void*) freeRegistro);
 
 	free(rutaArchTemporal);
 	list_destroy_and_destroy_elements(archivosTmp, free);
@@ -484,7 +492,7 @@ char * obtenerNombreDeArchivoDeUnaRuta(char * ruta) {
 void crearArchivo(char* rutaArch) {
 	t_archivo* file = malloc(sizeof(t_archivo));
 	file->BLOQUES = list_create();
-	agregarNuevoBloque(file);
+	asignarBloquesArchivo(file, 1);
 	file->TAMANIO = 0;
 	file->cantBloques = 0;
 
@@ -556,30 +564,23 @@ FILE* obtenerArchivoBloque(int numeroBloque, bool sobreEscribirBloques) {
 	return archivoBloque;
 }
 
-int agregarNuevoBloque(t_archivo* archivo) {
+void asignarBloquesArchivo(t_archivo* archivo, int cantidadBloqueNecesarios) {
 	pthread_mutex_lock(&mutexBitarray);
 
-	t_list* bloquesLibres = buscarBloquesLibres(1);
+	t_list* bloquesLibres = buscarBloquesLibres(cantidadBloqueNecesarios);
 	if (bloquesLibres == NULL) {
 		//no hay mas bloques libres
 		log_error(loggerError, "No hay suficientes bloques libres");
-		return -1;
+		list_destroy(bloquesLibres);
+		return;
 	}
-	int bloqueLibre = (int) list_get(bloquesLibres, 0);
-
-	reservarBloque(bloqueLibre);
-
-	bool contieneBloque(int bloqueActual) {
-		return bloqueLibre == bloqueActual;
-	}
-	if (!list_any_satisfy(archivo->BLOQUES, (void*) contieneBloque)) {
-		list_add(archivo->BLOQUES, (void*) bloqueLibre);
-	}
+	list_iterate(bloquesLibres, (void*) reservarBloque);
+	list_clean(archivo->BLOQUES);
+	list_add_all(archivo->BLOQUES, bloquesLibres);
 
 	list_destroy(bloquesLibres);
 
 	pthread_mutex_unlock(&mutexBitarray);
-	return bloqueLibre;
 }
 
 int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchivoAEscribir) {
@@ -592,7 +593,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		return -1;
 	}
 
-	list_clean_and_destroy_elements(archivo->BLOQUES, (void*) liberarBloque);
+	liberarBloquesDeArchivo(pathArchivoAEscribir);
 
 	void acumularRegistros(char* registro) {
 		string_append_with_format(&registrosAcumulados, "%s;\n", registro);
@@ -603,9 +604,7 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 
 	int cantidadBloquesNecesarios = ceil((double) tamanioTotalEscribir / metadata.BLOCK_SIZE);
 
-	for (int i = 0; i < cantidadBloquesNecesarios; i++) {
-		agregarNuevoBloque(archivo);
-	}
+	asignarBloquesArchivo(archivo, cantidadBloquesNecesarios);
 
 	for (int i = 0; i < cantidadBloquesNecesarios; i++) {
 		char* registrosDeBloque = string_substring(registrosAcumulados, i * metadata.BLOCK_SIZE, metadata.BLOCK_SIZE);
@@ -629,7 +628,6 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		free(registrosDeBloque);
 
 	}
-	escribirBitmap();
 	archivo->TAMANIO = tamanioTotalBloquesPorArchivo(archivo->BLOQUES);
 	escribirArchivo(pathArchivoAEscribir, archivo);
 	free(registrosAcumulados);
@@ -673,7 +671,8 @@ void escribirArchivo(char*rutaArchivo, t_archivo *archivo) {
 		index++;
 	}
 	list_iterate(archivo->BLOQUES, (void*) escribirBloque);
-	fprintf(arch, "]");
+	fprintf(arch, "]\n");
+	fprintf(arch, "CANTIDAD BLOQUES=%d", list_size(archivo->BLOQUES));
 	fclose(arch);
 }
 

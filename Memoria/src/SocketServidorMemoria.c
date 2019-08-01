@@ -136,7 +136,7 @@ void procesarRequestDESCRIBE(char* nombreTabla, int socketKernel) {
 		EnviarDatosTipo(socketKernel, FILESYSTEM, response, strlen(response) + 1, DESCRIBE);
 		free(metaData);
 	} else {
-		enviarSuccess(1, DESCRIBE, socketKernel);
+		enviarSuccess(-1, DESCRIBE, socketKernel);
 	}
 
 }
@@ -195,6 +195,6 @@ void procesarRequestTABLA_GOSSIPING(int socketKernel) {
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, TABLA_GOSSIPING);
 		free(response);
 	}
-
+	filtrarMemoriasConocidas();
 	list_iterate(tablaGossiping, (void*) enviarMemoria);
 }

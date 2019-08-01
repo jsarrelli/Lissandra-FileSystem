@@ -85,7 +85,7 @@ void freeTabla(t_tabla_memtable* tabla);
 
 int tamanioTotalBloquesPorArchivo(t_list* bloques);
 char* armarRutaBloque(int bloque);
-int agregarNuevoBloque(t_archivo* archivo);
+void asignarBloquesArchivo(t_archivo* archivo, int cantidadBloqueNecesarios);
 
 t_list* getRegistrosFromMemtable(char* nombreTabla);
 

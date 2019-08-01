@@ -37,8 +37,8 @@ void iniciarVariablesKernel() {
 	sem_init(&fin, 0, 0);
 	sem_init(&cantProcesosColaReady, 0, 0);
 	sem_init(&semMetricas, 0, 1);
+	pthread_mutex_init(&mutexListaMemorias, NULL);
 
-	haySC = false;
 	hayMetricas = false;
 	puedeHaberRequests = true;
 	idMemoria = 1;
@@ -50,7 +50,7 @@ void iniciarVariablesKernel() {
 	listaMemorias = list_create();
 
 	//hardcodearInfoMemorias();
-	listaMetadataTabla = list_create();
+	listaInfoTablas = list_create();
 	//hardcodearListaMetadataTabla();
 	multiprocesamiento = config->MULTIPROCESAMIENTO;
 	multiprocesamientoUsado = 0;
@@ -120,9 +120,10 @@ void iniciarHiloMetadataRefresh() {
 
 void iniciarHiloGossiping() {
 	log_info(log_master->logInfo, "Iniciando hilo de gossiping");
-	log_info(log_master->logInfo, "Descubriendo memorias..");
+
 	while (true) {
 		usleep(tiempoGossiping * 1000);
+		log_info(log_master->logInfo, "Descubriendo memorias..");
 		if (conocerMemorias() == SUPER_ERROR) {
 
 			log_error(log_master->logError, "Fallo conocer memorias");

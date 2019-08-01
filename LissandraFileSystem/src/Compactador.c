@@ -13,13 +13,12 @@ void compactarTabla(char*nombreTabla) {
 
 	pthread_mutex_lock(&mutexCompactacion);
 
-
 	t_list* archivosTemporales = buscarTemporalesByNombreTabla(nombreTabla);
 	if (list_is_empty(archivosTemporales)) {
 		list_destroy(archivosTemporales);
 		log_info(loggerInfo, "No hay nada para compactar");
 
-		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+		//pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 		pthread_mutex_unlock(&mutexCompactacion);
 
 		return;
@@ -90,7 +89,6 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
-		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
@@ -240,6 +238,7 @@ void filtrarRegistros(t_list* registros) {
 /*levanta los registros de un path (binario o temporal)
  y te los cargar en la lista que le pases*/
 void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros) {
+
 	t_archivo* archivo = malloc(sizeof(t_archivo));
 	if (leerArchivoDeTabla(pathArchivo, archivo) == -1) {
 		log_error(loggerError, "No se pudo abrir el archivo %s", pathArchivo);
@@ -249,6 +248,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 	log_info(loggerInfo, "Leyendo registros de %s... ", pathArchivo);
 
 	char* contenidoBloques = string_new();
+	bool error = false;
 
 	void cargarRegistrosDeBloque(int bloque) {
 		if (archivo->TAMANIO == 0) {
@@ -258,7 +258,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 		char* rutaBloque = armarRutaBloque(bloque);
 
 		int sizeOfBloque = getSizeOfFile(rutaBloque);
-		if(sizeOfBloque ==-1){
+		if (sizeOfBloque == -1) {
 			log_error(loggerError, "No se pudo obtener el tamanio del archivo %s", rutaBloque);
 			return;
 		}
@@ -269,13 +269,23 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 			return;
 		}
 
-
 		log_info(loggerInfo, "Levantando registros de bloque %d", bloque);
-		char* contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
+		int intentos = 0;
+		char* contenidoBloque = NULL;
+		do {
+			contenidoBloque = mmap(NULL, sizeOfBloque, PROT_READ, MAP_PRIVATE, fd, 0);
+			if (contenidoBloque != MAP_FAILED) {
+				break;
+			}
+			intentos++;
+			log_error(loggerError, "BOOM Bloque %d", bloque);
+			sleep(2);
+
+		} while (intentos < 5);
 
 		if (contenidoBloque == MAP_FAILED) {
 
-			log_error(loggerError, "BOOM Bloque %d", bloque);
+			error = true;
 
 		} else if (!string_is_empty(contenidoBloque)) {
 
@@ -289,7 +299,7 @@ void agregarRegistrosFromBloqueByPath(char* pathArchivo, t_list* listaRegistros)
 
 	list_iterate(archivo->BLOQUES, (void*) cargarRegistrosDeBloque);
 
-	if (!string_is_empty(contenidoBloques)) {
+	if (!string_is_empty(contenidoBloques) && !error) {
 		char** registrosChar = string_split(contenidoBloques, "\n");
 		int i = 0;
 		while (registrosChar[i] != NULL) {
@@ -411,12 +421,11 @@ t_list* buscarBinariosByNombreTabla(char* nombreTabla) {
 }
 
 void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
-	usleep(200);
 	char* nombreTablaAux = string_duplicate(tabla->nombreTabla);
 	log_info(loggerInfo, "Iniciando compactacion de tabla %s..", nombreTablaAux);
-	while (existeTabla(nombreTablaAux)) {
+	t_metadata_tabla metadata = obtenerMetadata(tabla->nombreTabla);
 
-		t_metadata_tabla metadata = obtenerMetadata(tabla->nombreTabla);
+	while (existeTabla(nombreTablaAux)) {
 		compactarTabla(tabla->nombreTabla);
 		usleep(metadata.T_COMPACTACION * 1000);
 
@@ -424,5 +433,4 @@ void iniciarThreadCompactacion(t_tabla_memtable* tabla) {
 	free(nombreTablaAux);
 
 }
-
 

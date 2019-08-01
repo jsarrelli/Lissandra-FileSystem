@@ -34,10 +34,8 @@ t_metadata_tabla* describeSegmento(char* nombreSegmento) {
 	}
 
 	t_metadata_tabla* metaDataRecibida = NULL;
-	if (atoi(paquete.mensaje) != 1) {
+	if (atoi(paquete.mensaje) != -1) {
 		metaDataRecibida = deserealizarTabla(&paquete);
-		return NULL;
-		//la tabla no existe
 	}
 
 	free(paquete.mensaje);
