@@ -18,7 +18,7 @@ void compactarTabla(char*nombreTabla) {
 		list_destroy(archivosTemporales);
 		log_info(loggerInfo, "No hay nada para compactar");
 
-		pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
+		//pthread_mutex_unlock(&(getSemaforoByTabla(nombreTabla)->mutexCompactacion));
 		pthread_mutex_unlock(&mutexCompactacion);
 
 		return;
@@ -89,7 +89,7 @@ void mergearRegistrosNuevosConViejos(t_list* archivosBinarios, t_list* particion
 		t_list* registrosChar = list_map(registrosNuevos, (void*) registroToChar);
 
 		//escribimos en el binario y sobreescribimos los bloques de ese archivo
-		liberarBloquesDeArchivo(rutaArchivoBinarioActual);
+		//liberarBloquesDeArchivo(rutaArchivoBinarioActual);
 
 		escribirRegistrosEnBloquesByPath(registrosChar, rutaArchivoBinarioActual);
 
