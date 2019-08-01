@@ -364,7 +364,7 @@ void buscarDirectorios(char * ruta, t_list* listaDirectorios) {
 		closedir(directorioActual);
 	}
 	pthread_mutex_unlock(&mutexBuscarDirectorios);
-
+	log_info(loggerInfo, "Directorios Obtenidos");
 }
 
 char* obtenerNombreTablaByRuta(char* rutaTabla) {
@@ -419,13 +419,13 @@ void insertarKey(char* nombreTabla, char* key, char* value, double timestamp) {
 }
 
 void procesoDump() {
-
+	pthread_mutex_lock(&mutexDrop);
 	t_list* listaDirectorios = list_create();
 	buscarDirectorios(rutas.Tablas, listaDirectorios);
 
 	list_iterate(listaDirectorios, (void*) dumpearTabla);
 	list_destroy_and_destroy_elements(listaDirectorios, free);
-
+	pthread_mutex_unlock(&mutexDrop);
 }
 
 void dumpearTabla(char* rutaTabla) {
