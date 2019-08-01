@@ -231,11 +231,15 @@ int esDirectorio(char * ruta) {
 }
 
 void eliminarArchivo(char* rutaArchivo) {
-	liberarBloquesDeArchivo(rutaArchivo);
+
+	if (!string_contains(rutaArchivo, "Metadata.txt")) {
+		liberarBloquesDeArchivo(rutaArchivo);
+	}
 	remove(rutaArchivo);
 }
 
 void removerArchivosDeTabla(char * nombreTabla) {
+
 	t_list* archivos = buscarArchivos(nombreTabla);
 	list_iterate(archivos, (void*) eliminarArchivo);
 	list_destroy_and_destroy_elements(archivos, free);
@@ -315,6 +319,7 @@ void removerTabla(char* nombreTabla) {
 	rmdir(rutaTabla);
 	free(rutaTabla);
 	pthread_mutex_unlock(&mutexDrop);
+	log_trace(loggerInfo, "Archivos de %s eliminados", nombreTabla);
 }
 
 void freeTabla(t_tabla_memtable* tabla) {
