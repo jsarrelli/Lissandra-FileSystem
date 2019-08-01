@@ -630,7 +630,6 @@ int escribirRegistrosEnBloquesByPath(t_list* registrosAEscribir, char*pathArchiv
 		free(registrosDeBloque);
 
 	}
-	escribirBitmap();
 	archivo->TAMANIO = tamanioTotalBloquesPorArchivo(archivo->BLOQUES);
 	escribirArchivo(pathArchivoAEscribir, archivo);
 	free(registrosAcumulados);
