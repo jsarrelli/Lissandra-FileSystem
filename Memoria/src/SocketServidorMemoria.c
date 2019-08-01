@@ -195,6 +195,6 @@ void procesarRequestTABLA_GOSSIPING(int socketKernel) {
 		EnviarDatosTipo(socketKernel, MEMORIA, response, strlen(response) + 1, TABLA_GOSSIPING);
 		free(response);
 	}
-
+	filtrarMemoriasConocidas();
 	list_iterate(tablaGossiping, (void*) enviarMemoria);
 }

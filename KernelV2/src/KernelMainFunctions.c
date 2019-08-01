@@ -352,11 +352,12 @@ void crearProcesoYMandarloAReady(char* operacion) {
 }
 
 int conocerMemorias() {
-
+	pthread_mutex_lock(&mutexListaMemorias);
 	int socketMemoria = ConectarAServidor(config->PUERTO_MEMORIA, config->IP_MEMORIA);
 	while (socketMemoria == -1) {
 		infoMemoria* memoria = obtenerMemoriaAlAzar(listaMemorias);
 		socketMemoria = ConectarAServidor(memoria->puerto, memoria->ip);
+		usleep(20);
 	}
 
 	EnviarDatosTipo(socketMemoria, KERNEL, NULL, 0, TABLA_GOSSIPING);
@@ -370,7 +371,7 @@ int conocerMemorias() {
 		return TODO_OK;
 		//esto no es un OK un carajo pero basta de tirar errores
 	}
-	pthread_mutex_lock(&mutexListaMemorias);
+
 	while ((codRecibir = RecibirPaquete(socketMemoria, &paquete)) > 0) {
 
 		char** response = string_split(paquete.mensaje, " ");

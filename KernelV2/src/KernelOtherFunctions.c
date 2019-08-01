@@ -43,7 +43,7 @@ void filtrarMemorias() {
 			}
 			usleep(10);
 			i++;
-		} while (i < 20);
+		} while (i < 5);
 
 		bool caida;
 		if (socket == -1) {
