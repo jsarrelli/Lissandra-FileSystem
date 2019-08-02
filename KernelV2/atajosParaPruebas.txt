@@ -52,6 +52,16 @@ SELECT METALS 135
 SELECT ANIMALS 110
 
 /* Prueba Stress */
+// En el caso en que se quiera que se conecten a mano
+ADD MEMORY 5 TO SC
+ADD MEMORY 1 TO SHC
+ADD MEMORY 2 TO SHC
+ADD MEMORY 3 TO SHC
+ADD MEMORY 4 TO SHC
+ADD MEMORY 2 TO EC
+ADD MEMORY 3 TO EC
+ADD MEMORY 5 TO EC
+
 RUN ../scripts/memorias.lql
 RUN ../scripts/cities_countries.lql
 RUN ../scripts/games_computer.lql
