@@ -141,12 +141,15 @@ int consolaInsert(char*argumentos) {
 
 	infoMemoria* memoriaAEnviar = obtenerMemoria(nombreTabla, atoi(key));
 	if (memoriaAEnviar == NULL) {
+		log_error(log_master->logError, "Fallo al no encontrar memoria");
 		freePunteroAPunteros(valoresAux);
 		freePunteroAPunteros(valores);
 		return SUPER_ERROR;
 	}
+
 	actualizarMetricasDeMemoria(atoi(key), nombreTabla, INSERT, memoriaAEnviar);
 
+	log_info(log_master->logInfo, "Calculando datos..");
 	// Seguimos con las metrics
 	timestampInsertAlFinalizar = getCurrentTime();
 	double* diferencia = malloc(sizeof(double));
