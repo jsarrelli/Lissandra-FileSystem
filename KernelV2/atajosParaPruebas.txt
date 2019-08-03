@@ -78,9 +78,14 @@ METRICS
 JOURNAL
 
 /* Prueba Memoria */
-
+ADD MEMORY 1 TO SC
+RUN ../scripts/reemplazo1.lql
+// Desde memoria
+JOURNAL
+// En LFS
 INSERT POSTRES 819 "ALFAJOR"
 INSERT POSTRES 178 "MOUSSE"
+RUN ../scripts/reemplazo2.lql
 SELECT POSTRES 100
 SELECT POSTRES 101
 SELECT POSTRES 1888
