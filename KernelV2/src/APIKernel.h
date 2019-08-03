@@ -37,5 +37,5 @@ void agregarTabla(infoTabla* tabla);
 int procesarDescribe(int socketMemoria, char* nombreTabla);
 
 void freeInfoTabla(infoTabla* tabla);
-
+void actualizarMetricasGenerales(double timestampInsertAlFinalizar, double timestampInsertAlIniciar,t_protocolo protocolo);
 #endif /* APIKERNEL_H_ */

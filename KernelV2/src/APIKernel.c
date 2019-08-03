@@ -115,6 +115,20 @@ int consolaAdd(char*argumento) {
 	return TODO_OK;
 }
 
+void actualizarMetricasGenerales(double tiempoFinal, double tiempoInicial, t_protocolo protocolo) {
+	pthread_mutex_lock(&mutexActualizarMetricas);
+	double* diferencia = malloc(sizeof(double));
+	*diferencia = tiempoFinal - tiempoInicial;
+	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
+	if (protocolo == INSERT) {
+		cantInserts++;
+	} else if (protocolo == SELECT) {
+		cantSelects++;
+	}
+	pthread_mutex_unlock(&mutexActualizarMetricas);
+
+}
+
 int consolaInsert(char*argumentos) {
 	//	INSERT
 	//[NOMBRE_TABLA] [KEY] “[VALUE]” TIMESTAMP
@@ -152,10 +166,7 @@ int consolaInsert(char*argumentos) {
 	log_info(log_master->logInfo, "Calculando datos..");
 	// Seguimos con las metrics
 	double timestampInsertAlFinalizar = getCurrentTime();
-	double* diferencia = malloc(sizeof(double));
-	*diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
-	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
-	cantInserts++;
+	actualizarMetricasGenerales(timestampInsertAlFinalizar, timestampInsertAlIniciar, INSERT);
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);
 
@@ -196,15 +207,12 @@ int consolaSelect(char*argumentos) {
 		free(argumentosAux);
 	}
 
+	actualizarMetricasDeMemoria(key, nombreTabla, SELECT, memoriaAEnviar);
+
 	log_info(log_master->logInfo, "Calculando datos..");
 	// Seguimos con las metrics y luego mandamos el mensaje
 	double timestampSelectAlFinalizar = getCurrentTime();
-	double* diferencia = malloc(sizeof(double));
-	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
-	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
-	cantSelects++;
-
-	actualizarMetricasDeMemoria(key, nombreTabla, SELECT, memoriaAEnviar);
+	actualizarMetricasGenerales(timestampSelectAlFinalizar, timestampSelectAlIniciar, SELECT);
 
 	log_info(log_master->logInfo, "Intenando conectarse a memoria..");
 	int socketMemoria = ConectarAServidorPlus(memoriaAEnviar->puerto, memoriaAEnviar->ip);

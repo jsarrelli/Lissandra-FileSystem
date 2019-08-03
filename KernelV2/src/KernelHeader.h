@@ -125,6 +125,7 @@ sem_t fin;
 sem_t cantProcesosColaReady;
 sem_t semMetricas;
 pthread_mutex_t mutexListaMemorias;
+pthread_mutex_t mutexActualizarMetricas;
 //sem_t* arraySemaforos; // Borrar
 logStruct* log_master;
 bool puedeHaberRequests;

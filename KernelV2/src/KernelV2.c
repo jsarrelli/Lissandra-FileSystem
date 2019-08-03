@@ -38,6 +38,7 @@ void iniciarVariablesKernel() {
 	sem_init(&cantProcesosColaReady, 0, 0);
 	sem_init(&semMetricas, 0, 1);
 	pthread_mutex_init(&mutexListaMemorias, NULL);
+	pthread_mutex_init(&mutexActualizarMetricas, NULL);
 
 	hayMetricas = false;
 	puedeHaberRequests = true;
