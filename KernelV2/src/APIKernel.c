@@ -121,7 +121,7 @@ int consolaInsert(char*argumentos) {
 
 	// Info inicial de las metricas
 	metricas.writes++;
-	timestampInsertAlIniciar = getCurrentTime();
+	double timestampInsertAlIniciar = getCurrentTime();
 
 	// Ahora evaluamos el comando en si
 	char** valores = string_split(argumentos, "\"");
@@ -151,7 +151,7 @@ int consolaInsert(char*argumentos) {
 
 	log_info(log_master->logInfo, "Calculando datos..");
 	// Seguimos con las metrics
-	timestampInsertAlFinalizar = getCurrentTime();
+	double timestampInsertAlFinalizar = getCurrentTime();
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampInsertAlFinalizar - timestampInsertAlIniciar;
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
@@ -179,7 +179,7 @@ int consolaSelect(char*argumentos) {
 	//	SELECT [NOMBRE_TABLA] [KEY]
 	// Info inicial de las metricas
 	metricas.reads++;
-	timestampSelectAlIniciar = getCurrentTime();
+	double timestampSelectAlIniciar = getCurrentTime();
 
 	// Ahora evaluamos el comando en si
 	char* argumentosAux = string_duplicate(argumentos);
@@ -196,8 +196,9 @@ int consolaSelect(char*argumentos) {
 		free(argumentosAux);
 	}
 
+	log_info(log_master->logInfo, "Calculando datos..");
 	// Seguimos con las metrics y luego mandamos el mensaje
-	timestampSelectAlFinalizar = getCurrentTime();
+	double timestampSelectAlFinalizar = getCurrentTime();
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = timestampSelectAlFinalizar - timestampSelectAlIniciar;
 	list_add(metricas.diferenciaDeTiempoReadLatency, diferencia);
