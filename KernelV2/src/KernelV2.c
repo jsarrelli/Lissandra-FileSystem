@@ -57,10 +57,6 @@ void iniciarVariablesKernel() {
 
 	cantSelects = 0;
 	cantInserts = 0;
-	timestampSelectAlIniciar = 0;
-	timestampSelectAlFinalizar = 0;
-	timestampInsertAlIniciar = 0;
-	timestampInsertAlFinalizar = 0;
 
 	hilosActivos = 0;
 	idHilo = 0;
