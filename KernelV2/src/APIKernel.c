@@ -117,6 +117,7 @@ int consolaAdd(char*argumento) {
 
 void actualizarMetricasGenerales(double tiempoFinal, double tiempoInicial, t_protocolo protocolo) {
 	pthread_mutex_lock(&mutexActualizarMetricas);
+	log_info(log_master->logInfo, "Actualizando metricas generales");
 	double* diferencia = malloc(sizeof(double));
 	*diferencia = tiempoFinal - tiempoInicial;
 	list_add(metricas.diferenciaDeTiempoWriteLatency, diferencia);
@@ -125,6 +126,7 @@ void actualizarMetricasGenerales(double tiempoFinal, double tiempoInicial, t_pro
 	} else if (protocolo == SELECT) {
 		cantSelects++;
 	}
+	log_info(log_master->logInfo, "Metricas actualizadas");
 	pthread_mutex_unlock(&mutexActualizarMetricas);
 
 }
